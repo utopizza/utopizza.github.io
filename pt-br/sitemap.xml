@@ -3,58 +3,58 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>http://utopizza.github.io/pt-br/categories/</loc>
+    <loc>https://utopizza.github.io/pt-br/categories/</loc>
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="http://utopizza.github.io/categories/"
+                href="https://utopizza.github.io/categories/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="pt-br"
-                href="http://utopizza.github.io/pt-br/categories/"
+                href="https://utopizza.github.io/pt-br/categories/"
                 />
   </url>
   
   <url>
-    <loc>http://utopizza.github.io/pt-br/</loc>
+    <loc>https://utopizza.github.io/pt-br/</loc>
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="http://utopizza.github.io/"
+                href="https://utopizza.github.io/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="pt-br"
-                href="http://utopizza.github.io/pt-br/"
+                href="https://utopizza.github.io/pt-br/"
                 />
   </url>
   
   <url>
-    <loc>http://utopizza.github.io/pt-br/series/</loc>
+    <loc>https://utopizza.github.io/pt-br/series/</loc>
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="http://utopizza.github.io/series/"
+                href="https://utopizza.github.io/series/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="pt-br"
-                href="http://utopizza.github.io/pt-br/series/"
+                href="https://utopizza.github.io/pt-br/series/"
                 />
   </url>
   
   <url>
-    <loc>http://utopizza.github.io/pt-br/tags/</loc>
+    <loc>https://utopizza.github.io/pt-br/tags/</loc>
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="http://utopizza.github.io/tags/"
+                href="https://utopizza.github.io/tags/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="pt-br"
-                href="http://utopizza.github.io/pt-br/tags/"
+                href="https://utopizza.github.io/pt-br/tags/"
                 />
   </url>
   

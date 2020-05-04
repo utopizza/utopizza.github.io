@@ -3,69 +3,69 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>http://utopizza.github.io/posts/my-first-post/</loc>
+    <loc>https://utopizza.github.io/posts/my-first-post/</loc>
     <lastmod>2019-03-26T08:47:11+01:00</lastmod>
   </url>
   
   <url>
-    <loc>http://utopizza.github.io/posts/</loc>
+    <loc>https://utopizza.github.io/posts/</loc>
     <lastmod>2019-03-26T08:47:11+01:00</lastmod>
   </url>
   
   <url>
-    <loc>http://utopizza.github.io/</loc>
+    <loc>https://utopizza.github.io/</loc>
     <lastmod>2019-03-26T08:47:11+01:00</lastmod>
     <xhtml:link
                 rel="alternate"
                 hreflang="pt-br"
-                href="http://utopizza.github.io/pt-br/"
+                href="https://utopizza.github.io/pt-br/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="http://utopizza.github.io/"
+                href="https://utopizza.github.io/"
                 />
   </url>
   
   <url>
-    <loc>http://utopizza.github.io/categories/</loc>
+    <loc>https://utopizza.github.io/categories/</loc>
     <xhtml:link
                 rel="alternate"
                 hreflang="pt-br"
-                href="http://utopizza.github.io/pt-br/categories/"
+                href="https://utopizza.github.io/pt-br/categories/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="http://utopizza.github.io/categories/"
+                href="https://utopizza.github.io/categories/"
                 />
   </url>
   
   <url>
-    <loc>http://utopizza.github.io/series/</loc>
+    <loc>https://utopizza.github.io/series/</loc>
     <xhtml:link
                 rel="alternate"
                 hreflang="pt-br"
-                href="http://utopizza.github.io/pt-br/series/"
+                href="https://utopizza.github.io/pt-br/series/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="http://utopizza.github.io/series/"
+                href="https://utopizza.github.io/series/"
                 />
   </url>
   
   <url>
-    <loc>http://utopizza.github.io/tags/</loc>
+    <loc>https://utopizza.github.io/tags/</loc>
     <xhtml:link
                 rel="alternate"
                 hreflang="pt-br"
-                href="http://utopizza.github.io/pt-br/tags/"
+                href="https://utopizza.github.io/pt-br/tags/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="http://utopizza.github.io/tags/"
+                href="https://utopizza.github.io/tags/"
                 />
   </url>
   
