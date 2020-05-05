@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Language" content="en">
+
+    <meta name="author" content="Yusheng Wang">
+    <meta name="description" content="一、简介
+参赛作品是《面向物联网的无线无源风速仪》，设计一种面向物联网的无线无源小型三杯式风速仪，其工作原理是： (1) 无源：在有风时通过一个内置的小型发电装置，捕获风能，转化为电能供应自身工作，在无风时使用后备电源。为节省电源，大部分时间处于休眠状态，除非被上位机唤醒进行数据交互； (2) 无线：使用zigbee无线通讯模块，与上位机进行通信。
+其中我实现的部分是上位机软件，主要功能：定时向串口发送数据采集命令，然后从串口读取风速仪返回的风速值，显示到屏幕上。
+二、上位机软件的实现
+我用 WinForm &#43; MS.Chart 的方式来实现，用 WinForm 来制作窗体，用 MS.Chart 来实现风速值的实时显示。上位机的采集数据的过程包括：定时、读写串口、CRC校验、字符串和十六进制等的数值转换、更新图形界面、监控报警最大风速值等。关键代码：
+初始化
+//用于更新图形化界面的事件委托 delegate void UpdateTextEventHandler_experimental(List&lt;double&gt; experimentalWSList); UpdateTextEventHandler_experimental updateTextEventHandler_experimental; delegate void UpdateChartEventHandler_experimental(string experimentalWSstr); UpdateChartEventHandler_experimental updateChartEventHandler_experimental; //初始化串口 public void InitCOM_experimental(string PortName) { experimentalPort = new SerialPort(PortName); experimentalPort.BaudRate = 9600;//波特率 experimentalPort.Parity = Parity.None;//无奇偶校验位 experimentalPort.StopBits = StopBits.One;//一个停止位 experimentalPort.DataBits = 8;//8位数据位 experimentalPort.DataReceived &#43;= experimentalPort_DataReceived;//接收返回数据时触发的事件 } 接收数据，更新图形化界面
+//串口接收到风速仪返回数据时触发的事件 private void experimentalPort_DataReceived(object sender, SerialDataReceivedEventArgs e) { //读取缓冲区的数据，这里应该先处理读取的数据 int[] buffer = new int[7]; for (int i = 0; i &lt; buffer.">
+    <meta name="keywords" content="blog,developer,personal">
+
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="全国大学生节能减排社会实践与科技竞赛"/>
+<meta name="twitter:description" content="一、简介
+参赛作品是《面向物联网的无线无源风速仪》，设计一种面向物联网的无线无源小型三杯式风速仪，其工作原理是： (1) 无源：在有风时通过一个内置的小型发电装置，捕获风能，转化为电能供应自身工作，在无风时使用后备电源。为节省电源，大部分时间处于休眠状态，除非被上位机唤醒进行数据交互； (2) 无线：使用zigbee无线通讯模块，与上位机进行通信。
+其中我实现的部分是上位机软件，主要功能：定时向串口发送数据采集命令，然后从串口读取风速仪返回的风速值，显示到屏幕上。
+二、上位机软件的实现
+我用 WinForm &#43; MS.Chart 的方式来实现，用 WinForm 来制作窗体，用 MS.Chart 来实现风速值的实时显示。上位机的采集数据的过程包括：定时、读写串口、CRC校验、字符串和十六进制等的数值转换、更新图形界面、监控报警最大风速值等。关键代码：
+初始化
+//用于更新图形化界面的事件委托 delegate void UpdateTextEventHandler_experimental(List&lt;double&gt; experimentalWSList); UpdateTextEventHandler_experimental updateTextEventHandler_experimental; delegate void UpdateChartEventHandler_experimental(string experimentalWSstr); UpdateChartEventHandler_experimental updateChartEventHandler_experimental; //初始化串口 public void InitCOM_experimental(string PortName) { experimentalPort = new SerialPort(PortName); experimentalPort.BaudRate = 9600;//波特率 experimentalPort.Parity = Parity.None;//无奇偶校验位 experimentalPort.StopBits = StopBits.One;//一个停止位 experimentalPort.DataBits = 8;//8位数据位 experimentalPort.DataReceived &#43;= experimentalPort_DataReceived;//接收返回数据时触发的事件 } 接收数据，更新图形化界面
+//串口接收到风速仪返回数据时触发的事件 private void experimentalPort_DataReceived(object sender, SerialDataReceivedEventArgs e) { //读取缓冲区的数据，这里应该先处理读取的数据 int[] buffer = new int[7]; for (int i = 0; i &lt; buffer."/>
+
+    <meta property="og:title" content="全国大学生节能减排社会实践与科技竞赛" />
+<meta property="og:description" content="一、简介
+参赛作品是《面向物联网的无线无源风速仪》，设计一种面向物联网的无线无源小型三杯式风速仪，其工作原理是： (1) 无源：在有风时通过一个内置的小型发电装置，捕获风能，转化为电能供应自身工作，在无风时使用后备电源。为节省电源，大部分时间处于休眠状态，除非被上位机唤醒进行数据交互； (2) 无线：使用zigbee无线通讯模块，与上位机进行通信。
+其中我实现的部分是上位机软件，主要功能：定时向串口发送数据采集命令，然后从串口读取风速仪返回的风速值，显示到屏幕上。
+二、上位机软件的实现
+我用 WinForm &#43; MS.Chart 的方式来实现，用 WinForm 来制作窗体，用 MS.Chart 来实现风速值的实时显示。上位机的采集数据的过程包括：定时、读写串口、CRC校验、字符串和十六进制等的数值转换、更新图形界面、监控报警最大风速值等。关键代码：
+初始化
+//用于更新图形化界面的事件委托 delegate void UpdateTextEventHandler_experimental(List&lt;double&gt; experimentalWSList); UpdateTextEventHandler_experimental updateTextEventHandler_experimental; delegate void UpdateChartEventHandler_experimental(string experimentalWSstr); UpdateChartEventHandler_experimental updateChartEventHandler_experimental; //初始化串口 public void InitCOM_experimental(string PortName) { experimentalPort = new SerialPort(PortName); experimentalPort.BaudRate = 9600;//波特率 experimentalPort.Parity = Parity.None;//无奇偶校验位 experimentalPort.StopBits = StopBits.One;//一个停止位 experimentalPort.DataBits = 8;//8位数据位 experimentalPort.DataReceived &#43;= experimentalPort_DataReceived;//接收返回数据时触发的事件 } 接收数据，更新图形化界面
+//串口接收到风速仪返回数据时触发的事件 private void experimentalPort_DataReceived(object sender, SerialDataReceivedEventArgs e) { //读取缓冲区的数据，这里应该先处理读取的数据 int[] buffer = new int[7]; for (int i = 0; i &lt; buffer." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://utopizza.github.io/posts/projects/2015-08-27-%E9%A1%B9%E7%9B%AE-%E5%85%A8%E5%9B%BD%E5%A4%A7%E5%AD%A6%E7%94%9F%E8%8A%82%E8%83%BD%E5%87%8F%E6%8E%92%E7%A4%BE%E4%BC%9A%E5%AE%9E%E8%B7%B5%E4%B8%8E%E7%A7%91%E6%8A%80%E7%AB%9E%E8%B5%9B/" />
+<meta property="article:published_time" content="2015-08-27T09:15:33+00:00" />
+<meta property="article:modified_time" content="2015-08-27T09:15:33+00:00" />
+
+
+    
+      <base href="https://utopizza.github.io/posts/projects/2015-08-27-%E9%A1%B9%E7%9B%AE-%E5%85%A8%E5%9B%BD%E5%A4%A7%E5%AD%A6%E7%94%9F%E8%8A%82%E8%83%BD%E5%87%8F%E6%8E%92%E7%A4%BE%E4%BC%9A%E5%AE%9E%E8%B7%B5%E4%B8%8E%E7%A7%91%E6%8A%80%E7%AB%9E%E8%B5%9B/">
+    
+    <title>
+  全国大学生节能减排社会实践与科技竞赛 · Utopizza
+</title>
+
+    
+      <link rel="canonical" href="https://utopizza.github.io/posts/projects/2015-08-27-%E9%A1%B9%E7%9B%AE-%E5%85%A8%E5%9B%BD%E5%A4%A7%E5%AD%A6%E7%94%9F%E8%8A%82%E8%83%BD%E5%87%8F%E6%8E%92%E7%A4%BE%E4%BC%9A%E5%AE%9E%E8%B7%B5%E4%B8%8E%E7%A7%91%E6%8A%80%E7%AB%9E%E8%B5%9B/">
+    
+
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700%7CMerriweather:300,700%7CSource+Code+Pro:400,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.13.0/css/all.css" integrity="sha384-Bfad6CLCknfcloXFOyFnlgtENryhrpZCe29RTifKEixXQZ38WheV+i/6YWSzkz3V" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" integrity="sha256-l85OmPOjvil/SOvVt3HnSSjzF1TUMyT9eV0c2BzEGzU=" crossorigin="anonymous" />
+
+    
+      
+      
+      <link rel="stylesheet" href="https://utopizza.github.io/css/coder.min.a4f332213a21ce8eb521670c614470c58923aaaf385e2a73982c31dd7642decb.css" integrity="sha256-pPMyITohzo61IWcMYURwxYkjqq84XipzmCwx3XZC3ss=" crossorigin="anonymous" media="screen" />
+    
+
+    
+
+    
+      
+        
+        
+        <link rel="stylesheet" href="https://utopizza.github.io/css/coder-dark.min.e78e80fc3a585a4d1c8fc7f58623b6ff852411e38431a9cd1792877ecaa160f6.css" integrity="sha256-546A/DpYWk0cj8f1hiO2/4UkEeOEManNF5KHfsqhYPY=" crossorigin="anonymous" media="screen" />
+      
+    
+
+    
+
+    
+
+    <link rel="icon" type="image/png" href="https://utopizza.github.io/images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="https://utopizza.github.io/images/favicon-16x16.png" sizes="16x16">
+
+    <meta name="generator" content="Hugo 0.69.2" />
+  </head>
+
+  
+  
+    
+  
+  <body class="colorscheme-auto">
+    <main class="wrapper">
+      <nav class="navigation">
+  <section class="container">
+    <a class="navigation-title" href="https://utopizza.github.io/">
+      Utopizza
+    </a>
+    
+    <input type="checkbox" id="menu-toggle" />
+    <label class="menu-button float-right" for="menu-toggle"><i class="fas fa-bars"></i></label>
+    <ul class="navigation-list">
+      
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/about/">About</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/posts/">Blog</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/projects/">Projects</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/contact/">Contact me</a>
+          </li>
+        
+      
+      
+    </ul>
+    
+  </section>
+</nav>
+
+
+      <div class="content">
+        
+  <section class="container post">
+    <article>
+      <header>
+        <div class="post-title">
+          <h1 class="title">全国大学生节能减排社会实践与科技竞赛</h1>
+        </div>
+        <div class="post-meta">
+          <div class="date">
+            <span class="posted-on">
+              <i class="fas fa-calendar"></i>
+              <time datetime='2015-08-27T09:15:33Z'>
+                August 27, 2015
+              </time>
+            </span>
+            <span class="reading-time">
+              <i class="fas fa-clock"></i>
+              2-minute read
+            </span>
+          </div>
+          <div class="categories">
+  <i class="fas fa-folder"></i>
+    <a href="https://utopizza.github.io/categories/projects/">Projects</a></div>
+
+          
+        </div>
+      </header>
+
+      <div>
+        
+        <p>一、简介</p>
+<p>参赛作品是《面向物联网的无线无源风速仪》，设计一种面向物联网的无线无源小型三杯式风速仪，其工作原理是：
+(1) 无源：在有风时通过一个内置的小型发电装置，捕获风能，转化为电能供应自身工作，在无风时使用后备电源。为节省电源，大部分时间处于休眠状态，除非被上位机唤醒进行数据交互；
+(2) 无线：使用zigbee无线通讯模块，与上位机进行通信。</p>
+<p><img src="https://utopizza.github.io/2015-08-27-%E9%A1%B9%E7%9B%AE-%E5%85%A8%E5%9B%BD%E5%A4%A7%E5%AD%A6%E7%94%9F%E8%8A%82%E8%83%BD%E5%87%8F%E6%8E%92%E7%A4%BE%E4%BC%9A%E5%AE%9E%E8%B7%B5%E4%B8%8E%E7%A7%91%E6%8A%80%E7%AB%9E%E8%B5%9B/%E8%A3%85%E7%BD%AE%E5%AE%9E%E7%89%A9.png" alt=""></p>
+<p>其中我实现的部分是上位机软件，主要功能：定时向串口发送数据采集命令，然后从串口读取风速仪返回的风速值，显示到屏幕上。</p>
+<p><img src="https://utopizza.github.io/2015-08-27-%E9%A1%B9%E7%9B%AE-%E5%85%A8%E5%9B%BD%E5%A4%A7%E5%AD%A6%E7%94%9F%E8%8A%82%E8%83%BD%E5%87%8F%E6%8E%92%E7%A4%BE%E4%BC%9A%E5%AE%9E%E8%B7%B5%E4%B8%8E%E7%A7%91%E6%8A%80%E7%AB%9E%E8%B5%9B/%E4%B8%8A%E4%BD%8D%E6%9C%BA%E9%87%87%E9%9B%86%E9%A3%8E%E9%80%9F%E5%80%BC.png" alt=""></p>
+<p><img src="https://utopizza.github.io/2015-08-27-%E9%A1%B9%E7%9B%AE-%E5%85%A8%E5%9B%BD%E5%A4%A7%E5%AD%A6%E7%94%9F%E8%8A%82%E8%83%BD%E5%87%8F%E6%8E%92%E7%A4%BE%E4%BC%9A%E5%AE%9E%E8%B7%B5%E4%B8%8E%E7%A7%91%E6%8A%80%E7%AB%9E%E8%B5%9B/%E4%B8%8A%E4%BD%8D%E6%9C%BA%E8%BD%AF%E4%BB%B6.jpg" alt=""></p>
+<p>二、上位机软件的实现</p>
+<p>我用 WinForm + MS.Chart 的方式来实现，用 WinForm 来制作窗体，用 MS.Chart 来实现风速值的实时显示。上位机的采集数据的过程包括：定时、读写串口、CRC校验、字符串和十六进制等的数值转换、更新图形界面、监控报警最大风速值等。关键代码：</p>
+<p>初始化</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">//用于更新图形化界面的事件委托
+delegate void UpdateTextEventHandler_experimental(List&lt;double&gt; experimentalWSList);
+UpdateTextEventHandler_experimental updateTextEventHandler_experimental;
+delegate void UpdateChartEventHandler_experimental(string experimentalWSstr);
+UpdateChartEventHandler_experimental updateChartEventHandler_experimental;
+
+//初始化串口
+public void InitCOM_experimental(string PortName)
+{
+    experimentalPort = new SerialPort(PortName);
+    experimentalPort.BaudRate = 9600;//波特率
+    experimentalPort.Parity = Parity.None;//无奇偶校验位
+    experimentalPort.StopBits = StopBits.One;//一个停止位
+    experimentalPort.DataBits = 8;//8位数据位
+    experimentalPort.DataReceived += experimentalPort_DataReceived;//接收返回数据时触发的事件
+}
+</code></pre></div><p>接收数据，更新图形化界面</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">//串口接收到风速仪返回数据时触发的事件
+private void experimentalPort_DataReceived(object sender, SerialDataReceivedEventArgs e)
+{
+    //读取缓冲区的数据，这里应该先处理读取的数据
+    int[] buffer = new int[7];
+    for (int i = 0; i &lt; buffer.Length; i++)
+    {
+        buffer[i] = experimentalPort.ReadByte();
+    }
+    double newWindSpeed = Convert.ToDouble(DataHandler_ExperimentalMachine(buffer));
+    speedWarnTest(newWindSpeed);
+    experimentalWSList.Add(newWindSpeed);
+
+    //更新Textbox
+    updateTextEventHandler_experimental = new UpdateTextEventHandler_experimental(UpdateTextBox_experimental);
+    this.Invoke(updateTextEventHandler_experimental, new List&lt;double&gt;[] { experimentalWSList });
+
+    //更新Chart
+    updateChartEventHandler_experimental = new UpdateChartEventHandler_experimental(UpdateChart_experimental);
+    this.Invoke(updateChartEventHandler_experimental, new string[] { newWindSpeed.ToString() });
+}
+</code></pre></div><p>发送数据采集命令</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">//用于发送采集命令的定时器
+private void SendCommand_Timer()
+{
+    myTimer = new System.Timers.Timer();
+    myTimer.Elapsed += new ElapsedEventHandler(SendCommand_TimedEvent);
+    myTimer.AutoReset = true;
+    myTimer.Enabled = true;
+    myTimer.Interval = 1000;
+}
+
+//发送采集命令事件
+private void SendCommand_TimedEvent(object sender, System.Timers.ElapsedEventArgs e)
+{
+    SendCommand_ExperimentalMachine();
+}
+
+//发送采集命令具体操作：写数据到串口
+private void SendCommand_ExperimentalMachine()
+{
+    //ID 03 00 00 00 01 CR0 CR1；十六进制，ID为设备地址，CR0，CR1为CRC校验位，其他固定
+    byte[] commandByte = { 0x01, 0x03, 0x00, 0x00, 0x00, 0x01 }; //01 03 00 00 00 01 0A 84
+    byte[] commandByteCRC = CRC(commandByte, commandByte.Length);
+    experimentalPort.Write(commandByteCRC, 0, commandByteCRC.Length);
+}
+
+//实验机型CRC校验算法
+private byte[] CRC(byte[] byteArray, int datalen)
+{
+    byte CRC16Lo, CRC16Hi, CL, CH, SaveHi, SaveLo;
+    int i, Flag;
+    CRC16Lo = 0xFF;
+    CRC16Hi = 0xFF;
+    CL = 0x01;
+    CH = 0xA0;
+    for (i = 0; i &lt; datalen; i++)
+    {
+        CRC16Lo ^= byteArray[i];
+        for (Flag = 0; Flag &lt; 8; Flag++)
+        {
+            SaveHi = CRC16Hi;
+            SaveLo = CRC16Lo;
+            CRC16Hi &gt;&gt;= 1;
+            CRC16Lo &gt;&gt;= 1;
+            if ((SaveHi &amp; 0x01) == 0x01)
+            {
+                CRC16Lo |= 0x80;
+            }
+            if ((SaveLo &amp; 0x01) == 0x01)
+            {
+                CRC16Hi ^= CH;
+                CRC16Lo ^= CL;
+            }
+        }
+    }
+
+    byte[] newByteArray = new byte[datalen + 2];
+    for (int j = 0; j &lt; datalen; j++)
+    {
+        newByteArray[j] = byteArray[j];
+    }
+    newByteArray[datalen] = CRC16Lo;
+    newByteArray[datalen + 1] = CRC16Hi;
+    //return (CRC16Hi &lt;&lt; 8) | CRC16Lo;
+    return newByteArray;
+}
+</code></pre></div><p>三、调试</p>
+<p>1 先使用虚拟串口，让COM1和COM2连接</p>
+<p><img src="https://utopizza.github.io/2015-08-27-%E9%A1%B9%E7%9B%AE-%E5%85%A8%E5%9B%BD%E5%A4%A7%E5%AD%A6%E7%94%9F%E8%8A%82%E8%83%BD%E5%87%8F%E6%8E%92%E7%A4%BE%E4%BC%9A%E5%AE%9E%E8%B7%B5%E4%B8%8E%E7%A7%91%E6%8A%80%E7%AB%9E%E8%B5%9B/%E8%B0%83%E8%AF%95-%E8%99%9A%E6%8B%9F%E4%B8%B2%E5%8F%A3.png" alt=""></p>
+<p>2 打开串口助手，连接COM1，模拟风速仪</p>
+<p><img src="https://utopizza.github.io/2015-08-27-%E9%A1%B9%E7%9B%AE-%E5%85%A8%E5%9B%BD%E5%A4%A7%E5%AD%A6%E7%94%9F%E8%8A%82%E8%83%BD%E5%87%8F%E6%8E%92%E7%A4%BE%E4%BC%9A%E5%AE%9E%E8%B7%B5%E4%B8%8E%E7%A7%91%E6%8A%80%E7%AB%9E%E8%B5%9B/%E8%B0%83%E8%AF%95-%E4%B8%B2%E5%8F%A3%E5%8A%A9%E6%89%8B.png" alt=""></p>
+<p>3 启动上位机软件，连接COM2，测试数据采集命令的发送、风速值的采集和显示</p>
+<p><img src="https://utopizza.github.io/2015-08-27-%E9%A1%B9%E7%9B%AE-%E5%85%A8%E5%9B%BD%E5%A4%A7%E5%AD%A6%E7%94%9F%E8%8A%82%E8%83%BD%E5%87%8F%E6%8E%92%E7%A4%BE%E4%BC%9A%E5%AE%9E%E8%B7%B5%E4%B8%8E%E7%A7%91%E6%8A%80%E7%AB%9E%E8%B5%9B/%E8%B0%83%E8%AF%95-%E4%B8%8A%E4%BD%8D%E6%9C%BA%E8%BD%AF%E4%BB%B6.png" alt=""></p>
+
+      </div>
+
+
+      <footer>
+        
+
+
+        
+        
+        
+      </footer>
+    </article>
+
+    
+  </section>
+
+      </div>
+
+      <script type="text/javascript"
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+    </main>
+
+    
+
+    
+
+    <script>
+(function(f, a, t, h, o, m){
+	a[h]=a[h]||function(){
+		(a[h].q=a[h].q||[]).push(arguments)
+	};
+	o=f.createElement('script'),
+	m=f.getElementsByTagName('script')[0];
+	o.async=1; o.src=t; o.id='fathom-script';
+	m.parentNode.insertBefore(o,m)
+})(document, window, '//analytics.example.com/tracker.js', 'fathom');
+fathom('set', 'siteId', 'ABCDE');
+fathom('trackPageview');
+</script>
+
+
+  </body>
+
+</html>

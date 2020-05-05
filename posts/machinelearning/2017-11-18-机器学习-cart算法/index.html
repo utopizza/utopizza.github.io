@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Language" content="en">
+
+    <meta name="author" content="Yusheng Wang">
+    <meta name="description" content="分类与回归树（classification and regression tree, CART）模型是应用广泛的决策树学习方法，既可以用于分类，也可以用于回归。
+回顾之前学习的 ID3 算法，它的做法是每次选取当前最佳的特征来分割数据，分割依据是该特征的所有取值。也就是说，如果这个特征有 $n$ 个取值，那么数据将立即被分割成 $n$ 分。一旦被切分之后，该特征在之后将不会再被考虑。这样有两个问题：一是切分过于迅速，如果 $n$ 很大，那么数据将被马上切分成大量的小份，影响后续切分的效果。二是，这样的决策树只能处理离散型的数值，如果特征的取值是连续型数值，则需要将其预处理转化成离散型，但这样就会人为地破坏了连续型变量的内在性质。
+CART 算法解决了上述问题。CART 设定决策树是二叉树，每次切分数据只做二元切分，即把数据集切分成两份。对某个连续型的特征，设定一个切分值，大于此值的数据进入左子树，反之则进入右子树。然后递归地构建子树。
+一、CART 生成
+CART 决策树的生成就是递归地构建二叉决策树的过程。对回归树用平方误差最小化准则，对分类树用基尼指数最小化准则，进行特征选择。
+1、回归树的生成
+输入：训练数据集 $D$，特征集 $A$ 输出：回归树 $T$
+(1)、寻找最佳的切分特征 $A_g$ 和对应的最佳切分值 $v$：遍历特征集中每一个特征，尝试以该特征的每一个取值作为切分值，对数据集执行二元切分，然后计算切分误差，如果当前误差小于记录的最小误差，那么更新最优切分特征、最优切分值、最小误差。遍历完成后，返回最优切分特征、最优切分值。
+其中误差一般使用目标变量的方差来计算，设数据集为 $D$，数据集中的目标变量为 $D.Y$，数据集在执行一次二元切分后被切分成 $D_{left}$ 和 $D_{right}$，则此次切分减小的混乱程度为
+$$g(D,A_g,v)=var(D.Y)- \left[ var(D_{left}.Y)&#43;var(D_{right}.Y) \right]$$
+其中 $D_{left}={D \mid D.A_g&gt;v}$，$D_{right}={D \mid D.A_g \leq v}$。
+(2)、如果该结点不能再分（左右两个子集方差之和比原数据集方差还大，或者大于给定的某个阈值等等），将该结点存为叶结点，把该结点上的数据集目标变量的平均值作为该结点的输出值返回；否则执行二元切分，把数据集以 $v$ 为切分值，按特征 $A_g$ 切分成 $D_{left}$ 和 $D_{right}$ 两个子集，并对应地生成左右两个子树
+(3)、递归地对左右子树重复执行前面的步骤，直到满足停止条件
+构造决策树：
+def createTree(dataSet,tolN,tolS): # 寻找最优切分特征、最优切分值 feat, value = chooseBestSplit(dataSet,tolN,tolS) # 切分特征为空，说明不能再分，直接返回value作为叶结点的输出值 if feat is None: return value # 把最优切分特征、最优切分值记录到树中 retTree = {} retTree[&#39;spInd&#39;] = feat retTree[&#39;spVal&#39;] = value # 执行二元切分，得到左右子树对应的两个数据集子集 leftSet, rightSet = binSplitDataSet(dataSet, feat, value) # 在左右子树继续递归地调用自己，构造决策树 retTree[&#39;left&#39;] = createTree(leftSet, leafType, errType, ops) retTree[&#39;right&#39;] = createTree(rightSet, leafType, errType, ops) return retTree 选择最优切分特征、最优切分值：">
+    <meta name="keywords" content="blog,developer,personal">
+
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="CART算法"/>
+<meta name="twitter:description" content="分类与回归树（classification and regression tree, CART）模型是应用广泛的决策树学习方法，既可以用于分类，也可以用于回归。
+回顾之前学习的 ID3 算法，它的做法是每次选取当前最佳的特征来分割数据，分割依据是该特征的所有取值。也就是说，如果这个特征有 $n$ 个取值，那么数据将立即被分割成 $n$ 分。一旦被切分之后，该特征在之后将不会再被考虑。这样有两个问题：一是切分过于迅速，如果 $n$ 很大，那么数据将被马上切分成大量的小份，影响后续切分的效果。二是，这样的决策树只能处理离散型的数值，如果特征的取值是连续型数值，则需要将其预处理转化成离散型，但这样就会人为地破坏了连续型变量的内在性质。
+CART 算法解决了上述问题。CART 设定决策树是二叉树，每次切分数据只做二元切分，即把数据集切分成两份。对某个连续型的特征，设定一个切分值，大于此值的数据进入左子树，反之则进入右子树。然后递归地构建子树。
+一、CART 生成
+CART 决策树的生成就是递归地构建二叉决策树的过程。对回归树用平方误差最小化准则，对分类树用基尼指数最小化准则，进行特征选择。
+1、回归树的生成
+输入：训练数据集 $D$，特征集 $A$ 输出：回归树 $T$
+(1)、寻找最佳的切分特征 $A_g$ 和对应的最佳切分值 $v$：遍历特征集中每一个特征，尝试以该特征的每一个取值作为切分值，对数据集执行二元切分，然后计算切分误差，如果当前误差小于记录的最小误差，那么更新最优切分特征、最优切分值、最小误差。遍历完成后，返回最优切分特征、最优切分值。
+其中误差一般使用目标变量的方差来计算，设数据集为 $D$，数据集中的目标变量为 $D.Y$，数据集在执行一次二元切分后被切分成 $D_{left}$ 和 $D_{right}$，则此次切分减小的混乱程度为
+$$g(D,A_g,v)=var(D.Y)- \left[ var(D_{left}.Y)&#43;var(D_{right}.Y) \right]$$
+其中 $D_{left}={D \mid D.A_g&gt;v}$，$D_{right}={D \mid D.A_g \leq v}$。
+(2)、如果该结点不能再分（左右两个子集方差之和比原数据集方差还大，或者大于给定的某个阈值等等），将该结点存为叶结点，把该结点上的数据集目标变量的平均值作为该结点的输出值返回；否则执行二元切分，把数据集以 $v$ 为切分值，按特征 $A_g$ 切分成 $D_{left}$ 和 $D_{right}$ 两个子集，并对应地生成左右两个子树
+(3)、递归地对左右子树重复执行前面的步骤，直到满足停止条件
+构造决策树：
+def createTree(dataSet,tolN,tolS): # 寻找最优切分特征、最优切分值 feat, value = chooseBestSplit(dataSet,tolN,tolS) # 切分特征为空，说明不能再分，直接返回value作为叶结点的输出值 if feat is None: return value # 把最优切分特征、最优切分值记录到树中 retTree = {} retTree[&#39;spInd&#39;] = feat retTree[&#39;spVal&#39;] = value # 执行二元切分，得到左右子树对应的两个数据集子集 leftSet, rightSet = binSplitDataSet(dataSet, feat, value) # 在左右子树继续递归地调用自己，构造决策树 retTree[&#39;left&#39;] = createTree(leftSet, leafType, errType, ops) retTree[&#39;right&#39;] = createTree(rightSet, leafType, errType, ops) return retTree 选择最优切分特征、最优切分值："/>
+
+    <meta property="og:title" content="CART算法" />
+<meta property="og:description" content="分类与回归树（classification and regression tree, CART）模型是应用广泛的决策树学习方法，既可以用于分类，也可以用于回归。
+回顾之前学习的 ID3 算法，它的做法是每次选取当前最佳的特征来分割数据，分割依据是该特征的所有取值。也就是说，如果这个特征有 $n$ 个取值，那么数据将立即被分割成 $n$ 分。一旦被切分之后，该特征在之后将不会再被考虑。这样有两个问题：一是切分过于迅速，如果 $n$ 很大，那么数据将被马上切分成大量的小份，影响后续切分的效果。二是，这样的决策树只能处理离散型的数值，如果特征的取值是连续型数值，则需要将其预处理转化成离散型，但这样就会人为地破坏了连续型变量的内在性质。
+CART 算法解决了上述问题。CART 设定决策树是二叉树，每次切分数据只做二元切分，即把数据集切分成两份。对某个连续型的特征，设定一个切分值，大于此值的数据进入左子树，反之则进入右子树。然后递归地构建子树。
+一、CART 生成
+CART 决策树的生成就是递归地构建二叉决策树的过程。对回归树用平方误差最小化准则，对分类树用基尼指数最小化准则，进行特征选择。
+1、回归树的生成
+输入：训练数据集 $D$，特征集 $A$ 输出：回归树 $T$
+(1)、寻找最佳的切分特征 $A_g$ 和对应的最佳切分值 $v$：遍历特征集中每一个特征，尝试以该特征的每一个取值作为切分值，对数据集执行二元切分，然后计算切分误差，如果当前误差小于记录的最小误差，那么更新最优切分特征、最优切分值、最小误差。遍历完成后，返回最优切分特征、最优切分值。
+其中误差一般使用目标变量的方差来计算，设数据集为 $D$，数据集中的目标变量为 $D.Y$，数据集在执行一次二元切分后被切分成 $D_{left}$ 和 $D_{right}$，则此次切分减小的混乱程度为
+$$g(D,A_g,v)=var(D.Y)- \left[ var(D_{left}.Y)&#43;var(D_{right}.Y) \right]$$
+其中 $D_{left}={D \mid D.A_g&gt;v}$，$D_{right}={D \mid D.A_g \leq v}$。
+(2)、如果该结点不能再分（左右两个子集方差之和比原数据集方差还大，或者大于给定的某个阈值等等），将该结点存为叶结点，把该结点上的数据集目标变量的平均值作为该结点的输出值返回；否则执行二元切分，把数据集以 $v$ 为切分值，按特征 $A_g$ 切分成 $D_{left}$ 和 $D_{right}$ 两个子集，并对应地生成左右两个子树
+(3)、递归地对左右子树重复执行前面的步骤，直到满足停止条件
+构造决策树：
+def createTree(dataSet,tolN,tolS): # 寻找最优切分特征、最优切分值 feat, value = chooseBestSplit(dataSet,tolN,tolS) # 切分特征为空，说明不能再分，直接返回value作为叶结点的输出值 if feat is None: return value # 把最优切分特征、最优切分值记录到树中 retTree = {} retTree[&#39;spInd&#39;] = feat retTree[&#39;spVal&#39;] = value # 执行二元切分，得到左右子树对应的两个数据集子集 leftSet, rightSet = binSplitDataSet(dataSet, feat, value) # 在左右子树继续递归地调用自己，构造决策树 retTree[&#39;left&#39;] = createTree(leftSet, leafType, errType, ops) retTree[&#39;right&#39;] = createTree(rightSet, leafType, errType, ops) return retTree 选择最优切分特征、最优切分值：" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://utopizza.github.io/posts/machinelearning/2017-11-18-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-cart%E7%AE%97%E6%B3%95/" />
+<meta property="article:published_time" content="2017-11-18T16:34:00+00:00" />
+<meta property="article:modified_time" content="2017-11-18T16:34:00+00:00" />
+
+
+    
+      <base href="https://utopizza.github.io/posts/machinelearning/2017-11-18-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-cart%E7%AE%97%E6%B3%95/">
+    
+    <title>
+  CART算法 · Utopizza
+</title>
+
+    
+      <link rel="canonical" href="https://utopizza.github.io/posts/machinelearning/2017-11-18-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-cart%E7%AE%97%E6%B3%95/">
+    
+
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700%7CMerriweather:300,700%7CSource+Code+Pro:400,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.13.0/css/all.css" integrity="sha384-Bfad6CLCknfcloXFOyFnlgtENryhrpZCe29RTifKEixXQZ38WheV+i/6YWSzkz3V" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" integrity="sha256-l85OmPOjvil/SOvVt3HnSSjzF1TUMyT9eV0c2BzEGzU=" crossorigin="anonymous" />
+
+    
+      
+      
+      <link rel="stylesheet" href="https://utopizza.github.io/css/coder.min.a4f332213a21ce8eb521670c614470c58923aaaf385e2a73982c31dd7642decb.css" integrity="sha256-pPMyITohzo61IWcMYURwxYkjqq84XipzmCwx3XZC3ss=" crossorigin="anonymous" media="screen" />
+    
+
+    
+
+    
+      
+        
+        
+        <link rel="stylesheet" href="https://utopizza.github.io/css/coder-dark.min.e78e80fc3a585a4d1c8fc7f58623b6ff852411e38431a9cd1792877ecaa160f6.css" integrity="sha256-546A/DpYWk0cj8f1hiO2/4UkEeOEManNF5KHfsqhYPY=" crossorigin="anonymous" media="screen" />
+      
+    
+
+    
+
+    
+
+    <link rel="icon" type="image/png" href="https://utopizza.github.io/images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="https://utopizza.github.io/images/favicon-16x16.png" sizes="16x16">
+
+    <meta name="generator" content="Hugo 0.69.2" />
+  </head>
+
+  
+  
+    
+  
+  <body class="colorscheme-auto">
+    <main class="wrapper">
+      <nav class="navigation">
+  <section class="container">
+    <a class="navigation-title" href="https://utopizza.github.io/">
+      Utopizza
+    </a>
+    
+    <input type="checkbox" id="menu-toggle" />
+    <label class="menu-button float-right" for="menu-toggle"><i class="fas fa-bars"></i></label>
+    <ul class="navigation-list">
+      
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/about/">About</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/posts/">Blog</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/projects/">Projects</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/contact/">Contact me</a>
+          </li>
+        
+      
+      
+    </ul>
+    
+  </section>
+</nav>
+
+
+      <div class="content">
+        
+  <section class="container post">
+    <article>
+      <header>
+        <div class="post-title">
+          <h1 class="title">CART算法</h1>
+        </div>
+        <div class="post-meta">
+          <div class="date">
+            <span class="posted-on">
+              <i class="fas fa-calendar"></i>
+              <time datetime='2017-11-18T16:34:00Z'>
+                November 18, 2017
+              </time>
+            </span>
+            <span class="reading-time">
+              <i class="fas fa-clock"></i>
+              3-minute read
+            </span>
+          </div>
+          <div class="categories">
+  <i class="fas fa-folder"></i>
+    <a href="https://utopizza.github.io/categories/machinelearning/">MachineLearning</a></div>
+
+          
+        </div>
+      </header>
+
+      <div>
+        
+        <p>分类与回归树（classification and regression tree, CART）模型是应用广泛的决策树学习方法，<strong>既可以用于分类，也可以用于回归</strong>。</p>
+<p>回顾之前学习的 ID3 算法，它的做法是每次选取当前最佳的特征来分割数据，分割依据是该特征的所有取值。也就是说，如果这个特征有 $n$ 个取值，那么数据将立即被分割成 $n$ 分。一旦被切分之后，该特征在之后将不会再被考虑。这样有两个问题：一是切分过于迅速，如果 $n$ 很大，那么数据将被马上切分成大量的小份，影响后续切分的效果。二是，这样的决策树只能处理离散型的数值，如果特征的取值是连续型数值，则需要将其预处理转化成离散型，但这样就会人为地破坏了连续型变量的内在性质。</p>
+<p>CART 算法解决了上述问题。CART 设定决策树是<strong>二叉树</strong>，每次切分数据只做二元切分，即把数据集切分成两份。对某个连续型的特征，设定一个切分值，大于此值的数据进入左子树，反之则进入右子树。然后递归地构建子树。</p>
+<p>一、CART 生成</p>
+<p>CART 决策树的生成就是递归地构建二叉决策树的过程。对回归树用<strong>平方误差最小化</strong>准则，对分类树用<strong>基尼指数最小化</strong>准则，进行特征选择。</p>
+<p>1、回归树的生成</p>
+<p>输入：训练数据集 $D$，特征集 $A$
+输出：回归树 $T$</p>
+<p>(1)、寻找最佳的切分特征 $A_g$ 和对应的最佳切分值 $v$：遍历特征集中每一个特征，尝试以该特征的每一个取值作为切分值，对数据集执行二元切分，然后计算切分误差，如果当前误差小于记录的最小误差，那么更新最优切分特征、最优切分值、最小误差。遍历完成后，返回最优切分特征、最优切分值。</p>
+<p>其中误差一般使用目标变量的方差来计算，设数据集为 $D$，数据集中的目标变量为 $D.Y$，数据集在执行一次二元切分后被切分成 $D_{left}$ 和 $D_{right}$，则此次切分减小的混乱程度为</p>
+<p>$$g(D,A_g,v)=var(D.Y)- \left[ var(D_{left}.Y)+var(D_{right}.Y) \right]$$</p>
+<p>其中 $D_{left}={D \mid D.A_g&gt;v}$，$D_{right}={D \mid D.A_g \leq v}$。</p>
+<p>(2)、如果该结点不能再分（左右两个子集方差之和比原数据集方差还大，或者大于给定的某个阈值等等），将该结点存为叶结点，把该结点上的数据集<strong>目标变量的平均值</strong>作为该结点的输出值返回；否则执行二元切分，把数据集以 $v$ 为切分值，按特征 $A_g$ 切分成 $D_{left}$ 和 $D_{right}$ 两个子集，并对应地生成左右两个子树</p>
+<p>(3)、递归地对左右子树重复执行前面的步骤，直到满足停止条件</p>
+<p>构造决策树：</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">def createTree(dataSet,tolN,tolS):
+    # 寻找最优切分特征、最优切分值
+    feat, value = chooseBestSplit(dataSet,tolN,tolS)
+    
+    # 切分特征为空，说明不能再分，直接返回value作为叶结点的输出值
+    if feat is None:
+        return value
+        
+    # 把最优切分特征、最优切分值记录到树中
+    retTree = {}
+    retTree[&#39;spInd&#39;] = feat
+    retTree[&#39;spVal&#39;] = value
+
+    # 执行二元切分，得到左右子树对应的两个数据集子集
+    leftSet, rightSet = binSplitDataSet(dataSet, feat, value)
+    
+    # 在左右子树继续递归地调用自己，构造决策树
+    retTree[&#39;left&#39;] = createTree(leftSet, leafType, errType, ops)
+    retTree[&#39;right&#39;] = createTree(rightSet, leafType, errType, ops)
+    
+    return retTree
+</code></pre></div><p>选择最优切分特征、最优切分值：</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">def chooseBestSplit(dataSet,tolN,tolS):
+    # 如果数据集的目标变量全部属于同一个值，则不用再切分
+    # 此时返回空特征，并把数据集的目标变量（最后一列）的平均值作为返回值
+    if len(set(dataSet[:, -1].T.tolist()[0])) == 1:
+        return None, mean(dataSet[:, -1])
+        
+    # 求数据集的目标变量的总方差
+    m, n = shape(dataSet)
+    S = var(dataSet[:, -1]) * m
+
+    # 初始化最小方差、最优特征、最优切分值
+    bestS = inf
+    bestIndex = 0
+    bestValue = 0
+    
+    # 遍历每个特征的每个取值
+    for featIndex in range(n - 1):
+        for splitVal in set((dataSet[:, featIndex].T.A.tolist())[0]):
+            
+            # 执行一次二元切分尝试
+            mat0, mat1 = binSplitDataSet(dataSet, featIndex, splitVal)
+
+            # 计算两个子集的方差之和
+            newS = var(mat0[:, -1]) * shape(mat0)[0] + var(mat1[:, -1]) * shape(mat1)[0]
+            
+            # 如果误差小于当前记录的最小误差，则记录这次切分
+            if newS &lt; bestS:
+                bestIndex = featIndex
+                bestValue = splitVal
+                bestS = newS
+
+    # 如果误差减小不大，小于给定的阈值 tolS，则不再切分
+    if S - bestS &lt; tolS:
+        return None, mean(dataSet[:, -1])
+
+    # 如果切分的两个子集的大小小于给定的阈值 tolN，则不再切分
+    mat0, mat1 = binSplitDataSet(dataSet, bestIndex, bestValue)
+    if shape(mat0)[0] &lt; tolN or shape(mat1)[1] &lt; tolN:
+        return None, mean(dataSet[:, -1])
+
+    # 返回最优切分特征和最优切分值
+    return bestIndex, bestValue
+</code></pre></div><p>执行一次二元切分：</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">def binSplitDataSet(dataSet, feature, value):
+    mat0 = dataSet[nonzero(dataSet[:, feature] &gt; value)[0], :]  # [0]
+    mat1 = dataSet[nonzero(dataSet[:, feature] &lt;= value)[0], :]  # [0]
+    return mat0, mat1
+</code></pre></div><p>2、分类树的生成</p>
+<p>分类树用基尼指数选择最优特征，同时决定该特征的最优切分值。</p>
+<p>基尼指数：分类问题中，假设有 $K$ 个类，样本点属于第 $k$ 类的概率为 $p_k$ ，则概率分布的基尼指数为：</p>
+<p>$$Gini(p)=\sum_{k=1}^{K}p_k(1-p_k)=1-\sum_{k=1}^{K}p_{k}^{2}$$</p>
+<p>对于给定的样本集合 $D$，其基尼指数为：</p>
+<p>$$Gini(D)=1-\sum_{k=1}^{K} \left( \frac{|C_k|}{|D|} \right)^2$$</p>
+<p>这里，$C_k$ 是 $D$ 中属于第 $k$ 类的样本子集，$K$ 是类的个数。</p>
+<p>设集合 $D$ 被特征 $A_g$ 的某个取值 $v$ 二元切分，得到两个子集 $D_{left}$ 和 $D_{right}$，则在特征 $A_g$ 和切分值 $v$ 的条件下，集合 $D$ 的基尼指数定义为</p>
+<p>$$
+Gini(D,A_g,v)=
+\frac{|D_{left}|}{|D|}Gini(D_{left})+
+\frac{|D_{right}|}{|D|}Gini(D_{right})
+$$</p>
+<p>其中 $D_{left}={D \mid D.A_g&gt;v}$，$D_{right}={D \mid D.A_g \leq v}$。</p>
+<p>基尼指数 $Gini(D)$ 表示集合 $D$ 的不确定性，基尼指数 $Gini(D,A_g,v)$ 表示按特征 $A_g$ 的值 $v$ 二元切分后的不确定性。基尼指数越大，样本集合的不确定性越大，这一点和熵类似。</p>
+<p>输入：训练数据集 $D$，停止计算的条件
+输出：CART 决策树</p>
+<p>根据训练数据集，从根节点开始，递归地对每个结点进行一下操作：</p>
+<p>(1)、设结点的数据集为 $D$，计算 $Gini(D)$。然后遍历每一个特征的每一个取值，尝试二元切分，并计算 $Gini(D,A_g,v)$，找出基尼指数最小的特征及其对应的切分值，作为最优切分特征和最优切分值。</p>
+<p>(2)、把数据集 $D$ 按照最优切分特征和最优切分值进行二元切分，得到两个子集，并对应地从本结点生成两个子结点，将两个子集分配到对应的结点中去。</p>
+<p>(3)、对左右子树递归地调用前面步骤，直至满足停止条件。算法的停止条件是结点中的样本个数小于预定阈值，或样本集的基尼指数小于预定阈值，或者没有更多特征。这里需要注意，分类树的叶子结点不是像回归树那样取叶子结点所对应的数据集的目标变量的均值，而是像 ID3 算法那个，选择叶子结点对应的数据集中实例数最大的那个类别作为叶子结点的类别返回。</p>
+<p>二、CART 剪枝</p>
+<p>如果一棵决策树的结点过多，表明该模型可能对数据进行了“过拟合”。要分析是否确实发生了过拟合，可以使用交叉验证来判断。另一方面，可以在构造决策树的时候采取一些措施来防止发生过拟合，降低决策树模型的复杂度，此称为决策树的剪枝（pruning）。决策树的剪枝有两种方式，一种是预剪枝（prepruning），另一种是后剪枝（postpruning）。</p>
+<p>1、预剪枝</p>
+<p>预剪枝实际上就是在决策树构建过程中加入算法的停止条件。具体来说，就是前面所述的例子中，在选择最优特征最优切分点的函数 $chooseBestSplit()$ 中加入的停止条件： $tolS$ 和 $tolN$ 两个参数。这两个参数所表达的意义是，对某个结点的数据集，如果二元切分之后的两个子集总误差比原数据集误差下降很小，或者子集的大小太小，那么不对这个结点进行切分，直接把它当作一个叶子结点返回，这样就阻止了决策树在这个结点上的过分生长，简化了决策树。实验证明，决策树生成算法对这两个参数非常敏感。但是这样也会有一个缺点，需要不断的人为地调整这两个参数来达到好的结果，这并不是一个好的办法。</p>
+<p>2、后剪枝</p>
+<p>后剪枝方法需要将数据分成测试集和训练集。首先用训练集生成长一棵足够大足够复杂的决策树，然后从上而下找到叶子结点，用测试集来判断将这些叶子结点合并是否能降低测试误差。如果是就合并。剪枝算法相关代码如下：</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback"># 从叶子结点到根结点坍塌树，把每棵子树根结点替换成左右子树的均值
+def getMean(tree):
+    if isTree(tree[&#39;right&#39;]):
+        tree[&#39;right&#39;] = getMean(tree[&#39;right&#39;])
+    if isTree(tree[&#39;left&#39;]):
+        tree[&#39;left&#39;] = getMean(tree[&#39;left&#39;])
+    return (tree[&#39;left&#39;] + tree[&#39;right&#39;]) / 2
+
+# 剪枝算法
+def prune(tree, testData):
+    # 若测试集大小为0，对本子树进行坍塌，收缩到一个值返回
+    if shape(testData)[0] == 0:
+        return getMean(tree)
+
+    # 若本结点有左右子树，则把测试集按本结点进行二元划分得到左右子集
+    if isTree(tree[&#39;right&#39;]) or isTree(tree[&#39;left&#39;]):
+        leftSet, rightSet = binSplitDataSet(testData, tree[&#39;spInd&#39;], tree[&#39;spVal&#39;])
+
+    # 如果本结点有左子树，用测试集的左子集对该子树剪枝
+    if isTree(tree[&#39;left&#39;]):
+        tree[&#39;left&#39;] = prune(tree[&#39;left&#39;], leftSet)
+    
+    # 如果本结点有右子树，用测试集的右子集对该子树剪枝
+    if isTree(tree[&#39;right&#39;]):
+        tree[&#39;right&#39;] = prune(tree[&#39;right&#39;], rightSet)
+
+    # 若本结点既无左子树，也无右子树
+    # 仍然按本结点把测试集进行二元划分
+    if not isTree(tree[&#39;left&#39;]) and not isTree(tree[&#39;right&#39;]):
+        leftSet, rightSet = binSplitDataSet(testData, tree[&#39;spInd&#39;], tree[&#39;spVal&#39;])
+        
+        # 分别计算不合并和合并的误差
+        errorNoMerge = sum(power(leftSet[:, -1] - tree[&#39;left&#39;], 2)) + sum(power(rightSet[:, -1] - tree[&#39;right&#39;], 2))
+        treeMean = (tree[&#39;left&#39;] + tree[&#39;right&#39;]) / 2.0
+        errorMerge = sum(power(testData[:, -1] - treeMean, 2))
+        
+        # 确定是否合并
+        if errorMerge &lt; errorNoMerge:
+            print &#34;merging&#34;
+            return treeMean
+        else:
+            return tree
+    else:
+        return tree
+</code></pre></div>
+      </div>
+
+
+      <footer>
+        
+
+
+        
+        
+        
+      </footer>
+    </article>
+
+    
+  </section>
+
+      </div>
+
+      <script type="text/javascript"
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+    </main>
+
+    
+
+    
+
+    <script>
+(function(f, a, t, h, o, m){
+	a[h]=a[h]||function(){
+		(a[h].q=a[h].q||[]).push(arguments)
+	};
+	o=f.createElement('script'),
+	m=f.getElementsByTagName('script')[0];
+	o.async=1; o.src=t; o.id='fathom-script';
+	m.parentNode.insertBefore(o,m)
+})(document, window, '//analytics.example.com/tracker.js', 'fathom');
+fathom('set', 'siteId', 'ABCDE');
+fathom('trackPageview');
+</script>
+
+
+  </body>
+
+</html>

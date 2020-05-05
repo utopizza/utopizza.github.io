@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Language" content="en">
+
+    <meta name="author" content="Yusheng Wang">
+    <meta name="description" content="一、背景及问题
+在谷歌提出了 MapReduce 编程模型之后，UC Berkeley 在此基础上提出了一个更加高效的模型，称为 Spark。其核心思想是将 MapReduce 的中间结果缓存到内存中，使得 Workers 可以快速读取数据而无需启动延迟极大的磁盘读取操作。这种编程模型针对一些迭代次数高、需要反复使用或者修改数据的计算任务尤其有效。根据论文的实验，Spark 在一些高迭代次数的算法实验中处理速度是 MapReduce 的 10 倍以上。
+然而因为没有了将中间结果写磁盘的操作来保证容灾和恢复，因此 Spark 设计了一套别的方案来达到该目的，那就是 RDD &#43; Lineage。RDD(Resilient Distribute Datasets)称为弹性数据集，它是一种对被操作数据的抽象，而 Lineage 称为“血统”，顾名思义它记录了每一个 RDD 演变过程中的上下文信息。当故障出现时，可以根据丢失的 RDD 的 Lineage 来追寻它的祖先 RDD ，然后重新执行演化即可恢复出丢失的 RDD。
+二、Spark 编程模型
+使用 Spark 的用户通过编写一个称为 Driver Program 的程序来实现自己的计算任务。Spark 为用户的并行化编程提供了三个组件：resilient distribution dataset、 parallel operations、 parallel operations。
+(1) Resilient Distribution Datasets(RDDs)：一个 RDD 是一个可恢复的只读对象集合，它无须存储在磁盘中。每次对一个 RDD 的操作都会被记录下来，从而每个 RDD 可以沿着它的演化过程一直追寻它的祖先 RDD，甚至可以追寻到最开始的第一次从磁盘读取初始数据。因此这个机制保证了任何一个 RDD 都可以被恢复。具体在 Spark 系统中，RDD 由 Scala 对象来表达。论文中规定了 RDD 仅可以从四种方式构造：">
+    <meta name="keywords" content="blog,developer,personal">
+
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Spark"/>
+<meta name="twitter:description" content="一、背景及问题
+在谷歌提出了 MapReduce 编程模型之后，UC Berkeley 在此基础上提出了一个更加高效的模型，称为 Spark。其核心思想是将 MapReduce 的中间结果缓存到内存中，使得 Workers 可以快速读取数据而无需启动延迟极大的磁盘读取操作。这种编程模型针对一些迭代次数高、需要反复使用或者修改数据的计算任务尤其有效。根据论文的实验，Spark 在一些高迭代次数的算法实验中处理速度是 MapReduce 的 10 倍以上。
+然而因为没有了将中间结果写磁盘的操作来保证容灾和恢复，因此 Spark 设计了一套别的方案来达到该目的，那就是 RDD &#43; Lineage。RDD(Resilient Distribute Datasets)称为弹性数据集，它是一种对被操作数据的抽象，而 Lineage 称为“血统”，顾名思义它记录了每一个 RDD 演变过程中的上下文信息。当故障出现时，可以根据丢失的 RDD 的 Lineage 来追寻它的祖先 RDD ，然后重新执行演化即可恢复出丢失的 RDD。
+二、Spark 编程模型
+使用 Spark 的用户通过编写一个称为 Driver Program 的程序来实现自己的计算任务。Spark 为用户的并行化编程提供了三个组件：resilient distribution dataset、 parallel operations、 parallel operations。
+(1) Resilient Distribution Datasets(RDDs)：一个 RDD 是一个可恢复的只读对象集合，它无须存储在磁盘中。每次对一个 RDD 的操作都会被记录下来，从而每个 RDD 可以沿着它的演化过程一直追寻它的祖先 RDD，甚至可以追寻到最开始的第一次从磁盘读取初始数据。因此这个机制保证了任何一个 RDD 都可以被恢复。具体在 Spark 系统中，RDD 由 Scala 对象来表达。论文中规定了 RDD 仅可以从四种方式构造："/>
+
+    <meta property="og:title" content="Spark" />
+<meta property="og:description" content="一、背景及问题
+在谷歌提出了 MapReduce 编程模型之后，UC Berkeley 在此基础上提出了一个更加高效的模型，称为 Spark。其核心思想是将 MapReduce 的中间结果缓存到内存中，使得 Workers 可以快速读取数据而无需启动延迟极大的磁盘读取操作。这种编程模型针对一些迭代次数高、需要反复使用或者修改数据的计算任务尤其有效。根据论文的实验，Spark 在一些高迭代次数的算法实验中处理速度是 MapReduce 的 10 倍以上。
+然而因为没有了将中间结果写磁盘的操作来保证容灾和恢复，因此 Spark 设计了一套别的方案来达到该目的，那就是 RDD &#43; Lineage。RDD(Resilient Distribute Datasets)称为弹性数据集，它是一种对被操作数据的抽象，而 Lineage 称为“血统”，顾名思义它记录了每一个 RDD 演变过程中的上下文信息。当故障出现时，可以根据丢失的 RDD 的 Lineage 来追寻它的祖先 RDD ，然后重新执行演化即可恢复出丢失的 RDD。
+二、Spark 编程模型
+使用 Spark 的用户通过编写一个称为 Driver Program 的程序来实现自己的计算任务。Spark 为用户的并行化编程提供了三个组件：resilient distribution dataset、 parallel operations、 parallel operations。
+(1) Resilient Distribution Datasets(RDDs)：一个 RDD 是一个可恢复的只读对象集合，它无须存储在磁盘中。每次对一个 RDD 的操作都会被记录下来，从而每个 RDD 可以沿着它的演化过程一直追寻它的祖先 RDD，甚至可以追寻到最开始的第一次从磁盘读取初始数据。因此这个机制保证了任何一个 RDD 都可以被恢复。具体在 Spark 系统中，RDD 由 Scala 对象来表达。论文中规定了 RDD 仅可以从四种方式构造：" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://utopizza.github.io/posts/thesis/2019-05-09-%E8%AE%BA%E6%96%87-spark/" />
+<meta property="article:published_time" content="2019-05-09T00:00:00+00:00" />
+<meta property="article:modified_time" content="2019-05-09T00:00:00+00:00" />
+
+
+    
+      <base href="https://utopizza.github.io/posts/thesis/2019-05-09-%E8%AE%BA%E6%96%87-spark/">
+    
+    <title>
+  Spark · Utopizza
+</title>
+
+    
+      <link rel="canonical" href="https://utopizza.github.io/posts/thesis/2019-05-09-%E8%AE%BA%E6%96%87-spark/">
+    
+
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700%7CMerriweather:300,700%7CSource+Code+Pro:400,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.13.0/css/all.css" integrity="sha384-Bfad6CLCknfcloXFOyFnlgtENryhrpZCe29RTifKEixXQZ38WheV+i/6YWSzkz3V" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" integrity="sha256-l85OmPOjvil/SOvVt3HnSSjzF1TUMyT9eV0c2BzEGzU=" crossorigin="anonymous" />
+
+    
+      
+      
+      <link rel="stylesheet" href="https://utopizza.github.io/css/coder.min.a4f332213a21ce8eb521670c614470c58923aaaf385e2a73982c31dd7642decb.css" integrity="sha256-pPMyITohzo61IWcMYURwxYkjqq84XipzmCwx3XZC3ss=" crossorigin="anonymous" media="screen" />
+    
+
+    
+
+    
+      
+        
+        
+        <link rel="stylesheet" href="https://utopizza.github.io/css/coder-dark.min.e78e80fc3a585a4d1c8fc7f58623b6ff852411e38431a9cd1792877ecaa160f6.css" integrity="sha256-546A/DpYWk0cj8f1hiO2/4UkEeOEManNF5KHfsqhYPY=" crossorigin="anonymous" media="screen" />
+      
+    
+
+    
+
+    
+
+    <link rel="icon" type="image/png" href="https://utopizza.github.io/images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="https://utopizza.github.io/images/favicon-16x16.png" sizes="16x16">
+
+    <meta name="generator" content="Hugo 0.69.2" />
+  </head>
+
+  
+  
+    
+  
+  <body class="colorscheme-auto">
+    <main class="wrapper">
+      <nav class="navigation">
+  <section class="container">
+    <a class="navigation-title" href="https://utopizza.github.io/">
+      Utopizza
+    </a>
+    
+    <input type="checkbox" id="menu-toggle" />
+    <label class="menu-button float-right" for="menu-toggle"><i class="fas fa-bars"></i></label>
+    <ul class="navigation-list">
+      
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/about/">About</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/posts/">Blog</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/projects/">Projects</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/contact/">Contact me</a>
+          </li>
+        
+      
+      
+    </ul>
+    
+  </section>
+</nav>
+
+
+      <div class="content">
+        
+  <section class="container post">
+    <article>
+      <header>
+        <div class="post-title">
+          <h1 class="title">Spark</h1>
+        </div>
+        <div class="post-meta">
+          <div class="date">
+            <span class="posted-on">
+              <i class="fas fa-calendar"></i>
+              <time datetime='2019-05-09T00:00:00Z'>
+                May 9, 2019
+              </time>
+            </span>
+            <span class="reading-time">
+              <i class="fas fa-clock"></i>
+              2-minute read
+            </span>
+          </div>
+          <div class="categories">
+  <i class="fas fa-folder"></i>
+    <a href="https://utopizza.github.io/categories/thesis/">Thesis</a></div>
+
+          
+        </div>
+      </header>
+
+      <div>
+        
+        <p>一、背景及问题</p>
+<p>在谷歌提出了 MapReduce 编程模型之后，UC Berkeley 在此基础上提出了一个更加高效的模型，称为 Spark。其核心思想是将 MapReduce 的中间结果缓存到内存中，使得 Workers 可以快速读取数据而无需启动延迟极大的磁盘读取操作。这种编程模型针对一些迭代次数高、需要反复使用或者修改数据的计算任务尤其有效。根据论文的实验，Spark 在一些高迭代次数的算法实验中处理速度是 MapReduce 的 10 倍以上。</p>
+<p>然而因为没有了将中间结果写磁盘的操作来保证容灾和恢复，因此 Spark 设计了一套别的方案来达到该目的，那就是 RDD + Lineage。RDD(Resilient Distribute Datasets)称为弹性数据集，它是一种对被操作数据的抽象，而 Lineage 称为“血统”，顾名思义它记录了每一个 RDD 演变过程中的上下文信息。当故障出现时，可以根据丢失的 RDD 的 Lineage 来追寻它的祖先 RDD ，然后重新执行演化即可恢复出丢失的 RDD。</p>
+<p>二、Spark 编程模型</p>
+<p>使用 Spark 的用户通过编写一个称为 Driver Program 的程序来实现自己的计算任务。Spark 为用户的并行化编程提供了三个组件：resilient distribution dataset、 parallel operations、 parallel operations。</p>
+<p>(1) Resilient Distribution Datasets(RDDs)：一个 RDD 是一个可恢复的只读对象集合，它无须存储在磁盘中。每次对一个 RDD 的操作都会被记录下来，从而每个 RDD 可以沿着它的演化过程一直追寻它的祖先 RDD，甚至可以追寻到最开始的第一次从磁盘读取初始数据。因此这个机制保证了任何一个 RDD 都可以被恢复。具体在 Spark 系统中，RDD 由 Scala 对象来表达。论文中规定了 RDD 仅可以从四种方式构造：</p>
+<ul>
+<li>从文件系统中构造，例如从 HDFS 中读取数据</li>
+<li>并行化处理 Scala 对象，例如将 Scala 的数组分片</li>
+<li>从另一个 RDD 转化</li>
+<li>改变一个 RDD 的持久化状态</li>
+</ul>
+<p>(2) Parallel Operations：Spark 支持的并行化操作，大体上类似于 MapReduce 的 Map 和 Reduce。有以下三类：</p>
+<ul>
+<li>reduce</li>
+<li>collect</li>
+<li>foreach</li>
+</ul>
+<p>(3) Shared Variables：Spark 支持的共享变量，在机器集群中可以传递并共享这些变量。有两类共享变量：</p>
+<ul>
+<li>Broadcast variables：被定义为这种变量的数据会被复制到每一个 Worker，并且只复制一次。一般用于一些只读的并且需要被每个 Worker 使用的数据，例如 lookup table 等。</li>
+<li>Accumulators：一般用于进行计数求和的数据。没看太懂论文中这段的解释。</li>
+</ul>
+<p>三、编程示例</p>
+<p>(1) Text Search：类似于 MapReduce 论文中给出的统计单词示例。这里是统计日志文件中出现 “ERROR” 的行数。</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">val file = spark.textFile(&#34;hdfs://...&#34;)
+val errs = file.filter(_.contains(&#34;ERROR&#34;))
+val ones = errs.map(_ =&gt; 1)
+val count = ones.reduce(_+_)
+</code></pre></div><p>(2) Logistic Regression：逻辑回归学习的 Spark 并行化版本。</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">// Read points from a text file and cache them
+val points = spark.textFile(&#34;hdfs://...&#34;).map(parsePoint).cache()
+
+// Initialize w to random D-dimensional vector
+var w = Vector.random(D)
+
+// Run multiple iterations to update w
+for (i &lt;- 1 to ITERATIONS) {
+    val grad = spark.accumulator(new Vector(D))
+    for (p &lt;- points) { // Runs in parallel
+        val s = (1/(1+exp(-p.y*(w dot p.x)))-1)*p.y
+        grad += s * p.x
+    }
+    w -= grad.value
+}
+</code></pre></div><p>(3) Alternating Least Squares：ALS 算法的 Spark 并行版本</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">val Rb = spark.broadcast(R)
+for (i &lt;- 1 to ITERATIONS) {
+    U = spark.parallelize(0 until u).map(j =&gt; updateUser(j, Rb, M)).collect()
+    M = spark.parallelize(0 until m).map(j =&gt; updateUser(j, Rb, U)).collect()
+}
+</code></pre></div><p>四、Spark 实现细节</p>
+<p>这一节论文也没有讲得很详细，具体细节可以考虑参考工具书</p>
+<ul>
+<li><a href="https://book.douban.com/subject/27035127/">Spark: The Definitive Guide: Big Data Processing Made Simple</a></li>
+<li><a href="https://book.douban.com/subject/22139960/">Learning Spark: Lightning-Fast Big Data Analysis</a></li>
+</ul>
+
+      </div>
+
+
+      <footer>
+        
+
+
+        
+        
+        
+      </footer>
+    </article>
+
+    
+  </section>
+
+      </div>
+
+      <script type="text/javascript"
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+    </main>
+
+    
+
+    
+
+    <script>
+(function(f, a, t, h, o, m){
+	a[h]=a[h]||function(){
+		(a[h].q=a[h].q||[]).push(arguments)
+	};
+	o=f.createElement('script'),
+	m=f.getElementsByTagName('script')[0];
+	o.async=1; o.src=t; o.id='fathom-script';
+	m.parentNode.insertBefore(o,m)
+})(document, window, '//analytics.example.com/tracker.js', 'fathom');
+fathom('set', 'siteId', 'ABCDE');
+fathom('trackPageview');
+</script>
+
+
+  </body>
+
+</html>

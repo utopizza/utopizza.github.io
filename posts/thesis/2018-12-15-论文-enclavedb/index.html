@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Language" content="en">
+
+    <meta name="author" content="Yusheng Wang">
+    <meta name="description" content="一、背景及问题
+目前一些云端的数据处理服务经常受到可能来自数据库管理员、服务器管理员、利用操作系统漏洞的黑客等的攻击。虽然一般意义上的数据加密可以为静态数据和数据传输提供强力高效的保护，但是却无法为数据处理系统提供足够的保护，因为数据处理系统在处理查询的时会在内存解密敏感数据。而内存是容易被攻击者入侵并掌控的区域，因此这会导致数据的不安全。
+一种实现安全查询（secure query）的方法是，一些系统如 CryptDB，Monomi 以及 Seabed 等通过使用 property-preserving encryption 技术来进行在已加密数据上的安全查询。然而这种方法只能处理十分有限的查询请求，并且有信息泄漏的风险。
+另一种实现安全查询的方法是在受信任的执行环境（trusted execution environment）或者内飞地（enclaves） 中执行查询。系统的内飞地如 Intel Software Guard Extensions (SGX) 可以保护敏感数据和代码，即使攻击者控制了整个操作系统或者主机。虽然如此，使用内飞地存在几个问题：
+ 为了实现安全保护，需要仔细地对应用程序进行重构，分解出可信任部分和不可信任部分 为了实现高层次的安全特性如机密性（confidentiality）、完整性（integrity）、时新性（freshness），需要增加额外的逻辑和机制来确保机密信息在进入和离开内飞地的时候不会被泄漏  这些问题对于一些简单的应用程序来说并不困难，但是对于一些大型复杂系统如数据库系统来说则非常不容易。先前的一些研究例如 CipherBase、TrustedDB 等采取的方式是将查询引擎（query engine）的一小部分放置于受信任的硬件之上，这种方式的问题是无法提供上述的机密性、完整性、时新性。另一种选择是将整个数据库放置于内飞地之中，但这显然会导致大量的 trusted computing base (TCB) 以及服务性能的下降，并且无法阻止来自数据库管理员的攻击。
+【根据维基百科，飞地指在某个地理区划境内有一块隶属于他地的区域。根据地区与国家之间的相对关系，飞地又可以分为“外飞地”（Exclave）与“内飞地”（Enclave）两种概念，其关系如下： 内飞地（enclave）：意指某个国家境内有块土地，其主权属于另外一个国家，则该地区称为此国家的内飞地。 外飞地（exclave）：某国家拥有一块与本国分离开来的领土，该领土被其他国家包围，则该领土称为某国的外飞地。】  二、解决方案
+文章提出了一个称为 EnclaveDB 的数据库，它可以为查询和数据提供机密性、完整性、时新性。它与传统关系型数据库一样提供了数据处理、SQL查询、存储过程等基本功能。与传统数据库不同的是：
+ EnclaveDB 通过把所有敏感数据（tables, indexes, queries and other intermediate state）维护在内飞地的内存中来保护数据库状态 EnclaveDB 使用可信任的 EnclaveDB 客户端来预编译查询代码，并进行加密 预编译代码后，受信任的 EnclaveDB 客户端与不受信任的服务器上的内飞地直接建立一个安全的加密通道，然后将已加密的查询和参数发送过去 不受信任的服务器上的内飞地收到查询请求后，对请求进行验证、解密、执行查询、对查询结果进行加密、返回给客户端 EnclaveDB 重新设计了数据库的日志与恢复机制，以确保服务器无法对数据库的日志进行攻击 EnclaveDB 采取了一些优化手段，减少线程上下文切换，减少服务器开销  三、总结
+文章提出了一个通过使用内飞地来实现不信任服务器上的安全数据库。通过可信任客户端的预编译、加密安全通道的通信、内飞地的隔离保护、重新设计数据库的日志与恢复机制等一系列措施，实现了机密性、完整性、时新性这三个重要的安全特性。">
+    <meta name="keywords" content="blog,developer,personal">
+
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="EnclaveDB"/>
+<meta name="twitter:description" content="一、背景及问题
+目前一些云端的数据处理服务经常受到可能来自数据库管理员、服务器管理员、利用操作系统漏洞的黑客等的攻击。虽然一般意义上的数据加密可以为静态数据和数据传输提供强力高效的保护，但是却无法为数据处理系统提供足够的保护，因为数据处理系统在处理查询的时会在内存解密敏感数据。而内存是容易被攻击者入侵并掌控的区域，因此这会导致数据的不安全。
+一种实现安全查询（secure query）的方法是，一些系统如 CryptDB，Monomi 以及 Seabed 等通过使用 property-preserving encryption 技术来进行在已加密数据上的安全查询。然而这种方法只能处理十分有限的查询请求，并且有信息泄漏的风险。
+另一种实现安全查询的方法是在受信任的执行环境（trusted execution environment）或者内飞地（enclaves） 中执行查询。系统的内飞地如 Intel Software Guard Extensions (SGX) 可以保护敏感数据和代码，即使攻击者控制了整个操作系统或者主机。虽然如此，使用内飞地存在几个问题：
+ 为了实现安全保护，需要仔细地对应用程序进行重构，分解出可信任部分和不可信任部分 为了实现高层次的安全特性如机密性（confidentiality）、完整性（integrity）、时新性（freshness），需要增加额外的逻辑和机制来确保机密信息在进入和离开内飞地的时候不会被泄漏  这些问题对于一些简单的应用程序来说并不困难，但是对于一些大型复杂系统如数据库系统来说则非常不容易。先前的一些研究例如 CipherBase、TrustedDB 等采取的方式是将查询引擎（query engine）的一小部分放置于受信任的硬件之上，这种方式的问题是无法提供上述的机密性、完整性、时新性。另一种选择是将整个数据库放置于内飞地之中，但这显然会导致大量的 trusted computing base (TCB) 以及服务性能的下降，并且无法阻止来自数据库管理员的攻击。
+【根据维基百科，飞地指在某个地理区划境内有一块隶属于他地的区域。根据地区与国家之间的相对关系，飞地又可以分为“外飞地”（Exclave）与“内飞地”（Enclave）两种概念，其关系如下： 内飞地（enclave）：意指某个国家境内有块土地，其主权属于另外一个国家，则该地区称为此国家的内飞地。 外飞地（exclave）：某国家拥有一块与本国分离开来的领土，该领土被其他国家包围，则该领土称为某国的外飞地。】  二、解决方案
+文章提出了一个称为 EnclaveDB 的数据库，它可以为查询和数据提供机密性、完整性、时新性。它与传统关系型数据库一样提供了数据处理、SQL查询、存储过程等基本功能。与传统数据库不同的是：
+ EnclaveDB 通过把所有敏感数据（tables, indexes, queries and other intermediate state）维护在内飞地的内存中来保护数据库状态 EnclaveDB 使用可信任的 EnclaveDB 客户端来预编译查询代码，并进行加密 预编译代码后，受信任的 EnclaveDB 客户端与不受信任的服务器上的内飞地直接建立一个安全的加密通道，然后将已加密的查询和参数发送过去 不受信任的服务器上的内飞地收到查询请求后，对请求进行验证、解密、执行查询、对查询结果进行加密、返回给客户端 EnclaveDB 重新设计了数据库的日志与恢复机制，以确保服务器无法对数据库的日志进行攻击 EnclaveDB 采取了一些优化手段，减少线程上下文切换，减少服务器开销  三、总结
+文章提出了一个通过使用内飞地来实现不信任服务器上的安全数据库。通过可信任客户端的预编译、加密安全通道的通信、内飞地的隔离保护、重新设计数据库的日志与恢复机制等一系列措施，实现了机密性、完整性、时新性这三个重要的安全特性。"/>
+
+    <meta property="og:title" content="EnclaveDB" />
+<meta property="og:description" content="一、背景及问题
+目前一些云端的数据处理服务经常受到可能来自数据库管理员、服务器管理员、利用操作系统漏洞的黑客等的攻击。虽然一般意义上的数据加密可以为静态数据和数据传输提供强力高效的保护，但是却无法为数据处理系统提供足够的保护，因为数据处理系统在处理查询的时会在内存解密敏感数据。而内存是容易被攻击者入侵并掌控的区域，因此这会导致数据的不安全。
+一种实现安全查询（secure query）的方法是，一些系统如 CryptDB，Monomi 以及 Seabed 等通过使用 property-preserving encryption 技术来进行在已加密数据上的安全查询。然而这种方法只能处理十分有限的查询请求，并且有信息泄漏的风险。
+另一种实现安全查询的方法是在受信任的执行环境（trusted execution environment）或者内飞地（enclaves） 中执行查询。系统的内飞地如 Intel Software Guard Extensions (SGX) 可以保护敏感数据和代码，即使攻击者控制了整个操作系统或者主机。虽然如此，使用内飞地存在几个问题：
+ 为了实现安全保护，需要仔细地对应用程序进行重构，分解出可信任部分和不可信任部分 为了实现高层次的安全特性如机密性（confidentiality）、完整性（integrity）、时新性（freshness），需要增加额外的逻辑和机制来确保机密信息在进入和离开内飞地的时候不会被泄漏  这些问题对于一些简单的应用程序来说并不困难，但是对于一些大型复杂系统如数据库系统来说则非常不容易。先前的一些研究例如 CipherBase、TrustedDB 等采取的方式是将查询引擎（query engine）的一小部分放置于受信任的硬件之上，这种方式的问题是无法提供上述的机密性、完整性、时新性。另一种选择是将整个数据库放置于内飞地之中，但这显然会导致大量的 trusted computing base (TCB) 以及服务性能的下降，并且无法阻止来自数据库管理员的攻击。
+【根据维基百科，飞地指在某个地理区划境内有一块隶属于他地的区域。根据地区与国家之间的相对关系，飞地又可以分为“外飞地”（Exclave）与“内飞地”（Enclave）两种概念，其关系如下： 内飞地（enclave）：意指某个国家境内有块土地，其主权属于另外一个国家，则该地区称为此国家的内飞地。 外飞地（exclave）：某国家拥有一块与本国分离开来的领土，该领土被其他国家包围，则该领土称为某国的外飞地。】  二、解决方案
+文章提出了一个称为 EnclaveDB 的数据库，它可以为查询和数据提供机密性、完整性、时新性。它与传统关系型数据库一样提供了数据处理、SQL查询、存储过程等基本功能。与传统数据库不同的是：
+ EnclaveDB 通过把所有敏感数据（tables, indexes, queries and other intermediate state）维护在内飞地的内存中来保护数据库状态 EnclaveDB 使用可信任的 EnclaveDB 客户端来预编译查询代码，并进行加密 预编译代码后，受信任的 EnclaveDB 客户端与不受信任的服务器上的内飞地直接建立一个安全的加密通道，然后将已加密的查询和参数发送过去 不受信任的服务器上的内飞地收到查询请求后，对请求进行验证、解密、执行查询、对查询结果进行加密、返回给客户端 EnclaveDB 重新设计了数据库的日志与恢复机制，以确保服务器无法对数据库的日志进行攻击 EnclaveDB 采取了一些优化手段，减少线程上下文切换，减少服务器开销  三、总结
+文章提出了一个通过使用内飞地来实现不信任服务器上的安全数据库。通过可信任客户端的预编译、加密安全通道的通信、内飞地的隔离保护、重新设计数据库的日志与恢复机制等一系列措施，实现了机密性、完整性、时新性这三个重要的安全特性。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://utopizza.github.io/posts/thesis/2018-12-15-%E8%AE%BA%E6%96%87-enclavedb/" />
+<meta property="article:published_time" content="2018-12-15T00:00:00+00:00" />
+<meta property="article:modified_time" content="2018-12-15T00:00:00+00:00" />
+
+
+    
+      <base href="https://utopizza.github.io/posts/thesis/2018-12-15-%E8%AE%BA%E6%96%87-enclavedb/">
+    
+    <title>
+  EnclaveDB · Utopizza
+</title>
+
+    
+      <link rel="canonical" href="https://utopizza.github.io/posts/thesis/2018-12-15-%E8%AE%BA%E6%96%87-enclavedb/">
+    
+
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700%7CMerriweather:300,700%7CSource+Code+Pro:400,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.13.0/css/all.css" integrity="sha384-Bfad6CLCknfcloXFOyFnlgtENryhrpZCe29RTifKEixXQZ38WheV+i/6YWSzkz3V" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" integrity="sha256-l85OmPOjvil/SOvVt3HnSSjzF1TUMyT9eV0c2BzEGzU=" crossorigin="anonymous" />
+
+    
+      
+      
+      <link rel="stylesheet" href="https://utopizza.github.io/css/coder.min.a4f332213a21ce8eb521670c614470c58923aaaf385e2a73982c31dd7642decb.css" integrity="sha256-pPMyITohzo61IWcMYURwxYkjqq84XipzmCwx3XZC3ss=" crossorigin="anonymous" media="screen" />
+    
+
+    
+
+    
+      
+        
+        
+        <link rel="stylesheet" href="https://utopizza.github.io/css/coder-dark.min.e78e80fc3a585a4d1c8fc7f58623b6ff852411e38431a9cd1792877ecaa160f6.css" integrity="sha256-546A/DpYWk0cj8f1hiO2/4UkEeOEManNF5KHfsqhYPY=" crossorigin="anonymous" media="screen" />
+      
+    
+
+    
+
+    
+
+    <link rel="icon" type="image/png" href="https://utopizza.github.io/images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="https://utopizza.github.io/images/favicon-16x16.png" sizes="16x16">
+
+    <meta name="generator" content="Hugo 0.69.2" />
+  </head>
+
+  
+  
+    
+  
+  <body class="colorscheme-auto">
+    <main class="wrapper">
+      <nav class="navigation">
+  <section class="container">
+    <a class="navigation-title" href="https://utopizza.github.io/">
+      Utopizza
+    </a>
+    
+    <input type="checkbox" id="menu-toggle" />
+    <label class="menu-button float-right" for="menu-toggle"><i class="fas fa-bars"></i></label>
+    <ul class="navigation-list">
+      
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/about/">About</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/posts/">Blog</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/projects/">Projects</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/contact/">Contact me</a>
+          </li>
+        
+      
+      
+    </ul>
+    
+  </section>
+</nav>
+
+
+      <div class="content">
+        
+  <section class="container post">
+    <article>
+      <header>
+        <div class="post-title">
+          <h1 class="title">EnclaveDB</h1>
+        </div>
+        <div class="post-meta">
+          <div class="date">
+            <span class="posted-on">
+              <i class="fas fa-calendar"></i>
+              <time datetime='2018-12-15T00:00:00Z'>
+                December 15, 2018
+              </time>
+            </span>
+            <span class="reading-time">
+              <i class="fas fa-clock"></i>
+              1-minute read
+            </span>
+          </div>
+          <div class="categories">
+  <i class="fas fa-folder"></i>
+    <a href="https://utopizza.github.io/categories/thesis/">Thesis</a></div>
+
+          
+        </div>
+      </header>
+
+      <div>
+        
+        <p>一、背景及问题</p>
+<p>目前一些云端的数据处理服务经常受到可能来自数据库管理员、服务器管理员、利用操作系统漏洞的黑客等的攻击。虽然一般意义上的数据加密可以为静态数据和数据传输提供强力高效的保护，但是却无法为数据处理系统提供足够的保护，因为数据处理系统在处理查询的时会在内存解密敏感数据。而内存是容易被攻击者入侵并掌控的区域，因此这会导致数据的不安全。</p>
+<p>一种实现安全查询（secure query）的方法是，一些系统如 CryptDB，Monomi 以及 Seabed 等通过使用 property-preserving encryption 技术来进行在已加密数据上的安全查询。然而这种方法只能处理十分有限的查询请求，并且有信息泄漏的风险。</p>
+<p>另一种实现安全查询的方法是在受信任的执行环境（trusted execution environment）或者内飞地（enclaves） 中执行查询。系统的内飞地如 Intel Software Guard Extensions (SGX) 可以保护敏感数据和代码，即使攻击者控制了整个操作系统或者主机。虽然如此，使用内飞地存在几个问题：</p>
+<ol>
+<li>为了实现安全保护，需要仔细地对应用程序进行重构，分解出可信任部分和不可信任部分</li>
+<li>为了实现高层次的安全特性如机密性（confidentiality）、完整性（integrity）、时新性（freshness），需要增加额外的逻辑和机制来确保机密信息在进入和离开内飞地的时候不会被泄漏</li>
+</ol>
+<p>这些问题对于一些简单的应用程序来说并不困难，但是对于一些大型复杂系统如数据库系统来说则非常不容易。先前的一些研究例如 CipherBase、TrustedDB 等采取的方式是将查询引擎（query engine）的一小部分放置于受信任的硬件之上，这种方式的问题是无法提供上述的机密性、完整性、时新性。另一种选择是将整个数据库放置于内飞地之中，但这显然会导致大量的 trusted computing base (TCB) 以及服务性能的下降，并且无法阻止来自数据库管理员的攻击。</p>
+<pre><code>【根据维基百科，飞地指在某个地理区划境内有一块隶属于他地的区域。根据地区与国家之间的相对关系，飞地又可以分为“外飞地”（Exclave）与“内飞地”（Enclave）两种概念，其关系如下：
+内飞地（enclave）：意指某个国家境内有块土地，其主权属于另外一个国家，则该地区称为此国家的内飞地。
+外飞地（exclave）：某国家拥有一块与本国分离开来的领土，该领土被其他国家包围，则该领土称为某国的外飞地。】
+</code></pre>
+<p>二、解决方案</p>
+<p>文章提出了一个称为 EnclaveDB 的数据库，它可以为查询和数据提供机密性、完整性、时新性。它与传统关系型数据库一样提供了数据处理、SQL查询、存储过程等基本功能。与传统数据库不同的是：</p>
+<ol>
+<li>EnclaveDB 通过把所有敏感数据（tables, indexes, queries and other intermediate state）维护在内飞地的内存中来保护数据库状态</li>
+<li>EnclaveDB 使用可信任的 EnclaveDB 客户端来预编译查询代码，并进行加密</li>
+<li>预编译代码后，受信任的 EnclaveDB 客户端与不受信任的服务器上的内飞地直接建立一个安全的加密通道，然后将已加密的查询和参数发送过去</li>
+<li>不受信任的服务器上的内飞地收到查询请求后，对请求进行验证、解密、执行查询、对查询结果进行加密、返回给客户端</li>
+<li>EnclaveDB 重新设计了数据库的日志与恢复机制，以确保服务器无法对数据库的日志进行攻击</li>
+<li>EnclaveDB 采取了一些优化手段，减少线程上下文切换，减少服务器开销</li>
+</ol>
+<p><img src="https://utopizza.github.io/2018-12-15-%E8%AE%BA%E6%96%87-EnclaveDB/EnclaveDB.png" alt=""></p>
+<p>三、总结</p>
+<p>文章提出了一个通过使用内飞地来实现不信任服务器上的安全数据库。通过可信任客户端的预编译、加密安全通道的通信、内飞地的隔离保护、重新设计数据库的日志与恢复机制等一系列措施，实现了机密性、完整性、时新性这三个重要的安全特性。</p>
+
+      </div>
+
+
+      <footer>
+        
+
+
+        
+        
+        
+      </footer>
+    </article>
+
+    
+  </section>
+
+      </div>
+
+      <script type="text/javascript"
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+    </main>
+
+    
+
+    
+
+    <script>
+(function(f, a, t, h, o, m){
+	a[h]=a[h]||function(){
+		(a[h].q=a[h].q||[]).push(arguments)
+	};
+	o=f.createElement('script'),
+	m=f.getElementsByTagName('script')[0];
+	o.async=1; o.src=t; o.id='fathom-script';
+	m.parentNode.insertBefore(o,m)
+})(document, window, '//analytics.example.com/tracker.js', 'fathom');
+fathom('set', 'siteId', 'ABCDE');
+fathom('trackPageview');
+</script>
+
+
+  </body>
+
+</html>

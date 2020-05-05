@@ -1,0 +1,725 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Projects on Utopizza</title>
+    <link>https://utopizza.github.io/categories/projects/</link>
+    <description>Recent content in Projects on Utopizza</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Sun, 25 Mar 2018 20:37:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://utopizza.github.io/categories/projects/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>阿里天池气象无人机线路优化大赛</title>
+      <link>https://utopizza.github.io/posts/projects/2018-03-25-%E9%A1%B9%E7%9B%AE-%E9%98%BF%E9%87%8C%E5%A4%A9%E6%B1%A0%E6%B0%94%E8%B1%A1%E6%97%A0%E4%BA%BA%E6%9C%BA%E7%BA%BF%E8%B7%AF%E4%BC%98%E5%8C%96%E5%A4%A7%E8%B5%9B/</link>
+      <pubDate>Sun, 25 Mar 2018 20:37:00 +0000</pubDate>
+      
+      <guid>https://utopizza.github.io/posts/projects/2018-03-25-%E9%A1%B9%E7%9B%AE-%E9%98%BF%E9%87%8C%E5%A4%A9%E6%B1%A0%E6%B0%94%E8%B1%A1%E6%97%A0%E4%BA%BA%E6%9C%BA%E7%BA%BF%E8%B7%AF%E4%BC%98%E5%8C%96%E5%A4%A7%E8%B5%9B/</guid>
+      <description>&lt;p&gt;一、赛题&lt;/p&gt;
+&lt;p&gt;给出5天的气象数据（风速和降雨量），预测未来5天的气象情况，并根据预测结果，为每天的10架无人机设计最优的飞行路线。要求是无人飞行器不能进入风速大于等于15、降雨量大于等于4的区域，否则立即坠毁。另外还有一些限制条件如任意两架无人飞行器起飞时间必须间隔大于等于10分钟且最大飞行时长为18个小时等等。详情见：未来已来——气象数据领航无人飞行器线路优化大赛。&lt;/p&gt;
+&lt;p&gt;其中，我负责气象预测部分，队友负责线路规划部分。由于线路规划是取决于气象预测的结果，如果预测错误导致飞行器进入实际是危险的区域而坠毁，那么将会受到严重的加时惩罚（每架次惩罚24*60分钟）。所以气象预测的准确性在这个比赛中非常重要。因此我们的目标是：尽可能避免坠毁，其次再考虑如何寻找总飞行时长最小的线路。以下主要讲述我负责的气象预测部分。&lt;/p&gt;
+&lt;p&gt;二、数据&lt;/p&gt;
+&lt;p&gt;官方给出5天的气象数据，分为风速和降雨量两部分。每个地图区域抽象成一个坐标点(x,y)，每个区域每小时一条气象数据，每天一共20个小时。拿到数据后需要进行 Merge，才能得到“每个区域每个小时一条数据”的数据格式。&lt;/p&gt;
+&lt;p&gt;Merge 的时候要注意列名是否重复，是否需要重命名新拼接的列，否则会导致错误。完成后需要检查数据是否正确。从图中可以看出，样本的特征不多，只有坐标、天、小时、真值和 10 个气象模型的预测值共 14 个特征。&lt;/p&gt;
+&lt;p&gt;三、分析&lt;/p&gt;
+&lt;p&gt;把每个小时的静态风速图和一天20个小时的风速动图画出来分析。发现每天的风速变化相当大，即便是同一天内，同一个区域不同小时的风速变化也很大，这为预测增加了不小的难度。&lt;/p&gt;
+&lt;p&gt;另一个难点是官方提供的测评方式是直接返回无人飞行器的飞行时长总得分，而不是关于气象预测的某种评价函数的得分。这让我们无法直接获得气象预测结果的反馈，为模型调优增加了难度。&lt;/p&gt;
+&lt;p&gt;还有一个难点是前5天和后5天的数据分布不一致。例如前5天平均风速在10左右，远小于危险风速值15，而后5天平均风速在15左右，每天都是大片的飞行危险区域，可行域很少，增加了线路寻优的难度。&lt;/p&gt;
+&lt;p&gt;四、初赛&lt;/p&gt;
+&lt;p&gt;1、直接二分类&lt;/p&gt;
+&lt;p&gt;刚开始的想法是二分类。因为每个区域对于飞行器来说，只有“危险”和“安全”两个状态，因此我们先想到的是把气象预测问题看作二分类问题来处理，使用 LightGBM 的 binary classification 模式直接对每个区域每个小时是否安全进行逻辑回归。尝试过的方案：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;取5天的某4天作训练集，剩下一天作为验证集&lt;/li&gt;
+&lt;li&gt;尝试去掉特征 [xid, yid, date_id, hour] 中的一个或多个&lt;/li&gt;
+&lt;li&gt;把10列气象特征的平均值作为新特征&lt;/li&gt;
+&lt;li&gt;特征规范化（minmax）/ 二值化（对10列气象特征）&lt;/li&gt;
+&lt;li&gt;尝试不同的危险阈值（风速），如 13，13.5，14，14.5，15等&lt;/li&gt;
+&lt;li&gt;设置正负样本的权重，尝试不同的权重，如 1：1，1：10等&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;这里的思路是，为了尽量避免预测的时候出现伪安全区域，导致飞行器坠毁而被严重罚时，应该设置更低的危险阈值，更大的负样本（危险区域）权重。当然如果把过多的安全区域预测为危险区域，会导致后面的线路规划没有路可走。&lt;/p&gt;
+&lt;p&gt;经过几次提交发现效果不太理想（也可能是线路规划的问题，总之最终得分不是很好）。通过误差分析发现，直接使用二分类对那些接近危险阈值的样本的预测并不好。例如，有某个区域在某个小时的10列气象特征的平均值为14.5，应该判为危险，但是二分类模型却把它判断为安全（为什么？）。&lt;/p&gt;
+&lt;p&gt;2、先回归再按阈值二分类&lt;/p&gt;
+&lt;p&gt;由于二分类效果不理想，于是转向回归，即先通过回归预测未来5天的风速值，通过与危险阈值比较，大于等于危险阈值的判为危险，否则判为安全区域。尝试过的方案：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;随机切分数据集 train、eval、test，按 98%：1%：1% 的比例&lt;/li&gt;
+&lt;li&gt;去掉特征 date_id&lt;/li&gt;
+&lt;li&gt;特征标准化（minmax）&lt;/li&gt;
+&lt;li&gt;删除异常点（就是10个气象特征均值与真值的绝对值之差达到5以上的样本）&lt;/li&gt;
+&lt;li&gt;每天单独训练，得到5个模型，每个模型对后5天的结果进行预测，再加权平均&lt;/li&gt;
+&lt;li&gt;对预测结果进行平滑。尝试使用 scipy 的高斯平滑和卷积平滑。具体步骤是先把整个地图某个小时的风速按坐标顺序 reshape 成一个“图像”矩阵，然后调用 &lt;code&gt;scipy.ndimage.filters.gaussian_filter()&lt;/code&gt; 和 &lt;code&gt;scipy.ndimage.filters.convolve()&lt;/code&gt; 进行平滑处理，再把矩阵平展成原来的数据格式&lt;/li&gt;
+&lt;li&gt;尝试不同的危险阈值（风速），如 13，13.5，14，14.5，15等&lt;/li&gt;
+&lt;li&gt;对每个样本，加入周围8个点的10*8共80个风速特征&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;先回归再按阈值二分类这个方案得到的成绩是比较好的，在线路规划的版本不变的情况下，最好的成绩来自 20000 轮训练的 ligtGBM regression 模型。高斯平滑和卷积平滑方案作用不大，成绩提高在个位数以内，可视为基本无效。&lt;/p&gt;
+&lt;p&gt;3、投票法&lt;/p&gt;
+&lt;p&gt;不跑模型不训练，直接统计预测集中每个样本的10列风速值特征中大于等于危险风速值的个数，如果10个中有5个或以上是危险的风速，那么就把这条样本预测为危险，否则预测为安全。也尝试过对九宫格（即加入周围80列特征）进行此方法，但是都效果一般，从最终得分来看提高不大。&lt;/p&gt;
+&lt;p&gt;最后还是使用了方案2，20000 轮的回归，结合线路规划的多次优化，最终以第2名的成绩进入复赛。&lt;/p&gt;
+&lt;p&gt;五、复赛&lt;/p&gt;
+&lt;p&gt;复赛加入了降雨量这个条件，并且对飞行器的飞行规则也加了一些约束，总体来说比初赛难度大了很多。由于时间只有4天，提交的次数有限，我们只尝试了一下方案：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;lightGBM 的 LGBMClassifier 二分类&lt;/li&gt;
+&lt;li&gt;xgboost 的 XGBClassifier 二分类&lt;/li&gt;
+&lt;li&gt;投票法&lt;/li&gt;
+&lt;li&gt;风速和降雨量合并起来一起预测&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;打算尝试模型融合，但是时间不够了，最终成绩是17名。最好成绩用的版本是 xgboost 的二分类版本。&lt;/p&gt;
+&lt;p&gt;六、第三名分享思路&lt;/p&gt;
+&lt;p&gt;链接：&lt;a href=&#34;https://tianchi.aliyun.com/forum/new_articleDetail.html?spm=5176.8366600.0.0.771a311fkLZyZe&amp;amp;raceId=231622&amp;amp;postsId=4259&#34;&gt;Future Chanllenge &amp;ndash; Experience Sharing (3rd place)&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;他们的思路很简单，就是用 xgboost 和 lightGBM 来做回归然后再模型融合，也没有太多特征工程，就是比我们多了一个“对每一行数据，视那些比真值大太多或者小太多的数据为异常点，用剩下的点的均值替换掉些数据”。这样改数据的方法有什么理论支持？我不是很理解。另外他们做了交叉验证和很多不同的特征组合，但是我们的机器不好，跑一次训练加预测就要两个多小时，我们没有这个时间。再有一个不同的就是他们做了模型融合，我们没有做。我觉得在预测这一部分我们和他们的效果应该是差不太多的。&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>全国大学生节能减排社会实践与科技竞赛</title>
+      <link>https://utopizza.github.io/posts/projects/2015-08-27-%E9%A1%B9%E7%9B%AE-%E5%85%A8%E5%9B%BD%E5%A4%A7%E5%AD%A6%E7%94%9F%E8%8A%82%E8%83%BD%E5%87%8F%E6%8E%92%E7%A4%BE%E4%BC%9A%E5%AE%9E%E8%B7%B5%E4%B8%8E%E7%A7%91%E6%8A%80%E7%AB%9E%E8%B5%9B/</link>
+      <pubDate>Thu, 27 Aug 2015 09:15:33 +0000</pubDate>
+      
+      <guid>https://utopizza.github.io/posts/projects/2015-08-27-%E9%A1%B9%E7%9B%AE-%E5%85%A8%E5%9B%BD%E5%A4%A7%E5%AD%A6%E7%94%9F%E8%8A%82%E8%83%BD%E5%87%8F%E6%8E%92%E7%A4%BE%E4%BC%9A%E5%AE%9E%E8%B7%B5%E4%B8%8E%E7%A7%91%E6%8A%80%E7%AB%9E%E8%B5%9B/</guid>
+      <description>&lt;p&gt;一、简介&lt;/p&gt;
+&lt;p&gt;参赛作品是《面向物联网的无线无源风速仪》，设计一种面向物联网的无线无源小型三杯式风速仪，其工作原理是：
+(1) 无源：在有风时通过一个内置的小型发电装置，捕获风能，转化为电能供应自身工作，在无风时使用后备电源。为节省电源，大部分时间处于休眠状态，除非被上位机唤醒进行数据交互；
+(2) 无线：使用zigbee无线通讯模块，与上位机进行通信。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://utopizza.github.io/2015-08-27-%E9%A1%B9%E7%9B%AE-%E5%85%A8%E5%9B%BD%E5%A4%A7%E5%AD%A6%E7%94%9F%E8%8A%82%E8%83%BD%E5%87%8F%E6%8E%92%E7%A4%BE%E4%BC%9A%E5%AE%9E%E8%B7%B5%E4%B8%8E%E7%A7%91%E6%8A%80%E7%AB%9E%E8%B5%9B/%E8%A3%85%E7%BD%AE%E5%AE%9E%E7%89%A9.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;其中我实现的部分是上位机软件，主要功能：定时向串口发送数据采集命令，然后从串口读取风速仪返回的风速值，显示到屏幕上。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://utopizza.github.io/2015-08-27-%E9%A1%B9%E7%9B%AE-%E5%85%A8%E5%9B%BD%E5%A4%A7%E5%AD%A6%E7%94%9F%E8%8A%82%E8%83%BD%E5%87%8F%E6%8E%92%E7%A4%BE%E4%BC%9A%E5%AE%9E%E8%B7%B5%E4%B8%8E%E7%A7%91%E6%8A%80%E7%AB%9E%E8%B5%9B/%E4%B8%8A%E4%BD%8D%E6%9C%BA%E9%87%87%E9%9B%86%E9%A3%8E%E9%80%9F%E5%80%BC.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://utopizza.github.io/2015-08-27-%E9%A1%B9%E7%9B%AE-%E5%85%A8%E5%9B%BD%E5%A4%A7%E5%AD%A6%E7%94%9F%E8%8A%82%E8%83%BD%E5%87%8F%E6%8E%92%E7%A4%BE%E4%BC%9A%E5%AE%9E%E8%B7%B5%E4%B8%8E%E7%A7%91%E6%8A%80%E7%AB%9E%E8%B5%9B/%E4%B8%8A%E4%BD%8D%E6%9C%BA%E8%BD%AF%E4%BB%B6.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;二、上位机软件的实现&lt;/p&gt;
+&lt;p&gt;我用 WinForm + MS.Chart 的方式来实现，用 WinForm 来制作窗体，用 MS.Chart 来实现风速值的实时显示。上位机的采集数据的过程包括：定时、读写串口、CRC校验、字符串和十六进制等的数值转换、更新图形界面、监控报警最大风速值等。关键代码：&lt;/p&gt;
+&lt;p&gt;初始化&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;//用于更新图形化界面的事件委托
+delegate void UpdateTextEventHandler_experimental(List&amp;lt;double&amp;gt; experimentalWSList);
+UpdateTextEventHandler_experimental updateTextEventHandler_experimental;
+delegate void UpdateChartEventHandler_experimental(string experimentalWSstr);
+UpdateChartEventHandler_experimental updateChartEventHandler_experimental;
+
+//初始化串口
+public void InitCOM_experimental(string PortName)
+{
+    experimentalPort = new SerialPort(PortName);
+    experimentalPort.BaudRate = 9600;//波特率
+    experimentalPort.Parity = Parity.None;//无奇偶校验位
+    experimentalPort.StopBits = StopBits.One;//一个停止位
+    experimentalPort.DataBits = 8;//8位数据位
+    experimentalPort.DataReceived += experimentalPort_DataReceived;//接收返回数据时触发的事件
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;接收数据，更新图形化界面&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;//串口接收到风速仪返回数据时触发的事件
+private void experimentalPort_DataReceived(object sender, SerialDataReceivedEventArgs e)
+{
+    //读取缓冲区的数据，这里应该先处理读取的数据
+    int[] buffer = new int[7];
+    for (int i = 0; i &amp;lt; buffer.Length; i++)
+    {
+        buffer[i] = experimentalPort.ReadByte();
+    }
+    double newWindSpeed = Convert.ToDouble(DataHandler_ExperimentalMachine(buffer));
+    speedWarnTest(newWindSpeed);
+    experimentalWSList.Add(newWindSpeed);
+
+    //更新Textbox
+    updateTextEventHandler_experimental = new UpdateTextEventHandler_experimental(UpdateTextBox_experimental);
+    this.Invoke(updateTextEventHandler_experimental, new List&amp;lt;double&amp;gt;[] { experimentalWSList });
+
+    //更新Chart
+    updateChartEventHandler_experimental = new UpdateChartEventHandler_experimental(UpdateChart_experimental);
+    this.Invoke(updateChartEventHandler_experimental, new string[] { newWindSpeed.ToString() });
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;发送数据采集命令&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;//用于发送采集命令的定时器
+private void SendCommand_Timer()
+{
+    myTimer = new System.Timers.Timer();
+    myTimer.Elapsed += new ElapsedEventHandler(SendCommand_TimedEvent);
+    myTimer.AutoReset = true;
+    myTimer.Enabled = true;
+    myTimer.Interval = 1000;
+}
+
+//发送采集命令事件
+private void SendCommand_TimedEvent(object sender, System.Timers.ElapsedEventArgs e)
+{
+    SendCommand_ExperimentalMachine();
+}
+
+//发送采集命令具体操作：写数据到串口
+private void SendCommand_ExperimentalMachine()
+{
+    //ID 03 00 00 00 01 CR0 CR1；十六进制，ID为设备地址，CR0，CR1为CRC校验位，其他固定
+    byte[] commandByte = { 0x01, 0x03, 0x00, 0x00, 0x00, 0x01 }; //01 03 00 00 00 01 0A 84
+    byte[] commandByteCRC = CRC(commandByte, commandByte.Length);
+    experimentalPort.Write(commandByteCRC, 0, commandByteCRC.Length);
+}
+
+//实验机型CRC校验算法
+private byte[] CRC(byte[] byteArray, int datalen)
+{
+    byte CRC16Lo, CRC16Hi, CL, CH, SaveHi, SaveLo;
+    int i, Flag;
+    CRC16Lo = 0xFF;
+    CRC16Hi = 0xFF;
+    CL = 0x01;
+    CH = 0xA0;
+    for (i = 0; i &amp;lt; datalen; i++)
+    {
+        CRC16Lo ^= byteArray[i];
+        for (Flag = 0; Flag &amp;lt; 8; Flag++)
+        {
+            SaveHi = CRC16Hi;
+            SaveLo = CRC16Lo;
+            CRC16Hi &amp;gt;&amp;gt;= 1;
+            CRC16Lo &amp;gt;&amp;gt;= 1;
+            if ((SaveHi &amp;amp; 0x01) == 0x01)
+            {
+                CRC16Lo |= 0x80;
+            }
+            if ((SaveLo &amp;amp; 0x01) == 0x01)
+            {
+                CRC16Hi ^= CH;
+                CRC16Lo ^= CL;
+            }
+        }
+    }
+
+    byte[] newByteArray = new byte[datalen + 2];
+    for (int j = 0; j &amp;lt; datalen; j++)
+    {
+        newByteArray[j] = byteArray[j];
+    }
+    newByteArray[datalen] = CRC16Lo;
+    newByteArray[datalen + 1] = CRC16Hi;
+    //return (CRC16Hi &amp;lt;&amp;lt; 8) | CRC16Lo;
+    return newByteArray;
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;三、调试&lt;/p&gt;
+&lt;p&gt;1 先使用虚拟串口，让COM1和COM2连接&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://utopizza.github.io/2015-08-27-%E9%A1%B9%E7%9B%AE-%E5%85%A8%E5%9B%BD%E5%A4%A7%E5%AD%A6%E7%94%9F%E8%8A%82%E8%83%BD%E5%87%8F%E6%8E%92%E7%A4%BE%E4%BC%9A%E5%AE%9E%E8%B7%B5%E4%B8%8E%E7%A7%91%E6%8A%80%E7%AB%9E%E8%B5%9B/%E8%B0%83%E8%AF%95-%E8%99%9A%E6%8B%9F%E4%B8%B2%E5%8F%A3.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;2 打开串口助手，连接COM1，模拟风速仪&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://utopizza.github.io/2015-08-27-%E9%A1%B9%E7%9B%AE-%E5%85%A8%E5%9B%BD%E5%A4%A7%E5%AD%A6%E7%94%9F%E8%8A%82%E8%83%BD%E5%87%8F%E6%8E%92%E7%A4%BE%E4%BC%9A%E5%AE%9E%E8%B7%B5%E4%B8%8E%E7%A7%91%E6%8A%80%E7%AB%9E%E8%B5%9B/%E8%B0%83%E8%AF%95-%E4%B8%B2%E5%8F%A3%E5%8A%A9%E6%89%8B.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;3 启动上位机软件，连接COM2，测试数据采集命令的发送、风速值的采集和显示&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://utopizza.github.io/2015-08-27-%E9%A1%B9%E7%9B%AE-%E5%85%A8%E5%9B%BD%E5%A4%A7%E5%AD%A6%E7%94%9F%E8%8A%82%E8%83%BD%E5%87%8F%E6%8E%92%E7%A4%BE%E4%BC%9A%E5%AE%9E%E8%B7%B5%E4%B8%8E%E7%A7%91%E6%8A%80%E7%AB%9E%E8%B5%9B/%E8%B0%83%E8%AF%95-%E4%B8%8A%E4%BD%8D%E6%9C%BA%E8%BD%AF%E4%BB%B6.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>挑战杯河北省大学生课外学术科技作品竞赛</title>
+      <link>https://utopizza.github.io/posts/projects/2015-05-28-%E9%A1%B9%E7%9B%AE-%E6%8C%91%E6%88%98%E6%9D%AF%E6%B2%B3%E5%8C%97%E7%9C%81%E5%A4%A7%E5%AD%A6%E7%94%9F%E8%AF%BE%E5%A4%96%E5%AD%A6%E6%9C%AF%E7%A7%91%E6%8A%80%E4%BD%9C%E5%93%81%E7%AB%9E%E8%B5%9B/</link>
+      <pubDate>Thu, 28 May 2015 16:50:35 +0000</pubDate>
+      
+      <guid>https://utopizza.github.io/posts/projects/2015-05-28-%E9%A1%B9%E7%9B%AE-%E6%8C%91%E6%88%98%E6%9D%AF%E6%B2%B3%E5%8C%97%E7%9C%81%E5%A4%A7%E5%AD%A6%E7%94%9F%E8%AF%BE%E5%A4%96%E5%AD%A6%E6%9C%AF%E7%A7%91%E6%8A%80%E4%BD%9C%E5%93%81%E7%AB%9E%E8%B5%9B/</guid>
+      <description>&lt;p&gt;一、简介&lt;/p&gt;
+&lt;p&gt;参赛作品是《基于四旋翼无人机的输电线路智能巡检系统》，用无人机代替人工对高压电线塔进行智能巡检。其智能体现于：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;根据高压电线塔的地理坐标自动计算出高压线塔检测点的位置&lt;/li&gt;
+&lt;li&gt;根据两塔之间的距离和气温、风速、覆冰等气象条件计算两塔之间高压电线的应力弧垂&lt;/li&gt;
+&lt;li&gt;自动制定飞行计划，实现无人控制，自动巡检&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;无人机硬件：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://utopizza.github.io/2015-05-28-%E9%A1%B9%E7%9B%AE-%E6%8C%91%E6%88%98%E6%9D%AF%E6%B2%B3%E5%8C%97%E7%9C%81%E5%A4%A7%E5%AD%A6%E7%94%9F%E8%AF%BE%E5%A4%96%E5%AD%A6%E6%9C%AF%E7%A7%91%E6%8A%80%E4%BD%9C%E5%93%81%E7%AB%9E%E8%B5%9B/%E6%97%A0%E4%BA%BA%E6%9C%BA%E7%A1%AC%E4%BB%B6.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;其中我负责的部分是无人机飞控系统的开发：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://utopizza.github.io/2015-05-28-%E9%A1%B9%E7%9B%AE-%E6%8C%91%E6%88%98%E6%9D%AF%E6%B2%B3%E5%8C%97%E7%9C%81%E5%A4%A7%E5%AD%A6%E7%94%9F%E8%AF%BE%E5%A4%96%E5%AD%A6%E6%9C%AF%E7%A7%91%E6%8A%80%E4%BD%9C%E5%93%81%E7%AB%9E%E8%B5%9B/%E6%97%A0%E4%BA%BA%E6%9C%BA%E9%A3%9E%E6%8E%A7%E7%B3%BB%E7%BB%9F.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;二、飞控系统的开发&lt;/p&gt;
+&lt;p&gt;该系统基于一个开源的飞控地面站系统——MissionPlanner进行改造。我所做的工作有：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;清理多余的面板和插件，只留下我们需要的功能，使软件更加简洁好用。&lt;/li&gt;
+&lt;li&gt;加入一些新的小功能，如从文件读入高压输电塔的经纬度、在地图上选取高压输电塔的坐标点并且将其转换成经纬度显示在面板上等等。&lt;/li&gt;
+&lt;li&gt;加入自动生成巡检点的算法。该算法根据用户在地图上选取的点，或者从文件中读入的高压输电塔的经纬度，自动计算出关键巡检点，并生成飞行计划。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;img src=&#34;https://utopizza.github.io/2015-05-28-%E9%A1%B9%E7%9B%AE-%E6%8C%91%E6%88%98%E6%9D%AF%E6%B2%B3%E5%8C%97%E7%9C%81%E5%A4%A7%E5%AD%A6%E7%94%9F%E8%AF%BE%E5%A4%96%E5%AD%A6%E6%9C%AF%E7%A7%91%E6%8A%80%E4%BD%9C%E5%93%81%E7%AB%9E%E8%B5%9B/%E5%85%B3%E9%94%AE%E5%B7%A1%E6%A3%80%E7%82%B9.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;该软件是基于WinForm实现的，因此前面两点都不难实现，只是引用的插件和使用的控件比较多，理清各个层次的引用关系略复杂。此处不再赘述。&lt;/p&gt;
+&lt;p&gt;现在来分析第3点的算法。在用户添加一个航点(高压输电塔)的时候，我们能获取的数据只有塔的经度、纬度、海拔，那怎么计算出它周围对应的12个航点呢？这个问题的关键是要求出两个塔之间的电线的走向。我的思路是，地球的经纬度相当于地面的坐标轴，考虑到我们的监测范围是一个面积很小的范围，而且电线塔与电线塔之间的距离也不大，我们可以把地图的经纬度近似作为一个直角坐标系，经度作为X轴，纬度作为Y轴，于是地图上的每个航点就抽象成了一个包含坐标的点。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://utopizza.github.io/2015-05-28-%E9%A1%B9%E7%9B%AE-%E6%8C%91%E6%88%98%E6%9D%AF%E6%B2%B3%E5%8C%97%E7%9C%81%E5%A4%A7%E5%AD%A6%E7%94%9F%E8%AF%BE%E5%A4%96%E5%AD%A6%E6%9C%AF%E7%A7%91%E6%8A%80%E4%BD%9C%E5%93%81%E7%AB%9E%E8%B5%9B/%E5%9D%90%E6%A0%87.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;有了这个坐标，我们就可以把本航点和上一个航点连起来，而这条线段就是两个电线塔之间的电线。因为有了坐标轴，于是现在我们可以把电线塔的“走向”进行量化——斜率。这样，每两个塔之间的电线走向就可以轻易得到：&lt;/p&gt;
+&lt;p&gt;$$k=\frac{y_0-y_1}{x_0-x_1}$$&lt;/p&gt;
+&lt;p&gt;有了斜率之后，我们就可以给每个塔的周围的对应的12个监测航点进行定位了，如图&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://utopizza.github.io/2015-05-28-%E9%A1%B9%E7%9B%AE-%E6%8C%91%E6%88%98%E6%9D%AF%E6%B2%B3%E5%8C%97%E7%9C%81%E5%A4%A7%E5%AD%A6%E7%94%9F%E8%AF%BE%E5%A4%96%E5%AD%A6%E6%9C%AF%E7%A7%91%E6%8A%80%E4%BD%9C%E5%93%81%E7%AB%9E%E8%B5%9B/%E5%9D%90%E6%A0%872.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;(说明：图中的 $(x&amp;rsquo;,y&amp;rsquo;)$ 是前一个航点，$(x_0,y_0)$ 是要计算的本行航点。图中下方的1、2、3、4分别就是四个位置的监测航点的坐标位置了。而每个位置均有3个监测航点，只是高度不同而已，可以通过代码进行设置)&lt;/p&gt;
+&lt;p&gt;核心代码:&lt;/p&gt;
+&lt;p&gt;{% codeblock lang:csharp %}
+//添加一个塔，自动计算出12个航点
+private void AddTower_Click(object sender, EventArgs e)
+{
+double towerlat = Convert.ToDouble(TXT_towerlat.Text.ToString().Trim());
+double towerlong = Convert.ToDouble(TXT_towerlng.Text.ToString().Trim());&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;//先往地图中加入塔点
+AddWPToMap(towerlat, towerlong, 0);
+
+//根据塔点自动生成的航点
+
+//上一个塔点
+PointLatLngAlt wp_last = pointlist[pointlist.Count - 2];
+
+//该塔点
+PointLatLngAlt wp_this = pointlist[pointlist.Count - 1];
+
+//通过两点的斜率k求夹角a(PI)
+double k = (wp_last.Lat - wp_this.Lat) / (wp_last.Lng - wp_this.Lng);
+double a = Math.Atan(k);
+
+//监测半径r
+double r = 0.0001;
+
+//添加4*4=16个监视航点
+
+//第一角度4个航点
+double Lat1 = (float)(wp_this.Lat + r * Math.Cos(0.25 * Math.PI - a));
+double Lng1 = (float)(wp_this.Lng - r * Math.Sin(0.25 * Math.PI - a));
+int Alt1 = 100;
+AddWPToMap(Lat1, Lng1, Alt1);
+AddWPToMap(Lat1, Lng1, Alt1 - 5);
+AddWPToMap(Lat1, Lng1, Alt1 - 8);
+AddWPToMap(Lat1, Lng1, Alt1);
+
+//第二角度4个航点
+double Lat2 = (float)(wp_this.Lat + r * Math.Sin(0.25 * Math.PI - a));
+double Lng2 = (float)(wp_this.Lng + r * Math.Cos(0.25 * Math.PI - a));
+int Alt2 = 100;
+AddWPToMap(Lat2, Lng2, Alt2);
+AddWPToMap(Lat2, Lng2, Alt2 - 5);
+AddWPToMap(Lat2, Lng2, Alt2 - 8);
+AddWPToMap(Lat2, Lng2, Alt2);
+
+//第三角度4个航点
+double Lat3 = (float)(wp_this.Lat - r * Math.Cos(0.25 * Math.PI - a));
+double Lng3 = (float)(wp_this.Lng + r * Math.Sin(0.25 * Math.PI - a));
+int Alt3 = 100;
+AddWPToMap(Lat3, Lng3, Alt3);
+AddWPToMap(Lat3, Lng3, Alt3 - 5);
+AddWPToMap(Lat3, Lng3, Alt3 - 8);
+AddWPToMap(Lat3, Lng3, Alt3);
+
+//第四角度3个航点
+double Lat4 = (float)(wp_this.Lat - r * Math.Sin(0.25 * Math.PI - a));
+double Lng4 = (float)(wp_this.Lng - r * Math.Cos(0.25 * Math.PI - a));
+int Alt4 = 100;
+AddWPToMap(Lat4, Lng4, Alt4);
+AddWPToMap(Lat4, Lng4, Alt4 - 5);
+AddWPToMap(Lat4, Lng4, Alt4 - 8);
+AddWPToMap(Lat4, Lng4, Alt4);
+
+//再次加入该塔点，让飞机飞回塔顶
+AddWPToMap(towerlat, towerlong, 0);
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}
+{% endcodeblock %}&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>美国大学生数学建模竞赛</title>
+      <link>https://utopizza.github.io/posts/projects/2015-04-20-%E9%A1%B9%E7%9B%AE-%E7%BE%8E%E5%9B%BD%E5%A4%A7%E5%AD%A6%E7%94%9F%E6%95%B0%E5%AD%A6%E5%BB%BA%E6%A8%A1%E7%AB%9E%E8%B5%9B/</link>
+      <pubDate>Wed, 20 May 2015 22:35:40 +0000</pubDate>
+      
+      <guid>https://utopizza.github.io/posts/projects/2015-04-20-%E9%A1%B9%E7%9B%AE-%E7%BE%8E%E5%9B%BD%E5%A4%A7%E5%AD%A6%E7%94%9F%E6%95%B0%E5%AD%A6%E5%BB%BA%E6%A8%A1%E7%AB%9E%E8%B5%9B/</guid>
+      <description>&lt;p&gt;一、简介&lt;/p&gt;
+&lt;p&gt;我们参加的是2015年2月6日到10日的美赛，组队的时候已经接近学期末。而且我们三人中，只有一人参加过国赛，没有拿奖。其余两人包括我是完全没有比赛经验的。我们三人正式开始准备的时候，已经是2015年1月中下旬了吧，具体记得不太清楚了，貌似是大三上学期结束，已经放寒假了我们才有时间开始准备比赛。相比他们那些参加过各种培训的校队选手，有的甚至整个大二暑假都在学校做模拟训练，我们这样的业余队伍几乎是没有优势的。&lt;/p&gt;
+&lt;p&gt;在放假之后比赛之前，我们做了一些小训练，拿了往年的题目做，有：连环杀人案侦破、葡萄酒评价、树叶分类、碎纸片复原等等。因为时间太紧，只有通过直接上手实战来快速学习。我觉得这样的学习方式有好的地方也有不好的地方，好的地方在于效率高速度快能够体验成就感，形成良好的反馈机制，而不好的地方在于这样学习不系统不全面，知识体系松散，难以打好扎实的基础，或者说“功底”。&lt;/p&gt;
+&lt;p&gt;6日早上八点拿到赛题，我们讨论一小会儿，就确定了选择 MCM 的 A 题，对抗埃博拉病毒：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;PROBLEM A: Eradicating Ebola
+The world medical association has announced that their new medication could stop Ebola and cure patients whose disease is not advanced. Build a realistic, sensible, and useful model that considers not only the spread of the disease, the quantity of the medicine needed, possible feasible delivery systems, locations of delivery, speed of manufacturing of the vaccine or drug, but also any other critical factors your team considers necessary as part of the model to optimize the eradication of Ebola, or at least its current strain. In addition to your modeling approach for the contest, prepare a 1-2 page non-technical letter for the world medical association to use in their announcement.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;二、思路&lt;/p&gt;
+&lt;p&gt;确定题目后，经过短暂的讨论，主题思路很快就清晰了：如何“对抗”埃博拉病毒？自然就是通过隔离病人、控制疫情、注射药物。具体怎么用数学模型去做？显然分三部：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;建立埃博拉病毒的传播模型。有了这个模型，我们就可以预测病毒传播的发展情况，根据它的发展规律定制相应的疫情控制措施，这是整篇论文根基。&lt;/li&gt;
+&lt;li&gt;有了传播模型后，用该模型来预测至少需要多少的药物才能把疫情控制在可控的范围内。&lt;/li&gt;
+&lt;li&gt;确定好疫苗需求量后，最后一个问题就是，如何建立生产、运输、分配疫苗的整个体系？（很自然会联想到线性规划问题）&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;三、Modeling&lt;/p&gt;
+&lt;p&gt;1、建立埃博拉传播模型。我们先用传统的 S.I.R 模型对实际数据进行拟合，发现效果很差，因为这个模型是一个不考虑外界条件干扰的模型，例如政府的介入、世界卫生组织的先进医疗器械援助等，而且每种病毒由于感染期、潜伏期、患病期、致死期的时间都不一样。因此我们放弃了这个理想化的传播模型，而采用元胞自动机模型。我们通过调整参数来拟合实际数据。模型按实际情况分为两部分，一部分是传染病爆发后紧接着的一段时间内，政府和医疗机构还未采取有效的遏制措施，患病人数接近于自然增长；另一部分则是较长的一段时间后，政府和医疗机构采取了较为有效的防范和隔离措施，患病人数得到控制，在波动中减少。模型测试的效果比较好，因为我们在元胞自动机模型里面考虑了很多有实际意义的参数。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://utopizza.github.io/2015-04-20-%E9%A1%B9%E7%9B%AE-%E7%BE%8E%E5%9B%BD%E5%A4%A7%E5%AD%A6%E7%94%9F%E6%95%B0%E5%AD%A6%E5%BB%BA%E6%A8%A1%E7%AB%9E%E8%B5%9B/%E4%BC%A0%E6%92%AD%E6%A8%A1%E5%9E%8B.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://utopizza.github.io/2015-04-20-%E9%A1%B9%E7%9B%AE-%E7%BE%8E%E5%9B%BD%E5%A4%A7%E5%AD%A6%E7%94%9F%E6%95%B0%E5%AD%A6%E5%BB%BA%E6%A8%A1%E7%AB%9E%E8%B5%9B/%E5%85%83%E8%83%9E%E8%87%AA%E5%8A%A8%E6%9C%BA.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;2、预测药物需求量。分别计算三个疫情国家 Guinea、Liberia 和 Sierra Leone 的药物需求量。药量的计算为当前药物的需求量与半年内增加患者的药物需求量和药物的储存量三部分之和。其中储存量的多少根据每周增加患者人数最多的一段时间的病人总量来确定，也就是考虑最严重的情况。对于疫苗量的计算我们首先估计一个合适免疫覆盖率，用模型一的改进模型中每人每天传染人数的改变（蒙特卡罗算法加以实现）来表示免疫覆盖率，然后根据患病者人数的变化来确定合适的免疫覆盖率。最后用相关公式计算出疫苗的需求量。&lt;/p&gt;
+&lt;p&gt;3、确定具体的药品和疫苗的配送方案。模型分为两部分，一部分为国际之间药物的配送，一部分为国内药物的配送。我们首先根据相关设施的发展水平给定四个出产国的产量。通过药物和疫苗总量的限制，不同国家的总成本应该相近等条件对其进行规划，从而得到具体的配送方案。国内的配送首先将发病地点用模糊-C聚类分析的方法分类，然后在每一类中产生最小生成树，也就是总代价最少。不同的类用不同的车运送药品，同一类中的地点用同一辆车按照最小生成树的路线运送。&lt;/p&gt;
+&lt;p&gt;(1). 国际运送：用线性规划确定从药物生产国到每个灾情国的配给量。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://utopizza.github.io/2015-04-20-%E9%A1%B9%E7%9B%AE-%E7%BE%8E%E5%9B%BD%E5%A4%A7%E5%AD%A6%E7%94%9F%E6%95%B0%E5%AD%A6%E5%BB%BA%E6%A8%A1%E7%AB%9E%E8%B5%9B/%E5%9B%BD%E9%99%85%E8%BF%90%E9%80%81.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://utopizza.github.io/2015-04-20-%E9%A1%B9%E7%9B%AE-%E7%BE%8E%E5%9B%BD%E5%A4%A7%E5%AD%A6%E7%94%9F%E6%95%B0%E5%AD%A6%E5%BB%BA%E6%A8%A1%E7%AB%9E%E8%B5%9B/%E5%9B%BD%E9%99%85%E8%BF%90%E9%80%812.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;国内运送（以 Sierra Leone）为例：先对灾点进行聚类，再使用最小生成树找出投递药物的最小总路径。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://utopizza.github.io/2015-04-20-%E9%A1%B9%E7%9B%AE-%E7%BE%8E%E5%9B%BD%E5%A4%A7%E5%AD%A6%E7%94%9F%E6%95%B0%E5%AD%A6%E5%BB%BA%E6%A8%A1%E7%AB%9E%E8%B5%9B/%E6%A8%A1%E7%B3%8A%E8%81%9A%E7%B1%BB.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://utopizza.github.io/2015-04-20-%E9%A1%B9%E7%9B%AE-%E7%BE%8E%E5%9B%BD%E5%A4%A7%E5%AD%A6%E7%94%9F%E6%95%B0%E5%AD%A6%E5%BB%BA%E6%A8%A1%E7%AB%9E%E8%B5%9B/%E6%9C%80%E5%B0%8F%E7%94%9F%E6%88%90%E6%A0%91.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;四、总结（关于编程方面）&lt;/p&gt;
+&lt;p&gt;1、工具：熟练使用matlab，稍微熟悉使用spss等等其他工具。没必要花太多时间在研究工具上面，熟练使用matlab基本就足够。&lt;/p&gt;
+&lt;p&gt;2、算法：最好有一定的编程功底，了解面向对象和面向过程编程，这样写起程序来会快很多。一些基本的数学方法，例如线性规划、插值、拟合等等要在比赛之前能够自己写出来。进一步，有时间的话，最好能拓展一下一些智能算法，例如模拟退火、遗传算法、蒙特卡洛法、神经网络、自动元胞机等等。因为基本的数学模型大家都会，所以想要让自己的论文出彩，就要用一些一般人想不到的或者实现不了的方法，因为美赛要求的不是结果的准确性，而是解法的新颖性，思路的发散性。&lt;/p&gt;
+&lt;p&gt;3、技巧：编程说难也不难，说不难也难。如果你不是那种天才型的编程玩家，那就唯有多练，不断地动手实践，调试，改错，总结，一步步提高自己，这确实是一个很费时间和精力的学习任务，以我个人来看，看一个算法10遍，不如自己动手写一遍的印象来得深刻。&lt;/p&gt;
+&lt;p&gt;4、最后谈一点感受，虽然参加美赛时间仓促，但是我们三人都拿出了最大的努力，比赛这四天，基本每天都只睡不到3个小时。真的很累，比赛结束交了论文的那天，在坐火车回家的路上，站着都能睡着，整个人都感觉有点飘忽或者说精神有点恍惚。但是，那种和朋友们一起拼命为同一个目标奋斗的感觉真的很棒，很开心，也觉得很充实。每每回想起那些日子，我都认为，那就是我本科阶段，最珍贵最开心的时光了。至于论文，第一部分使用了元胞自动机模型，知道这个东西的人应该挺少吧，可以算是论文的一大亮点，对美赛的风格来说。第二部分的预测药物量不太好，模型有点过于简单。第三部分的药物运送分为国际和国内两部分处理，考虑了成本，时间，地理各种因素，我觉得也是一个可以加分的部分。最后拿了一等奖，遗憾也不是很大了，毕竟我们准备的时间真的太少，又没什么经验，我们只是临时组成的队伍。现在两位队友都走上了各自想走的路，但我仍然希望，日后还有一起努力奋斗的机会。&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>全国高校物联网应用创新大赛</title>
+      <link>https://utopizza.github.io/posts/projects/2015-01-20-%E9%A1%B9%E7%9B%AE-%E5%85%A8%E5%9B%BD%E9%AB%98%E6%A0%A1%E7%89%A9%E8%81%94%E7%BD%91%E5%BA%94%E7%94%A8%E5%88%9B%E6%96%B0%E5%A4%A7%E8%B5%9B/</link>
+      <pubDate>Tue, 20 Jan 2015 22:14:40 +0000</pubDate>
+      
+      <guid>https://utopizza.github.io/posts/projects/2015-01-20-%E9%A1%B9%E7%9B%AE-%E5%85%A8%E5%9B%BD%E9%AB%98%E6%A0%A1%E7%89%A9%E8%81%94%E7%BD%91%E5%BA%94%E7%94%A8%E5%88%9B%E6%96%B0%E5%A4%A7%E8%B5%9B/</guid>
+      <description>&lt;p&gt;一、简介&lt;/p&gt;
+&lt;p&gt;参赛作品是“基于物联网的车辆事故智能报警系统”，它对车辆运行情况进行实时监控。一旦发生车辆事故导致安全气囊打开时，系统便会检测到这一状态，并立即获取事故的定位信息、人员信息并进行自动报警。当交警服务中心接收到报警电话和相关信息后，就会立即通知离事故发生地最近的医院前往救援。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://utopizza.github.io/2015-01-20-%E9%A1%B9%E7%9B%AE-%E5%85%A8%E5%9B%BD%E9%AB%98%E6%A0%A1%E7%89%A9%E8%81%94%E7%BD%91%E5%BA%94%E7%94%A8%E5%88%9B%E6%96%B0%E5%A4%A7%E8%B5%9B/%E7%B3%BB%E7%BB%9F%E6%B5%81%E7%A8%8B%E5%9B%BE.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://utopizza.github.io/2015-01-20-%E9%A1%B9%E7%9B%AE-%E5%85%A8%E5%9B%BD%E9%AB%98%E6%A0%A1%E7%89%A9%E8%81%94%E7%BD%91%E5%BA%94%E7%94%A8%E5%88%9B%E6%96%B0%E5%A4%A7%E8%B5%9B/%E7%B3%BB%E7%BB%9F%E6%B5%81%E7%A8%8B%E5%9B%BE2.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;系统工作流程：&lt;/p&gt;
+&lt;p&gt;1、 当车载客户端监测到安全气囊打开后，它先从 OBD 系统中读取出车辆故障码等车辆信息，记录到单片机内存中，然后启动蓝牙模块，把车辆信息发送到手机客户端；&lt;/p&gt;
+&lt;p&gt;2、当手机客户端收到车辆故障码后，
+(1)、启动第一重自动报警：从手机内存卡读出驾车人员信息，启动 GPS 对车辆进行定位读出车辆经纬度，然后把车辆信息、人员信息、定位信息一并通过 GPRS 发送到交警信息中心服务器；
+(2)、启动第二重自动报警：调用手机的拨号功能，自动拨打 110 报警电话；
+(3)、当手机报警功能被触发后， 手机开始倒计时 15 秒。用户可以在 15 秒内点击取消按钮中断报警， 否则在计时结束后执行报警任务。&lt;/p&gt;
+&lt;p&gt;3、当交警信息中心服务器收到手机发送过来的报警信息后，会马上把报警信息显示在屏幕上，并响起警铃，通知交警人员，前往事故现在进行处理。&lt;/p&gt;
+&lt;p&gt;二、实现&lt;/p&gt;
+&lt;p&gt;我负责开发的部分是 Server 端的“交警信息中心”网站，和 Client 端的“EmergencyCall”安卓 App。&lt;/p&gt;
+&lt;p&gt;1、Server 端&lt;/p&gt;
+&lt;p&gt;基于 .NET 的 WebService 框架，采用 Model -&amp;gt; DAL -&amp;gt; BLL 三层架构。Server 端的主要功能是：提供 WebService 方法给安卓 客户端调用，接收其发送过来的数据，经过处理后插入数据库，最后显示到网页上。&lt;/p&gt;
+&lt;p&gt;Server 端主要的两个文件是：网站主页 TICSystemDefault.aspx 和 WebService 接口 TICSystemWebService.asmx。网站主页每3秒自动刷新一次，把所有数据即时地显示到网页上。WebService 接口负责和安卓端数据交互。其他文件分别实现解析Json字符串并转化成Model、操作数据库、绑定数据到网页等等。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://utopizza.github.io/2015-01-20-%E9%A1%B9%E7%9B%AE-%E5%85%A8%E5%9B%BD%E9%AB%98%E6%A0%A1%E7%89%A9%E8%81%94%E7%BD%91%E5%BA%94%E7%94%A8%E5%88%9B%E6%96%B0%E5%A4%A7%E8%B5%9B/Server%E7%AB%AF.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;其中提供给安卓端调用的 WebService 方法：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;// webservice方法
+[WebMethod]
+public int AddAccidentInfo(string JasonAccidentInfo)
+{
+    AccidentInfoModel AccidentInfo = ModelJsonChange&amp;lt;AccidentInfoModel&amp;gt;.JsonToModel(JasonAccidentInfo);
+    return accidentDal.AddAccidentInfo(AccidentInfo);
+}
+
+//Helper类，实现Json和Model的互转
+public class ModelJsonChange&amp;lt;T&amp;gt;
+{
+    //Model转换为Json
+    public static string ModelToJson(T model)
+    {
+        JavaScriptSerializer js = new JavaScriptSerializer();
+        return js.Serialize(model);
+    }
+
+    //Json转换为Model
+    public static T JsonToModel(string json)
+    {
+        JavaScriptSerializer js = new JavaScriptSerializer();
+        return js.Deserialize&amp;lt;T&amp;gt;(json);
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;2、Client 端&lt;/p&gt;
+&lt;p&gt;Client 端的安卓 App 名为“EmergencyCall”。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://utopizza.github.io/2015-01-20-%E9%A1%B9%E7%9B%AE-%E5%85%A8%E5%9B%BD%E9%AB%98%E6%A0%A1%E7%89%A9%E8%81%94%E7%BD%91%E5%BA%94%E7%94%A8%E5%88%9B%E6%96%B0%E5%A4%A7%E8%B5%9B/MainActivity.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;其中分为五大功能模块：&lt;/p&gt;
+&lt;p&gt;(1). SaveActivity：保存、修改用户的个人信息。我使用了SharedPreferences来保存这些数据。SharedPreferences是Android平台上一个轻量级的存储类，用来保存应用的一些常用配置。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://utopizza.github.io/2015-01-20-%E9%A1%B9%E7%9B%AE-%E5%85%A8%E5%9B%BD%E9%AB%98%E6%A0%A1%E7%89%A9%E8%81%94%E7%BD%91%E5%BA%94%E7%94%A8%E5%88%9B%E6%96%B0%E5%A4%A7%E8%B5%9B/SaveActivity.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;关键代码（为节省篇幅，以下均省略 OnCreate、setContentView、addActivity、findViewById 等基本的常用代码，只显示实现某功能的关键代码）：&lt;/p&gt;
+&lt;p&gt;{% codeblock lang:java %}
+// 声明
+private EditText EditText_userName;// 姓名
+private EditText EditText_userPhone;// 电话
+private EditText EditText_userCar;// 车牌
+private SharedPreferences sharedPrefrences;
+private Editor editor;
+private static final String FILENAME = &amp;ldquo;filename&amp;rdquo;;// 要存储的文件名&lt;/p&gt;
+&lt;p&gt;// 进入页面时，将已经保存在文件中的内容取出，显示到三个文本框中
+sharedPrefrences = this.getSharedPreferences(FILENAME, MODE_PRIVATE);
+EditText_userName.setText(sharedPrefrences.getString(&amp;ldquo;userName&amp;rdquo;, &amp;ldquo;&amp;quot;));
+EditText_userPhone.setText(sharedPrefrences.getString(&amp;ldquo;userPhone&amp;rdquo;, &amp;ldquo;&amp;quot;));
+EditText_userCar.setText(sharedPrefrences.getString(&amp;ldquo;userCar&amp;rdquo;, &amp;ldquo;&amp;quot;));&lt;/p&gt;
+&lt;p&gt;// 保存按钮
+savebutton.setOnClickListener(new View.OnClickListener() {
+@Override
+public void onClick(View v) {
+editor = getSharedPreferences(FILENAME, MODE_PRIVATE).edit();
+editor.putString(&amp;ldquo;userName&amp;rdquo;, EditText_userName.getText().toString());
+editor.putString(&amp;ldquo;userPhone&amp;rdquo;, EditText_userPhone.getText().toString());
+editor.putString(&amp;ldquo;userCar&amp;rdquo;, EditText_userCar.getText().toString());
+editor.commit();
+Intent intent = new Intent();
+intent.setClass(SaveActivity.this, MainActivity.class);
+startActivity(intent);
+}
+});
+{% endcodeblock %}&lt;/p&gt;
+&lt;p&gt;(2). BlueToothActivity：蓝牙连接，使手机通过蓝牙与车上的硬件模块通讯。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://utopizza.github.io/2015-01-20-%E9%A1%B9%E7%9B%AE-%E5%85%A8%E5%9B%BD%E9%AB%98%E6%A0%A1%E7%89%A9%E8%81%94%E7%BD%91%E5%BA%94%E7%94%A8%E5%88%9B%E6%96%B0%E5%A4%A7%E8%B5%9B/BlueToothActivity.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;关键代码：&lt;/p&gt;
+&lt;p&gt;{% codeblock lang:java %}
+// 通过蓝牙连接硬件
+BluetoothAdapter btAdapt = BluetoothAdapter.getDefaultAdapter();
+BluetoothDevice btDev = btAdapt.getRemoteDevice(address);// &amp;ldquo;00:11:00:18:05:45&amp;rdquo;
+Method m = btDev.getClass().getMethod(&amp;ldquo;createRfcommSocket&amp;rdquo;, new Class[] { int.class });
+BluetoothSocket btSocket = (BluetoothSocket) m.invoke(btDev, Integer.valueOf(1));
+try {
+btSocket.connect();
+Log.e(TAG, &amp;quot; BT connection established, data transfer link open.&amp;quot;);
+Toast.makeText(testBlueTooth.this, &amp;ldquo;连接成功&amp;rdquo;, Toast.LENGTH_SHORT).show();&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;// 进入护航界面
+Intent intent = new Intent();
+intent.setClass(testBlueTooth.this, DisplayActivity.class);
+startActivity(intent);
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;} catch (IOException e) {
+Log.e(TAG, &amp;quot; Connection failed.&amp;quot;, e);
+setTitle(&amp;ldquo;连接失败..&amp;quot;);
+}
+{% endcodeblock %}&lt;/p&gt;
+&lt;p&gt;(3). DisplayActivity：连接成功后，手机将一直监控车载硬件模块的状态，接收硬件模块发送过来的状态码。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://utopizza.github.io/2015-01-20-%E9%A1%B9%E7%9B%AE-%E5%85%A8%E5%9B%BD%E9%AB%98%E6%A0%A1%E7%89%A9%E8%81%94%E7%BD%91%E5%BA%94%E7%94%A8%E5%88%9B%E6%96%B0%E5%A4%A7%E8%B5%9B/DisplayActivity.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;关键代码：&lt;/p&gt;
+&lt;p&gt;{% codeblock lang:java %}
+// 监听车载硬件模块发送过来的消息
+ConnectedThread manageThread = new ConnectedThread();
+Handler mHandler = new MyHandler();
+manageThread.Start();
+public ConnectedThread() {
+isRecording = false;
+this.wait = 50;
+thread = new Thread(new ReadRunnable());
+}
+private class ReadRunnable implements Runnable {
+public void run() {
+while (isRecording) {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;        //从蓝牙端口获取接收到的消息
+        try {
+            inStream = testBlueTooth.btSocket.getInputStream();
+        } catch (IOException e) {}
+
+        // 处理获取的消息，设置长度为20
+        int length = 20;
+        byte[] temp = new byte[length];
+        if (inStream != null) {
+            try {
+                int len = inStream.read(temp, 0, length - 1);
+                Log.e(&amp;quot;available&amp;quot;, String.valueOf(len));
+                if (len &amp;gt; 0) {
+                    byte[] btBuf = new byte[len];
+                    System.arraycopy(temp, 0, btBuf, 0, btBuf.length);
+                    String readStr1 = new String(btBuf, encodeType);
+                    // 如果收到非空数据，说明事故发生，发送“01”给mHandler
+                    mHandler.obtainMessage(01, len, -1, readStr1).sendToTarget();
+                }
+                Thread.sleep(wait);
+            } catch (Exception e) {
+                // 否则发送“00”，表示没有事故发生(这样好像逻辑有点问题)
+                mHandler.sendEmptyMessage(00);
+            }
+        }
+
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}&lt;/p&gt;
+&lt;p&gt;// 接收到状态码后的后续处理
+private class MyHandler extends Handler {
+@Override
+public void dispatchMessage(Message msg) {
+String info = (String) msg.obj;
+if (StopFlag) {
+if (info.equals(&amp;ldquo;01&amp;rdquo;)) {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;            StopFlag=false;
+			
+            // 报警
+            Intent intent = new Intent();
+            intent.setClass(DisplayActivity.this, PostActivity.class);
+            startActivity(intent);
+            // finish();
+        }
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}
+{% endcodeblock %}&lt;/p&gt;
+&lt;p&gt;(4). PostActivity：进入事故报警流程，获取用户的个人信息、地理位置信息和当前时间，然后通过 GPRS 发送到交警信息中心网站。发送的数据格式是 Json。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://utopizza.github.io/2015-01-20-%E9%A1%B9%E7%9B%AE-%E5%85%A8%E5%9B%BD%E9%AB%98%E6%A0%A1%E7%89%A9%E8%81%94%E7%BD%91%E5%BA%94%E7%94%A8%E5%88%9B%E6%96%B0%E5%A4%A7%E8%B5%9B/PostActivity.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;具体工作流程：启动线程 time_runnable 计时 -&amp;gt; 计时结束，发送报警信息给 time_handler -&amp;gt; time_handler 转发报警信息给 http_handler -&amp;gt; http_handler 启动线程 http_runnable 执行 http 报警。HttpPost 用到了外部包 ksoap2 。&lt;/p&gt;
+&lt;p&gt;{% codeblock lang:java %}
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.ksoap2.SoapEnvelope;
+import org.ksoap2.serialization.SoapObject;
+import org.ksoap2.serialization.SoapSerializationEnvelope;
+import org.ksoap2.transport.HttpTransportSE;&lt;/p&gt;
+&lt;p&gt;// 获取当前时间
+public String GetNowDateTime() {
+SimpleDateFormat sDateFormat = new SimpleDateFormat(&amp;ldquo;yyyy-MM-dd HH:mm:ss&amp;rdquo;);
+String date = sDateFormat.format(new java.util.Date());
+return date;
+}&lt;/p&gt;
+&lt;p&gt;// 获取地理位置
+public String GetLocation() {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+Criteria criteria = new Criteria();
+criteria.setAccuracy(Criteria.ACCURACY_COARSE);
+criteria.setAltitudeRequired(false);
+criteria.setBearingRequired(false);
+criteria.setCostAllowed(true);
+criteria.setPowerRequirement(Criteria.POWER_HIGH);
+criteria.setSpeedRequired(false);
+
+String currentProvider = locationManager.getBestProvider(criteria, true);
+Location currentLocation = locationManager.getLastKnownLocation(currentProvider);
+if (currentLocation == null) {
+    locationManager.requestLocationUpdates(currentProvider, 0, 0, locationListener);
+}
+while (true) {
+    currentLocation = locationManager.getLastKnownLocation(currentProvider);
+    if (currentLocation != null) {
+        Log.d(&amp;quot;Location&amp;quot;, &amp;quot;Latitude: &amp;quot; + currentLocation.getLatitude());
+        Log.d(&amp;quot;Location&amp;quot;, &amp;quot;Longitude: &amp;quot; + currentLocation.getLongitude());
+        break;
+    } else {
+        Log.d(&amp;quot;Location&amp;quot;, &amp;quot;Latitude: &amp;quot; + 0);
+        Log.d(&amp;quot;Location&amp;quot;, &amp;quot;Longitude: &amp;quot; + 0);
+    }
+    try {
+        Thread.sleep(1000);
+    } catch (InterruptedException e) {
+        Log.e(&amp;quot;Location&amp;quot;, e.getMessage());
+    }
+}
+
+String userLocation = &amp;quot;经度&amp;quot; + currentLocation.getLongitude() + &amp;quot;；纬度&amp;quot; + currentLocation.getLatitude();
+return userLocation;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}
+{% endcodeblock %}&lt;/p&gt;
+&lt;p&gt;{% codeblock lang:java %}
+// time_runnable线程：计时15秒，5秒后给time_handler发送信息
+Runnable time_runnable = new Runnable() {
+@Override
+public void run() {
+try {
+Thread.sleep(15000);
+} catch (InterruptedException e) {
+e.printStackTrace();
+}
+Message message = new Message();
+time_handler.sendMessage(message);
+}
+};&lt;/p&gt;
+&lt;p&gt;// http_runnable线程：发送Http报警
+Runnable http_runnable = new Runnable() {
+@Override
+public void run() {
+String AccidentTime = GetNowDateTime();
+String AccidentPlace = GetLocation();
+String PersonName = sharedPrefrences.getString(&amp;ldquo;userName&amp;rdquo;, &amp;ldquo;&amp;quot;);
+String PersonPhone = sharedPrefrences.getString(&amp;ldquo;userPhone&amp;rdquo;, &amp;ldquo;&amp;quot;);
+String CarNumber = sharedPrefrences.getString(&amp;ldquo;userCar&amp;rdquo;, &amp;ldquo;&amp;quot;);
+//发送
+HttpPost(AccidentTime, AccidentPlace, PersonName, PersonPhone, CarNumber);
+}
+};&lt;/p&gt;
+&lt;p&gt;// 启动time_runnable（在OnCreate中）
+new Thread(time_runnable).start();&lt;/p&gt;
+&lt;p&gt;// 计时结束，给http_handler转发报警信息
+time_handler = new Handler() {
+@Override
+public void handleMessage(Message msg) {
+if (IsPost) {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;        IsPost = false;
+        time_runnable = null;
+		
+        // 转发报警信息给http_handler
+        Message message = new Message();
+        http_handler.sendMessage(message);
+
+        // 跳转到拨号报警页面
+        Intent intent = new Intent();
+        intent.setClass(PostActivity.this, PhoneActivity.class);
+        startActivity(intent);
+        //finish();
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;};&lt;/p&gt;
+&lt;p&gt;// 启动线程http_runnable，执行http报警
+Handler http_handler = new Handler() {
+@Override
+public void handleMessage(Message msg) {
+super.handleMessage(msg);
+new Thread(http_runnable).start();
+}
+};
+{% endcodeblock %}&lt;/p&gt;
+&lt;p&gt;(5). PhoneActivity：同样倒计时15秒，计时结束后自动拨号报警。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://utopizza.github.io/2015-01-20-%E9%A1%B9%E7%9B%AE-%E5%85%A8%E5%9B%BD%E9%AB%98%E6%A0%A1%E7%89%A9%E8%81%94%E7%BD%91%E5%BA%94%E7%94%A8%E5%88%9B%E6%96%B0%E5%A4%A7%E8%B5%9B/PhoneActivity.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;关键代码：&lt;/p&gt;
+&lt;p&gt;{% codeblock lang:java %}
+// 启动子线程开始计时
+new Thread(time_runnable).start();&lt;/p&gt;
+&lt;p&gt;// 计时结束，进行拨号报警
+time_handler = new Handler() {
+@Override
+public void handleMessage(Message msg) {
+if (IsPhone) {&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;        IsPhone = false;
+        time_runnable = null;
+		
+        // 拨打报警电话
+        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse(&amp;quot;tel:110&amp;quot;));
+        PhoneActivity.this.startActivity(intent);
+		
+        MyApplication.getInstance().exit();
+        //finish();
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;};
+{% endcodeblock %}&lt;/p&gt;
+&lt;p&gt;3、车载硬件模块&lt;/p&gt;
+&lt;p&gt;这部分是做硬件的同学实现的，安装在车辆的OBD接口上面，不断地给车辆发送查询命令，查询安全气囊的状态码，如果发现安全气囊打开了，那么断定发生了严重事故，立刻通过蓝牙模块发送报警信息给用户的手机，以启动后续的自动报警流程。由于实验条件和时间的限制，目前只实现了简单版。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://utopizza.github.io/2015-01-20-%E9%A1%B9%E7%9B%AE-%E5%85%A8%E5%9B%BD%E9%AB%98%E6%A0%A1%E7%89%A9%E8%81%94%E7%BD%91%E5%BA%94%E7%94%A8%E5%88%9B%E6%96%B0%E5%A4%A7%E8%B5%9B/%E8%BD%A6%E8%BD%BD%E7%A1%AC%E4%BB%B6%E6%A8%A1%E5%9D%97.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>华北电力大学基金会管理系统开发总结</title>
+      <link>https://utopizza.github.io/posts/projects/2014-06-20-%E9%A1%B9%E7%9B%AE-%E5%8D%8E%E5%8C%97%E7%94%B5%E5%8A%9B%E5%A4%A7%E5%AD%A6%E5%9F%BA%E9%87%91%E4%BC%9A%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E6%80%BB%E7%BB%93/</link>
+      <pubDate>Fri, 20 Jun 2014 16:31:00 +0000</pubDate>
+      
+      <guid>https://utopizza.github.io/posts/projects/2014-06-20-%E9%A1%B9%E7%9B%AE-%E5%8D%8E%E5%8C%97%E7%94%B5%E5%8A%9B%E5%A4%A7%E5%AD%A6%E5%9F%BA%E9%87%91%E4%BC%9A%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E6%80%BB%E7%BB%93/</guid>
+      <description>&lt;p&gt;一、数据库&lt;/p&gt;
+&lt;p&gt;1、数据库文档：建立数据库前，要根据需求把需求在脑海里实现一遍，这样才能避免缺少某些表或字段导致功能无法实现，切记要先建立好完整的数据库，写好完善的数据库文档（要注意的细节有：命名的规范，注意单词拼写是否正确，还有各表的关系（见3），要写好各表、各字段的功能解析和备注提醒等等，规范的文档包括——是否主键，字段名称，字段描述即中文注释，数据类型，长度，是否可空，约束即是否外键，默认值，备注），再开始搭建其他各层&lt;/p&gt;
+&lt;p&gt;2、数据库备份功能的实现：每个表都添加字段：IsDelete（bit）——是否删除，在删除的时候就把该字段赋值为“1”或者“True”，表明该行数据已经被删除，而不是真的删除&lt;/p&gt;
+&lt;p&gt;3、注意建表时各表的关系：一对多的关系应该建立子表，并使用外键；多对多的关系应该在两表之间建立一个关系表（RelationTable），把两者之间的关系保存到关系表中，并使用两个表的主键作为外键。若删除两者其中之一，必须切记把关系表中对应的那个关系也删除掉（也是给IsDelete字段赋值为1，而不是真的删除）&lt;/p&gt;
+&lt;p&gt;4、外键的使用：这个地方我自己也还是不大懂，什么时候用外键什么时候不用外键。目前，我默认为能用外键就应该添加外键约束，虽然可以通过后台在逻辑上去进行约束，但是我还是觉得在数据库使用外键约束更加可靠&lt;/p&gt;
+&lt;p&gt;5、多条件（不定项条件）搜索：采用字符串拼接技术，给每个搜索条件参数声明一个对应的字符串拼接变量，先在备注中写好当输入所有搜索条件参数时的SQL语句，然后将传入的每个条件参数判断是否为空字符串（条件如果不用，传空字符串到数据库存储过程，不要使用NULL，因为NULL代表未知量，容易造成条件判断时的逻辑混乱），若为空字符串，则对应的拼接变量赋值为空字符串；若条件参数不为空，就按照刚才写的SQL语句格式给对应的拼接变量赋值（把传入的条件参数拼进字符串时要注意使用Convert()函数进行强制转换，把各种数据类型转换成字符串格式，否则会报错）；最后，当每个条件都判断过了并且给对应的拼接变量都赋值了后，就可以把各个拼接变量按照在备注中写好的SQL语句拼接起来，然后使用EXEC(@SQL)执行最终拼接的SQL语句&lt;/p&gt;
+&lt;p&gt;6、临时表的使用：在存储过程中无法一次性选择出想要的表时，就需要建立一个临时表，把每次选择的表插入到临时表中（可能需要使用游标），最后再一次性把临时表选择出来。临时表的表名要以#开头，表明该表是临时表，它每次使用完毕后都会自动销毁，不会永久性存在数据库中&lt;/p&gt;
+&lt;p&gt;7、分页功能：这里说的是（AspNetPager+存储过程）的真分页。其中AspNetPager负责取出每次分页的开始和结束的索引并传给数据库，存储过程需要根据两个索引取出索引之间的那几行数据。所以，存储过程需要在取出数据前把表按要求排好顺序，并添加一个索引字段（为了按索引取出数据），这样有两个方案，一个是上面说的建立一个和原表一样的临时表，但是给它一个新的自增主键，让它自增长作为序号，这样把原表按要求的顺序插进临时表的时候，分页索引就自动建立好了，然后取数据的时候就把那两个传入的分页索引作为条件取出临时表的数据即可。另一个方案是使用数据库系统函数Row_Number()建立索引字段，即在子查询中使用该函数，并把本表按要求的顺序选择出来，给该表重命名，然后再按索引取数据：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;select * from 
+(select Row_Number() over(order by ...) as Row_Num , * from ...）as T
+where T.Row_Num between ...
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;8、关于存储过程：每个表至少四个存储过程：Select（按自己的主键ID取出数据），Insert（添加数据，有子表的话可能需要返回一个值，就是新插入的数据的ID，可使用output关键字实现），Update（更新，切记添加更新的where条件），Delete（删除，如果该数据库需要设计备份功能的话，就不执行删除，而是建立一个IsDelete（bit）字段，删除的时候update为1，也切记添加where条件）。有的时候还可能需要取出全部表的所有数据，Select_All（用于控件的数据绑定等等）&lt;/p&gt;
+&lt;p&gt;9、游标的使用：游标配合While（@@FETCH_STATUS=0）循环语句可以遍历表并逐行对数据进行各种操作。一般用于对含有子表（含外键）的表进行删除，修改等操作。首先本表的某行数据的ID放进游标，然后在子表中根据该ID找出对应的数据并进行删改等操作，然后再把本表的该行数据进行删改等操作，完了后再把本表下一行数据的ID放进游标，如此继续下去即可完成含子表的表的相关操作&lt;/p&gt;
+&lt;p&gt;10、数据库导出表到EXCEL：使用外部插件，比麻烦&lt;/p&gt;
+&lt;p&gt;二、Model层&lt;/p&gt;
+&lt;p&gt;1、该层用来将各个表的数据封装成对象进行数据传递，所以，表中的每个字段都是该表对应的类的属性。但是有时候需要经常用到一些额外的参数，例如分页时用的两个索引值，如果每次都作为额外参数进行传递会十分麻烦，所以可以把这些参数也作为该类的一个属性，使用时直接像其他参数一样封装到该类的对象中进行传递或调用，这样可以简便很多&lt;/p&gt;
+&lt;p&gt;2、为了封装参数时的灵活性，应该给每个类写一个空的构造函数，这样可以每次使用该类时可以调用不定个属性，而不是固定死每次封装对象都必须把所有属性赋值&lt;/p&gt;
+&lt;p&gt;3、一般来说，Model层中，每个类对应数据库中的每个表，每个类的属性的要和表中对应的字段数据类型要保持一致。但是由于从前台取参，到赋值给Model层对象，到再调用BLL层函数，到传参到数据库，这几个环节都需要对参数进行非空判断，而DateTime等数据类型的非空判断比较困难，所以在本项目中，我例外的把DateTime类型的属性改为String字符串类型（因为字符串在前台取值时不会为NULL，例如，如果用户在TextBox中什么都不填，那么在后台取值时，将取得一个空字符串&amp;rsquo;&#39;，而不是NULL）&lt;/p&gt;
+&lt;p&gt;三、Common层&lt;/p&gt;
+&lt;p&gt;1、该层主要是存放SqlHelper，FileHelper等通用的帮助类&lt;/p&gt;
+&lt;p&gt;2、其实后来发现，有很多东西都是公用的，比如一些方法，例如：输入的数据的非空检测，输入数据的最大长度检测和截取，防止SQL注入的字符串检测和处理，添加用户操作日志等等，这些可用抽出来的公用方法，最好是在这个common层写好，然后在其他层引用或者调用，这样维护起来十分的方面，不用在修改的时候逐个cs文件或者逐个页面的改&lt;/p&gt;
+&lt;p&gt;四、DAL层&lt;/p&gt;
+&lt;p&gt;1、该层主要负责存放针对于每个表进行的操作方法（和MODEL层一样，每个类对应一个表），如增删改取&lt;/p&gt;
+&lt;p&gt;2、这部分还需要下工夫，这部分的方法主要是把传过来的参数进行一定的格式化，然后调用SqlHelper把这些参数传给存储过程，并执行存储过程，最后接收存储过程返回的结果。如果要对返回的结果进行一些修改，比如数据的格式转换，应该使用List&amp;lt;&amp;gt;比较容易实行，如果只需要原封不动的接收一张表，应该使用Table比较方便&lt;/p&gt;
+&lt;p&gt;3、方法的大概步骤：存储过程名字sql，参数数组paras，调用SqlHelper方法ExecuteQuery()，接收返回结果集dt或者list&lt;/p&gt;
+&lt;p&gt;五、BLL层&lt;/p&gt;
+&lt;p&gt;1、对应调用DAL层的方法，供给UI层使用，这层封装的是业务逻辑&lt;/p&gt;
+&lt;p&gt;2、目前该项目的这层并没有体现出应有的业务逻辑，都是直接同名调用DAL层的方法就直接去UI绑数据了，我觉得真正的项目不应该是这样的&lt;/p&gt;
+&lt;p&gt;3、我认为，DAL层应该只存放针对某个Model（也就是某张表）的最基本的增删查改，不考虑UI层需要的数据格式。然后BLL层调用DAL层的方法，对数据进行整合，处理成可以直接绑定到UI的格式（如过滤，筛选，多个表的联合、匹配、业务逻辑上的计算，业务上的数据验证等等）&lt;/p&gt;
+&lt;p&gt;六、UI层&lt;/p&gt;
+&lt;p&gt;1、页面的大致分类：登录页，母版页，首页，项目添加页面，管理页面（显示项目查询结果列表，提供查改删等操作的入口），详细信息页面（单个项目的查看，修改），出错页&lt;/p&gt;
+&lt;p&gt;2、页面的浏览权限：项目一般把用户的权限进行划分，不同的用户的权限级别应该不同，比如普通用户只能查看项目，高级用户能够添加，修改，删除项目，而管理员能拥有所有权限，包括对用户的管理。因此，每个用户都应该有一个权限属性，在用户登录成功的时候，马上取出该用户的权限并保存到Session中。这样在该用户浏览页面的时候，每次跳转页面或者点击按钮，都可以根据Session里面的值来判断用户是否拥有该操作的权限。&lt;/p&gt;
+&lt;p&gt;3、页面分类：能提供不同权限的用户使用的页面，尽量分开成与权限对应的页面，比如管理页面，普通用户只能查看不能修改和删除，高级用户能查看修改和删除，最好的做法是供普通用户使用的做成一个页面，供高级用户使用的做成另一个页面，而不是做成一个页面然后根据用户的权限判断是否隐藏修改和删除按钮。虽然两个页面大部分是相同的，但是代码的逻辑十分清晰，也不会导致安全性问题的出现（普通用户进行越权入侵），并且维护起来而十分容易&lt;/p&gt;
+&lt;p&gt;4、登陆页：主要负责用户名和密码的验证，高级一点的会加个验证码。当然用户名和密码是保存在数据库中的，所以要调用一个存储过程，看该用户验证是否正确。正确的话，取出该用户的权限，保存到Session中，并根据权限的不同跳转到不同的首页&lt;/p&gt;
+&lt;p&gt;5、项目添加页面：主要负责添加项目，用户等等。该过程的实质是，在页面的控件获取用户输入的数据，进行一定的格式转换（根据需要而定），然后将这堆数据封装成Model层的对象，把该对象传给BLL层的方法，调用该方法把该对象包含的数据传到DAL层的存储过程，最终把该对象添加到数据库的表中。在用户输入添加信息时，一定要考虑该数据的最大值或者最大长度，否则是添加不进去数据库的。所以每获取一个控件的值，在封装到Model层的对象前，必须进行长度或者最大值的检验，如果超过最大值，则截断或者给用户报错&lt;/p&gt;
+&lt;p&gt;6、管理页（搜索页）：主要负责从一堆输入控件（textbox，dropdownlist，checkbox等等）中获取搜索条件并封装成Model层的对象，和以上类似，一直传到存储过程并返回搜索结果，然后将结果绑到该页面的repeter上，供用户查看，修改，或者删除。搜索页一般要求分页，我一般使用分页控件，配合存储过程，进行真分页，上面已经说过，这里不多说了。另外，绑定项目信息的时候，有的信息可能很多，所以要对其进行剪切（当然关键信息要保证其完整性）&lt;/p&gt;
+&lt;p&gt;7、详细信息页：主要负责提供当个项目的所有详细信息，因为每个项目绑到搜索结果上的信息毕竟有限，所以必须提供一个页面来展示单个项目的所有详细信息，供用户查看，或者修改（最好查看功能和修改功能分开两个页面）。该页面一般是在搜索结果列表中，用户点击某个项目后面的查看或者修改按钮时，取出该项目的ID，并根据该ID跳转过来的。加载该页面时，要取出该项目的所有信息，进过一定的格式转换后（根据需要），存放于对应的控件中，便于用户查看或者修改&lt;/p&gt;
+&lt;p&gt;8、出错页：就是出现故障时自动跳转的页面，主要是出于安全性的考虑&lt;/p&gt;
+&lt;p&gt;七、关于维护&lt;/p&gt;
+&lt;p&gt;1、维护是开发的重中之重，在维护过程中经常会出现许多大大小小的问题，我们必须站在用户的角度去开发这些软件，必须认真细心耐烦，只有这样才能把错误和漏洞降到最小，才能做一个好的软件&lt;/p&gt;
+&lt;p&gt;2、必须坚持一个原则就是每次写好一段代码（每个类，每个方法等），自己必须进行测试并调试值没有问题出现，尽量使代码简洁高效，并加上注释，让其他人能够轻易的看懂&lt;/p&gt;
+&lt;p&gt;3、在写页面的时候，必须考虑的事情有：输入的最大长度（最好写一个统一的函数来进行判断并截断），输入的数据格式（一般用try catch，即使前台用js进行判断了，后台也要进行判断，但是进行简单的错误抛出即可），输入的字符中是否含有危险的sql注入（写一个函数进行检测，并将原字符串的&amp;rsquo;替换成&amp;rdquo;）&lt;/p&gt;
+&lt;p&gt;4、在前台控件取值，封装成Model层的对象并传递到后台时，一定要注意对空的判断，特别是传递到多条件选择的存储过程的参数时，不能把NULL传进去，所有对每一个参数必须进行非空判断，到底是传空字符串，还是某个默认值，还是什么什么，这个是必须要注意的问题&lt;/p&gt;
+&lt;p&gt;5、关于修改：有时候客户需要修改需求，这时系统不得不做一些硬性修改。比如增加表里某个字段的长度。这时一定要细心，一定要从数据库改起，先改表的字段长度，然后是相关的增删改的存储过程中的那些临时表的字段的长度，然后是Model层，然后是DAL层的函数，接着是BLL层的函数，最后是最关键的UI层，要仔细检查每个用户输入控件的获取数据情况，修改截取函数的截取长度。另外还要留意一下控件的最大输入长度，是否需要修改&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

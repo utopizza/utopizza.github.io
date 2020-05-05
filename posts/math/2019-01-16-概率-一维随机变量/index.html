@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Language" content="en">
+
+    <meta name="author" content="Yusheng Wang">
+    <meta name="description" content="一、随机变量
+随机变量就是“其值随机会而定”的变量。随机变量主要分为两类，一类是离散型随机变量，它有若干个不同的可枚举的取值，这些取值以不同（或相同）的概率出现，例如扔一个骰子可能会出现的点数。另一类是连续型随机变量，它的全部可能取值不仅是无穷多的，并且还不能无遗漏地逐一排列，而是充满一个区间，例如称量一个物体重量的误差。
+二、离散型随机变量
+1、离散型随机变量的概率分布：设 $X$ 为离散型随机变量，其全部可能取值 ${a_1,a_2,\cdots}$。则
+$$p_i=P(X=a_i) \quad (i=1,2,\cdots)$$
+称为 $X$ 的概率分布。根据概率的定义，显然有
+$$p_i \geq 0$$
+$$p_1&#43;p_2&#43;\cdots=1$$
+用分布表的形式给出为
+$$ \begin{array}{c|lcr} \text{可能值} &amp; a_1 &amp; a_2 &amp; \cdots &amp; a_i \cdots \
+\hline \text{概率} &amp; p_1 &amp; p_2 &amp; \cdots &amp;p_i \cdots \end{array} $$
+2、离散型随机变量的分布函数：设 $X$ 为一离散型随机变量，则函数
+$$F(x)=P(X \leq x)=\sum_{{i|a_i \leq x}}p_i \quad (-\infty &lt; x &lt; &#43;\infty)$$
+称为 $X$ 的分布函数。实质上就是随机变量 $X$ 的部分可能取值的概率之和。分布函数有下面的一般性质：
+ 当 $x_1 &lt; x_2$ 时，有 $F(x_1) \leq F(x_2)$ 当 $x \to &#43;\infty$ 时，$F(x) \to 1$；当 $x \to -\infty$ 时，$F(x) \to 0$  3、常见的离散型随机变量">
+    <meta name="keywords" content="blog,developer,personal">
+
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="一维随机变量"/>
+<meta name="twitter:description" content="一、随机变量
+随机变量就是“其值随机会而定”的变量。随机变量主要分为两类，一类是离散型随机变量，它有若干个不同的可枚举的取值，这些取值以不同（或相同）的概率出现，例如扔一个骰子可能会出现的点数。另一类是连续型随机变量，它的全部可能取值不仅是无穷多的，并且还不能无遗漏地逐一排列，而是充满一个区间，例如称量一个物体重量的误差。
+二、离散型随机变量
+1、离散型随机变量的概率分布：设 $X$ 为离散型随机变量，其全部可能取值 ${a_1,a_2,\cdots}$。则
+$$p_i=P(X=a_i) \quad (i=1,2,\cdots)$$
+称为 $X$ 的概率分布。根据概率的定义，显然有
+$$p_i \geq 0$$
+$$p_1&#43;p_2&#43;\cdots=1$$
+用分布表的形式给出为
+$$ \begin{array}{c|lcr} \text{可能值} &amp; a_1 &amp; a_2 &amp; \cdots &amp; a_i \cdots \
+\hline \text{概率} &amp; p_1 &amp; p_2 &amp; \cdots &amp;p_i \cdots \end{array} $$
+2、离散型随机变量的分布函数：设 $X$ 为一离散型随机变量，则函数
+$$F(x)=P(X \leq x)=\sum_{{i|a_i \leq x}}p_i \quad (-\infty &lt; x &lt; &#43;\infty)$$
+称为 $X$ 的分布函数。实质上就是随机变量 $X$ 的部分可能取值的概率之和。分布函数有下面的一般性质：
+ 当 $x_1 &lt; x_2$ 时，有 $F(x_1) \leq F(x_2)$ 当 $x \to &#43;\infty$ 时，$F(x) \to 1$；当 $x \to -\infty$ 时，$F(x) \to 0$  3、常见的离散型随机变量"/>
+
+    <meta property="og:title" content="一维随机变量" />
+<meta property="og:description" content="一、随机变量
+随机变量就是“其值随机会而定”的变量。随机变量主要分为两类，一类是离散型随机变量，它有若干个不同的可枚举的取值，这些取值以不同（或相同）的概率出现，例如扔一个骰子可能会出现的点数。另一类是连续型随机变量，它的全部可能取值不仅是无穷多的，并且还不能无遗漏地逐一排列，而是充满一个区间，例如称量一个物体重量的误差。
+二、离散型随机变量
+1、离散型随机变量的概率分布：设 $X$ 为离散型随机变量，其全部可能取值 ${a_1,a_2,\cdots}$。则
+$$p_i=P(X=a_i) \quad (i=1,2,\cdots)$$
+称为 $X$ 的概率分布。根据概率的定义，显然有
+$$p_i \geq 0$$
+$$p_1&#43;p_2&#43;\cdots=1$$
+用分布表的形式给出为
+$$ \begin{array}{c|lcr} \text{可能值} &amp; a_1 &amp; a_2 &amp; \cdots &amp; a_i \cdots \
+\hline \text{概率} &amp; p_1 &amp; p_2 &amp; \cdots &amp;p_i \cdots \end{array} $$
+2、离散型随机变量的分布函数：设 $X$ 为一离散型随机变量，则函数
+$$F(x)=P(X \leq x)=\sum_{{i|a_i \leq x}}p_i \quad (-\infty &lt; x &lt; &#43;\infty)$$
+称为 $X$ 的分布函数。实质上就是随机变量 $X$ 的部分可能取值的概率之和。分布函数有下面的一般性质：
+ 当 $x_1 &lt; x_2$ 时，有 $F(x_1) \leq F(x_2)$ 当 $x \to &#43;\infty$ 时，$F(x) \to 1$；当 $x \to -\infty$ 时，$F(x) \to 0$  3、常见的离散型随机变量" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://utopizza.github.io/posts/math/2019-01-16-%E6%A6%82%E7%8E%87-%E4%B8%80%E7%BB%B4%E9%9A%8F%E6%9C%BA%E5%8F%98%E9%87%8F/" />
+<meta property="article:published_time" content="2019-01-16T00:00:00+00:00" />
+<meta property="article:modified_time" content="2019-01-16T00:00:00+00:00" />
+
+
+    
+      <base href="https://utopizza.github.io/posts/math/2019-01-16-%E6%A6%82%E7%8E%87-%E4%B8%80%E7%BB%B4%E9%9A%8F%E6%9C%BA%E5%8F%98%E9%87%8F/">
+    
+    <title>
+  一维随机变量 · Utopizza
+</title>
+
+    
+      <link rel="canonical" href="https://utopizza.github.io/posts/math/2019-01-16-%E6%A6%82%E7%8E%87-%E4%B8%80%E7%BB%B4%E9%9A%8F%E6%9C%BA%E5%8F%98%E9%87%8F/">
+    
+
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700%7CMerriweather:300,700%7CSource+Code+Pro:400,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.13.0/css/all.css" integrity="sha384-Bfad6CLCknfcloXFOyFnlgtENryhrpZCe29RTifKEixXQZ38WheV+i/6YWSzkz3V" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" integrity="sha256-l85OmPOjvil/SOvVt3HnSSjzF1TUMyT9eV0c2BzEGzU=" crossorigin="anonymous" />
+
+    
+      
+      
+      <link rel="stylesheet" href="https://utopizza.github.io/css/coder.min.a4f332213a21ce8eb521670c614470c58923aaaf385e2a73982c31dd7642decb.css" integrity="sha256-pPMyITohzo61IWcMYURwxYkjqq84XipzmCwx3XZC3ss=" crossorigin="anonymous" media="screen" />
+    
+
+    
+
+    
+      
+        
+        
+        <link rel="stylesheet" href="https://utopizza.github.io/css/coder-dark.min.e78e80fc3a585a4d1c8fc7f58623b6ff852411e38431a9cd1792877ecaa160f6.css" integrity="sha256-546A/DpYWk0cj8f1hiO2/4UkEeOEManNF5KHfsqhYPY=" crossorigin="anonymous" media="screen" />
+      
+    
+
+    
+
+    
+
+    <link rel="icon" type="image/png" href="https://utopizza.github.io/images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="https://utopizza.github.io/images/favicon-16x16.png" sizes="16x16">
+
+    <meta name="generator" content="Hugo 0.69.2" />
+  </head>
+
+  
+  
+    
+  
+  <body class="colorscheme-auto">
+    <main class="wrapper">
+      <nav class="navigation">
+  <section class="container">
+    <a class="navigation-title" href="https://utopizza.github.io/">
+      Utopizza
+    </a>
+    
+    <input type="checkbox" id="menu-toggle" />
+    <label class="menu-button float-right" for="menu-toggle"><i class="fas fa-bars"></i></label>
+    <ul class="navigation-list">
+      
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/about/">About</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/posts/">Blog</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/projects/">Projects</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/contact/">Contact me</a>
+          </li>
+        
+      
+      
+    </ul>
+    
+  </section>
+</nav>
+
+
+      <div class="content">
+        
+  <section class="container post">
+    <article>
+      <header>
+        <div class="post-title">
+          <h1 class="title">一维随机变量</h1>
+        </div>
+        <div class="post-meta">
+          <div class="date">
+            <span class="posted-on">
+              <i class="fas fa-calendar"></i>
+              <time datetime='2019-01-16T00:00:00Z'>
+                January 16, 2019
+              </time>
+            </span>
+            <span class="reading-time">
+              <i class="fas fa-clock"></i>
+              2-minute read
+            </span>
+          </div>
+          <div class="categories">
+  <i class="fas fa-folder"></i>
+    <a href="https://utopizza.github.io/categories/math/">Math</a></div>
+
+          
+        </div>
+      </header>
+
+      <div>
+        
+        <p>一、随机变量</p>
+<p>随机变量就是“其值随机会而定”的变量。随机变量主要分为两类，一类是离散型随机变量，它有若干个不同的可枚举的取值，这些取值以不同（或相同）的概率出现，例如扔一个骰子可能会出现的点数。另一类是连续型随机变量，它的全部可能取值不仅是无穷多的，并且还不能无遗漏地逐一排列，而是充满一个区间，例如称量一个物体重量的误差。</p>
+<p>二、离散型随机变量</p>
+<p>1、离散型随机变量的概率分布：设 $X$ 为离散型随机变量，其全部可能取值 ${a_1,a_2,\cdots}$。则</p>
+<p>$$p_i=P(X=a_i) \quad (i=1,2,\cdots)$$</p>
+<p>称为 $X$ 的概率分布。根据概率的定义，显然有</p>
+<p>$$p_i \geq 0$$</p>
+<p>$$p_1+p_2+\cdots=1$$</p>
+<p>用分布表的形式给出为</p>
+<p>$$
+\begin{array}{c|lcr}
+\text{可能值} &amp; a_1 &amp; a_2 &amp; \cdots &amp; a_i \cdots \<br>
+\hline
+\text{概率} &amp; p_1 &amp; p_2 &amp; \cdots &amp;p_i \cdots
+\end{array}
+$$</p>
+<p>2、离散型随机变量的分布函数：设 $X$ 为一离散型随机变量，则函数</p>
+<p>$$F(x)=P(X \leq x)=\sum_{{i|a_i \leq x}}p_i \quad (-\infty &lt; x &lt; +\infty)$$</p>
+<p>称为 $X$ 的分布函数。实质上就是随机变量 $X$ 的部分可能取值的概率之和。分布函数有下面的一般性质：</p>
+<ul>
+<li>当 $x_1 &lt; x_2$ 时，有 $F(x_1) \leq F(x_2)$</li>
+<li>当 $x \to +\infty$ 时，$F(x) \to 1$；当 $x \to -\infty$ 时，$F(x) \to 0$</li>
+</ul>
+<p>3、常见的离散型随机变量</p>
+<p>(1)、二项分布：设在某一个试验中，有且仅有两种可能结果：事件 $A$ 发生，或者 $A$ 不发生。其中 $A$ 发生的概率记为 $p$，则 $A$ 不发生的概率显然为 $1-p$。现把这个试验独立地重复 $n$ 次，记 $A$ 发生的次数为 $X$ ，则显然 $X$ 的可能取值为 $0,1,2,\cdots,n$。显然这是一个组合问题，$n$ 个试验结果中设有 $i$ 次为 $A$，那么必定 $n-i$ 次为 $\bar{A}$。因此 $X=i$ 的概率即为从 $n$ 个试验中取 $i$ 个 $p$，$n-i$ 个 $1-p$，即</p>
+<p>$$P(X=i)=C_{n}^{i} p^i (1-p)^{n-i} \quad (i=0,1,\cdots,n)$$</p>
+<p>此时 $X$ 所遵从的概率分布称为二项分布，记为 $B(n,p)$。而 $X$ 服从二项分布记为 $X \sim B(n,p)$</p>
+<p>(2)、泊松分布：若随机变量 $X$ 的可能取值为 $0,1,2,\cdots$，且概率分布为</p>
+<p>$$P(X=i)=\frac{e^{-\lambda}\lambda^i}{i!}$$</p>
+<p>则称 $X$ 服从泊松分布，记为 $X \sim P(\lambda)$。此处，$\lambda &gt; 0$ 是某一常数。该分布是最重要的离散型分布之一，它多出现在当 $X$ 表示某时间或空间内出现的事件个数或者事件的频率分布。该分布可以看做是二项分布的极限形式，即若取 $\lambda$ 为二项分布 $B(n,p)$ 的期望，即 $\lambda=pn$，则当二项分布的试验次数 $n \to +\infty$ 时，</p>
+<p>$$
+\begin{aligned}
+P(X=i) &amp;=C_{n}^{i} (\frac{\lambda}{n})^i (1-\frac{\lambda}{n})^{n-i}\<br>
+&amp;=\frac{C_n^i}{n^i} \cdot \lambda^i \cdot (1-\frac{\lambda}{n})^n \<br>
+&amp;=\frac{1}{i!} \cdot \lambda^i \cdot e^{-\lambda} \<br>
+&amp;=\frac{e^{-\lambda}\lambda^i}{i!}
+\end{aligned}
+$$</p>
+<p>在实际应用中， $\lambda$ 往往就取随机变量的期望，例如某用户在某段时间内重复购买某件商品的次数的期望，例如 2 次。确定了 $\lambda$ 后，该用户重复购买商品次数的泊松分布模型就可以完全确定，从而可以计算用户在同样的时间段内重复购买 0 次、1 次、3 次、5次等次数的概率。</p>
+<p>三、连续型随机变量</p>
+<p>1、连续型随机变量的概率分布：对于连续型随机变量的概率分布，不能用像离散型随机变量那种方法去描述，因为连续型变量的取值是充满一个区间的，无法一一枚举，并且要研究连续型变量恰好取某个精确的值意义也不大，例如“射击靶面恰好精准命中某一个点”是几乎不可能也毫无意义的事，一般认为这样概率为 0。对于连续型随机变量，我们研究的要点是“该变量的取值落在某个区间内的概率多大”，而不是“该变量的取值恰好等于某个无限精确的值的概率有多大”。</p>
+<p>2、连续型随机变量的分布函数：设 $X$ 为一连续型随机变量，则函数</p>
+<p>$$F(x)=P(X \leq x)=\int_{-\infty}^{x} f(t) dt$$</p>
+<p>称为 $X$ 的分布函数。其中 $f(x)=F’(x)$ 称为 $X$ 的概率密度函数。引用陈希孺教授《概率论与数理统计》中对“概率密度”的解释：</p>
+<blockquote>
+<p>“概率密度”这个名词的来由可以解释如下：取定一个点 $x$，则按分布函数的定义，事件 ${x &lt; X \leq  x+\Delta x}$ 的概率应为 $F(x+\Delta x)-F(x)$，所以比值 $\frac{F(x+\Delta x)-F(x)}{\Delta x}$ 可解释为在 $x$ 点附近 $\Delta x$ 长度的区间内，单位长度占有的概率。当 $\Delta x \to 0$ 时，这个比值的极限就是 $F&rsquo;(x)=f(x)$，也就是在 $x$ 点处无穷小区段内单位长度的概率，它反映了概率在 $x$ 点处的“密集程度”。可以设想一条极细的无穷长的金属杆，总质量为 1，概率密度相当于杆上各点的质量密度。</p>
+</blockquote>
+<p>连续型随机变量 $X$ 的概率密度函数 $f(x)$ 有以下基本性质：</p>
+<ul>
+<li>$f(x) \geq 0$</li>
+<li>$\int_{-\infty}^{+\infty} f(x)dx=1$</li>
+<li>对任何常数 $a &lt; b$，有 $P(a \leq X \leq b)=F(b)-F(a)=\int_{a}^{b}f(x)dx$</li>
+</ul>
+<p>3、常见的连续型随机变量：</p>
+<p>(1)、正态分布：若随机变量 $X$ 具有概率密度函数</p>
+<p>$$f(x)=\frac{1}{\sqrt{2\pi}\delta}e^{-\frac{(x-\mu)^2}{2\delta^2}} \quad (-\infty &lt; x &lt; +\infty)$$</p>
+<p>则称 $X$ 为正态随机变量，记为 $X \sim N(\mu, \delta)$。该密度函数没有显式的原函数，也即正态分布没有显式的分布函数。但是正态分布有一个重要的性质，就是任何正态分布可以转化成标准正态分布 $N(0,1)$，然后通过查标准正态分布概率表来计算原正态分布的概率。即</p>
+<p>$$\text{ 若 } X \sim N(\mu, \delta), \text{ 则 } Y=\frac{X-\mu}{\delta} \sim N(0,1)$$</p>
+<p>正态分布具有非常重要的意义，它的图形是关于 $x=\mu$ 对称，并在该点取得最大概率值，然后向两端逐渐降低。自然界大部分的数据都是呈现这样的分布：接近均值的概率大，接近极端值的概率小。例如一个学校的身高分布、随机采样得到的样本的误差分布等等。而更重要的是，根据中心极限定理，当随机变量的数量趋向无穷的时候，它们的和的极限分布就是正态分布。另外多维的高斯分布也是对各种真实世界中的事件进行建模的良好工具。</p>
+<p>(2)、指数分布：若随机变量 $X$ 具有概率密度函数</p>
+<p>$$f(x)=
+\begin{cases}
+\lambda e^{-\lambda x}, &amp; x&gt;0 \<br>
+0, &amp; x \leq 0
+\end{cases}
+$$</p>
+<p>则称 $X$ 服从指数分布，其中 $\lambda&gt;0$ 为参数。利用微积分知识易求得其分布函数为</p>
+<p>$$F(x)=\int_{-\infty}^{x}f(t)dt=
+\begin{cases}
+1-e^{-\lambda x}, &amp; x &gt; 0 \<br>
+0, &amp; x \leq 0
+\end{cases}
+$$</p>
+<p>指数分布最常见的一个场合就是寿命分布，寿命越长概率越小。</p>
+<p>(3)、均匀分布：若随机变量 $X$ 具有概率密度函数</p>
+<p>$$f(x)=
+\begin{cases}
+\frac{1}{b-a}, &amp; a\leq x\leq b \<br>
+0, &amp; \text{otherwise}
+\end{cases}
+$$</p>
+<p>则称 $X$ 服从区间 $[a,b]$ 上的均匀分布，记为 $X \sim R(a,b)$。这里 $a,b$ 都是常数且 $-\infty &lt; a &lt; b &lt; +\infty$。易求其分布函数为</p>
+<p>$$F(x)=
+\begin{cases}
+0, &amp; x \leq a \<br>
+\frac{x-a}{b-a}, &amp; a \leq x \leq b \<br>
+1, &amp; x \geq b
+\end{cases}
+$$</p>
+<p>因为均匀分布的特点是区间中各点的概率密度都是相同的，因此一般用来产生均匀的随机数。</p>
+
+      </div>
+
+
+      <footer>
+        
+
+
+        
+        
+        
+      </footer>
+    </article>
+
+    
+  </section>
+
+      </div>
+
+      <script type="text/javascript"
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+    </main>
+
+    
+
+    
+
+    <script>
+(function(f, a, t, h, o, m){
+	a[h]=a[h]||function(){
+		(a[h].q=a[h].q||[]).push(arguments)
+	};
+	o=f.createElement('script'),
+	m=f.getElementsByTagName('script')[0];
+	o.async=1; o.src=t; o.id='fathom-script';
+	m.parentNode.insertBefore(o,m)
+})(document, window, '//analytics.example.com/tracker.js', 'fathom');
+fathom('set', 'siteId', 'ABCDE');
+fathom('trackPageview');
+</script>
+
+
+  </body>
+
+</html>

@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Language" content="en">
+
+    <meta name="author" content="Yusheng Wang">
+    <meta name="description" content="上一次写阶段总结是2019年4月30日，距现在已经过去了5、6、7、8四个月。需要总结下这四个月以来的工作，以及后续的计划。
+一、Backward
+2019年5月 毕业答辩日期安排在5月26日，因此这个月基本全部精力时间都花在论文上。论文主体在4月份基本已经写完了，5月份基本都是在补一些报告书如开题报告、中期检查报告等等。月初和舍友去木兰天池玩了一天，山上挺凉快的。中间抽时间在宿舍看了一部电视剧《我们离恶有多远》，相当震撼，因为剧中探讨的问题十分有深度。剧情比较虐心，让人看得都郁闷了很久。就这样刷刷剧、写写文档，就浑浑噩噩到了答辩日期。答辩地点就在实验室旁边的一个大会议室，但是评委老师一个都没见过，刚开始还是有点紧张的。由于准备还算较充分，流畅地讲完了PPT，评委老师也没问什么很深入的问题，就问了我在汉口那边呆了多久，什么时候回来的。我说3月回来的，老师还表扬了一波我说这么短时间能弄出这么多公式理论，还不错。。大概就是就这样水过了硕士答辩。硕士阶段的最后一块大石终于落地。答辩完了基本就知道通过了。回去的路上，感觉整个世界都不一样，虽然是下午四点多，但是感觉阳光特别特别的明媚。
+2019年6月 答辩完了之后，回去就是整理各种报告、文档，然后去打印店打印封装论文。然后就是各种浪了，约几个小伙伴一起去游泳、密室逃脱、攀岩、射箭、桌游、吃吃喝喝。月初端午节百度寄来了一箱很粽子，16号的时候学校还举办了毕业晚餐会。18号晚上老爸老妈到汉，带他们吃了西餐，然后安顿好酒店。19号带他们逛了武大、省博、楚河汉街。20号上午是毕业典礼，下午弄离校手续，旁晚去拍了毕业照。21号主要是收拾宿舍东西，寄东西，下午带爸妈去逛光谷、拍照。晚上和舍友聚餐。22号早上等爸妈过来吃了早饭，就跟舍友告别，滴滴去高铁站了。
+2019年7月、8月、9月 系统里定的7月10号报到入职，因此在家里只呆了不到两周就上深圳了。刚入职就遇到团建——东西冲穿越，不知道是暴晒的原因还是过度运动的原因，回来竟然发烧、鼻炎复发。先后看了两次医生，做了鼻镜检查，浪费了不少时间，不过还好没事。从7月10号入职到现在，这两个月的主要工作任务就是看文档和内部的wiki，熟悉团队的产品。还有一些小issue需要写一些简单的代码，难度不大。另外还有一些运维和运营的小任务，就是平时要留意下一些服务的监控任务的报警，根据情况处理下就行，也不太难。总的来说目前主要是以熟悉和了解为主，辅以一些小issue开发任务，还有各种新人培训课程。公司也配备了导师，感觉导师的指导还是非常到位的，尤其一开始就指出要从校园心态过渡到职场心态，我一开始听了没什么感觉，但是到了后来就确实体会到了，确实比较难一下子调整过来。
+二、forward
+最近想了下，工作之余应该有自己的学习计划和安排，否则会浪费很多时间。因此制作个最近的一些学习小目标吧：
+ 代码规范：这是工程师的最基本素养（python已看，java未看） 多看代码，总结设计模式：同为最基本素养之一 学习大数据组件：hadoop，spark，storm，kafka，zookeeper，flume，thrift，protobuf 学习虚拟化组件：docker，k8s 学会使用上述组件之后，进行源码学习，尝试在git中进行contribute，争取被accept leetcode要重新开始刷，每天至少一道到两道 学有余力的话，学习新语言：mapreduce，storm topology，golang 英语单词落下一段时间了，要重启百词斩和听力练习了 关注下hk的实验室和团队，还有research方向 坚持锻炼身体  目前只想到这么些。目前学习的方式要转变，万事先看官网，快速了解产品的背景、解决的问题、基本框架、基本使用方法，然后下载到本地安装，跑一些小demo。另外一些零碎时间也应该利用起来，背单词或者思考算法题都行。">
+    <meta name="keywords" content="blog,developer,personal">
+
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="阶段总结(8)"/>
+<meta name="twitter:description" content="上一次写阶段总结是2019年4月30日，距现在已经过去了5、6、7、8四个月。需要总结下这四个月以来的工作，以及后续的计划。
+一、Backward
+2019年5月 毕业答辩日期安排在5月26日，因此这个月基本全部精力时间都花在论文上。论文主体在4月份基本已经写完了，5月份基本都是在补一些报告书如开题报告、中期检查报告等等。月初和舍友去木兰天池玩了一天，山上挺凉快的。中间抽时间在宿舍看了一部电视剧《我们离恶有多远》，相当震撼，因为剧中探讨的问题十分有深度。剧情比较虐心，让人看得都郁闷了很久。就这样刷刷剧、写写文档，就浑浑噩噩到了答辩日期。答辩地点就在实验室旁边的一个大会议室，但是评委老师一个都没见过，刚开始还是有点紧张的。由于准备还算较充分，流畅地讲完了PPT，评委老师也没问什么很深入的问题，就问了我在汉口那边呆了多久，什么时候回来的。我说3月回来的，老师还表扬了一波我说这么短时间能弄出这么多公式理论，还不错。。大概就是就这样水过了硕士答辩。硕士阶段的最后一块大石终于落地。答辩完了基本就知道通过了。回去的路上，感觉整个世界都不一样，虽然是下午四点多，但是感觉阳光特别特别的明媚。
+2019年6月 答辩完了之后，回去就是整理各种报告、文档，然后去打印店打印封装论文。然后就是各种浪了，约几个小伙伴一起去游泳、密室逃脱、攀岩、射箭、桌游、吃吃喝喝。月初端午节百度寄来了一箱很粽子，16号的时候学校还举办了毕业晚餐会。18号晚上老爸老妈到汉，带他们吃了西餐，然后安顿好酒店。19号带他们逛了武大、省博、楚河汉街。20号上午是毕业典礼，下午弄离校手续，旁晚去拍了毕业照。21号主要是收拾宿舍东西，寄东西，下午带爸妈去逛光谷、拍照。晚上和舍友聚餐。22号早上等爸妈过来吃了早饭，就跟舍友告别，滴滴去高铁站了。
+2019年7月、8月、9月 系统里定的7月10号报到入职，因此在家里只呆了不到两周就上深圳了。刚入职就遇到团建——东西冲穿越，不知道是暴晒的原因还是过度运动的原因，回来竟然发烧、鼻炎复发。先后看了两次医生，做了鼻镜检查，浪费了不少时间，不过还好没事。从7月10号入职到现在，这两个月的主要工作任务就是看文档和内部的wiki，熟悉团队的产品。还有一些小issue需要写一些简单的代码，难度不大。另外还有一些运维和运营的小任务，就是平时要留意下一些服务的监控任务的报警，根据情况处理下就行，也不太难。总的来说目前主要是以熟悉和了解为主，辅以一些小issue开发任务，还有各种新人培训课程。公司也配备了导师，感觉导师的指导还是非常到位的，尤其一开始就指出要从校园心态过渡到职场心态，我一开始听了没什么感觉，但是到了后来就确实体会到了，确实比较难一下子调整过来。
+二、forward
+最近想了下，工作之余应该有自己的学习计划和安排，否则会浪费很多时间。因此制作个最近的一些学习小目标吧：
+ 代码规范：这是工程师的最基本素养（python已看，java未看） 多看代码，总结设计模式：同为最基本素养之一 学习大数据组件：hadoop，spark，storm，kafka，zookeeper，flume，thrift，protobuf 学习虚拟化组件：docker，k8s 学会使用上述组件之后，进行源码学习，尝试在git中进行contribute，争取被accept leetcode要重新开始刷，每天至少一道到两道 学有余力的话，学习新语言：mapreduce，storm topology，golang 英语单词落下一段时间了，要重启百词斩和听力练习了 关注下hk的实验室和团队，还有research方向 坚持锻炼身体  目前只想到这么些。目前学习的方式要转变，万事先看官网，快速了解产品的背景、解决的问题、基本框架、基本使用方法，然后下载到本地安装，跑一些小demo。另外一些零碎时间也应该利用起来，背单词或者思考算法题都行。"/>
+
+    <meta property="og:title" content="阶段总结(8)" />
+<meta property="og:description" content="上一次写阶段总结是2019年4月30日，距现在已经过去了5、6、7、8四个月。需要总结下这四个月以来的工作，以及后续的计划。
+一、Backward
+2019年5月 毕业答辩日期安排在5月26日，因此这个月基本全部精力时间都花在论文上。论文主体在4月份基本已经写完了，5月份基本都是在补一些报告书如开题报告、中期检查报告等等。月初和舍友去木兰天池玩了一天，山上挺凉快的。中间抽时间在宿舍看了一部电视剧《我们离恶有多远》，相当震撼，因为剧中探讨的问题十分有深度。剧情比较虐心，让人看得都郁闷了很久。就这样刷刷剧、写写文档，就浑浑噩噩到了答辩日期。答辩地点就在实验室旁边的一个大会议室，但是评委老师一个都没见过，刚开始还是有点紧张的。由于准备还算较充分，流畅地讲完了PPT，评委老师也没问什么很深入的问题，就问了我在汉口那边呆了多久，什么时候回来的。我说3月回来的，老师还表扬了一波我说这么短时间能弄出这么多公式理论，还不错。。大概就是就这样水过了硕士答辩。硕士阶段的最后一块大石终于落地。答辩完了基本就知道通过了。回去的路上，感觉整个世界都不一样，虽然是下午四点多，但是感觉阳光特别特别的明媚。
+2019年6月 答辩完了之后，回去就是整理各种报告、文档，然后去打印店打印封装论文。然后就是各种浪了，约几个小伙伴一起去游泳、密室逃脱、攀岩、射箭、桌游、吃吃喝喝。月初端午节百度寄来了一箱很粽子，16号的时候学校还举办了毕业晚餐会。18号晚上老爸老妈到汉，带他们吃了西餐，然后安顿好酒店。19号带他们逛了武大、省博、楚河汉街。20号上午是毕业典礼，下午弄离校手续，旁晚去拍了毕业照。21号主要是收拾宿舍东西，寄东西，下午带爸妈去逛光谷、拍照。晚上和舍友聚餐。22号早上等爸妈过来吃了早饭，就跟舍友告别，滴滴去高铁站了。
+2019年7月、8月、9月 系统里定的7月10号报到入职，因此在家里只呆了不到两周就上深圳了。刚入职就遇到团建——东西冲穿越，不知道是暴晒的原因还是过度运动的原因，回来竟然发烧、鼻炎复发。先后看了两次医生，做了鼻镜检查，浪费了不少时间，不过还好没事。从7月10号入职到现在，这两个月的主要工作任务就是看文档和内部的wiki，熟悉团队的产品。还有一些小issue需要写一些简单的代码，难度不大。另外还有一些运维和运营的小任务，就是平时要留意下一些服务的监控任务的报警，根据情况处理下就行，也不太难。总的来说目前主要是以熟悉和了解为主，辅以一些小issue开发任务，还有各种新人培训课程。公司也配备了导师，感觉导师的指导还是非常到位的，尤其一开始就指出要从校园心态过渡到职场心态，我一开始听了没什么感觉，但是到了后来就确实体会到了，确实比较难一下子调整过来。
+二、forward
+最近想了下，工作之余应该有自己的学习计划和安排，否则会浪费很多时间。因此制作个最近的一些学习小目标吧：
+ 代码规范：这是工程师的最基本素养（python已看，java未看） 多看代码，总结设计模式：同为最基本素养之一 学习大数据组件：hadoop，spark，storm，kafka，zookeeper，flume，thrift，protobuf 学习虚拟化组件：docker，k8s 学会使用上述组件之后，进行源码学习，尝试在git中进行contribute，争取被accept leetcode要重新开始刷，每天至少一道到两道 学有余力的话，学习新语言：mapreduce，storm topology，golang 英语单词落下一段时间了，要重启百词斩和听力练习了 关注下hk的实验室和团队，还有research方向 坚持锻炼身体  目前只想到这么些。目前学习的方式要转变，万事先看官网，快速了解产品的背景、解决的问题、基本框架、基本使用方法，然后下载到本地安装，跑一些小demo。另外一些零碎时间也应该利用起来，背单词或者思考算法题都行。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://utopizza.github.io/posts/summary/2019-09-16-%E6%80%BB%E7%BB%93-%E9%98%B6%E6%AE%B5%E6%80%BB%E7%BB%938/" />
+<meta property="article:published_time" content="2019-09-16T00:00:00+00:00" />
+<meta property="article:modified_time" content="2019-09-16T00:00:00+00:00" />
+
+
+    
+      <base href="https://utopizza.github.io/posts/summary/2019-09-16-%E6%80%BB%E7%BB%93-%E9%98%B6%E6%AE%B5%E6%80%BB%E7%BB%938/">
+    
+    <title>
+  阶段总结(8) · Utopizza
+</title>
+
+    
+      <link rel="canonical" href="https://utopizza.github.io/posts/summary/2019-09-16-%E6%80%BB%E7%BB%93-%E9%98%B6%E6%AE%B5%E6%80%BB%E7%BB%938/">
+    
+
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700%7CMerriweather:300,700%7CSource+Code+Pro:400,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.13.0/css/all.css" integrity="sha384-Bfad6CLCknfcloXFOyFnlgtENryhrpZCe29RTifKEixXQZ38WheV+i/6YWSzkz3V" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" integrity="sha256-l85OmPOjvil/SOvVt3HnSSjzF1TUMyT9eV0c2BzEGzU=" crossorigin="anonymous" />
+
+    
+      
+      
+      <link rel="stylesheet" href="https://utopizza.github.io/css/coder.min.a4f332213a21ce8eb521670c614470c58923aaaf385e2a73982c31dd7642decb.css" integrity="sha256-pPMyITohzo61IWcMYURwxYkjqq84XipzmCwx3XZC3ss=" crossorigin="anonymous" media="screen" />
+    
+
+    
+
+    
+      
+        
+        
+        <link rel="stylesheet" href="https://utopizza.github.io/css/coder-dark.min.e78e80fc3a585a4d1c8fc7f58623b6ff852411e38431a9cd1792877ecaa160f6.css" integrity="sha256-546A/DpYWk0cj8f1hiO2/4UkEeOEManNF5KHfsqhYPY=" crossorigin="anonymous" media="screen" />
+      
+    
+
+    
+
+    
+
+    <link rel="icon" type="image/png" href="https://utopizza.github.io/images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="https://utopizza.github.io/images/favicon-16x16.png" sizes="16x16">
+
+    <meta name="generator" content="Hugo 0.69.2" />
+  </head>
+
+  
+  
+    
+  
+  <body class="colorscheme-auto">
+    <main class="wrapper">
+      <nav class="navigation">
+  <section class="container">
+    <a class="navigation-title" href="https://utopizza.github.io/">
+      Utopizza
+    </a>
+    
+    <input type="checkbox" id="menu-toggle" />
+    <label class="menu-button float-right" for="menu-toggle"><i class="fas fa-bars"></i></label>
+    <ul class="navigation-list">
+      
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/about/">About</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/posts/">Blog</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/projects/">Projects</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/contact/">Contact me</a>
+          </li>
+        
+      
+      
+    </ul>
+    
+  </section>
+</nav>
+
+
+      <div class="content">
+        
+  <section class="container post">
+    <article>
+      <header>
+        <div class="post-title">
+          <h1 class="title">阶段总结(8)</h1>
+        </div>
+        <div class="post-meta">
+          <div class="date">
+            <span class="posted-on">
+              <i class="fas fa-calendar"></i>
+              <time datetime='2019-09-16T00:00:00Z'>
+                September 16, 2019
+              </time>
+            </span>
+            <span class="reading-time">
+              <i class="fas fa-clock"></i>
+              1-minute read
+            </span>
+          </div>
+          <div class="categories">
+  <i class="fas fa-folder"></i>
+    <a href="https://utopizza.github.io/categories/summary/">Summary</a></div>
+
+          
+        </div>
+      </header>
+
+      <div>
+        
+        <p>上一次写阶段总结是2019年4月30日，距现在已经过去了5、6、7、8四个月。需要总结下这四个月以来的工作，以及后续的计划。</p>
+<p>一、Backward</p>
+<p>2019年5月
+毕业答辩日期安排在5月26日，因此这个月基本全部精力时间都花在论文上。论文主体在4月份基本已经写完了，5月份基本都是在补一些报告书如开题报告、中期检查报告等等。月初和舍友去木兰天池玩了一天，山上挺凉快的。中间抽时间在宿舍看了一部电视剧《我们离恶有多远》，相当震撼，因为剧中探讨的问题十分有深度。剧情比较虐心，让人看得都郁闷了很久。就这样刷刷剧、写写文档，就浑浑噩噩到了答辩日期。答辩地点就在实验室旁边的一个大会议室，但是评委老师一个都没见过，刚开始还是有点紧张的。由于准备还算较充分，流畅地讲完了PPT，评委老师也没问什么很深入的问题，就问了我在汉口那边呆了多久，什么时候回来的。我说3月回来的，老师还表扬了一波我说这么短时间能弄出这么多公式理论，还不错。。大概就是就这样水过了硕士答辩。硕士阶段的最后一块大石终于落地。答辩完了基本就知道通过了。回去的路上，感觉整个世界都不一样，虽然是下午四点多，但是感觉阳光特别特别的明媚。</p>
+<p>2019年6月
+答辩完了之后，回去就是整理各种报告、文档，然后去打印店打印封装论文。然后就是各种浪了，约几个小伙伴一起去游泳、密室逃脱、攀岩、射箭、桌游、吃吃喝喝。月初端午节百度寄来了一箱很粽子，16号的时候学校还举办了毕业晚餐会。18号晚上老爸老妈到汉，带他们吃了西餐，然后安顿好酒店。19号带他们逛了武大、省博、楚河汉街。20号上午是毕业典礼，下午弄离校手续，旁晚去拍了毕业照。21号主要是收拾宿舍东西，寄东西，下午带爸妈去逛光谷、拍照。晚上和舍友聚餐。22号早上等爸妈过来吃了早饭，就跟舍友告别，滴滴去高铁站了。</p>
+<p>2019年7月、8月、9月
+系统里定的7月10号报到入职，因此在家里只呆了不到两周就上深圳了。刚入职就遇到团建——东西冲穿越，不知道是暴晒的原因还是过度运动的原因，回来竟然发烧、鼻炎复发。先后看了两次医生，做了鼻镜检查，浪费了不少时间，不过还好没事。从7月10号入职到现在，这两个月的主要工作任务就是看文档和内部的wiki，熟悉团队的产品。还有一些小issue需要写一些简单的代码，难度不大。另外还有一些运维和运营的小任务，就是平时要留意下一些服务的监控任务的报警，根据情况处理下就行，也不太难。总的来说目前主要是以熟悉和了解为主，辅以一些小issue开发任务，还有各种新人培训课程。公司也配备了导师，感觉导师的指导还是非常到位的，尤其一开始就指出要从校园心态过渡到职场心态，我一开始听了没什么感觉，但是到了后来就确实体会到了，确实比较难一下子调整过来。</p>
+<p>二、forward</p>
+<p>最近想了下，工作之余应该有自己的学习计划和安排，否则会浪费很多时间。因此制作个最近的一些学习小目标吧：</p>
+<ol>
+<li>代码规范：这是工程师的最基本素养（python已看，java未看）</li>
+<li>多看代码，总结设计模式：同为最基本素养之一</li>
+<li>学习大数据组件：hadoop，spark，storm，kafka，zookeeper，flume，thrift，protobuf</li>
+<li>学习虚拟化组件：docker，k8s</li>
+<li>学会使用上述组件之后，进行源码学习，尝试在git中进行contribute，争取被accept</li>
+<li>leetcode要重新开始刷，每天至少一道到两道</li>
+<li>学有余力的话，学习新语言：mapreduce，storm topology，golang</li>
+<li>英语单词落下一段时间了，要重启百词斩和听力练习了</li>
+<li>关注下hk的实验室和团队，还有research方向</li>
+<li>坚持锻炼身体</li>
+</ol>
+<p>目前只想到这么些。目前学习的方式要转变，万事先看官网，快速了解产品的背景、解决的问题、基本框架、基本使用方法，然后下载到本地安装，跑一些小demo。另外一些零碎时间也应该利用起来，背单词或者思考算法题都行。</p>
+
+      </div>
+
+
+      <footer>
+        
+
+
+        
+        
+        
+      </footer>
+    </article>
+
+    
+  </section>
+
+      </div>
+
+      <script type="text/javascript"
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+    </main>
+
+    
+
+    
+
+    <script>
+(function(f, a, t, h, o, m){
+	a[h]=a[h]||function(){
+		(a[h].q=a[h].q||[]).push(arguments)
+	};
+	o=f.createElement('script'),
+	m=f.getElementsByTagName('script')[0];
+	o.async=1; o.src=t; o.id='fathom-script';
+	m.parentNode.insertBefore(o,m)
+})(document, window, '//analytics.example.com/tracker.js', 'fathom');
+fathom('set', 'siteId', 'ABCDE');
+fathom('trackPageview');
+</script>
+
+
+  </body>
+
+</html>

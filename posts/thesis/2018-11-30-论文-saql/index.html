@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Language" content="en">
+
+    <meta name="author" content="Yusheng Wang">
+    <meta name="description" content="一、背景及问题
+目前一些高级的网络攻击如 APT（advanced persistent threats）威胁并损害着很多公司的信息安全。它们利用主机的各种弱点，通过一系列步骤来进行攻击。
+为了应对这些攻击，一些基于系统监控（System Monitoring）的方法被提出，用于快速侦查异常，或者定位存在风险的系统事件（System Event）。这些方法主要通过对主机的系统调用（system calls）进行监控，收集系统事件的信息，来实现系统异常的侦查。然而，目前这些方法存在几点问题和困难：
+ 时间要求严格。要避免主机受到进一步的伤害导致无法修复，该监控系统必须做到实时在线保护主机，实时侦查主机内的异常事件，这就犹如进行实时的“大海捞针” 如何让监控系统实时地结合系统管理员、安全专家、数据分析专家们的领域知识（domain knowledge）？因为这些领域知识对于系统异常的侦查是非常有帮助的，甚至是必要的 实时的系统监控自然会产生海量的日志数据，这就要求分析数据侦查异常的算法必须非常高效，因为是实时的  遗憾的是目前没有任何一个监控系统能够解决以上问题，尤其是第二点——已有的监控系统往往只专注于特定的异常侦查，无法提供足够的支持以便用户可以灵活地引入专家的领域知识。
+二、解决方案
+论文提出了一个基于流的异常查询系统，以及一种基于流的异常查询语言（Streambased Anomaly Query Language，SAQL）。该系统主要面向 4 种异常：
+ Rule-based Anomaly:基于规则的异常，某个进程在短时间内读取大量的命令日志文件，这种异常通常意味着某个非法的用户想要探测合法用户的常用命令或者操作习惯。为了侦查这种异常，SAQL 使用事件模式（event patterns）来表达操作系统中的各种活动：定义一个事件表示为 {subject-operation-object}，例如 {process p1 write file f2}。有了如此统一定义的形式，用户就可以在查询的时间灵活地定义领域知识，甚至可以定制基于特定规则的异常检测 Time-Series Anomaly:时间序列的异常，某个进程在一段时间内不正常地传送了大量的数据。为了探测到这种异常，SAQL 构造带状态的滑动窗口，将数据流进行分段，那么只要通过与历史滑动窗口的状态进行比较，就可以检测到某个时间段对应的数据量是否异常地增大 Invariant-based Anomaly:基于不变的异常？一个进程启动了一个异常的进程，如 apache.exe 本应该启动 httpd.exe，但却启动了一个在训练模型时从来未出现过的进程 java.exe。这种情况同样可以使用上述带状态滑动窗口的模型，只要提前训练学习好正常情况下的系统状态（可用窗口状态表达），便可检测此类异常。 Outlier-based Anomaly:基于异常的异常，通过与同等的进程的比较来确定异常。例如，通过比较发现，某个进程向某个 IP 地址传送的数据量比同等进程向其他 IP 地址传送的数据量大太多，那么这个进程就值得怀疑。SAQL 可以使用聚类算法对事件进行聚类，以便在同类的事件中进行比较并发现异常。  除此之外，系统往往需要同时处理大批量的异常检测查询，而目前一般的检测系统如 Siddhi、Esper、Flink 采取的做法都是为每一个 query 复制一份数据，由于操作系统的日志文件是非常巨大的，这样的复制操作会使得系统非常低效。针对这个问题，论文提出一个名为 master-dependent-query 的查询模式，它把用户提交的各种查询进行兼容性分析，然后将兼容的查询分到同一个组，每个组的查询都共用一份数据，这样避免了大量的数据复制，提高了查询分析的效率。
+三、总结
+总的来说，文章的主要工作是提出了一个用于描述操作系统事件的形式化语言 SAQL，使得用户和系统可以统一地描述各种正常和异常的事件，从而可以灵活地加入专家领域知识并进行异常检测，无需改动系统本身。另外提高为查询效率，文章提出了查询分组的模型，让可以相互兼容的查询共用日志数据，避免了为每个查询复制一次数据的低效模式。">
+    <meta name="keywords" content="blog,developer,personal">
+
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="SAQL"/>
+<meta name="twitter:description" content="一、背景及问题
+目前一些高级的网络攻击如 APT（advanced persistent threats）威胁并损害着很多公司的信息安全。它们利用主机的各种弱点，通过一系列步骤来进行攻击。
+为了应对这些攻击，一些基于系统监控（System Monitoring）的方法被提出，用于快速侦查异常，或者定位存在风险的系统事件（System Event）。这些方法主要通过对主机的系统调用（system calls）进行监控，收集系统事件的信息，来实现系统异常的侦查。然而，目前这些方法存在几点问题和困难：
+ 时间要求严格。要避免主机受到进一步的伤害导致无法修复，该监控系统必须做到实时在线保护主机，实时侦查主机内的异常事件，这就犹如进行实时的“大海捞针” 如何让监控系统实时地结合系统管理员、安全专家、数据分析专家们的领域知识（domain knowledge）？因为这些领域知识对于系统异常的侦查是非常有帮助的，甚至是必要的 实时的系统监控自然会产生海量的日志数据，这就要求分析数据侦查异常的算法必须非常高效，因为是实时的  遗憾的是目前没有任何一个监控系统能够解决以上问题，尤其是第二点——已有的监控系统往往只专注于特定的异常侦查，无法提供足够的支持以便用户可以灵活地引入专家的领域知识。
+二、解决方案
+论文提出了一个基于流的异常查询系统，以及一种基于流的异常查询语言（Streambased Anomaly Query Language，SAQL）。该系统主要面向 4 种异常：
+ Rule-based Anomaly:基于规则的异常，某个进程在短时间内读取大量的命令日志文件，这种异常通常意味着某个非法的用户想要探测合法用户的常用命令或者操作习惯。为了侦查这种异常，SAQL 使用事件模式（event patterns）来表达操作系统中的各种活动：定义一个事件表示为 {subject-operation-object}，例如 {process p1 write file f2}。有了如此统一定义的形式，用户就可以在查询的时间灵活地定义领域知识，甚至可以定制基于特定规则的异常检测 Time-Series Anomaly:时间序列的异常，某个进程在一段时间内不正常地传送了大量的数据。为了探测到这种异常，SAQL 构造带状态的滑动窗口，将数据流进行分段，那么只要通过与历史滑动窗口的状态进行比较，就可以检测到某个时间段对应的数据量是否异常地增大 Invariant-based Anomaly:基于不变的异常？一个进程启动了一个异常的进程，如 apache.exe 本应该启动 httpd.exe，但却启动了一个在训练模型时从来未出现过的进程 java.exe。这种情况同样可以使用上述带状态滑动窗口的模型，只要提前训练学习好正常情况下的系统状态（可用窗口状态表达），便可检测此类异常。 Outlier-based Anomaly:基于异常的异常，通过与同等的进程的比较来确定异常。例如，通过比较发现，某个进程向某个 IP 地址传送的数据量比同等进程向其他 IP 地址传送的数据量大太多，那么这个进程就值得怀疑。SAQL 可以使用聚类算法对事件进行聚类，以便在同类的事件中进行比较并发现异常。  除此之外，系统往往需要同时处理大批量的异常检测查询，而目前一般的检测系统如 Siddhi、Esper、Flink 采取的做法都是为每一个 query 复制一份数据，由于操作系统的日志文件是非常巨大的，这样的复制操作会使得系统非常低效。针对这个问题，论文提出一个名为 master-dependent-query 的查询模式，它把用户提交的各种查询进行兼容性分析，然后将兼容的查询分到同一个组，每个组的查询都共用一份数据，这样避免了大量的数据复制，提高了查询分析的效率。
+三、总结
+总的来说，文章的主要工作是提出了一个用于描述操作系统事件的形式化语言 SAQL，使得用户和系统可以统一地描述各种正常和异常的事件，从而可以灵活地加入专家领域知识并进行异常检测，无需改动系统本身。另外提高为查询效率，文章提出了查询分组的模型，让可以相互兼容的查询共用日志数据，避免了为每个查询复制一次数据的低效模式。"/>
+
+    <meta property="og:title" content="SAQL" />
+<meta property="og:description" content="一、背景及问题
+目前一些高级的网络攻击如 APT（advanced persistent threats）威胁并损害着很多公司的信息安全。它们利用主机的各种弱点，通过一系列步骤来进行攻击。
+为了应对这些攻击，一些基于系统监控（System Monitoring）的方法被提出，用于快速侦查异常，或者定位存在风险的系统事件（System Event）。这些方法主要通过对主机的系统调用（system calls）进行监控，收集系统事件的信息，来实现系统异常的侦查。然而，目前这些方法存在几点问题和困难：
+ 时间要求严格。要避免主机受到进一步的伤害导致无法修复，该监控系统必须做到实时在线保护主机，实时侦查主机内的异常事件，这就犹如进行实时的“大海捞针” 如何让监控系统实时地结合系统管理员、安全专家、数据分析专家们的领域知识（domain knowledge）？因为这些领域知识对于系统异常的侦查是非常有帮助的，甚至是必要的 实时的系统监控自然会产生海量的日志数据，这就要求分析数据侦查异常的算法必须非常高效，因为是实时的  遗憾的是目前没有任何一个监控系统能够解决以上问题，尤其是第二点——已有的监控系统往往只专注于特定的异常侦查，无法提供足够的支持以便用户可以灵活地引入专家的领域知识。
+二、解决方案
+论文提出了一个基于流的异常查询系统，以及一种基于流的异常查询语言（Streambased Anomaly Query Language，SAQL）。该系统主要面向 4 种异常：
+ Rule-based Anomaly:基于规则的异常，某个进程在短时间内读取大量的命令日志文件，这种异常通常意味着某个非法的用户想要探测合法用户的常用命令或者操作习惯。为了侦查这种异常，SAQL 使用事件模式（event patterns）来表达操作系统中的各种活动：定义一个事件表示为 {subject-operation-object}，例如 {process p1 write file f2}。有了如此统一定义的形式，用户就可以在查询的时间灵活地定义领域知识，甚至可以定制基于特定规则的异常检测 Time-Series Anomaly:时间序列的异常，某个进程在一段时间内不正常地传送了大量的数据。为了探测到这种异常，SAQL 构造带状态的滑动窗口，将数据流进行分段，那么只要通过与历史滑动窗口的状态进行比较，就可以检测到某个时间段对应的数据量是否异常地增大 Invariant-based Anomaly:基于不变的异常？一个进程启动了一个异常的进程，如 apache.exe 本应该启动 httpd.exe，但却启动了一个在训练模型时从来未出现过的进程 java.exe。这种情况同样可以使用上述带状态滑动窗口的模型，只要提前训练学习好正常情况下的系统状态（可用窗口状态表达），便可检测此类异常。 Outlier-based Anomaly:基于异常的异常，通过与同等的进程的比较来确定异常。例如，通过比较发现，某个进程向某个 IP 地址传送的数据量比同等进程向其他 IP 地址传送的数据量大太多，那么这个进程就值得怀疑。SAQL 可以使用聚类算法对事件进行聚类，以便在同类的事件中进行比较并发现异常。  除此之外，系统往往需要同时处理大批量的异常检测查询，而目前一般的检测系统如 Siddhi、Esper、Flink 采取的做法都是为每一个 query 复制一份数据，由于操作系统的日志文件是非常巨大的，这样的复制操作会使得系统非常低效。针对这个问题，论文提出一个名为 master-dependent-query 的查询模式，它把用户提交的各种查询进行兼容性分析，然后将兼容的查询分到同一个组，每个组的查询都共用一份数据，这样避免了大量的数据复制，提高了查询分析的效率。
+三、总结
+总的来说，文章的主要工作是提出了一个用于描述操作系统事件的形式化语言 SAQL，使得用户和系统可以统一地描述各种正常和异常的事件，从而可以灵活地加入专家领域知识并进行异常检测，无需改动系统本身。另外提高为查询效率，文章提出了查询分组的模型，让可以相互兼容的查询共用日志数据，避免了为每个查询复制一次数据的低效模式。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://utopizza.github.io/posts/thesis/2018-11-30-%E8%AE%BA%E6%96%87-saql/" />
+<meta property="article:published_time" content="2018-11-30T00:00:00+00:00" />
+<meta property="article:modified_time" content="2018-11-30T00:00:00+00:00" />
+
+
+    
+      <base href="https://utopizza.github.io/posts/thesis/2018-11-30-%E8%AE%BA%E6%96%87-saql/">
+    
+    <title>
+  SAQL · Utopizza
+</title>
+
+    
+      <link rel="canonical" href="https://utopizza.github.io/posts/thesis/2018-11-30-%E8%AE%BA%E6%96%87-saql/">
+    
+
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700%7CMerriweather:300,700%7CSource+Code+Pro:400,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.13.0/css/all.css" integrity="sha384-Bfad6CLCknfcloXFOyFnlgtENryhrpZCe29RTifKEixXQZ38WheV+i/6YWSzkz3V" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" integrity="sha256-l85OmPOjvil/SOvVt3HnSSjzF1TUMyT9eV0c2BzEGzU=" crossorigin="anonymous" />
+
+    
+      
+      
+      <link rel="stylesheet" href="https://utopizza.github.io/css/coder.min.a4f332213a21ce8eb521670c614470c58923aaaf385e2a73982c31dd7642decb.css" integrity="sha256-pPMyITohzo61IWcMYURwxYkjqq84XipzmCwx3XZC3ss=" crossorigin="anonymous" media="screen" />
+    
+
+    
+
+    
+      
+        
+        
+        <link rel="stylesheet" href="https://utopizza.github.io/css/coder-dark.min.e78e80fc3a585a4d1c8fc7f58623b6ff852411e38431a9cd1792877ecaa160f6.css" integrity="sha256-546A/DpYWk0cj8f1hiO2/4UkEeOEManNF5KHfsqhYPY=" crossorigin="anonymous" media="screen" />
+      
+    
+
+    
+
+    
+
+    <link rel="icon" type="image/png" href="https://utopizza.github.io/images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="https://utopizza.github.io/images/favicon-16x16.png" sizes="16x16">
+
+    <meta name="generator" content="Hugo 0.69.2" />
+  </head>
+
+  
+  
+    
+  
+  <body class="colorscheme-auto">
+    <main class="wrapper">
+      <nav class="navigation">
+  <section class="container">
+    <a class="navigation-title" href="https://utopizza.github.io/">
+      Utopizza
+    </a>
+    
+    <input type="checkbox" id="menu-toggle" />
+    <label class="menu-button float-right" for="menu-toggle"><i class="fas fa-bars"></i></label>
+    <ul class="navigation-list">
+      
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/about/">About</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/posts/">Blog</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/projects/">Projects</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/contact/">Contact me</a>
+          </li>
+        
+      
+      
+    </ul>
+    
+  </section>
+</nav>
+
+
+      <div class="content">
+        
+  <section class="container post">
+    <article>
+      <header>
+        <div class="post-title">
+          <h1 class="title">SAQL</h1>
+        </div>
+        <div class="post-meta">
+          <div class="date">
+            <span class="posted-on">
+              <i class="fas fa-calendar"></i>
+              <time datetime='2018-11-30T00:00:00Z'>
+                November 30, 2018
+              </time>
+            </span>
+            <span class="reading-time">
+              <i class="fas fa-clock"></i>
+              1-minute read
+            </span>
+          </div>
+          <div class="categories">
+  <i class="fas fa-folder"></i>
+    <a href="https://utopizza.github.io/categories/thesis/">Thesis</a></div>
+
+          
+        </div>
+      </header>
+
+      <div>
+        
+        <p>一、背景及问题</p>
+<p>目前一些高级的网络攻击如 APT（advanced persistent threats）威胁并损害着很多公司的信息安全。它们利用主机的各种弱点，通过一系列步骤来进行攻击。</p>
+<p>为了应对这些攻击，一些基于系统监控（System Monitoring）的方法被提出，用于快速侦查异常，或者定位存在风险的系统事件（System Event）。这些方法主要通过对主机的系统调用（system calls）进行监控，收集系统事件的信息，来实现系统异常的侦查。然而，目前这些方法存在几点问题和困难：</p>
+<ol>
+<li>时间要求严格。要避免主机受到进一步的伤害导致无法修复，该监控系统必须做到实时在线保护主机，实时侦查主机内的异常事件，这就犹如进行实时的“大海捞针”</li>
+<li>如何让监控系统实时地结合系统管理员、安全专家、数据分析专家们的领域知识（domain knowledge）？因为这些领域知识对于系统异常的侦查是非常有帮助的，甚至是必要的</li>
+<li>实时的系统监控自然会产生海量的日志数据，这就要求分析数据侦查异常的算法必须非常高效，因为是实时的</li>
+</ol>
+<p>遗憾的是目前没有任何一个监控系统能够解决以上问题，尤其是第二点——已有的监控系统往往只专注于特定的异常侦查，无法提供足够的支持以便用户可以灵活地引入专家的领域知识。</p>
+<p>二、解决方案</p>
+<p>论文提出了一个基于流的异常查询系统，以及一种基于流的异常查询语言（Streambased Anomaly Query Language，SAQL）。该系统主要面向 4 种异常：</p>
+<ol>
+<li>Rule-based Anomaly:基于规则的异常，某个进程在短时间内读取大量的命令日志文件，这种异常通常意味着某个非法的用户想要探测合法用户的常用命令或者操作习惯。为了侦查这种异常，SAQL 使用事件模式（event patterns）来表达操作系统中的各种活动：定义一个事件表示为 {subject-operation-object}，例如 {process p1 write file f2}。有了如此统一定义的形式，用户就可以在查询的时间灵活地定义领域知识，甚至可以定制基于特定规则的异常检测</li>
+<li>Time-Series Anomaly:时间序列的异常，某个进程在一段时间内不正常地传送了大量的数据。为了探测到这种异常，SAQL 构造带状态的滑动窗口，将数据流进行分段，那么只要通过与历史滑动窗口的状态进行比较，就可以检测到某个时间段对应的数据量是否异常地增大</li>
+<li>Invariant-based Anomaly:基于不变的异常？一个进程启动了一个异常的进程，如 apache.exe 本应该启动 httpd.exe，但却启动了一个在训练模型时从来未出现过的进程 java.exe。这种情况同样可以使用上述带状态滑动窗口的模型，只要提前训练学习好正常情况下的系统状态（可用窗口状态表达），便可检测此类异常。</li>
+<li>Outlier-based Anomaly:基于异常的异常，通过与同等的进程的比较来确定异常。例如，通过比较发现，某个进程向某个 IP 地址传送的数据量比同等进程向其他 IP 地址传送的数据量大太多，那么这个进程就值得怀疑。SAQL 可以使用聚类算法对事件进行聚类，以便在同类的事件中进行比较并发现异常。</li>
+</ol>
+<p>除此之外，系统往往需要同时处理大批量的异常检测查询，而目前一般的检测系统如 Siddhi、Esper、Flink 采取的做法都是为每一个 query 复制一份数据，由于操作系统的日志文件是非常巨大的，这样的复制操作会使得系统非常低效。针对这个问题，论文提出一个名为 master-dependent-query 的查询模式，它把用户提交的各种查询进行兼容性分析，然后将兼容的查询分到同一个组，每个组的查询都共用一份数据，这样避免了大量的数据复制，提高了查询分析的效率。</p>
+<p>三、总结</p>
+<p>总的来说，文章的主要工作是提出了一个用于描述操作系统事件的形式化语言 SAQL，使得用户和系统可以统一地描述各种正常和异常的事件，从而可以灵活地加入专家领域知识并进行异常检测，无需改动系统本身。另外提高为查询效率，文章提出了查询分组的模型，让可以相互兼容的查询共用日志数据，避免了为每个查询复制一次数据的低效模式。</p>
+
+      </div>
+
+
+      <footer>
+        
+
+
+        
+        
+        
+      </footer>
+    </article>
+
+    
+  </section>
+
+      </div>
+
+      <script type="text/javascript"
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+    </main>
+
+    
+
+    
+
+    <script>
+(function(f, a, t, h, o, m){
+	a[h]=a[h]||function(){
+		(a[h].q=a[h].q||[]).push(arguments)
+	};
+	o=f.createElement('script'),
+	m=f.getElementsByTagName('script')[0];
+	o.async=1; o.src=t; o.id='fathom-script';
+	m.parentNode.insertBefore(o,m)
+})(document, window, '//analytics.example.com/tracker.js', 'fathom');
+fathom('set', 'siteId', 'ABCDE');
+fathom('trackPageview');
+</script>
+
+
+  </body>
+
+</html>

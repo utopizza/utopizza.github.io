@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Language" content="en">
+
+    <meta name="author" content="Yusheng Wang">
+    <meta name="description" content="一、熵（entropy）
+熵是表示随机变量不确定性的度量。熵越大，随机变量的不确定性越大。设 $X$ 是一个取值为有限个的离散型随机变量，其概率分布为：
+$$P(X=x_i)=p_i \text{ , } i=1,2,\cdots,n$$
+则随机变量 $X$ 的熵定义为
+$$H(X)=-\sum_{i=1}^{n}p_i\log(p_i)$$
+当式中对数以 $2$ 为底时，熵的单位为比特（bit）；以自然对数 $e$ 为底时，熵的单位为纳特（nat）。
+二、条件熵（conditional entropy）
+条件熵 $H(Y \mid X)$ 表示已知随机变量 $X$ 的条件下，随机变量 $Y$ 的不确定性。
+设有随机变量 $(X,Y)$，联合分布概率为
+$$P(X=x_i,Y=y_i)=p_{ij} \text{ , } i=1,2,\cdots,n \text{ ; }j=1,2,\cdots,m$$
+则随机变量 $X$ 给定条件下，随机变量 $Y$ 的条件熵为
+$$H(Y \mid X)=\sum_{i=1}^{n} p_i H(Y \mid X=x_i)$$
+这里 $p_i=P(X=x_i) \text{ , } i=1,2,\cdots,n$。
+当熵和条件熵的概率有数据估计得到时，所对应的熵与条件熵称为经验熵（empirical entropy）和经验条件熵（empirical conditional entropy）。
+三、信息增益（information gain）
+信息增益表示得知特征 $X$ 的信息而使得类 $Y$ 的信息的不确定性减少的程度。
+特征 $A$ 对训练数据集 $D$ 的信息增益 $g(D,A)$ 定义为集合 $D$ 的经验熵 $H(D)$ 与特征 $A$ 给定条件下 $D$ 的经验条件熵 $H(D \mid A)$ 之差">
+    <meta name="keywords" content="blog,developer,personal">
+
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="信息增益"/>
+<meta name="twitter:description" content="一、熵（entropy）
+熵是表示随机变量不确定性的度量。熵越大，随机变量的不确定性越大。设 $X$ 是一个取值为有限个的离散型随机变量，其概率分布为：
+$$P(X=x_i)=p_i \text{ , } i=1,2,\cdots,n$$
+则随机变量 $X$ 的熵定义为
+$$H(X)=-\sum_{i=1}^{n}p_i\log(p_i)$$
+当式中对数以 $2$ 为底时，熵的单位为比特（bit）；以自然对数 $e$ 为底时，熵的单位为纳特（nat）。
+二、条件熵（conditional entropy）
+条件熵 $H(Y \mid X)$ 表示已知随机变量 $X$ 的条件下，随机变量 $Y$ 的不确定性。
+设有随机变量 $(X,Y)$，联合分布概率为
+$$P(X=x_i,Y=y_i)=p_{ij} \text{ , } i=1,2,\cdots,n \text{ ; }j=1,2,\cdots,m$$
+则随机变量 $X$ 给定条件下，随机变量 $Y$ 的条件熵为
+$$H(Y \mid X)=\sum_{i=1}^{n} p_i H(Y \mid X=x_i)$$
+这里 $p_i=P(X=x_i) \text{ , } i=1,2,\cdots,n$。
+当熵和条件熵的概率有数据估计得到时，所对应的熵与条件熵称为经验熵（empirical entropy）和经验条件熵（empirical conditional entropy）。
+三、信息增益（information gain）
+信息增益表示得知特征 $X$ 的信息而使得类 $Y$ 的信息的不确定性减少的程度。
+特征 $A$ 对训练数据集 $D$ 的信息增益 $g(D,A)$ 定义为集合 $D$ 的经验熵 $H(D)$ 与特征 $A$ 给定条件下 $D$ 的经验条件熵 $H(D \mid A)$ 之差"/>
+
+    <meta property="og:title" content="信息增益" />
+<meta property="og:description" content="一、熵（entropy）
+熵是表示随机变量不确定性的度量。熵越大，随机变量的不确定性越大。设 $X$ 是一个取值为有限个的离散型随机变量，其概率分布为：
+$$P(X=x_i)=p_i \text{ , } i=1,2,\cdots,n$$
+则随机变量 $X$ 的熵定义为
+$$H(X)=-\sum_{i=1}^{n}p_i\log(p_i)$$
+当式中对数以 $2$ 为底时，熵的单位为比特（bit）；以自然对数 $e$ 为底时，熵的单位为纳特（nat）。
+二、条件熵（conditional entropy）
+条件熵 $H(Y \mid X)$ 表示已知随机变量 $X$ 的条件下，随机变量 $Y$ 的不确定性。
+设有随机变量 $(X,Y)$，联合分布概率为
+$$P(X=x_i,Y=y_i)=p_{ij} \text{ , } i=1,2,\cdots,n \text{ ; }j=1,2,\cdots,m$$
+则随机变量 $X$ 给定条件下，随机变量 $Y$ 的条件熵为
+$$H(Y \mid X)=\sum_{i=1}^{n} p_i H(Y \mid X=x_i)$$
+这里 $p_i=P(X=x_i) \text{ , } i=1,2,\cdots,n$。
+当熵和条件熵的概率有数据估计得到时，所对应的熵与条件熵称为经验熵（empirical entropy）和经验条件熵（empirical conditional entropy）。
+三、信息增益（information gain）
+信息增益表示得知特征 $X$ 的信息而使得类 $Y$ 的信息的不确定性减少的程度。
+特征 $A$ 对训练数据集 $D$ 的信息增益 $g(D,A)$ 定义为集合 $D$ 的经验熵 $H(D)$ 与特征 $A$ 给定条件下 $D$ 的经验条件熵 $H(D \mid A)$ 之差" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://utopizza.github.io/posts/machinelearning/2017-11-11-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E4%BF%A1%E6%81%AF%E5%A2%9E%E7%9B%8A/" />
+<meta property="article:published_time" content="2017-11-11T23:59:00+00:00" />
+<meta property="article:modified_time" content="2017-11-11T23:59:00+00:00" />
+
+
+    
+      <base href="https://utopizza.github.io/posts/machinelearning/2017-11-11-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E4%BF%A1%E6%81%AF%E5%A2%9E%E7%9B%8A/">
+    
+    <title>
+  信息增益 · Utopizza
+</title>
+
+    
+      <link rel="canonical" href="https://utopizza.github.io/posts/machinelearning/2017-11-11-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E4%BF%A1%E6%81%AF%E5%A2%9E%E7%9B%8A/">
+    
+
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700%7CMerriweather:300,700%7CSource+Code+Pro:400,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.13.0/css/all.css" integrity="sha384-Bfad6CLCknfcloXFOyFnlgtENryhrpZCe29RTifKEixXQZ38WheV+i/6YWSzkz3V" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" integrity="sha256-l85OmPOjvil/SOvVt3HnSSjzF1TUMyT9eV0c2BzEGzU=" crossorigin="anonymous" />
+
+    
+      
+      
+      <link rel="stylesheet" href="https://utopizza.github.io/css/coder.min.a4f332213a21ce8eb521670c614470c58923aaaf385e2a73982c31dd7642decb.css" integrity="sha256-pPMyITohzo61IWcMYURwxYkjqq84XipzmCwx3XZC3ss=" crossorigin="anonymous" media="screen" />
+    
+
+    
+
+    
+      
+        
+        
+        <link rel="stylesheet" href="https://utopizza.github.io/css/coder-dark.min.e78e80fc3a585a4d1c8fc7f58623b6ff852411e38431a9cd1792877ecaa160f6.css" integrity="sha256-546A/DpYWk0cj8f1hiO2/4UkEeOEManNF5KHfsqhYPY=" crossorigin="anonymous" media="screen" />
+      
+    
+
+    
+
+    
+
+    <link rel="icon" type="image/png" href="https://utopizza.github.io/images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="https://utopizza.github.io/images/favicon-16x16.png" sizes="16x16">
+
+    <meta name="generator" content="Hugo 0.69.2" />
+  </head>
+
+  
+  
+    
+  
+  <body class="colorscheme-auto">
+    <main class="wrapper">
+      <nav class="navigation">
+  <section class="container">
+    <a class="navigation-title" href="https://utopizza.github.io/">
+      Utopizza
+    </a>
+    
+    <input type="checkbox" id="menu-toggle" />
+    <label class="menu-button float-right" for="menu-toggle"><i class="fas fa-bars"></i></label>
+    <ul class="navigation-list">
+      
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/about/">About</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/posts/">Blog</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/projects/">Projects</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/contact/">Contact me</a>
+          </li>
+        
+      
+      
+    </ul>
+    
+  </section>
+</nav>
+
+
+      <div class="content">
+        
+  <section class="container post">
+    <article>
+      <header>
+        <div class="post-title">
+          <h1 class="title">信息增益</h1>
+        </div>
+        <div class="post-meta">
+          <div class="date">
+            <span class="posted-on">
+              <i class="fas fa-calendar"></i>
+              <time datetime='2017-11-11T23:59:00Z'>
+                November 11, 2017
+              </time>
+            </span>
+            <span class="reading-time">
+              <i class="fas fa-clock"></i>
+              1-minute read
+            </span>
+          </div>
+          <div class="categories">
+  <i class="fas fa-folder"></i>
+    <a href="https://utopizza.github.io/categories/machinelearning/">MachineLearning</a></div>
+
+          
+        </div>
+      </header>
+
+      <div>
+        
+        <p>一、熵（entropy）</p>
+<p>熵是表示随机变量不确定性的度量。熵越大，随机变量的不确定性越大。设 $X$ 是一个取值为有限个的离散型随机变量，其概率分布为：</p>
+<p>$$P(X=x_i)=p_i \text{ , } i=1,2,\cdots,n$$</p>
+<p>则随机变量 $X$ 的熵定义为</p>
+<p>$$H(X)=-\sum_{i=1}^{n}p_i\log(p_i)$$</p>
+<p>当式中对数以 $2$ 为底时，熵的单位为比特（bit）；以自然对数 $e$ 为底时，熵的单位为纳特（nat）。</p>
+<p>二、条件熵（conditional entropy）</p>
+<p>条件熵 $H(Y \mid X)$ 表示已知随机变量 $X$ 的条件下，随机变量 $Y$ 的不确定性。</p>
+<p>设有随机变量 $(X,Y)$，联合分布概率为</p>
+<p>$$P(X=x_i,Y=y_i)=p_{ij} \text{ , } i=1,2,\cdots,n \text{ ; }j=1,2,\cdots,m$$</p>
+<p>则随机变量 $X$ 给定条件下，随机变量 $Y$ 的条件熵为</p>
+<p>$$H(Y \mid X)=\sum_{i=1}^{n} p_i H(Y \mid X=x_i)$$</p>
+<p>这里 $p_i=P(X=x_i) \text{ , } i=1,2,\cdots,n$。</p>
+<p>当熵和条件熵的概率有数据估计得到时，所对应的熵与条件熵称为经验熵（empirical entropy）和经验条件熵（empirical conditional entropy）。</p>
+<p>三、信息增益（information gain）</p>
+<p>信息增益表示得知特征 $X$ 的信息而使得类 $Y$ 的信息的不确定性减少的程度。</p>
+<p>特征 $A$ 对训练数据集 $D$ 的信息增益 $g(D,A)$ 定义为集合 $D$ 的经验熵 $H(D)$ 与特征 $A$ 给定条件下 $D$ 的经验条件熵 $H(D \mid A)$ 之差</p>
+<p>$$g(D,A)=H(D)-H(D \mid A)$$</p>
+<p>进一步，如果 $A$ 的取值把 $D$ 划分成 $D_1,D_2,\cdots,D_n$ 这 $n$ 个子集，那么</p>
+<p>$$H(D \mid A)=\sum_{i=1}^{n}\frac{|D_i|}{|D|}H(D_i)$$</p>
+<p>因此</p>
+<p>$$g(D,A)=H(D)-\sum_{i=1}^{n}\frac{|D_i|}{|D|}H(D_i)$$</p>
+<p>上述公式可以理解为，选择特征 $A$ 带来的信息增益为：原数据集的熵（混乱程度，也可以理解为不确定性），减去被特征 $A$ 划分成 $n$ 个子集后这 $n$ 个子集的熵的期望，而得到的差值。</p>
+<p>我们在构建决策树时的目标是：使每次被划分数据集的不确定性尽可能小。由于原数据集的熵已经确定，那么，如果选择某个特征划分数据集后，整个数据集的不确定性减小最多（即信息增益最大），那么该特征就是当前最优的分类特征。</p>
+<p>找到最优特征后，取该特征下的每一个值构建一个子结点，把数据集划分成 $n$ 个子集合。例如，假设当前最优特征为“年龄”，该特征下一共有“青年”、“中年”、“老年”三种取值，那么在决策树的当前结点下面新建对应的三个孩子结点，把数据集按这三种取值划分为三个子集，传递到对应的三个孩子结点。</p>
+<p>四、信息增益比（information gain ratio）</p>
+<p>以信息增益作为划分训练数据集的特征，存在偏向于选择取值较多的特征的问题。用信息增益比可以对这一问题校正。</p>
+<p>特征 $A$ 对训练数据集 $D$ 的信息增益比 $g_R(D,A)$ 定义为其信息增益 $g(D,A)$ 与训练数据集 $D$ 关于特征 $A$ 的值的熵 $H_A(D)$ 之比，即</p>
+<p>$$g_R(D,A)=\frac{g(D,A)}{H_A(D)}$$</p>
+<p>其中</p>
+<p>$$H_A(D)=-\sum_{i=1}^{n}\frac{|D_i|}{|D|}\log_2\frac{|D_i|}{|D|}$$</p>
+<p>$n$ 是特征 $A$ 取值的个数。</p>
+
+      </div>
+
+
+      <footer>
+        
+
+
+        
+        
+        
+      </footer>
+    </article>
+
+    
+  </section>
+
+      </div>
+
+      <script type="text/javascript"
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+    </main>
+
+    
+
+    
+
+    <script>
+(function(f, a, t, h, o, m){
+	a[h]=a[h]||function(){
+		(a[h].q=a[h].q||[]).push(arguments)
+	};
+	o=f.createElement('script'),
+	m=f.getElementsByTagName('script')[0];
+	o.async=1; o.src=t; o.id='fathom-script';
+	m.parentNode.insertBefore(o,m)
+})(document, window, '//analytics.example.com/tracker.js', 'fathom');
+fathom('set', 'siteId', 'ABCDE');
+fathom('trackPageview');
+</script>
+
+
+  </body>
+
+</html>

@@ -1,0 +1,1866 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Algorithm on Utopizza</title>
+    <link>https://utopizza.github.io/categories/algorithm/</link>
+    <description>Recent content in Algorithm on Utopizza</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Sun, 19 May 2019 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://utopizza.github.io/categories/algorithm/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>PageRank在Spark的分布式实现</title>
+      <link>https://utopizza.github.io/posts/algorithm/2019-05-19-%E7%AE%97%E6%B3%95-pagerank%E5%9C%A8spark%E7%9A%84%E5%88%86%E5%B8%83%E5%BC%8F%E5%AE%9E%E7%8E%B0/</link>
+      <pubDate>Sun, 19 May 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://utopizza.github.io/posts/algorithm/2019-05-19-%E7%AE%97%E6%B3%95-pagerank%E5%9C%A8spark%E7%9A%84%E5%88%86%E5%B8%83%E5%BC%8F%E5%AE%9E%E7%8E%B0/</guid>
+      <description>&lt;p&gt;最近在研究 MapReduce 和 Spark 的相关资料，顺便补个关于如何在虚拟机中搭建的 Spark 上分布式运行 PageRank 算法的博客。犹记得这个小任务是研一开学时，导师布置的第一个小任务，而现在马上就要硕士毕业答辩了，不禁思绪万千。&lt;/p&gt;
+&lt;p&gt;一、PageRank 算法&lt;/p&gt;
+&lt;p&gt;PageRank 算法是谷歌的起家算法，凭借该算法谷歌击败了当时所有的其他门户网站以及搜索引擎。该算法的目的是对数以亿计的网页进行排序，重要的网页将被排在前列，作为搜索结果返回给用户。想起了昆丁的电影《低俗小说》中的对白：“如果你要把一具尸体藏起来，你知道世界上哪里最安全吗？那就是谷歌搜索结果的第二页”。言外之意，谷歌搜索的前几条解决方案总能满足用户，用户永远不需要翻到第二页寻找答案。由此可见谷歌的搜索算法及 PageRank 网页排序算法之强大。&lt;/p&gt;
+&lt;p&gt;PageRank 算法的详细介绍见 &lt;a href=&#34;https://en.wikipedia.org/wiki/PageRank&#34;&gt;维基百科&lt;/a&gt;。总而言之，该算法的主要思路是：如果一个网页被很多重要的网页指向，那么它也是一个重要的网页。具体地，互联网中的每个网页被抽象成一个节点；如果网页 A 包含网页 B 的链接，那么有一条有向边从节点 A 指向节点 B。如此，互联网中的网页及其链接被抽象成一个由节点及有向边组成的巨大拓扑图。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://utopizza.github.io/2019-05-19-%E7%AE%97%E6%B3%95-PageRank%E5%9C%A8Spark%E7%9A%84%E5%88%86%E5%B8%83%E5%BC%8F%E5%AE%9E%E7%8E%B0/graph.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;拓扑图建立好后，初始化系统，令每个节点的重要性分数均为1。然后开始迭代系统，在每一轮迭代中，对于每个节点，做如下两件事：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;如果出边是加权的，将该节点的分数按权重比例进行拆解并传送到对应的节点；如果出边不加权，那么将该节点的分数平均拆解并传送&lt;/li&gt;
+&lt;li&gt;搜集从其他节点传送过来的分数并求和，替换该节点原来的分数&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;该过程从数学上来说就是一个 &lt;a href=&#34;https://en.wikipedia.org/wiki/Markov_chain&#34;&gt;马尔可夫过程&lt;/a&gt;，可以从数学上证明其收敛性。也就是说，该系统经过若干次迭代，必定可以演化到一个平衡态。在这个状态下，每个节点的每一次分数收入约等于其分数支出。此时，每个节点上的分数就是稳定的分数，PageRank 算法按照该分数从大到小对网页进行排序并（分页地）返回给用户。&lt;/p&gt;
+&lt;p&gt;二、PageRank 算法的 Spark 分布式实现&lt;/p&gt;
+&lt;p&gt;输入数据是一个文件，如下所示。第一行只有一个数字，表明了该数据集一共有 114529 个网页节点。从第二行开始，每一行表示一个节点的出边以及对应的权重，以 [key-value] 形式表示 ：[指向的节点id:权重]。在使用该数据集时，需要把第一行的数字删去，刚好剩下一共 114529 行，每一行的行号表示其节点id。例如，删掉第一行后，第 2 行为空行，说明节点 2 出度为 0，不指向任何其他节点；第 3 行的数据表示节点 3 指向了节点 8107、节点 22950 和 节点 108053，边的权重分别为 3320、4 和 1。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://utopizza.github.io/2019-05-19-%E7%AE%97%E6%B3%95-PageRank%E5%9C%A8Spark%E7%9A%84%E5%88%86%E5%B8%83%E5%BC%8F%E5%AE%9E%E7%8E%B0/data.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;要分布式实现 PageRank，就需要按 MapReduce 编程范式来编写代码。MapReduce 接受的输入是 key-value 对，在 Map 过程中映射成新的 key-value 对，在 Reduce 过程中对相同 key 的 values 进行聚合，输入最终结果。为方便起见，使用函数式编程语言 Scala 编写。伪码如下：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;输入数据(每行) noteId:[outlinkId1:weight1, outlinkedId2:weight2, ...]
+预处理(每行) noteId:[outlinkId1, outlinkedId2, ...]
+统计出度 [noteId1:outlinkCount1, noteId2:outlinkCount2, ...]
+for 0 -&amp;gt; 迭代次数：
+    拆分分数 [noteId1:contribution=score1/outlinkCount1, ...]
+    收集分数 [noteId1:sum(inlinkIds:contributions), ...]
+    归一化
+打印显示每个节点的最终分数
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;具体实验代码及效果如下所示。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://utopizza.github.io/2019-05-19-%E7%AE%97%E6%B3%95-PageRank%E5%9C%A8Spark%E7%9A%84%E5%88%86%E5%B8%83%E5%BC%8F%E5%AE%9E%E7%8E%B0/1.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://utopizza.github.io/2019-05-19-%E7%AE%97%E6%B3%95-PageRank%E5%9C%A8Spark%E7%9A%84%E5%88%86%E5%B8%83%E5%BC%8F%E5%AE%9E%E7%8E%B0/2.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://utopizza.github.io/2019-05-19-%E7%AE%97%E6%B3%95-PageRank%E5%9C%A8Spark%E7%9A%84%E5%88%86%E5%B8%83%E5%BC%8F%E5%AE%9E%E7%8E%B0/3.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;按分数排序，并结合另一个数据集里面的 url 名称进行显示，得到结果如下所示。可以由域名看到排在前列的都是一些英国政府的权威网页（这个数据集是英国的网页数据集），因此该算法的排序效果是很好的。学术上更加具体的排序效果评价指标是 &lt;a href=&#34;https://en.wikipedia.org/wiki/Discounted_cumulative_gain&#34;&gt;nDCG&lt;/a&gt;，这里不再展开说明了。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://utopizza.github.io/2019-05-19-%E7%AE%97%E6%B3%95-PageRank%E5%9C%A8Spark%E7%9A%84%E5%88%86%E5%B8%83%E5%BC%8F%E5%AE%9E%E7%8E%B0/result.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>动态规划题(2)</title>
+      <link>https://utopizza.github.io/posts/algorithm/2018-05-01-%E7%AE%97%E6%B3%95-%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E9%A2%982/</link>
+      <pubDate>Tue, 01 May 2018 22:03:00 +0000</pubDate>
+      
+      <guid>https://utopizza.github.io/posts/algorithm/2018-05-01-%E7%AE%97%E6%B3%95-%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E9%A2%982/</guid>
+      <description>&lt;p&gt;1、最长递增子序列（返回长度）&lt;/p&gt;
+&lt;p&gt;给定数组 arr，返回它的最长递增子序列的长度。&lt;/p&gt;
+&lt;p&gt;思路：显然对于数组的任何一个子序列，它必定以数组的某个元素结尾，因此可用 dp[i] 表示以 arr[i] 结尾的最长递增子序列的长度。那它是如何得来的呢？显然它就是在前面 i-1 个最长递增子序列后面追加或者不追加 arr[i] 而得到的 i-1 个新的递增子序列中，最长的那个。如果 arr[i] 大于 arr[j]，那么 arr[i] 就可以追加到以 arr[j] 结尾的最长递增子序列。&lt;/p&gt;
+&lt;p&gt;边界条件：如果 arr[i] 比它前面的 i-1 个元素都小，那么以 arr[i] 结尾的最长递增子序列就是它自己了，此时 dp[i]=1。&lt;/p&gt;
+&lt;p&gt;$$
+dp[i]=\max{ dp[j]+1 } \text{,} \quad (0 \leq j &amp;lt; i , \text{,} , arr[j]&amp;lt;arr[i])
+$$&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;private static int LIS(int[] arr) {
+    if (arr == null || arr.length == 0) return 0;
+    int[] dp = new int[arr.length];
+    for (int i = 0; i &amp;lt; arr.length; i++) {
+        dp[i] = 1;
+        for (int j = 0; j &amp;lt; i; j++) {
+            if (arr[i] &amp;gt; arr[j]) {
+                dp[i] = Math.max(dp[i], dp[j] + 1);
+            }
+        }
+    }
+    int maxLen = 0;
+    for (int i = 0; i &amp;lt; dp.length; i++) maxLen = Math.max(maxLen, dp[i]);
+    return maxLen;
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;2、最长递增子序列（返回序列）&lt;/p&gt;
+&lt;p&gt;给定数组 arr，返回它的最长递增子序列。&lt;/p&gt;
+&lt;p&gt;思路：先按上面所述求出 dp 数组，然后再根据 dp 数组恢复出最长的子序列。恢复过程很简单：先找到 dp 中最大的元素的位置，假设是 i ，那么说明数组 arr 的最大递增序列以 arr[i] 结尾，也就是说它是所求序列的最后一个元素。然后从 arr[i] 开始往前扫描，如果遇到一个元素满足 dp[j]=d[i]-1 并且 arr[j] 小于 arr[i]，那么 arr[j] 便是倒数第二个元素。依次类推即可。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;private static int[] LIS2(int[] arr, int[] dp) {
+    int maxLen = 0;
+    int lastIndex = 0;
+    for (int i = 0; i &amp;lt; dp.length; i++) {
+        if (dp[i] &amp;gt; maxLen) {
+            maxLen = dp[i];
+            lastIndex = i;
+        }
+    }
+
+    int[] LIS = new int[maxLen];
+    int LISIndex = maxLen - 1;
+    LIS[LISIndex--] = arr[lastIndex];
+    for (int j = lastIndex; j &amp;gt;= 0; j--) {
+        if (arr[j] &amp;lt; arr[lastIndex] &amp;amp;&amp;amp; dp[j] == dp[lastIndex] - 1) {
+            LIS[LISIndex--] = arr[j];
+            lastIndex = j;
+        }
+    }
+
+    return LIS;
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;3、最长公共子序列（返回长度）&lt;/p&gt;
+&lt;p&gt;给定两个数组，返回两个数组的最长公共子序列的长度。&lt;/p&gt;
+&lt;p&gt;思路：用 dp[i][j] 表示 X[0&amp;hellip;i] 与 Y[0&amp;hellip;j] 的最长公共子序列长度。那么 dp[i][j] 是如何得到的？我们只需观察两个数组的最后一个元素 X[i] 和 Y[j]。如果 X[i] 和 Y[j] 相等，那么说明它就是 dp[i][j] 对应的公共子序列的最后一个元素。此时 dp[i][j] 由 dp[i-1][j-1]+1 得到。如果不相等，说明这个元素不是公共子序列的最后一个元素。那么此时 dp[i][j] 要么等于 dp[i-1][j]，要么等于 dp[i][j-1]。&lt;/p&gt;
+&lt;p&gt;边界：注意dp[0][0]，dp[i][0] 和 dp[0][j]。&lt;/p&gt;
+&lt;p&gt;$$
+dp[i][j]=
+\begin{cases}
+dp[i-1][j-1]+1，&amp;amp; \text{if $x_{i}=y_{j}$} \&lt;br&gt;
+max{dp[i-1][j], , dp[i][j-1]}，&amp;amp; \text{if $x_{i} \neq y_{j}$}
+\end{cases}
+$$&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;private static int LCS(int[] X, int[] Y) {
+    if (X == null || X.length == 0 || Y == null || Y.length == 0) return 0;
+    int[][] dp = new int[X.length][Y.length];
+    if (X[0] == Y[0]) dp[0][0] = 1;
+    for (int i = 1; i &amp;lt; X.length; i++) dp[i][0] = Math.max(X[i] == Y[0] ? 1 : 0, dp[i - 1][0]);
+    for (int j = 1; j &amp;lt; Y.length; j++) dp[0][j] = Math.max(X[0] == Y[j] ? 1 : 0, dp[0][j - 1]);
+    for (int i = 1; i &amp;lt; X.length; i++) {
+        for (int j = 1; j &amp;lt; Y.length; j++) {
+            if (X[i] == Y[j]) dp[i][j] = dp[i - 1][j - 1] + 1;
+            else dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
+        }
+    }
+    return dp[X.length - 1][Y.length - 1];
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;4、最长公共子序列（返回序列）&lt;/p&gt;
+&lt;p&gt;给定两个数组，返回两个数组的最长公共子序列。&lt;/p&gt;
+&lt;p&gt;思路：想按上题求出 dp 数组，然后根据它来恢复序列。思路很简答，根据上面的思路倒推回去即可。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;private static int[] LCS2(int[] X, int[] Y, int[][] dp) {
+    int len = dp[X.length - 1][Y.length - 1];
+    int[] lsc = new int[len];
+
+    int m = X.length - 1;
+    int n = Y.length - 1;
+    int index = len - 1;
+    while (index &amp;gt;= 0) {
+        if (n &amp;gt; 0 &amp;amp;&amp;amp; dp[m][n] == dp[m][n - 1]) n--;
+        else if (m &amp;gt; 0 &amp;amp;&amp;amp; dp[m][n] == dp[m - 1][n]) m--;
+        else { // X[m]==Y[n]
+            lsc[index--] = X[m];
+            m--;
+            n--;
+        }
+    }
+
+    return lsc;
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;5、最长公共子数组/子串&lt;/p&gt;
+&lt;p&gt;给定两个数组，返回最长公共子数组。&lt;/p&gt;
+&lt;p&gt;思路：思路类似公共子序列，但是因为子数组/子串必须是元素连续的，因此略有不同。同样构造 dp 数组，dp[i][j] 表示以 X[i] 和 Y[j] 结尾的最长公共子数组/子串的长度。如果这两个元素不相等，那么 dp[i][j]=0，如果相等则 dp[i][j]=dp[i-1][j-1]+1。&lt;/p&gt;
+&lt;p&gt;边界：dp[0][0]，dp[i][0]，dp[0][j]。&lt;/p&gt;
+&lt;p&gt;$$
+dp[i][j]=
+\begin{cases}
+dp[i-1][j-1]+1，&amp;amp; \text{if $x_{i}=y_{j}$} \&lt;br&gt;
+0，&amp;amp; \text{if $x_{i} \neq y_{j}$}
+\end{cases}
+$$&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;private static int[][] LCSA(int[] X, int[] Y) {
+    if (X == null || Y == null || X.length == 0 || Y.length == 0) return null;
+    int[][] dp = new int[X.length][Y.length];
+    if (X[0] == Y[0]) dp[0][0] = 1;
+    for (int i = 0; i &amp;lt; X.length; i++) dp[i][0] = X[i] == Y[0] ? 1 : 0;
+    for (int j = 0; j &amp;lt; Y.length; j++) dp[0][j] = X[0] == Y[j] ? 1 : 0;
+    for (int i = 1; i &amp;lt; X.length; i++) {
+        for (int j = 1; j &amp;lt; Y.length; j++) {
+            if (X[i] == Y[j]) dp[i][j] = dp[i - 1][j - 1] + 1;
+            else dp[i][j] = 0;
+        }
+    }
+    return dp;
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;现在根据 dp 数组来恢复出公共子数组/子串。由于 dp[i][j] 表示的是以 X[i] 和 Y[j] 结尾的最长公共子数组/子串，只有当 X[i] 和 Y[j] 相等时才会增长 dp[i][j]。因此可以看到 dp 数组必定是沿着右下方增长的。只要遍历 dp 找到最大的元素 dp[m][n]，其值即为最长公共子数组/子串的长度，并且该子数组/子串以 X[m] 或者 Y[n] 结尾。直接从 X 或者 Y 里面截取即可。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;private static int[] LCSA2(int[] X, int[] Y, int[][] dp) {
+    int maxlen = 0;
+    int lastIndex = 0;
+    for (int i = 0; i &amp;lt; X.length; i++) {
+        for (int j = 0; j &amp;lt; Y.length; j++) {
+            if (dp[i][j] &amp;gt; maxlen) {
+                lastIndex = i;
+                maxlen = dp[i][j];
+            }
+        }
+    }
+
+    int[] lcsa = new int[maxlen];
+    int index = lastIndex;
+    for (int i = maxlen - 1; i &amp;gt;= 0; i--) {
+        lcsa[i] = X[index--];
+    }
+    return lcsa;
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</description>
+    </item>
+    
+    <item>
+      <title>动态规划题(1)</title>
+      <link>https://utopizza.github.io/posts/algorithm/2018-04-29-%E7%AE%97%E6%B3%95-%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E9%A2%981/</link>
+      <pubDate>Sun, 29 Apr 2018 20:03:00 +0000</pubDate>
+      
+      <guid>https://utopizza.github.io/posts/algorithm/2018-04-29-%E7%AE%97%E6%B3%95-%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E9%A2%981/</guid>
+      <description>&lt;p&gt;1、矩阵的最小路径和&lt;/p&gt;
+&lt;p&gt;给定一个矩阵 m ，从左上角开始，每次只能向右或者向下走，最后到达右下角的位置，定义路径上所有的数字之和为路径和。求所有路径中最小路径和。&lt;/p&gt;
+&lt;p&gt;思路：因为题目规定了每次只能向右走一步或者向下走一步，因此每一个位置的上一步只能是来自左边一个位置或者上边一个位置。那么走到某个位置的最小路径，只能是左边位置路径和与上边位置路径和中最小的那个，加上本位置的数字。&lt;/p&gt;
+&lt;p&gt;考虑边界条件：第一行的所有位置只能从左边走过来，第一列的所有位置只能从上面走下来。&lt;/p&gt;
+&lt;p&gt;用 $dp[i][j]$ 表示第 $i$ 行第 $j$ 列位置上的最小路径和，则&lt;/p&gt;
+&lt;p&gt;$$
+dp[i][j]=min{dp[i][j-1], dp[i-1][j]}+m[i][j]
+$$&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;private static int minPath(int[][] m) {
+    if (m == null || m.length == 0 || m[0].length == 0) return 0;
+    int row = m.length;
+    int col = m[0].length;
+    int[][] dp = new int[row][col];
+    dp[0][0] = m[0][0];
+    for (int i = 1; i &amp;lt; row; i++) dp[i][0] = dp[i - 1][0] + m[i][0];
+    for (int j = 1; j &amp;lt; col; j++) dp[0][j] = dp[0][j - 1] + m[0][j];
+    for (int i = 1; i &amp;lt; row; i++) {
+        for (int j = 1; j &amp;lt; col; j++) {
+            dp[i][j] = Math.min(dp[i - 1][j], dp[i][j - 1]) + m[i][j];
+        }
+    }
+    return dp[row - 1][col - 1];
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;2、硬币找零——最少硬币数（硬币数量无限）&lt;/p&gt;
+&lt;p&gt;给定数组 coins，其元素均为正整数且不重复。每个元素代表一种面值的硬币。再给定一个换零的目标正整数 target，求用 coins 进行找零的最少硬币数。每种面值的硬币可以多次使用。&lt;/p&gt;
+&lt;p&gt;思路：因为题目规定每种面值的硬币可以无限重复使用，因此在找零的过程中，每一步都可以拿起 coins 数组中任意一个硬币，即每一步都有 coins.length 种选择。假设现在手上得到找零目标为 target 的最优找零方案。那么现在倒退一步来看，在拿起某个硬币 coins[j] 而得到 target 之前，手上的方案 target-coins[j] 必定也是最优的（可用算法导论的剪切-粘贴法证明）。如前面所述，每一步都有 coins.length 种选择，那么只需找出这些选择中最优的方案即可。即对每一个目标 i，只需搜索目标为 i-coins[j] 的所有方案并取最优的方案加 1 即可。&lt;/p&gt;
+&lt;p&gt;考虑边界条件：找零目标为 0 时的最少硬币数当然是 0。另外在遍历 coins 数组时，需要注意数组越界问题，即如果某个硬币的面值比要找零的目标还大的情况下，需要跳过这种情况。可通过先对 coins 数组进行排序来减少每一步的搜索空间。&lt;/p&gt;
+&lt;p&gt;设 dp[i] 表示找零目标为 i 的最少硬币数，则&lt;/p&gt;
+&lt;p&gt;$$
+dp[i]=\min_{1 \leq j \leq coins.length} dp[i-coins[j]]+1
+$$&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;private static int minCoins(int[] coins, int target) {
+    if (coins == null || coins.length == 0 || target &amp;lt;= 0) return 0;
+    int[] dp = new int[target + 1];
+    dp[0] = 0;
+    int max = Integer.MAX_VALUE; 
+    Arrays.sort(coins); // let &amp;#34;coins[j]&amp;lt;=i&amp;#34; to skip some useless solutions
+    for (int i = 1; i &amp;lt;= target; i++) {
+        dp[i] = max; 
+        for (int j = 0; j &amp;lt; coins.length &amp;amp;&amp;amp; coins[j] &amp;lt;= i; j++) {
+            if (dp[i - coins[j]] != max) dp[i] = Math.min(dp[i], dp[i - coins[j]] + 1);
+        }
+    }
+    return dp[target] == max ? 0 : dp[target];
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;3、硬币找零——最少硬币数（硬币数量有限）&lt;/p&gt;
+&lt;p&gt;给定数组 coins，其元素均为正整数，有可能重复。每个元素代表一种面值的硬币。再给定一个换零的目标正整数 target，求用 coins 进行找零的最少硬币数。每个硬币只能使用一次。&lt;/p&gt;
+&lt;p&gt;思路：由于每个硬币只能用一次，所以不但需要记录每一步找零的目标，还需要记录用到了 coins 中哪些硬币，因此需要使用二位数组 dp[i][j]。dp[i][j] 表示使用 coins[0&amp;hellip;i] 中的某些硬币来组成找零目标 j 的最少硬币数。主体思路和上一题差不多，只是这里不能“在每一步任意选取 coins.length 种硬币”了，而只能“要么用第 i 个硬币，要么不用”。假设现在手上已有使用前 i 个硬币得到找零目标为 j 的最优方案 dp[i][j]，那么它是如何得到的？同样倒推回去，它的前一步是：如果这一步使用了第 i 枚硬币 coins[i]，那么在使用这枚硬币前，手上的方案 dp[i-1][j-coins[i]] 必定也是一个最优的方案，此时使用这枚硬币后得到 dp[i][j]=dp[i-1][j-coins[i]]+1；如果这一步不使用 coins[i]，那么前一步手上的最优方案是 dp[i-1][j]，因为不使用这枚硬币，所以 dp[i][j]=dp[i-1][j]+0。最后 dp[i][j] 的最优解即为这两种情况的最小值。&lt;/p&gt;
+&lt;p&gt;边界条件：找零目标为 0 时最少硬币数为 0。搜索 coins 数组时同样要考虑硬币面值是否大于找零目标。如果小于找零目标，就按照上面的去两种方案中的最小值。如果大于找零目标，说明这个硬币永不上来找零，但是它的硬币数并不是0，而是直接等于不用这个硬币的方案，即 dp[i-1][j]。&lt;/p&gt;
+&lt;p&gt;$$
+dp[i][j]=\min{dp[i-1][j-coins[i]]+1, \quad dp[i-1][j]}
+$$&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;private static int minCoinsLimit(int[] coins, int target) {
+        if (coins.length == 0 || target &amp;lt;= 0) return 0;
+        int[][] dp = new int[coins.length][target + 1];
+        int max = Integer.MAX_VALUE;
+
+        for (int j = 1; j &amp;lt;= target; j++) dp[0][j] = max;
+        if (target &amp;gt;= coins[0]) dp[0][coins[0]] = 1;
+
+        for (int i = 1; i &amp;lt; dp.length; i++) {
+            for (int j = 1; j &amp;lt;= target; j++) {
+                if (j - coins[i] &amp;gt;= 0)
+                    if (dp[i - 1][j - coins[i]] == max) dp[i][j] = dp[i - 1][j];
+                    else dp[i][j] = Math.min(dp[i - 1][j - coins[i]] + 1, dp[i - 1][j]);
+                else
+                    dp[i][j] = max;
+            }
+        }
+        return dp[coins.length - 1][target] == max ? 0 : dp[coins.length - 1][target];
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;4、硬币找零——找零方法数（硬币数量无限）&lt;/p&gt;
+&lt;p&gt;给定数组 coins， 其中所有的值均为正整数且不重复，每个值代表一种面值的硬币。现给定找零目标 target，规定每种硬币可以使用无数次，求一共有多少种找零方法。&lt;/p&gt;
+&lt;p&gt;思路：思路很简单，用 dp[i][j] 表示使用硬币 coins[0&amp;hellip;i] 来组成找零目标 j 的方法数。同样倒回去想，dp[i][j]是怎么来的呢？显然是由 dp[i-1][x] 得来的。由于硬币数量无限，所以对第 i 种硬币，可以使用 0 到 K 个（$ K * coins[i] \leq j $）。因此 dp[i][j] 等于 dp[i-1][j-0&lt;em&gt;coins[i]]、 dp[i-1][j-1&lt;/em&gt;coins[i]]、dp[i-1][j-2&lt;em&gt;coins[i]]、&amp;hellip;、dp[i-1][j-K&lt;/em&gt;coins[i]] 之和。&lt;/p&gt;
+&lt;p&gt;$$
+dp[i][j]=\sum_{0\leq k \leq K} dp[i-1][j-k*coins[i]]
+$$&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;private static int coins(int[] coins, int target) {
+    if (coins == null || coins.length == 0 || target &amp;lt;= 0) return 0;
+    int[][] dp = new int[coins.length][target + 1];
+    for (int i = 0; i &amp;lt; coins.length; i++) dp[i][0] = 1;
+    for (int j = 0; j * coins[0] &amp;lt;= target; j++) dp[0][j * coins[0]] = 1;
+    for (int j = 1; j &amp;lt;= target; j++) {
+        for (int i = 1; i &amp;lt; coins.length; i++) {
+            int sum = 0;
+            for (int k = 0; k * coins[i] &amp;lt;= j; k++) {
+                sum += dp[i - 1][j - k * coins[i]];
+            }
+            dp[i][j] = sum;
+        }
+    }
+    return dp[coins.length - 1][target];
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;这里还可以进一步优化，把最里面那层求累加和的 for 循环去掉：&lt;/p&gt;
+&lt;p&gt;$$
+\begin{aligned}
+dp[i][j]
+&amp;amp; =\sum_{0\leq k \leq K} dp[i-1][j-k*coins[i]] \&lt;br&gt;
+&amp;amp; =dp[i-1][j]+\sum_{1\leq k \leq K} dp[i-1][j-k*coins[i]] \&lt;br&gt;
+&amp;amp; =dp[i-1][j]+dp[i][j-coins[i]]
+\end{aligned}
+$$&lt;/p&gt;
+&lt;p&gt;想一下为什么？&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>字符串大整数相乘</title>
+      <link>https://utopizza.github.io/posts/algorithm/2018-01-29-%E7%AE%97%E6%B3%95-%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%A4%A7%E6%95%B4%E6%95%B0%E7%9B%B8%E4%B9%98/</link>
+      <pubDate>Mon, 29 Jan 2018 22:07:00 +0000</pubDate>
+      
+      <guid>https://utopizza.github.io/posts/algorithm/2018-01-29-%E7%AE%97%E6%B3%95-%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%A4%A7%E6%95%B4%E6%95%B0%E7%9B%B8%E4%B9%98/</guid>
+      <description>&lt;p&gt;在 leetcode 上看到一个巨强的解法，记录一下以加深记忆。原文参见：&lt;a href=&#34;https://leetcode.com/problems/multiply-strings/discuss/17605/Easiest-JAVA-Solution-with-Graph-Explanation&#34;&gt;Easiest JAVA Solution with Graph Explanation&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;题目：&lt;a href=&#34;https://leetcode.com/problems/multiply-strings/description/&#34;&gt;Multiply Strings&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;题目大意为，给定两个字符串形式的非负整数，求它的乘积，以字符串形式返回。并且：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;两个字符串的长度小于 110.&lt;/li&gt;
+&lt;li&gt;两个字符串只包含 0 到 9 的数字.&lt;/li&gt;
+&lt;li&gt;两个字符串不以任何 ‘0’ 开头.&lt;/li&gt;
+&lt;li&gt;不能使用编程语言内置的大整数库函数，也不能直接转换成整数求解.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;leetcode 上某大神给出的思路：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;位数分别为 $m$ 和 $n$ 的两个整数相乘，乘积的位数最大不超过 $m+n$&lt;/li&gt;
+&lt;li&gt;从左至右地，乘数的第 $[i]$ 位与被乘数的第 $[j]$ 位相乘的积，将被加到最终结果的第 $[i+j]$ 位和第 $[i+j+1]$ 位&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;img src=&#34;https://utopizza.github.io/2018-01-29-%E7%AE%97%E6%B3%95-%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%A4%A7%E6%95%B4%E6%95%B0%E7%9B%B8%E4%B9%98/123.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;因此，整个计算过程就可以直接模拟我们小学就学的竖式乘法计算过程。这也是令我惊讶的地方，小学就学会了的竖式乘法计算，但是十几年来（我）都没有发现这两个十分有用的规律&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;public static String multiply(String num1, String num2) {
+    int m = num1.length();
+    int n = num2.length();
+    int[] pos = new int[m + n];
+
+    for (int i = m - 1; i &amp;gt;= 0; i--) {
+        for (int j = n - 1; j &amp;gt;= 0; j--) {
+            int mul = (num1.charAt(i) - &amp;#39;0&amp;#39;) * (num2.charAt(j) - &amp;#39;0&amp;#39;);
+            int p1 = i + j;
+            int p2 = i + j + 1;
+            int sum = mul + pos[p2];
+
+            pos[p1] += sum / 10;
+            pos[p2] = sum % 10;
+        }
+    }
+
+    StringBuilder sb = new StringBuilder();
+    for (int p : pos)
+        if (!(sb.length() == 0 &amp;amp;&amp;amp; p == 0))
+            sb.append(p);
+
+    return sb.length() == 0 ? &amp;#34;0&amp;#34; : sb.toString();
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</description>
+    </item>
+    
+    <item>
+      <title>回溯法</title>
+      <link>https://utopizza.github.io/posts/algorithm/2018-01-24-%E7%AE%97%E6%B3%95-%E5%9B%9E%E6%BA%AF%E6%B3%95/</link>
+      <pubDate>Wed, 24 Jan 2018 13:57:00 +0000</pubDate>
+      
+      <guid>https://utopizza.github.io/posts/algorithm/2018-01-24-%E7%AE%97%E6%B3%95-%E5%9B%9E%E6%BA%AF%E6%B3%95/</guid>
+      <description>&lt;p&gt;回溯法 （Backtracking） 是一种选优搜索法，又称为试探法，按选优条件向前搜索，以达到目标。但当探索到某一步时，发现原先选择并不优或达不到目标，就退回一步重新选择，这种走不通就退回再走的技术为回溯法，而满足回溯条件的某个状态的点称为“回溯点”。（摘自百度百科）&lt;/p&gt;
+&lt;p&gt;此方法一般适用于求“有多少种解”的题目，如N皇后问题的“一共有多少种走法”，数独问题的“一共有多少种填法”，数组和问题的“一共有多少种组合使得数组中的某些元素之和等于目标值”等等。这种问题的特点是搜索空间很大，并且往往伴有约束条件，如N皇后问题的“每个皇后不能在同一直线上”，数独问题的“每行每列每个小九宫格都由1到9组成并且不重复”，数组和问题的“元素之和等于给定目标值”。善于利用这些约束条件，往往可以跳过大量的不可能存在解的搜索空间，极大地减少计算量。此方法也称“剪枝法”。&lt;/p&gt;
+&lt;p&gt;下面是 leetcode 的一些相关题目的解法。&lt;/p&gt;
+&lt;p&gt;一、数组和&lt;/p&gt;
+&lt;p&gt;1、&lt;a href=&#34;https://leetcode.com/problems/combination-sum/description/&#34;&gt;Combination Sum&lt;/a&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;public List&amp;lt;List&amp;lt;Integer&amp;gt;&amp;gt; combinationSum(int[] nums, int target) {
+    List&amp;lt;List&amp;lt;Integer&amp;gt;&amp;gt; ret = new ArrayList&amp;lt;&amp;gt;();
+    Arrays.sort(nums);
+    backtrack(ret,new ArrayList&amp;lt;&amp;gt;(),nums,target,0);
+    return ret;
+}
+
+public void backtrack(List&amp;lt;List&amp;lt;Integer&amp;gt;&amp;gt; soluList, List&amp;lt;Integer&amp;gt; solu, int[] nums, int remain, int start){
+    if(remain&amp;lt;0) return;
+    else if(remain==0) soluList.add(new ArrayList(solu));
+    else{
+        for(int i=start;i&amp;lt;nums.length;i++){
+            solu.add(nums[i]);
+            backtrack(soluList,solu,nums,remain-nums[i],i);
+            solu.remove(solu.size()-1);
+        }
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;2、&lt;a href=&#34;https://leetcode.com/problems/combination-sum-ii/description/&#34;&gt;Combination Sum II&lt;/a&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;public List&amp;lt;List&amp;lt;Integer&amp;gt;&amp;gt; combinationSum2(int[] nums, int target) {
+    List&amp;lt;List&amp;lt;Integer&amp;gt;&amp;gt; ret=new ArrayList&amp;lt;&amp;gt;();
+    Arrays.sort(nums);
+    backtrack(ret,new ArrayList&amp;lt;&amp;gt;(),nums,target,0);
+    return ret;
+}
+
+private void backtrack(List&amp;lt;List&amp;lt;Integer&amp;gt;&amp;gt; soluList, List&amp;lt;Integer&amp;gt; solu, int[] nums, int remain, int start){
+    if(remain&amp;lt;0) return;
+    else if(remain==0) soluList.add(new ArrayList(solu));
+    else{
+        for(int i=start;i&amp;lt;nums.length;i++){
+            if(i&amp;gt;start&amp;amp;&amp;amp;nums[i-1]==nums[i]) continue;
+            solu.add(nums[i]);
+            backtrack(soluList,solu,nums,remain-nums[i],i+1);
+            solu.remove(solu.size()-1);
+        }
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;二、子集组合&lt;/p&gt;
+&lt;p&gt;1、&lt;a href=&#34;https://leetcode.com/problems/subsets/description/&#34;&gt;Subsets&lt;/a&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;public List&amp;lt;List&amp;lt;Integer&amp;gt;&amp;gt; subsets(int[] nums) {
+    List&amp;lt;List&amp;lt;Integer&amp;gt;&amp;gt; soluList=new ArrayList&amp;lt;&amp;gt;();
+    backtrack(soluList, new ArrayList&amp;lt;&amp;gt;(), nums, 0);
+    return soluList;
+}
+
+private void backtrack(List&amp;lt;List&amp;lt;Integer&amp;gt;&amp;gt; soluList, List&amp;lt;Integer&amp;gt; solu, int[] nums, int start){
+    soluList.add(new ArrayList&amp;lt;&amp;gt;(solu));
+    for(int i=start;i&amp;lt;nums.length;i++){
+        solu.add(nums[i]);
+        backtrack(soluList,solu,nums,i+1);
+        solu.remove(solu.size()-1);
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;2、&lt;a href=&#34;https://leetcode.com/problems/subsets-ii/description/&#34;&gt;Subsets II&lt;/a&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;public List&amp;lt;List&amp;lt;Integer&amp;gt;&amp;gt; subsetsWithDup(int[] nums) {
+    List&amp;lt;List&amp;lt;Integer&amp;gt;&amp;gt; soluList=new ArrayList&amp;lt;&amp;gt;();
+    Arrays.sort(nums);
+    backtrack(soluList,new ArrayList&amp;lt;&amp;gt;(),nums,0);
+    return soluList;
+}
+
+private void backtrack(List&amp;lt;List&amp;lt;Integer&amp;gt;&amp;gt; soluList, List&amp;lt;Integer&amp;gt; solu, int[] nums, int start){
+    soluList.add(new ArrayList&amp;lt;&amp;gt;(solu));
+    for(int i=start;i&amp;lt;nums.length;i++){
+        if(i&amp;gt;start&amp;amp;&amp;amp;nums[i-1]==nums[i]) continue;
+        solu.add(nums[i]);
+        backtrack(soluList,solu,nums,i+1);
+        solu.remove(solu.size()-1);
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;三、全排列&lt;/p&gt;
+&lt;p&gt;1、&lt;a href=&#34;https://leetcode.com/problems/permutations/description/&#34;&gt;Permutations&lt;/a&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;public List&amp;lt;List&amp;lt;Integer&amp;gt;&amp;gt; permute(int[] nums) {
+    List&amp;lt;List&amp;lt;Integer&amp;gt;&amp;gt; soluList=new ArrayList&amp;lt;&amp;gt;();
+    backtrack(soluList,new ArrayList&amp;lt;&amp;gt;(),nums);
+    return soluList;
+}
+    
+private void backtrack(List&amp;lt;List&amp;lt;Integer&amp;gt;&amp;gt; soluList, List&amp;lt;Integer&amp;gt; solu, int[] nums){
+    if(solu.size()==nums.length) soluList.add(new ArrayList&amp;lt;&amp;gt;(solu));
+    else{
+        for(int i=0;i&amp;lt;nums.length;i++){
+            if(solu.contains(nums[i])) continue;
+            solu.add(nums[i]);
+            backtrack(soluList, solu, nums);
+            solu.remove(solu.size()-1);
+        }
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;2、&lt;a href=&#34;https://leetcode.com/problems/permutations-ii/description/&#34;&gt;Permutations II&lt;/a&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;public List&amp;lt;List&amp;lt;Integer&amp;gt;&amp;gt; permuteUnique(int[] nums) {
+    List&amp;lt;List&amp;lt;Integer&amp;gt;&amp;gt; soluList=new ArrayList&amp;lt;&amp;gt;();
+    Arrays.sort(nums);
+    backtrack(soluList,new ArrayList&amp;lt;&amp;gt;(),nums,new boolean[nums.length]);
+    return soluList;
+}
+
+private void backtrack(List&amp;lt;List&amp;lt;Integer&amp;gt;&amp;gt; soluList, List&amp;lt;Integer&amp;gt; solu, int[] nums, boolean[] used){
+    if(solu.size()==nums.length) soluList.add(new ArrayList&amp;lt;&amp;gt;(solu));
+    else{
+        for(int i=0;i&amp;lt;nums.length;i++){
+            if(used[i]) continue;
+            if(i&amp;gt;0&amp;amp;&amp;amp;nums[i-1]==nums[i]&amp;amp;&amp;amp;!used[i-1]) continue;
+            used[i]=true;
+            solu.add(nums[i]);
+            backtrack(soluList,solu,nums,used);
+            solu.remove(solu.size()-1);
+            used[i]=false;
+        }
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</description>
+    </item>
+    
+    <item>
+      <title>二分查找</title>
+      <link>https://utopizza.github.io/posts/algorithm/2018-01-14-%E7%AE%97%E6%B3%95-%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE/</link>
+      <pubDate>Sun, 14 Jan 2018 21:57:00 +0000</pubDate>
+      
+      <guid>https://utopizza.github.io/posts/algorithm/2018-01-14-%E7%AE%97%E6%B3%95-%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE/</guid>
+      <description>&lt;p&gt;一、原始二分查找&lt;/p&gt;
+&lt;p&gt;二分查找的思想很简单，就是在一个有序序列里查找一个目标时，先与中位数比较，如果目标等于中位数，则直接返回。如果目标小于中位数，就去前半部分继续查找。如果目标大于中位数，就去后半部分查找，如此重复直至不可再分。如果找到则返回 mid，否则返回 -1 表示序列中不存在改目标。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;public int BinarySearch(int[] nums, int target) {
+    int lo = 0, hi = nums.length - 1;
+    while (lo &amp;lt;= hi) {
+        int mid = lo + (hi - lo) / 2;
+        if (nums[mid] == target) return mid;
+        else if (nums[mid] &amp;gt; target) hi = mid - 1;
+        else lo = mid + 1;
+    }
+    return -1;
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;二、半有序数组的二分查找&lt;/p&gt;
+&lt;p&gt;进阶问题，在一个部分有序（这里只考虑升序）的旋转数组里，使用二分查找来找到最大或者最小的值。所谓旋转数组，就是一个已按升序排序的数组，循环左移或者右移若干位，例如 $[4,5,6,0,1,2,3]$。先给出寻找最小值的代码。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;public int BinarySearchMinForRotateArray(int[] nums) {
+    int lo = 0, hi = nums.length - 1;
+    while (lo &amp;lt; hi) {
+        int mid = (lo + hi) / 2;
+        if (nums[mid] &amp;gt; nums[nums.length-1]) lo = mid + 1;
+        else hi = mid;
+    }
+    return lo;
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;下面是寻找最大值的代码，之前我写不出来，当数组是完全有序（也即最小值是第一个数，最大值是最后一个数）的时候，程序会死循环。后发现使用一个小技巧：&lt;code&gt;mid = (lo + hi + 1) / 2&lt;/code&gt; 就可以解决这个问题。因为这样可以使得 mid 指针向右偏，因为数组是升序的，最大值会在最小值的左边，所以能够调整到刚好在找到最大值的时候退出循环。这里有些复杂的边界调整，暂时还没整理出一个规律。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;public int BinarySearchMaxForRotateArray(int[] nums) {
+    int lo = 0, hi = nums.length - 1;
+    while (lo &amp;lt; hi) {
+        int mid = (lo + hi + 1) / 2;
+        if (nums[mid] &amp;lt; nums[0]) hi = mid - 1;
+        else lo = mid;
+    }
+    return lo;
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;三、二分查找思想实现整数除法运算&lt;/p&gt;
+&lt;p&gt;应用问题，要求不能用乘法、除法和模运算来实现一个除法。为了简单表示，这里暂不考虑小数除法和溢出的问题。思路是，通过不断把除数加倍，来逼近被除数。如果某次加倍后会超过被除数，则用被除数减去当前的除数累加和，把剩下的差作为新的逼近目标，重复调用自身来递归地逼近。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;// a/b
+public int dividedByBinarySearch(int a, int b) {
+    if (a &amp;lt; b) return 0;
+    int sum = b;
+    int multiply = 1;
+    while (sum + sum &amp;lt;= a) {
+        sum += sum;
+        multiply += multiply;
+    }
+    return multiply + dividedByBinarySearch(a - sum, b);
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;四、二分查找寻找指定元素的起始与结束下标&lt;/p&gt;
+&lt;p&gt;给定一个升序的整型数组，里面的元素会重复若干个，使用二分查找确定指定元素的起始和结束位置。例如，给定 [1,2,3,4,4,4,4,5]，指定目标为 4，则返回 [3,6]。思路是使用两次二分查找，分别向左和向右找最顶端的指定元素。这个例子应该能比较好地说明 &lt;code&gt;mid = (lo + hi + 1) / 2&lt;/code&gt; 这个技巧，目的是保证 mid 指针一直等于 target。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;public int[] BinarySearchRange(int[] nums, int target) {
+    int[] ret = new int[2];
+    ret[0] = -1;
+    ret[1] = -1;
+    if (nums == null || nums.length == 0) return ret;
+
+    // find the left top
+    int lo = 0, hi = nums.length - 1;
+    while (lo &amp;lt; hi) {
+        int mid = (lo + hi + 1) / 2;
+        if (target &amp;lt;= nums[mid]) hi = mid;
+        else lo = mid + 1;
+    }
+    if (nums[lo] == target) ret[0] = lo;
+
+    // find the right top
+    lo = 0;
+    hi = nums.length - 1;
+    while (lo &amp;lt; hi) {
+        int mid = (lo + hi) / 2;
+        if (target &amp;gt;= nums[mid]) lo = mid;
+        else hi = mid - 1;
+    }
+    if (nums[lo] == target) ret[1] = lo;
+
+    return ret;
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</description>
+    </item>
+    
+    <item>
+      <title>FourSum</title>
+      <link>https://utopizza.github.io/posts/algorithm/2018-01-13-%E7%AE%97%E6%B3%95-foursum/</link>
+      <pubDate>Sat, 13 Jan 2018 23:20:00 +0000</pubDate>
+      
+      <guid>https://utopizza.github.io/posts/algorithm/2018-01-13-%E7%AE%97%E6%B3%95-foursum/</guid>
+      <description>&lt;p&gt;一、TwoSum&lt;/p&gt;
+&lt;p&gt;给定一个整型数组，和一个 target，返回数组中两个数之和等于 target 的所有组合。不能输出重复组合。例如给定数组 [2,3,1,-4,8,3]，target = 4，则满足条件的非重复组合有 [3,1] 和 [-4,8]。&lt;/p&gt;
+&lt;p&gt;思路：因为要求输出的是数组元素而不是数组下标，因此可以对数组进行排序（注意，如果题目要求输出数组下标，就不应使用排序，而是使用 HashMap 来优化）。排序之后，使用两个指针分别从数组两头往中间移动搜索整个数组，为避免重复组合，需跳过重复的元素。当指针相遇时搜索结束，因此搜索的时间复杂度为 $O(n)$。（其实如果算上前面的排序操作那么时间复杂度不止$O(n)$。因为所有基于比较的排序算法的时间复杂度下界为 $O(nlogn)$，所以本算法的总时间复杂度实际上应是 $O(n+nlogn)=O(nlogn)$）&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;public List&amp;lt;List&amp;lt;Integer&amp;gt;&amp;gt; TwoSum(int[] nums, int target) {
+    List&amp;lt;List&amp;lt;Integer&amp;gt;&amp;gt; list = new ArrayList&amp;lt;List&amp;lt;Integer&amp;gt;&amp;gt;();
+    Arrays.sort(nums);
+    int lo = 0, hi = nums.length - 1;
+    while (lo &amp;lt; hi) {
+        int sum = nums[lo] + nums[hi];
+        if (sum == target) {
+            list.add(Arrays.asList(nums[lo], nums[hi]));
+            while (lo &amp;lt; hi &amp;amp;&amp;amp; nums[lo] == nums[lo + 1]) lo++;
+            while (lo &amp;lt; hi &amp;amp;&amp;amp; nums[hi] == nums[hi - 1]) hi--;
+            lo++;
+            hi--;
+        } else if (sum &amp;gt; target) hi--;
+        else lo++;
+    }
+    return list;
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;二、ThreeSum&lt;/p&gt;
+&lt;p&gt;上述题目的改进版，给定整型数组和一个 target，输出数组中三个数之和等于 target 的所有非重复组合。&lt;/p&gt;
+&lt;p&gt;思路：可以转化成 TwoSum 问题，即对原数组中第 $i$ 个元素 $nums[i]$，用 target 减去这个元素的差作为剩下的子数组 $nums[i+1,\cdots,n-1]$ 的 TwoSum 问题的 target。相当与对每一个元素调用一次 TwoSum 来找剩下的两个元素，因为 TwoSum 的时间复杂度为 $O(n)$，因此 ThreeSum 的时间复杂度为 $O(n^2)$。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;public List&amp;lt;List&amp;lt;Integer&amp;gt;&amp;gt; ThreeSum(int[] nums, int target) {
+    List&amp;lt;List&amp;lt;Integer&amp;gt;&amp;gt; list = new ArrayList&amp;lt;List&amp;lt;Integer&amp;gt;&amp;gt;();
+    if (nums == null || nums.length &amp;lt; 3) return list;
+
+    Arrays.sort(nums);
+    
+    // ThreeSum
+    for (int i = 0; i &amp;lt; nums.length - 2; i++) {
+        if (i == 0 || nums[i] != nums[i - 1]) {
+
+            // TwoSum
+            int lo = i + 1, hi = nums.length - 1, t = target - nums[i];
+            while (lo &amp;lt; hi) {
+                int sum = nums[lo] + nums[hi];
+                if (sum == t) {
+                    list.add(Arrays.asList(nums[lo], nums[hi], nums[i]));
+                    while (lo &amp;lt; hi &amp;amp;&amp;amp; nums[lo] == nums[lo + 1]) lo++;
+                    while (lo &amp;lt; hi &amp;amp;&amp;amp; nums[hi] == nums[hi - 1]) hi--;
+                    lo++;
+                    hi--;
+                } else if (sum &amp;gt; t) hi--;
+                else lo++;
+            }
+
+        }
+    }
+    return list;
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;三、FourSum&lt;/p&gt;
+&lt;p&gt;再次改进版，给定一个整型数组和一个 target，求数组中四个元素之和等于 target 的所有非重复组合。&lt;/p&gt;
+&lt;p&gt;思路：类似地，先排序，然后选定一个元素，把剩下的右边子数组看作 ThreeSum 问题。推理同上，时间复杂度为 $O(n^3)$。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;public static List&amp;lt;List&amp;lt;Integer&amp;gt;&amp;gt; FourSum(int[] nums, int target) {
+    List&amp;lt;List&amp;lt;Integer&amp;gt;&amp;gt; ret = new ArrayList&amp;lt;List&amp;lt;Integer&amp;gt;&amp;gt;();
+    Arrays.sort(nums);
+
+    // four sum
+    for (int i = 0; i &amp;lt; nums.length - 3; i++) {
+        if (i == 0 || nums[i] != nums[i - 1]) {
+
+            // three sum
+            for (int j = i + 1; j &amp;lt; nums.length - 2; j++) {
+                if (j == i + 1 || nums[j] != nums[j - 1]) {
+
+                    // two sum
+                    int lo = j + 1, hi = nums.length - 1, t = target - nums[i] - nums[j];
+                    while (lo &amp;lt; hi) {
+                        int sum = nums[lo] + nums[hi];
+                        if (sum == t) {
+                            ret.add(Arrays.asList(nums[i], nums[j], nums[lo], nums[hi]));
+                            while (lo &amp;lt; hi &amp;amp;&amp;amp; nums[lo] == nums[lo + 1]) lo++;
+                            while (lo &amp;lt; hi &amp;amp;&amp;amp; nums[hi] == nums[hi - 1]) hi--;
+                            lo++;
+                            hi--;
+                        } else if (sum &amp;gt; t) hi--;
+                        else lo++;
+                    }
+
+                }
+            }
+
+        }
+    }
+
+    return ret;
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</description>
+    </item>
+    
+    <item>
+      <title>位运算技巧</title>
+      <link>https://utopizza.github.io/posts/algorithm/2018-01-06-%E7%AE%97%E6%B3%95-%E4%BD%8D%E8%BF%90%E7%AE%97%E6%8A%80%E5%B7%A7/</link>
+      <pubDate>Sat, 06 Jan 2018 20:20:00 +0000</pubDate>
+      
+      <guid>https://utopizza.github.io/posts/algorithm/2018-01-06-%E7%AE%97%E6%B3%95-%E4%BD%8D%E8%BF%90%E7%AE%97%E6%8A%80%E5%B7%A7/</guid>
+      <description>&lt;p&gt;一、6种基本位操作&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th align=&#34;center&#34;&gt;符号&lt;/th&gt;
+&lt;th align=&#34;center&#34;&gt;描述&lt;/th&gt;
+&lt;th align=&#34;center&#34;&gt;运算规则&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td align=&#34;center&#34;&gt;&amp;amp;&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;And（按位与）&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;对应位上同时为 1 时，结果才为 1，否则为 0&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align=&#34;center&#34;&gt;$\mid$&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;Or（按位或）&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;对应位上同时为 0 时，结果才为 0，否则为 1&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align=&#34;center&#34;&gt;~&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;Not（取反）&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;1 变 0，0 变 1&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align=&#34;center&#34;&gt;^&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;Xor（异或）&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;对应位上相同时输出 0，相异时输出 1&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align=&#34;center&#34;&gt;&amp;laquo;&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;Left Shift（左移）&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;各二进位全部左移若干位，高位丢弃，低位补 0&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align=&#34;center&#34;&gt;&amp;gt;&amp;gt;&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;Right Shift（右移）&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;各二进位全部右移若干位，低位丢弃，高位分情况&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;注：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;计算机内部使用补码作为机器数，正数的补码等于原码，负数的补码等于原码的符号位外取反加一，切记。另外注意机器字长，如果题目没有明确说明，一般默认是32位或64位&lt;/li&gt;
+&lt;li&gt;这6种操作符中，只有~取反是单目操作符，其它5种都是双目操作符&lt;/li&gt;
+&lt;li&gt;位操作只能用于整型数据&lt;/li&gt;
+&lt;li&gt;位操作运算优先级比较低（比加减乘除低），因此一般需要使用括号来保证正确的运算顺序，否则容易出错&lt;/li&gt;
+&lt;li&gt;右移运算（&amp;gt;&amp;gt;）时，对无符号数，高位补0。对有符号数，各编译器处理方法不一样，有的补符号位（算术右移），有的补0（逻辑右移）&lt;/li&gt;
+&lt;li&gt;Java中的右移（&amp;gt;&amp;gt;）执行的是算术右移，高位补符号位；Java中的无符号（逻辑）右移有单独的运算符号：&amp;gt;&amp;raquo;&lt;/li&gt;
+&lt;li&gt;另外位操作还有一些复合操作符，如 &amp;amp;=、|=、^=、&amp;laquo;=、&amp;gt;&amp;gt;= 等&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;二、常用技巧&lt;/p&gt;
+&lt;p&gt;1、计算给定的整数对应的二进制数中 1 的个数。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;public int countOnes(int n) {
+    int count=0;
+    while(n!=0) {
+        n = n&amp;amp;(n-1);
+        count++;
+    }
+    return count;
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;2、判断一个整数是否是 4 的 n 次方。思路很清晰，4 的 n 次方即为 2 的 2n 次方，因此其二进制形式必定是由一个 1 和偶数个 0 组成。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;public boolean isPowerOfFour(int num) {
+    int count0=0;
+    int count1=0;
+    while(num&amp;gt;0){
+        if((num&amp;amp;1)==1){
+            count1++;
+        }else{
+            count0++;
+        }
+        num&amp;gt;&amp;gt;=1;
+    }
+    return count1==1 &amp;amp;&amp;amp; (count0%2==0);
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;3、仅用位运算求两个整数的和。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;public int getSum(int a, int b) {
+    //return b==0? a:getSum(a^b, (a&amp;amp;b)&amp;lt;&amp;lt;1);
+    while(b!=0){
+        int temp=a^b;
+        b=(a&amp;amp;b)&amp;lt;&amp;lt;1;
+        a=temp;
+    }
+    return a;
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;4、找出缺失的数。给定一个整型数组，每个数字都出现了两次，现在缺失了一个数字，即有一个数字只出现一次，找出这个数字。思路：利用异或运算的两个特性， 自己与自己异或结果为0，异或满足交换律&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;public int missingNumber(int[] nums) {
+    int ret = 0;
+    for (int i = 0; i &amp;lt; nums.length; ++i) {
+        ret ^= nums[i];
+    }
+    return ret;
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;5、找出缺失的数。给定一个整型数组，长度为 $n$，取值范围为 $[0,&amp;hellip;,n]$。找出缺失的那一个数。例如给定 $[0,1,3]$，返回 2。思路同上，把数组的 n 个数和完整的序列 $[0,&amp;hellip;,n]$ 异或起来，最后结果就是只出现一次的也即在数组中缺失的那个数。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;public static int missingNumber(int[] nums) {
+    int ret = 0;
+    for (int i = 0; i &amp;lt; nums.length; ++i) {
+        ret ^= i;
+        ret ^= nums[i];
+    }
+    return ret ^ nums.length;
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;6、判断奇偶。只要根据最未位是 0 还是 1 来决定，为 0 就是偶数，为 1 就是奇数。因此可以用 if((a &amp;amp; 1) == 0) 代替 if(a % 2 == 0) 来判断 a 是不是偶数。&lt;/p&gt;
+&lt;p&gt;7、不使用第三方变量交换两个数。利用一个数异或上自己等于 0 （消去这个数）的性质。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;public void swap(int a, int b)  
+{  
+    if (a != b)  
+    {  
+        a ^= b;  
+        b ^= a;  
+        a ^= b;  
+    }  
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;8、变换符号，即最高位 1 变 0，0 变 1。把该数取反加 1 即可。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;public int signReversal(int a)  
+{  
+    return ~a + 1;  
+}  
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;9、取绝对值。由上述可知对于负数可以通过对其取反加一来得到正数。因此现在只要判断输入的数是正数还是负数，如果是正数就直接输出，是负数就取反加一。对输入的数算术右移31位，由于高位补的是符号位，因此右移后如果原来是正数那么结果就是 0（0x 0000 0000），如果是负数那么右移的结果是 -1（0x FFFF FFFF）。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;public int abs(int a)  
+{  
+    int i = a &amp;gt;&amp;gt; 31;  
+    return i == 0 ? a : (~a + 1);  
+} 
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;如果进一步考虑，注意到任何数与 0 异或等于自己，与 -1 异或等于取反，而代码中的 i 要么是 0，要么是 -1，因此 a 与 i 异或再减去 i 和原代码等价，并且这样省去了判断。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;public int abs(int a)  
+{  
+    int i = a &amp;gt;&amp;gt; 31;  
+    return (a ^ i) - i;  
+} 
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;10、逆序一个二进制数。这里只关注正整数的有效位，例如，正整数 11 的二进制是 1011，逆序后得到 1101，输出 13。思路是对输入的数不断地取最低位并右移，取到的位赋到输出结果的最低位并不断左移。当输入的数减小到 0 时，算法完成。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;public int reverseBit(int n) {
+    int mask = 1, res = 0;
+    while (n != 0) {
+        res &amp;lt;&amp;lt;= 1;
+        res |= (n &amp;amp; mask);
+        n &amp;gt;&amp;gt;= 1;
+    }
+    return res;
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;11、逆序一个 32 位无符号整数的二进制。我们知道机器码是最高位是用于表示符号位的，但是 Java 中没有无符号整数的数据类型，怎办呢？&lt;/p&gt;
+&lt;p&gt;三、参考资料&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;a href=&#34;http://blog.csdn.net/morewindows/article/details/7354571&#34;&gt;位操作基础篇之位操作全面总结&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://leetcode.com/problems/sum-of-two-integers/discuss/84278/&#34;&gt;leetcode-A summary: how to use bit manipulation to solve problems easily and efficiently&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://stackoverflow.com/questions/3165776/reverse-bits-in-number&#34;&gt;Stack Overflow-Reverse bits in number&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://stackoverflow.com/questions/3324707/how-can-i-invert-bits-of-an-unsigned-byte-in-java&#34;&gt;Stack Overflow-How can I invert bits of an unsigned byte in Java?&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>机器数的三种编码策略</title>
+      <link>https://utopizza.github.io/posts/algorithm/2017-12-31-%E7%AE%97%E6%B3%95-%E6%9C%BA%E5%99%A8%E6%95%B0%E7%9A%84%E4%B8%89%E7%A7%8D%E7%BC%96%E7%A0%81%E7%AD%96%E7%95%A5/</link>
+      <pubDate>Sun, 31 Dec 2017 15:10:00 +0000</pubDate>
+      
+      <guid>https://utopizza.github.io/posts/algorithm/2017-12-31-%E7%AE%97%E6%B3%95-%E6%9C%BA%E5%99%A8%E6%95%B0%E7%9A%84%E4%B8%89%E7%A7%8D%E7%BC%96%E7%A0%81%E7%AD%96%E7%95%A5/</guid>
+      <description>&lt;p&gt;一、机器数（Machine Data）与真值（True Value）&lt;/p&gt;
+&lt;p&gt;一个数在计算机中的二进制表示形式，叫做这个数的机器数。我们知道，计算机的物理结构决定了它内部只能存储 0 和 1，也即二进制数，那么计算机如何区分表示一个数的正负呢？一般上，计算机用机器数的最高位存放符号，如果最高位是 0 则表示这个数是一个正数。如果最高位是 1 则表示这个数是一个负数。假设计算机字长为 8 位（现在的计算机一般32位和64位），则 +3 转换成二进制机器数就是 0000 0011，-3 转换成二进制机器数是 1000 0011。&lt;/p&gt;
+&lt;p&gt;反过来，我们把当一个二进制数作为机器数出现时，它所代表的真实数值为机器数的真值。例如，机器数 0000 0011 的真值为 +000 0001 = +3，机器数 1000 0001 的真值为 –000 0011 = –3。&lt;/p&gt;
+&lt;p&gt;下面分别介绍原码，反码，补码，它们实际上就是机器数的三种不同的编码策略。其中，适合人脑理解和计算的是原码，而适合计算机使用的是补码。&lt;/p&gt;
+&lt;p&gt;二、原码（Primitive Encoding）&lt;/p&gt;
+&lt;p&gt;原码就是直接使用符号位和真值的绝对值的二进制数作为机器码。例如，计算机字长为 8 位时，&lt;/p&gt;
+&lt;p&gt;$$[+3]_{原}=0000 , 0011$$&lt;/p&gt;
+&lt;p&gt;$$[-3]_{原}=1000 , 0011$$&lt;/p&gt;
+&lt;p&gt;由于原码最高位用于表示符号，因此原码可以表示的最大正数为 0111 1111 即 +127，最小负数为 1111 1111 即 -127，因此 8 位字长的原码机器码的取值范围为 [-127, 127]。&lt;/p&gt;
+&lt;p&gt;三、反码（Invert Encoding）&lt;/p&gt;
+&lt;p&gt;反码的定义为：正数的反码等于它的原码，负数的反码等于其原码的符号位不变，其余各位取反。例如，计算机字长为 8 位时，&lt;/p&gt;
+&lt;p&gt;$$[+3]_{反}=0000 , 0011$$&lt;/p&gt;
+&lt;p&gt;$$[-3]_{反}=1111 , 1100$$&lt;/p&gt;
+&lt;p&gt;四、补码（Complement Encoding）&lt;/p&gt;
+&lt;p&gt;补码的定义为：正数的补码等于它的原码，负数的补码等于其原码的符号位不变，其余各位取反，再加一。例如，计算机字长为 8 位时，&lt;/p&gt;
+&lt;p&gt;$$[+3]_{补}=0000 , 0011$$&lt;/p&gt;
+&lt;p&gt;$$[-3]_{补}=1111 , 1101$$&lt;/p&gt;
+&lt;p&gt;五、为什么需要原码、反码、补码三种编码策略&lt;/p&gt;
+&lt;p&gt;由上面知道，对于一个正数，它的原码、反码和补码的表示是完全一样的。而对于一个负数，它的三种编码策略完全不一样。例如，计算机字长为 8 位时，&lt;/p&gt;
+&lt;p&gt;$$[+3]&lt;em&gt;{真值}=[0000,0011]&lt;/em&gt;{原}=[0000,0011]&lt;em&gt;{反}=[0000,0011]&lt;/em&gt;{补}$$&lt;/p&gt;
+&lt;p&gt;$$[-3]&lt;em&gt;{真值}=[1000,0011]&lt;/em&gt;{原}=[1111,1100]&lt;em&gt;{反}=[1111,1101]&lt;/em&gt;{补}$$&lt;/p&gt;
+&lt;p&gt;适合人脑直观理解的是原码，因为它就是以真值的绝对值的二进制加上一个符号位来表示，但是这样却不适合于计算机的计算。因为如果单独处理计算机中每一个机器数的符号位，会使得电路设计非常复杂。于是需要一种可以直接让符号位直接参与计算并且保证结果正确的编码方式，这就是补码被提出的原因。补码的推导具体参见：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.cnblogs.com/zhangziqiu/archive/2011/03/30/ComputerCode.html&#34;&gt;原码, 反码, 补码 详解&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.tup.com.cn/upload/books/yz/026562-01.pdf&#34;&gt;机器数与编码&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;目前计算机内部使用的一般都是补码，切记。&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>二叉堆建堆时间复杂度</title>
+      <link>https://utopizza.github.io/posts/algorithm/2017-11-08-%E7%AE%97%E6%B3%95-%E4%BA%8C%E5%8F%89%E5%A0%86%E5%BB%BA%E5%A0%86%E6%97%B6%E9%97%B4%E5%A4%8D%E6%9D%82%E5%BA%A6/</link>
+      <pubDate>Wed, 08 Nov 2017 16:07:00 +0000</pubDate>
+      
+      <guid>https://utopizza.github.io/posts/algorithm/2017-11-08-%E7%AE%97%E6%B3%95-%E4%BA%8C%E5%8F%89%E5%A0%86%E5%BB%BA%E5%A0%86%E6%97%B6%E9%97%B4%E5%A4%8D%E6%9D%82%E5%BA%A6/</guid>
+      <description>&lt;p&gt;一、二叉堆建堆过程&lt;/p&gt;
+&lt;p&gt;二叉堆的定义、父子结点的相对位置计算公式，还有建堆过程在 &lt;a href=&#34;https://yushengwxxx.github.io/2017/11/04/2017-11-04-%E7%AE%97%E6%B3%95-%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95%EF%BC%88%E4%B8%80%EF%BC%89/&#34;&gt;排序算法（一）&lt;/a&gt; 中已经说明。这里稍微温习一下建堆的过程：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;从数组的中间位置开始，往左边扫描每个元素，并调用 $sink()$ 方法往下不断调整父子结点的相对位置，如果此堆是最大堆，那么 $sink()$ 方法会使小的结点下沉，大的结点上浮。当扫描完成，则可以保证每个子堆都是父结点大于两个孩子结点，此时堆有序，建堆完成。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;从树的角度来理解，建堆的总时间成本，就是对于下标小于 $\frac{n}{2}$ 的所有结点，也即所有的非叶子结点（二叉堆是完全二叉树），从原位置下沉到正确的位置的总成本。最好的情况是所有非叶子结点都比它的孩子结点大，即数组本来就是堆有序的。最坏的情况是所有非叶子结点都要从原位置一直向下被交换到叶子结点。现在我们来考虑最坏情况的时间复杂度。&lt;/p&gt;
+&lt;p&gt;在此之前，需要先得到推导过程中会用到的两个小结论。&lt;/p&gt;
+&lt;p&gt;二、含有 $n$ 个元素的二叉堆的高度为 $\lfloor \log_2{n} \rfloor$&lt;/p&gt;
+&lt;p&gt;《算法导论》中给出的关于堆的高度的定义：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;堆中一个结点的高度为该结点到叶子结点最长简单路径上边的数目；一个堆的高度即为根结点的高度。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;换句通俗的话说，就是从下往上数，以最深的叶子结点为第一层，高度为 $0$（注意这是《算法导论》给出的堆的高度定义，好像和树的高度的定义不太一样，网上有些博客对于树的高度好像是把最深叶子结点的高度算作 $1$ 而不是 $0$）；它的父结点所在的层为第二层，高度为 $1$，依此类推。因此，一个堆的高度（即根结点的高度）在数值上就等于该堆的总层数减一。这样就可转化成求含 $n$ 个元素的二叉树的总层数的简单问题：&lt;/p&gt;
+&lt;p&gt;对于一棵完全二叉树，结点总数为 $n$，设一共有 $x$ 层。根据完全二叉树的定义和性质，它的前 $x-1$ 层是一棵满二叉树。这棵满二叉树的总结点个数可以轻松求出：从根节点往下数，第一层共 $2^0$ 个结点，第二层共 $2^1$ 个结点，第 $k$ 层共 $2^{k-1}$ 个结点，因此满二叉树结点总数为：&lt;/p&gt;
+&lt;p&gt;$$2^0+2^1+\cdots+2^{(x-1)-1}=2^{x-1}-1$$&lt;/p&gt;
+&lt;p&gt;考虑最后一层，可能是满的也可能不是满的，我们无法确定，但是可以确定这一层必定多于或等于 $1$ 个结点，少于或等于 $2^{x-1}$ 个结点。因此&lt;/p&gt;
+&lt;p&gt;$$2^{x-1}-1+1 \leq n \leq 2^{x-1}-1+2^{x-1}$$&lt;/p&gt;
+&lt;p&gt;$$2^{x-1} \leq n \leq 2^x-1$$&lt;/p&gt;
+&lt;p&gt;$$x-1 \leq \log_{2}n \leq \log_2(2^x-1) &amp;lt; \log_{2}2^x = x$$&lt;/p&gt;
+&lt;p&gt;$$x-1 \leq \log_{2}n &amp;lt; x$$&lt;/p&gt;
+&lt;p&gt;$$\log_2{n} &amp;lt; x \leq \log_{2}n+1$$&lt;/p&gt;
+&lt;p&gt;因为 $x$ 是堆的层数，必定为整数，而 $\log_2n$ 可能是小数，例如 $2.3 &amp;lt; x \leq 3.3$，那么此时 $x$ 应该为 $2.3-0.3+1$，即向下取整加 $1$，因此解出 $x=\lfloor \log_2n \rfloor +1$。回到高度的定义，则该堆的高度为 $x-1=\lfloor \log_2n \rfloor$&lt;/p&gt;
+&lt;p&gt;三、含有 $n$ 个元素的二叉堆，高度为 $h$ 的结点最多有 $\lceil \frac{n}{2^{h+1}} \rceil$ 个&lt;/p&gt;
+&lt;p&gt;对高度为 $h$ 的结点，由定义知，它们位于从最深叶子结点往上数的第 $h+1$ 层。只要我们可以确定它们位于从根节点往下数是第几层，那么该层结点数就可以由上面的公式：“第 $k$ 层共 $2^{k-1}$ 个结点”直接求出。&lt;/p&gt;
+&lt;p&gt;那么如何确定从上往下数，高度为 $h$ 的结点位于第几层？非常简单，用总层数减去从下往上数的层数再加一即可得出。由上面的推导我们知道含 $n$ 个元素的二叉堆的高度（总层数）为 $\lfloor \log_2n \rfloor +1$，因此高度为 $h$ 的结点的位于从上往下数第 $\lfloor \log_2n \rfloor -(h+1)+1=\lfloor \log_2n \rfloor -h$ 层，所以该层最多共有 $2^{(\lfloor \log_2n \rfloor -h)-1}=2^{\lfloor \log_2n \rfloor} \cdot 2^{-(h+1)}=\lceil \frac{n}{2^{h+1}} \rceil$ 个结点。最后一步推导如下：&lt;/p&gt;
+&lt;p&gt;$$x &amp;lt; \lfloor x \rfloor +1 \leq x+1$$&lt;/p&gt;
+&lt;p&gt;$$\log_2n &amp;lt; \lfloor \log_2n \rfloor +1 \leq \log_2n+1$$&lt;/p&gt;
+&lt;p&gt;$$\log_2n-1 &amp;lt; \lfloor \log_2n \rfloor \leq \log_2n$$&lt;/p&gt;
+&lt;p&gt;$$\frac{2^{\log_2n-1}}{2^{h+1}} &amp;lt; \frac{2^{\lfloor \log_2n \rfloor}}{2^{h+1}} \leq \frac{2^{\log_2n}}{2^{h+1}}$$&lt;/p&gt;
+&lt;p&gt;$$\frac{0.5n}{2^{h+1}} &amp;lt; \frac{2^{\lfloor \log_2n \rfloor}}{2^{h+1}} \leq \frac{n}{2^{h+1}}$$&lt;/p&gt;
+&lt;p&gt;因为 $\frac{2^{\lfloor \log_2n \rfloor}}{2^{h+1}}$ 是结点个数，必为整数，因此对区间右端向上取整即可，即 $\lceil \frac{n}{2^{h+1}} \rceil$。&lt;/p&gt;
+&lt;p&gt;四、二叉堆建堆的时间复杂度为 $O(n)$&lt;/p&gt;
+&lt;p&gt;在一个高度为 $h$ 的结点上调用 $sink()$ 方法一直往下调整到叶子结点的最大代价是 $O(h)$。结合上面两个结论，建堆的总代价为:&lt;/p&gt;
+&lt;p&gt;$$O(h) \cdot \sum_{h=0}^{\lfloor \log_2n \rfloor} \lceil \frac{n}{2^{h+1}} \rceil= O(n \cdot \sum_{h=0}^{\lfloor \log_2n \rfloor} \frac{h}{2^h})$$&lt;/p&gt;
+&lt;p&gt;在这里引用级数公式：&lt;/p&gt;
+&lt;p&gt;$$\sum_{k=0}^{\infty} k \cdot x^k=\frac{x}{(1-x)^2}$$&lt;/p&gt;
+&lt;p&gt;把 $x=\frac{1}{2}$ 代入公式，$k$ 换成 $h$ 得&lt;/p&gt;
+&lt;p&gt;$$\sum_{h=0}^{\infty} \frac{h}{2^h}=\frac{0.5}{(1-0.5)^2}=2$$&lt;/p&gt;
+&lt;p&gt;因此建堆总代价为 $O(n \cdot 2)=O(n)$。&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>排序算法</title>
+      <link>https://utopizza.github.io/posts/algorithm/2017-11-04-%E7%AE%97%E6%B3%95-%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95/</link>
+      <pubDate>Sat, 04 Nov 2017 16:49:00 +0000</pubDate>
+      
+      <guid>https://utopizza.github.io/posts/algorithm/2017-11-04-%E7%AE%97%E6%B3%95-%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95/</guid>
+      <description>&lt;p&gt;一、选择排序&lt;/p&gt;
+&lt;p&gt;输入长度为 $n$ 的数组，依次选择数组第 $i$ 小的元素，交换到数组第 $i$ 个位置。使用内外两个循环，外循环负责定位到数组第 $i$ 个位置，内循环负责从数组第 $i+1$ 个位置 遍历到数组末端，记录最小的元素，交换到数组第 $i$ 个位置上。&lt;/p&gt;
+&lt;p&gt;无论输入数组元素的初始序列如何，内循环都需要迭代 $n-i$ 次，所以选择排序的总比较次数始终为 $(n-1)+(n-2)+ \cdots +2+1=\frac{n(n-1)}{2} \approx \frac{n^2}{2}$ ，时间复杂度为 $O(n^2)$。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;public class SortSelection extends Sort {
+    public static void sort(Comparable[] a) {
+        for (int i = 0; i &amp;lt; a.length; i++) {
+            int minIndex = i;
+            for (int j = i + 1; j &amp;lt; a.length; j++) {
+                if (less(a[j], a[minIndex])) {
+                    minIndex = j;
+                }
+            }
+            exchange(a, i, minIndex);
+        }
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;二、插入排序&lt;/p&gt;
+&lt;p&gt;模仿扑克卡牌等的整理过程，从最左边开始，将元素逐个插入到左边有序元素序列中适当的位置。同样使用两层循环，外循环负责定位到第 $i$ 个位置，内循环负责从第 $i-1$ 到第 $1$ 个位置找到能让第 $i$ 个元素插入的合适位置（找到第一个比它小的元素时停止内循环，该元素后一个位置即为适合插入的位置）并进行插入。外循环每层迭代结束时，都保证数组从左边第 $1$ 到第 $i$ 个位置是有序的。&lt;/p&gt;
+&lt;p&gt;与选择排序不同，插入排序的总比较次数与输入的初始序列有关，这取决于插入排序内循环的比较次数。最好的情况就是输入的数组直接就是有序的，那么每次内循环都只需要比较一次就结束，因为合适的位置就是本身。考虑到外循环迭代 $n$ 次，因此总比较次数为 $(n-1) \cdot 1=n-1$ 次，即最好情况下时间复杂度为 $O(n)$。相反地，最坏的情况就是输入的数组是刚好逆序的，此时每次内循环都需要从第 $i-1$ 位一直比较到数组最左端的第 $1$ 位，需比较 $i-1$ 次。考虑外循环，此时总比较次数为 $0+1+\cdots+(n-1)=\frac{n(n-1)}{2} \approx \frac{n^2}{2}$，即最坏情况下时间复杂度为 $O(n^2)$。因此对局部或者全部有序的输入数组，插入排序要比选择排序快。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;public class SortInsertion extends Sort {
+    public static void sort(Comparable[] a) {
+        for (int i = 0; i &amp;lt; a.length; i++) {
+            for (int j = i; j &amp;gt; 0 &amp;amp;&amp;amp; less(a[j], a[j - 1]); j--) {
+                exchange(a, j, (j - 1));
+            }
+        }
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;三、希尔排序&lt;/p&gt;
+&lt;p&gt;希尔排序是基于插入排序的一种改进版本。由上面分析知道，对于大规模乱序的数组，插入排序的效率是平方级别的，非常低，因为它只能一点一点地把元素从数组右边移动到左边。例如，如果最小的元素正好在数组尽头，那么将它插入正确位置就需要移动 $n-1$ 次，从数组最右边移到最左端。希尔排序为了加快速度，选择跨若干个元素交换的方式而不是相邻元素交换的方式。例如，跨 $h$ 个元素进行交互，那么一遍下来就可以保证任意间隔为 $h$ 的子数组是有序的。这样的数组被称为 $h$ 有序数组。当这些数组都有序后，开始减小 $h$，直至 $h=1$，这样整个数组便有序了。&lt;/p&gt;
+&lt;p&gt;至于复杂度分析，根据《算法（第四版）》一书所描述：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;透彻理解希尔排序性能至今仍然是一项挑战，也是唯一无法准确描述其对于乱序数组的性能特征的排序方式。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;但作者通过一些简单的实验，给出了一些结论：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;希尔排序比插入排序和选择排序要快得多，并且数组越大，优势越大。目前最重要的结论是它的运行时间达不到平方级别。已知的最坏的情况下的比较次数和 $N^{3/2}$ 成正比。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;关于选择递增序列 $h$：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;如何选择递增序列？要回答这个问题并不简单。算法的性能不仅取决于 $h$，还取决于 $h$ 之间的数学性质，例如它们的公因子等。有很多论文研究了各种不同的递增序列，但都无法证明某个序列是“最优”的。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;书中样例代码使用的 $h$ 序列为 $3h+1$，如：1，4，13，40，&amp;hellip;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;public class SortShell extends Sort {
+    public static void sort(Comparable[] a) {
+        int len = a.length;
+        int h = 1;
+        while (h &amp;lt; len / 3) 
+            h = 3 * h + 1;
+        while (h &amp;gt;= 1) {
+            for (int i = h; i &amp;lt; len; i++) {
+                for (int j = i; j &amp;gt;= h &amp;amp;&amp;amp; less(a[j], a[j - h]); j -= h) {
+                    exchange(a, j, (j - h));
+                }
+            }
+            h = h / 3;
+        }
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;四、归并排序&lt;/p&gt;
+&lt;p&gt;将两个已经有序的数组，合并成一个有序数组。&lt;/p&gt;
+&lt;p&gt;1、归并（原地）&lt;/p&gt;
+&lt;p&gt;我们假设输入是一个数组 $a$，该数组的第 $lo$ 位到第 $mid$ 位，第 $mid$ 位到第 $hi$ 位分别已经有序，现在需要将两部分合并，并使使其有序，返回原数组。思路非常简单，使用辅助数组先把这两部分复制出去，然后不断比较两个部分的队头元素，谁最小谁就出队回来原数组。如果忽略新建辅助数组并复制过去的操作，显然进行归并时每个元素都只需要扫描一次。因此时间复杂度是线性的，若需要归并的元素总个数为 $n$，则时间复杂度为 $O(n)$。（注意这里仅指归并两个子数组的复杂度，不是整个完整归并排序的复杂度）&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;// merge a[lo..mid] and a[mid+1..hi] to a[lo...hi]
+public static void merge(Comparable[] a, int lo, int mid, int hi) {
+    int i = lo, j = mid + 1;
+    for (int k = lo; k &amp;lt;= hi; k++)//copy a[lo..hi] to aux[lo..hi]
+        aux[k] = a[k];
+    for (int k = lo; k &amp;lt;= hi; k++)//move items back
+        if (i &amp;gt; mid)
+            a[k] = aux[j++];
+        else if (j &amp;gt; hi)
+            a[k] = aux[i++];
+        else if (less(aux[j], aux[i]))
+            a[k] = aux[j++];
+        else
+            a[k] = aux[i++];
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;2、排序&lt;/p&gt;
+&lt;p&gt;有了归并操作的基础后，后面的排序就有两种选择方式：自顶向下，自底向上。&lt;/p&gt;
+&lt;p&gt;(1)、自顶向下&lt;/p&gt;
+&lt;p&gt;自顶向下的思路是，在每一层递归函数中，先把数组切分成左半边和右半边，然后把这两部分分别放给下一层递归来处理（直到切分到子数组只有一个元素为止，便返回上一层），当左右两部分都完成排序返回到本层递归时，归并这两部分，返回上一层递归。&lt;/p&gt;
+&lt;p&gt;至于时间复杂度，我们可以把归并排序处理过程想象成一棵树，根节点是最顶层的递归函数，对应原数组 $a[0&amp;hellip;(n-1)]$ 的归并，这层需归并 $n$ 个元素；树的第二层是根节点的左右两个孩子，分别对应为原数组的左右两部分，左孩子处理 $a[0&amp;hellip;\frac{n-1}{2}]$ 的归并，右孩子处理 $a[\frac{n-1}{2}+1&amp;hellip;(n-1)]$ 的归并，因此该层也是一共需要归并 $n$ 个元素；如此一直到最底层叶节点，数组被切分成长度为2的 $\frac{n}{2}$ 个子数组：$a[0&amp;hellip;1]，a[2..3],\cdots,a[(n-2)&amp;hellip;(n-1)]$，该层同样共需处理 $n$ 个元素的归并。由于每层递归都是把对应子数组再分成两个子数组，因此该树是棵二叉树，树的高度为 $log_2(n)$。由上面分析知道每一层需归并处理的元素都是 $n$ 个，因此整棵树的处理代价，也即自顶向下归并排序的时间复杂度为 $O(n \cdot log_2(n))$。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;public class SortMerge extends Sort {
+
+    private static Comparable[] aux;
+
+    public static void sort(Comparable[] a) {
+        aux = new Comparable[a.length];
+        recursiveSort(a, 0, a.length - 1);
+    }
+
+    public static void recursiveSort(Comparable[] a, int lo, int hi) {
+        if (lo &amp;gt;= hi)
+            return;
+        int mid = lo + (hi - lo) / 2;
+        recursiveSort(a, lo, mid);
+        recursiveSort(a, (mid + 1), hi);
+        merge(a, lo, mid, hi);
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;(2)、自底向上&lt;/p&gt;
+&lt;p&gt;自底向上的思路是，使用迭代而不是递归的方式，对数组进行两两归并，四四归并，八八归并，一直到整个数组被归并。使用两层循环，外循环迭代地改变子数组的大小：1，2，4，8，依次类推；内循环对子数组执行归并排序。&lt;/p&gt;
+&lt;p&gt;显然外循环共执行 $log_2(n)$ 次；对外循环的每一层，内循环需要对所有子数组总共 $n$ 个元素进行归并排序，因此自底向上归并排序的时间复杂度也是 $O(n \cdot log_2(n))$。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;public class SortMergeBU extends Sort {
+
+    private static Comparable[] aux;
+
+    public static void sort(Comparable[] a) {
+        aux = new Comparable[a.length];
+        for (int subsize = 1; subsize &amp;lt; a.length; subsize += subsize) {
+            for (int lo = 0; lo &amp;lt; a.length - subsize; lo += subsize + subsize)
+                merge(a, lo, (lo + subsize - 1), Math.min(lo + subsize + subsize - 1, a.length - 1));
+        }
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;五、快速排序&lt;/p&gt;
+&lt;p&gt;快速排序是应用最广泛的排序算法，因为它实现简单，并且是原地排序，几乎不需要额外空间，同时也能做到时间复杂度为 $O(n \cdot log_2(n))$，在一般应用中，快速排序比其他排序算法都要快得多。&lt;/p&gt;
+&lt;p&gt;快速排序的基本思路是分治法。从输入数组中，随机地（或者有目的地）挑选某个元素，并以该元素为分界点，使用两个指针同时从数组左右两端往中间扫描，不断交换左右两边的元素，使小于分界点的元素被交换到左边，大于分界点的元素被交换到右边，直到两个指针在分界点相遇，则此一轮交换结束。此时，分界点左边的元素全部小于分界点，右边的元素全部大于分界点。接着分别对左边的数组，右边的数组重复执行如上操作，直到子数组不可再切分（子数组长度为1），此时原数组排序完成。在算法实现上非常简单，使用递归方式即可：先选择某个元素把数组切分成左右两部分，左边部分小于切分点，右边部分大于切分点。然后递归调用自己分别处理左边部分子数组和右边部分子数组（和归并排序刚好相反，归并排序是先排序好左边部分和右边部分，然后再合并两部分）。&lt;/p&gt;
+&lt;p&gt;快速排序对输入数据敏感，它的效率依赖于切分数组的效果，即依赖于切分元素的选择。快速排序的最好情况是每次都正好能将数组对半分，此时比较次数正好满足分治递归公式：$C_n=2 \cdot C_{n/2}+n$，其中 $2 \cdot C_{n/2}$ 表示将左右两个子数组排序的成本，$n$ 表示本层递归切分元素和所有元素比较的成本。由此公式可以推出，最好情况下快速排序的时间复杂度为 $O(n \cdot log_2(n))$（可以类比上面归并排序的树来帮助思考）。相反地，最坏情况呢？最坏情况就是每次选择的分界点元素，都是子数组最小或者最大的元素，此时把长度为 $n$ 的数组切分成长度为 $1$ 和长度为 $n-1$ 的两个子数组。此时虽然每一层递归中，切分元素和所有元素的比较次数仍然为 $n$ 次，但是递归的层数（切分次数）增加到了 $n$ 层，而不是 $log_2(n)$ 层。因此，最坏情况下快速排序的时间复杂度为 $O(n^2)$。**为了避免这种情况，一般会对输入数组进行一些预处理，例如随机打乱数组等等**。&lt;/p&gt;
+&lt;p&gt;可以利用树的结构来分析：设根节点大小为 $n$， 如果左右孩子结点大小均分得父结点的一半，那么这棵树将向左右同时平衡生长，最终为一棵完美平衡的二叉树，高度为 $log_2(n)$；如果左孩子只分得 $1$，右孩子分得剩余的全部，那么这棵树会一直沿着右子树生长，高度为 $n$。&lt;/p&gt;
+&lt;p&gt;为了简便表达基本思想，《算法（第四版）》书中给出的快速排序的代码不考虑输入数组乱序等预处理，并且每次切分只简单地选取子数组第一个元素作为切分点。作者在后面讨论了一些快速排序的高级改进，例如三取样切分等，还没时间仔细研究，等后面有空再回来补。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;public class SortQuick extends Sort {
+
+    public static void sort(Comparable[] a) {
+        //StdRandom.shuffle(a);
+        sort(a, 0, (a.length - 1));
+    }
+
+    private static void sort(Comparable[] a, int lo, int hi) {
+        if (hi &amp;lt;= lo) return;
+        int j = partition(a, lo, hi);
+        sort(a, lo, (j - 1));
+        sort(a, (j + 1), hi);
+    }
+
+    private static int partition(Comparable[] a, int lo, int hi) {
+        int i = lo, j = hi + 1;
+        Comparable v = a[lo];
+        while (true) {
+            while (less(a[++i], v)) if (i == hi) break;
+            while (less(v, a[--j])) if (j == lo) break;
+            if (i &amp;gt;= j) break;
+            exchange(a, i, j);
+        }
+        exchange(a, lo, j);
+        return j;
+    }
+
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;六、（二叉）堆排序&lt;/p&gt;
+&lt;p&gt;堆的定义：堆是一个数组，它可以被看成一个近似的完全二叉树，树上每个结点对应数组中的一个元素。当这棵树的每个结点都大于等于（或小于等于）它的两个孩子结点时，它被称为堆有序。父结点大于等于孩子借点时的堆称为最大堆，反之则称为最小堆。因为一个有序堆是一棵完全二叉树，因此堆中位置（即数组下标）为 $k$ 的结点，我们可以直接计算得知它的父结点位置为 $\frac{k}{2}$，它的两个孩子结点的位置为 $2k$ 和 $2k+1$。&lt;/p&gt;
+&lt;p&gt;建堆：输入长度为 $n$ 的数组，就是最初始的无序的堆。为了方便计算，我们先预处理输入的数组：把输入数组复制到一个新建数组 $aux[n+1]$，从 $aux[1]$ 开始放入元素，这样就不用考虑下标为 $0$ 的情况，便于利用上面的父子结点位置公式。然后，从数组的中间位置开始，往左边扫描每个元素，并调用 $sink()$ 方法往下不断调整父子结点的相对位置，如果此堆是最大堆，那么 $sink()$ 方法会使小的结点下沉，大的结点上浮。当扫描完成，则可以保证每个子堆都是父结点大于两个孩子结点，此时堆有序，建堆完成。&lt;/p&gt;
+&lt;p&gt;下沉排序：堆有序后，堆顶点那个元素即为数组最大元素。利用这个性质，只要在取出堆顶点后调整修复堆使其有序，然后不断重复取出堆顶点直到堆空，就可以得到有序的数组，即排序完成。那么如何取出顶点并修复堆呢？《算法（第四版）》给出的方案是，让堆顶点和堆的最后一个元素交换（其实就是取出顶点之后，用堆的最后一个元素补上，再修复），此时堆的大小减一，然后对新的顶点调用 $sink()$ 方法来修复堆的有序即可。如此这般，一直操作到堆的大小为0，则排序完成。如果该堆是最大堆，则排序的结果是升序，因为最先取出的顶点最大，放在数组最后面。&lt;/p&gt;
+&lt;p&gt;建堆的时间复杂度为 $O(n)$（详细推导另写一篇博客）；对于排序，每次取堆顶的时间复杂度为 $O(1)$，把最后一个元素放到堆顶并从上到下修复堆的时间复杂度为 $O(log_2(n))$，由于完成排序共需取 $n$ 次堆顶，因此排序的时间复杂度为 $O(n \cdot log_2(n))$。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;public class SortHeap extends Sort {
+
+    public static Comparable[] sort(Comparable[] a) {
+
+        int N = a.length;
+
+        Comparable[] aux = new Comparable[N + 1];// let index start from 1
+        for (int i = 0; i &amp;lt; N; i++) {
+            aux[i + 1] = a[i];
+        }
+
+        for (int k = N / 2; k &amp;gt;= 1; k--)
+            sink(aux, k, N);
+        while (N &amp;gt; 1) {
+            exchange(aux, 1, N--);
+            sink(aux, 1, N);
+        }
+
+        return aux;
+    }
+
+    private static void sink(Comparable[] a, int k, int N) {
+        while (k * 2 &amp;lt;= N) {
+            int j = k * 2;
+            if (j &amp;lt; N &amp;amp;&amp;amp; less(a[j], a[j + 1]))
+                j++;
+            if (!less(a[k], a[j]))
+                break;
+            exchange(a, k, j);
+            k = j;
+        }
+    }
+
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;七、基于比较的排序算法的下界&lt;/p&gt;
+&lt;p&gt;上面总结的选择排序、插入排序、希尔排序、归并排序、快速排序、堆排序都是基于元素两两比较决定相对位置的排序方式。这种基于比较的排序，最好的时间复杂度为 $O(n \cdot log_2(n))$。凡是基于比较的排序都不可能有比这更小的时间复杂度。理论证明参见《算法导论》第八章第一节：排序算法的下界。&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>java位运算符优先级</title>
+      <link>https://utopizza.github.io/posts/algorithm/2017-10-26-%E7%AE%97%E6%B3%95-java%E4%BD%8D%E8%BF%90%E7%AE%97%E7%AC%A6%E4%BC%98%E5%85%88%E7%BA%A7%E9%97%AE%E9%A2%98/</link>
+      <pubDate>Thu, 26 Oct 2017 14:31:00 +0000</pubDate>
+      
+      <guid>https://utopizza.github.io/posts/algorithm/2017-10-26-%E7%AE%97%E6%B3%95-java%E4%BD%8D%E8%BF%90%E7%AE%97%E7%AC%A6%E4%BC%98%E5%85%88%E7%BA%A7%E9%97%AE%E9%A2%98/</guid>
+      <description>&lt;p&gt;一、问题&lt;/p&gt;
+&lt;p&gt;leetcode第190题，逆序所输入的整数的32位bit，构成一个新的整数并输出：&lt;a href=&#34;https://leetcode.com/problems/reverse-bits/description/&#34;&gt;190. Reverse Bits&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;二、解决&lt;/p&gt;
+&lt;p&gt;思路不难，对输入的整数$n$，不断右移（带符号）并取其最低位（与上1），加到返回的整数上；返回的整数每次接收$n$的1位后，左移1位腾出最低位给下一次接收。如此循环32次即可。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;public class Solution {
+    public int reverseBits(int n) {
+        int result=0;
+        for(int i=0;i&amp;lt;32;i++){
+            result=result&amp;lt;&amp;lt;1;
+            result=result+(n&amp;amp;1);
+            n=n&amp;gt;&amp;gt;&amp;gt;1;
+        }
+        return result;
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;我一开始没有注意四则运算符和位运算符的优先级，默认了位运算是高于加减乘除的，所以上面第6行处我一开始写成：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;result = result + n&amp;amp;1;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;然后一直AC失败。我反复检查了我的思路也找不到出错的原因。无奈之下查看了discuss，发现我的思路和高票答案是一模一样的。不过别人的写法是：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;result += n&amp;amp;1;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;此时我才醒悟难道是运算符优先级的问题？我立马尝试加上括号，发现AC成功。后来查了资料才知道加减运算符的优先级是比按位与运算符的优先级高的：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;int a = 2;
+int b = 0;
+int c = a + b &amp;amp; 1;
+int d = a + (b &amp;amp; 1);
+System.out.print(&amp;#34;c=&amp;#34; + c + &amp;#34; , &amp;#34; + &amp;#34;d=&amp;#34; + d);
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;输出结果为：c=0，d=2&lt;/p&gt;
+&lt;p&gt;这件事充分说明了学习基础不扎实，需要深刻反省引以为戒，因此写到博客里记录一下。&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>最大子数组和</title>
+      <link>https://utopizza.github.io/posts/algorithm/2017-10-18-%E7%AE%97%E6%B3%95-%E6%9C%80%E5%A4%A7%E5%AD%90%E6%95%B0%E7%BB%84%E5%92%8C/</link>
+      <pubDate>Wed, 18 Oct 2017 00:37:00 +0000</pubDate>
+      
+      <guid>https://utopizza.github.io/posts/algorithm/2017-10-18-%E7%AE%97%E6%B3%95-%E6%9C%80%E5%A4%A7%E5%AD%90%E6%95%B0%E7%BB%84%E5%92%8C/</guid>
+      <description>&lt;p&gt;一、问题&lt;/p&gt;
+&lt;p&gt;给定一个整型数组，求其最大的子数组和。例如，给定数组：[-2,1,-3,4,-1,2,1,-5,4]，和最大的子数组为：[4,-1,2,1]，和为6。&lt;/p&gt;
+&lt;p&gt;二、递推式&lt;/p&gt;
+&lt;p&gt;设给定的数组为 $A$，用 $dp[i]$ 表示以 $A[i]$ 结尾的最大子数组之和。那么 $dp[i-1]$ 和 $dp[i]$ 有怎样的关系？由于给定的数组为整型，有正数也有负数，因此我们可以从子数组和的正负来考虑。显然，要使 $dp[i]$ 是最大的和，那么 以 $A[i-1]$ 结尾的子数组最大和 $dp[i-1]$ 如果是负数，则以 $A[i]$ 结尾的子数组的最大和 $dp[i]$ 应该去掉前面部分的负数，只取 $A[i]$  作为最大和，因为如果加上前面部分的和只会比 $A[i]$  更小；如果是正数，那么应该取 $A[i]$ 加上前面部分的 $dp[i-1]$ 作为最大和。形式化描述为：&lt;/p&gt;
+&lt;p&gt;$$
+dp[i]=A[i]+(dp[i-1]&amp;gt;0?dp[i-1]:0)
+$$&lt;/p&gt;
+&lt;p&gt;最终的最大子数组和就是数组 $dp[n]$ 的最大值。为了避免重复扫描该数组我们可以在计算该数组的时候维护一个当前最大值 $max$。&lt;/p&gt;
+&lt;p&gt;三、代码实现&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;public static int maxSubArray(int[] A) {
+    int n = A.length;
+    int[] dp = new int[n];//dp[i] means the maximum subarray ending with A[i];
+    dp[0] = A[0];
+    int max = dp[0];
+    
+    for(int i = 1; i &amp;lt; n; i++){
+        dp[i] = A[i] + (dp[i - 1] &amp;gt; 0 ? dp[i - 1] : 0);
+        max = Math.max(max, dp[i]);
+    }
+    
+    return max;
+}
+
+public static void main(String[] args) {
+    int[] A = {-2,1,-3,4,-1,2,1,-5,4};
+    System.out.println(maxSubArray(A));
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;时间和空间复杂度都为 $O(n)$。&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>最长递增子序列</title>
+      <link>https://utopizza.github.io/posts/algorithm/2017-09-26-%E7%AE%97%E6%B3%95-%E6%9C%80%E9%95%BF%E9%80%92%E5%A2%9E%E5%AD%90%E5%BA%8F%E5%88%97/</link>
+      <pubDate>Tue, 26 Sep 2017 01:37:00 +0000</pubDate>
+      
+      <guid>https://utopizza.github.io/posts/algorithm/2017-09-26-%E7%AE%97%E6%B3%95-%E6%9C%80%E9%95%BF%E9%80%92%E5%A2%9E%E5%AD%90%E5%BA%8F%E5%88%97/</guid>
+      <description>&lt;p&gt;一、问题&lt;/p&gt;
+&lt;p&gt;给定一个长度为 $N$ 的数组，找出一个最长的单调自增子序列的长度。例如：给定一个长度为 6 的数组 $A=&amp;lt; 5，6，7，1，2，8 &amp;gt;$，则其最长的单调递增子序列为 $&amp;lt; 5，6，7，8 &amp;gt;$，长度为4。&lt;/p&gt;
+&lt;p&gt;二、寻找最优子结构，导出递推式&lt;/p&gt;
+&lt;p&gt;设前 $i$ 个元素的最长递增子序列长度（即第 $i$ 个子问题最优解）表示为 $dp(i)$。那么第 $i$ 个子问题的最优解 $dp(i)$ 与前面 $i-1$ 个子问题各自的最优解 $dp(k)$ $(1 \leq k \leq i-1)$ 有着怎么样的递推关系？&lt;/p&gt;
+&lt;p&gt;考察前 $i-1$ 个子问题中第 $k$ $(1 \leq k \leq i-1)$ 个子问题对应的最长递增子序列。如果原序列第 $i$ 个元素 $A[i]$ 大于等于该序列的最后一个元素（设为 $last[k]$），则 $A[i]$ 可以追加到此递增子序列的末尾。此时有 $dp(i)=dp(k)+1$；反之如果 $A[i]$ 小于该序列的最后一个元素 $last[k]$，则 $A[i]$ 不能追加到此递增子序列的末尾，此时 $dp(i)=dp(k)$。由于 $1 \leq k \leq i-1$，因此我们只要遍历前 $i-1$ 个元素对应的 $i-1$ 个最长子序列，并考察第 $i$ 个元素追加（或者不追加）到这些子序列末尾后得到的 $i-1$ 个 $dp(i)$，其中最大一个的即为第 $i$ 个问题的最优解。形式化描述为：&lt;/p&gt;
+&lt;p&gt;$$
+dp(i)=
+\begin{cases}
+1, &amp;amp; \text{if $i=1$} \&lt;br&gt;
+max_{1 \leq k \leq i-1} { dp(k) } , &amp;amp; \text{if $i&amp;gt;1,A[i] &amp;lt; last[k]$} \&lt;br&gt;
+max_{1 \leq k \leq i-1} { dp(k)+1 }, &amp;amp; \text{if $i&amp;gt;1,A[i] \geq last[k]$} \&lt;br&gt;
+\end{cases}
+$$&lt;/p&gt;
+&lt;p&gt;三、代码实现&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;public static int longestIncreasingSubsequence(int[] A) {
+    int n = A.length - 1;
+    int[] dp = new int[n + 1];
+    int[] last = new int[n + 1];
+    for (int i = 1; i &amp;lt;= n; i++) {
+        if (i == 1) {
+            dp[i] = 1;
+            last[i] = A[1];
+        } else {
+            dp[i] = Integer.MIN_VALUE;
+            for (int k = 1; k &amp;lt;= i - 1; k++) {
+                if (A[i] &amp;gt;= last[k] &amp;amp;&amp;amp; dp[k] + 1 &amp;gt; dp[i]) {
+                    dp[i] = dp[k] + 1;
+                    last[i] = A[i];
+                } else if (dp[k] &amp;gt; dp[i]) {
+                    dp[i] = dp[k];
+                    last[i] = last[k];
+                }
+            }
+        }
+    }
+    return dp[n];
+}
+
+public static void main(String[] args) {
+    // 第一个元素从下标1开始
+    int[] A = {0, 9, 6, 7, 1, 9, 10};
+    System.out.println(longestIncrementSubsequence(A));
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;使用 $last[k]$ 来记录前 $k$ 个元素的最长递增子序列的最后一个元素。算法使用了两层 $for$ 循环，外层取值范围 $1$ 到 $n$，内层 $1$ 到 $i-1$，因此时间复杂度为 $O(n^2)$。另外由于使用了长度为 $n$ 的一维数组，因此空间复杂度为 $O(n)$。&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>硬币找零</title>
+      <link>https://utopizza.github.io/posts/algorithm/2017-09-24-%E7%AE%97%E6%B3%95-%E7%A1%AC%E5%B8%81%E6%89%BE%E9%9B%B6/</link>
+      <pubDate>Sun, 24 Sep 2017 23:20:00 +0000</pubDate>
+      
+      <guid>https://utopizza.github.io/posts/algorithm/2017-09-24-%E7%AE%97%E6%B3%95-%E7%A1%AC%E5%B8%81%E6%89%BE%E9%9B%B6/</guid>
+      <description>&lt;p&gt;一、问题&lt;/p&gt;
+&lt;p&gt;假设有几种硬币，如1、3、5、10，并且数量无限。请找出能够组成某个数目的找零所使用最少的硬币数&lt;/p&gt;
+&lt;p&gt;形式化定义：设需要找零的总额为 $V$ ，一共有 $n$ 种硬币可以选择，其中第 $i$ 种硬币面值为 $c_i$，对应的使用数量为 $y_i$。则问题表述为：&lt;/p&gt;
+&lt;p&gt;$$min \quad \sum_{i=1}^{n}y_i , \quad y_i \in N \text{（自然数集）} $$&lt;/p&gt;
+&lt;p&gt;$$s.t. \quad \sum_{i=1}^{n} c_i \cdot y_i = V$$&lt;/p&gt;
+&lt;p&gt;二、划分子问题，导出递推式&lt;/p&gt;
+&lt;p&gt;今天查了一些资料，对动态规划有了新的理解。&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://www.zhihu.com/question/23995189/answer/35324479&#34;&gt;有博主说&lt;/a&gt;：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;动态规划的本质是对问题状态的定义，和对状态转移方程的定义。动态规划是通过拆分问题，定义问题状态和状态之间的关系，使得问题能够以递推（或者说分治）的方式去解决。如何拆分问题，才是动态规划的核心，而拆分问题，靠的就是状态的定义和状态转移方程的定义。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;a href=&#34;https://www.zhihu.com/question/23995189/answer/35429905&#34;&gt;也有博主说&lt;/a&gt;：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;计算机的本质是一个状态机，内存里存储的所有数据构成了当前的状态，CPU只能利用当前的状态计算出下一个状态（不要纠结硬盘之类的外部存储，就算考虑他们也只是扩大了状态的存储容量而已，并不能改变下一个状态只能从当前状态计算出来这一条铁律）当你企图使用计算机解决一个问题是，其实就是在思考如何将这个问题表达成状态（用哪些变量存储哪些数据）以及如何在状态中转移（怎样根据一些变量计算出另一些变量）。所以所谓的空间复杂度就是为了支持你的计算所必需存储的状态最多有多少，所谓时间复杂度就是从初始状态到达最终状态中间需要多少步！&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;回到我们的问题，要定义这个问题的状态和状态转移方程，首先需要分析这个问题的解的构建过程。那么找零的过程是怎么样的？很简单，每次可以拿起 $n$ 种硬币中，面值小于找零总额的任意一个。然后把找零总额减去拿起的硬币的面值，进入下一次选择。不断如此重复，直至拿起的硬币的总值等于找零的总额。（到这里，子问题的定义就显而易见了，这个问题的子问题就是每一次进行的硬币的选择，本次的选择只与之前的选择有关，因为每一次选择后剩余的找零总额会相应减小）&lt;/p&gt;
+&lt;p&gt;但是这样并不能保证硬币数是最小的。为了找到最优解，我们需要假设某个子问题已经得到了最优解，然后推出与它的子问题的最优解的关系，也就是最优解的递推关系式。设 $dp(i)$ 表示组合总价值为 $i$ 的零钱所需要的最小硬币数。因此每次可以选择 $n$ 种硬币中的一种，设本次选择的硬币为第 $j$ $(1 \leq j \leq n)$ 种，对应的面值为 $c[j]$，则在拿起该硬币之前的子问题即为：组合面值为 $dp(i-c[j])$ 的总额需要的最小硬币数。同样可以用“剪贴粘贴”的反正法证明其最优解为 $dp(i-c[j])-1$。形式化描述为：&lt;/p&gt;
+&lt;p&gt;$$
+dp(i)=
+\begin{cases}
+0, &amp;amp; \text{if $i=0 $} \&lt;br&gt;
+min_{1 \leq j \leq n}(dp(i-c[j])+1), &amp;amp; \text{if $i &amp;gt;0 , , , c[j] \leq i$} \&lt;br&gt;
+\end{cases}
+$$&lt;/p&gt;
+&lt;p&gt;三、算法实现&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;public static int coin(int[] c, int v) {
+    int[] dp = new int[v + 1];
+    for (int i = 0; i &amp;lt;= v; i++) {
+        if (i == 0) dp[i] = 0;
+        else {
+            dp[i] = Integer.MAX_VALUE;
+            for (int j = 1; c[j] &amp;lt;= i &amp;amp;&amp;amp; j &amp;lt; c.length; j++) {
+                int temp = dp[i - c[j]] + 1;
+                if (temp &amp;lt; dp[i]) dp[i] = temp;
+            }
+        }
+    }
+    return dp[v];
+}
+
+public static void main(String[] args) {
+    //从下标1开始表示第1种硬币
+    int[] c = {0, 1, 3, 5, 10};
+    System.out.println(coin(c, 3));
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;外层的 $for$ 循环取值范围为 $0$ 到 $V$，内层的 $for$ 循环的取值范围为 $0$ 到 $n$，因此时间复杂度为 $O(V \cdot n)$    。空间复杂度为 $O(V)$。&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>0-1 背包问题</title>
+      <link>https://utopizza.github.io/posts/algorithm/2017-09-22-%E7%AE%97%E6%B3%95-01%E8%83%8C%E5%8C%85/</link>
+      <pubDate>Fri, 22 Sep 2017 20:36:00 +0000</pubDate>
+      
+      <guid>https://utopizza.github.io/posts/algorithm/2017-09-22-%E7%AE%97%E6%B3%95-01%E8%83%8C%E5%8C%85/</guid>
+      <description>&lt;p&gt;一、问题&lt;/p&gt;
+&lt;p&gt;有 $n$ 个物品，其中第 $i$ 个物品的重量为 $w[i]$，价值为 $p[i]$，我们规定所有物品的重量和价格均非负。现有一个可以承受最大重量为 $W$ 的背包，对每个物品，只能选择装 0 个或者 1 个入背包。问选择哪些物品装入背包可以使背包中的总价值最大。&lt;/p&gt;
+&lt;p&gt;形式化定义：&lt;/p&gt;
+&lt;p&gt;$$max \quad \sum_{i=1}^{n} p[i] \cdot x_i$$&lt;/p&gt;
+&lt;p&gt;$$s.t. \quad \sum_{i=1}^{n} w[i] \cdot x_i \leq W , \quad x_i \in { 0,1 }$$&lt;/p&gt;
+&lt;p&gt;二、划分子问题，导出递推式&lt;/p&gt;
+&lt;p&gt;如何从 $n$ 个物品中选择出若干个装入背包并使总价值最大？我们需要寻找一个有规律的装包过程，这样才能划分出子问题。&lt;/p&gt;
+&lt;p&gt;假设我们已经知道了选择哪几个物品是最优的，那么一个很直接的想法就是从左往右扫描这 $n$ 个物品，依次对每个物品做出选择：装入这个物品，或者放弃这个物品。当扫描完成，那么装包过程结束。&lt;/p&gt;
+&lt;p&gt;现在我们来分析每一步并试图划分出子问题。假设我们扫描了前 $i$ 个物品，并得到了当前的最大总价值，设为 $P_i$。那么倒回去看，这一步的最优解是怎么得到的？因为对每个物品，只能选择装入0个或者1个，因此这一步的最优解就是：在扫描并处理了前 $i-1$ 个物品后，选择装入第 $i$ 个物品后得到的最大总价值，或者放弃第 $i$ 个物品后的最大总价值。如果是通过选择物品 $i$ 而得到这一步的最优解 $P_i$，那么前 $i-1$ 个物品的最大总价值为 $P_i-p[i]$；如果是通过放弃物品 $i$ 而得到这一步的最优解，那么前 $i-1$ 个物品的最大总价值仍为 $P_i$。&lt;/p&gt;
+&lt;p&gt;考虑最优解的对应的背包容量的递推关系。设前 $i$ 物品恰好能装入容量为 $W_i$ 的背包得到最大总价值。如果是通过选择物品 $i$ 而得到的最优解，那么前 $i-1$ 个物品恰好能装入的背包的容量为 $W_i-w[i]$；反之，则前 $i-1$ 个物品恰好能装入的背包的容量为 $W_i$。&lt;/p&gt;
+&lt;p&gt;设 $dp(i,j)$ 表示前 $i$ 个物品装入容量为 $j$ 的背包的最大总价值。那么上述推导可以形式化描述为：&lt;/p&gt;
+&lt;p&gt;$$
+dp(i,j)=
+\begin{cases}
+0, &amp;amp; \text{if $i=0 , or , j=0$} \&lt;br&gt;
+dp(i-1,j), &amp;amp; \text{if $w[i]&amp;gt;j$} \&lt;br&gt;
+max {, dp(i-1,j-w[i])+p[i], , dp(i-1,j) ,} , &amp;amp; \text{if $w[i] \leq j$} \&lt;br&gt;
+\end{cases}
+$$&lt;/p&gt;
+&lt;p&gt;三、算法实现&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;public static int zeroOnePackage(int[] p, int[] w, int n, int W) {
+    int[][] dp = new int[n + 1][W + 1];
+    for (int i = 0; i &amp;lt;= n; i++) {
+        for (int j = 0; j &amp;lt;= W; j++) {
+            if (i == 0 || j == 0) dp[i][j] = 0;
+            else if (w[i] &amp;gt; j) dp[i][j] = dp[i - 1][j];
+            else dp[i][j] = Math.max(dp[i - 1][j - w[i]] + p[i], dp[i - 1][j]);
+        }
+    }
+    return dp[n][W];
+}
+
+public static void main(String[] args) {
+    int[] p = {0, 6, 3, 5, 4, 6}; //从下标1开始表示第1个物品
+    int[] w = {0, 2, 2, 6, 5, 4}; //同上
+    System.out.println(zeroOnePackage(p, w, 5, 10));
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;外层的 $for$ 循环取值范围为 $0$ 到 $n$，内层的 $for$ 循环的取值范围为 $0$ 到 $W$，因此时间复杂度为 $O(W \cdot n)$；因为使用了二维数组 $dp[0&amp;hellip;n][0&amp;hellip;W]$， 因此空间复杂度为 $O(W \cdot n)$。&lt;/p&gt;
+&lt;p&gt;其实空间复杂度还有可以优化的地方：如果仔细分析，可以发现 $dp[i][&amp;hellip;]$ 只与 $dp[i-1][&amp;hellip;]$ 有关。因此可以只存储 $dp[i-1][&amp;hellip;]$，即只使用一个一维数组，具体后续再讨论。&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>最优二叉搜索树</title>
+      <link>https://utopizza.github.io/posts/algorithm/2017-09-20-%E7%AE%97%E6%B3%95-%E6%9C%80%E4%BC%98%E4%BA%8C%E5%8F%89%E6%90%9C%E7%B4%A2%E6%A0%91/</link>
+      <pubDate>Wed, 20 Sep 2017 11:52:00 +0000</pubDate>
+      
+      <guid>https://utopizza.github.io/posts/algorithm/2017-09-20-%E7%AE%97%E6%B3%95-%E6%9C%80%E4%BC%98%E4%BA%8C%E5%8F%89%E6%90%9C%E7%B4%A2%E6%A0%91/</guid>
+      <description>&lt;p&gt;一、问题&lt;/p&gt;
+&lt;p&gt;给定一个包含 $n$ 个不同关键字的已经排序的序列 $K=&amp;lt; k_1,k_2, \cdots , k_n&amp;gt;$ $(k_1 &amp;lt; k_2 &amp;lt; \cdots &amp;lt; k_n)$，我们希望用这些关键字构造一颗二叉搜索树。&lt;/p&gt;
+&lt;p&gt;对每个关键字 $k_i$，都有一个概率 $p_i$ 表示其搜索频率。有些要搜索的值可能不在 $K$ 中，因此我们还有 $n+1$ 个“伪关键字”：$&amp;lt; d_0,d_1,d_2,\cdots,d_n &amp;gt;$ 表示不在 $K$ 中的值。其中，$d_0$ 表示所有小于 $k_1$ 的值，$d_n$ 表示所有大于 $k_n$ 的值，对 $i=1,2,\cdots,n-1$，伪关键字 $d_i$ 表示所有在 $k_i$ 和 $k_{i+1}$ 之间的值。对每个伪关键字 $d_i$，也都有一个概率 $q_i$ 表示对应的搜索频率。&lt;/p&gt;
+&lt;p&gt;由这 $n$ 个关键字和 $n+1$ 个 伪关键字构成的二叉搜索树，每个关键字 $k_i$ $(1 \leq i \leq n)$ 是一个内部结点，而每个伪关键字 $d_i$ $(0 \leq i \leq n)$ 是一个叶结点。&lt;/p&gt;
+&lt;p&gt;由于每次搜索要么成功（找到某个关键字 $k_i$）要么失败（找到某个伪关键字 $d_i$），因此这棵树所有结点的概率之和为1：&lt;/p&gt;
+&lt;p&gt;$$\sum_{i=1}^{n}p_i + \sum_{i=0}^{n}q_i = 1$$&lt;/p&gt;
+&lt;p&gt;因为我们知道了每个关键字和伪关键字的搜索概率，所以我们可以求出在这给定的二叉搜索树 $T$ 中进行一次搜索的期望代价 $E(T)$ 。假定一次搜索的代价等于访问的结点数，即搜索到的结点在 $T$ 中的深度再加 1（深度不算根结点，要从根节点算起就要加 1） ，那么在 $T$ 中进行一次搜索的期望代价为如下公式所示，其中 $D_{T}(k_l)$ 表示结点 $k_l$ 在树 $T$ 中的深度：&lt;/p&gt;
+&lt;p&gt;$$E(T)=
+\sum_{l=1}^{n} (D_{T}(k_l)+1) \cdot p_l +
+\sum_{l=0}^{n} (D_{T}(d_l)+1) \cdot q_l
+$$&lt;/p&gt;
+&lt;p&gt;现假设有一个 $n=5$ 的关键字序列，及如下的搜索概率：&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th align=&#34;center&#34;&gt;i&lt;/th&gt;
+&lt;th align=&#34;center&#34;&gt;0&lt;/th&gt;
+&lt;th align=&#34;center&#34;&gt;1&lt;/th&gt;
+&lt;th align=&#34;center&#34;&gt;2&lt;/th&gt;
+&lt;th align=&#34;center&#34;&gt;3&lt;/th&gt;
+&lt;th align=&#34;center&#34;&gt;4&lt;/th&gt;
+&lt;th align=&#34;center&#34;&gt;5&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td align=&#34;center&#34;&gt;pi&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;0.15&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;0.10&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;0.05&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;0.10&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;0.20&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td align=&#34;center&#34;&gt;qi&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;0.05&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;0.10&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;0.05&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;0.05&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;0.05&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;0.10&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;问如何构造一棵搜索期望代价 $E(T)$ 最小的二叉搜索树（即最优二叉搜索树）？&lt;/p&gt;
+&lt;p&gt;二、划分子问题，导出递推式&lt;/p&gt;
+&lt;p&gt;考虑一棵二叉搜索树的任意子树 $T$，它包含了关键字 $&amp;lt; k_i,\cdots,k_j &amp;gt;$（$1 \leq i \leq j \leq n$），其叶结点是伪关键字 $&amp;lt; d_{i-1},\cdots,d_n &amp;gt;$。由上一节的公式可以直接计算它的搜索期望 $E(T)$。现在我们来考察其子问题，并尝试推导该二叉搜索树的搜索期望和其子问题的搜索期望的递推关系式。&lt;/p&gt;
+&lt;p&gt;如何根据关键字序列 $&amp;lt; k_i,\cdots,k_j &amp;gt;$ 构造一棵搜索二叉树？考虑到该序列是已经排好序的，而二叉搜索树遵循：&lt;code&gt;左子树 &amp;lt; 根结点 &amp;lt; 右子树&lt;/code&gt; 的规则，因此用这些关键字构造二叉搜索树时，它们在树中的左右相对顺序与原序列一致。那么现在我们只需要确定用哪个结点来作为该树的根结点，把序列划分成左右两部分，左边作为左子树，右边作为右子树。假设选择第 $r$ $(i \leq r \leq j)$ 个关键字 $k_r$ 作为根结点，则左子树为 $&amp;lt; k_i,\cdots,k_{r-1} &amp;gt;$，右子树为 $&amp;lt; k_{r+1},\cdots,k_j &amp;gt;$ 。递归地对左子树和右子树进行这样的操作直到不可再分为止，即可构造出二叉搜索树。&lt;/p&gt;
+&lt;p&gt;这里还有一个要注意的细节——“空子树”。假定对于 $&amp;lt; k_i,\cdots,k_j &amp;gt;$ 的子问题，我们选定了序列第一个关键字 $k_i$ 作为根结点，即 $r=i$。那么根据上面的推导，它的左子树为 $&amp;lt; k_i,\cdots,k_{i-1} &amp;gt;$，我们将这样的序列解释：为不包含任何关键字的序列。但实际上由定义可知，它的作子树仍包含伪关键字 $d_{i-1}$（$d_{i-1} &amp;lt; k_i $），其对应的搜索概率为 $q_{i-1}$。对称地，如果选择序列最后一个关键字作为根结点，那么它的右子树不包含任何关键字，但包含伪关键字 $d_j$，对应搜索概率为 $q_j$。&lt;/p&gt;
+&lt;p&gt;这样，构造一棵子树的两个递归的子问题是：构造其左子树和右子树。设子树 $T$ 的左子树为 $T_{L}$，右子树为 $T_{R}$。现在我们来推导 $E(T)$ 和 $E(T_{L})$、$E(T_{R})$ 的关系。&lt;/p&gt;
+&lt;p&gt;注意到，当 $T_{L}$ 和 $T_{R}$ 合并成一棵树 $T$ 的时候，结点的深度加1，即：&lt;/p&gt;
+&lt;p&gt;$$D_{T}(k_l)=D_{T_{L}}(k_l)+1$$&lt;/p&gt;
+&lt;p&gt;对前面的公式，我们把作为根结点的关键字 $k_r$ $(D_{T}(k_r)=0)$ 提出来，并把分割后的左右两部分写成子树的形式：&lt;/p&gt;
+&lt;p&gt;$$
+\begin{aligned}
+E(T)
+&amp;amp;=
+\sum_{l=i}^{j} (D_{T}(k_l)+1) \cdot p_l +
+\sum_{l=i-1}^{j} (D_{T}(d_l)+1) \cdot q_l \&lt;br&gt;
+&amp;amp; =
+\sum_{l=i}^{r-1} (D_{T}(k_l)+1) \cdot p_l +
+\sum_{l=i-1}^{r-1} (D_{T}(d_l)+1) \cdot q_l&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;(D_{T}(k_r)+1) \cdot p_r +
+\sum_{l=r+1}^{j} (D_{T}(k_l)+1) \cdot p_l +
+\sum_{l=r+1-1}^{j} (D_{T}(d_l)+1) \cdot q_l \&lt;br&gt;
+&amp;amp; =
+\sum_{l=i}^{r-1} (D_{T_{L}}(k_l)+1+1) \cdot p_l +
+\sum_{l=i-1}^{r-1} (D_{T_{L}}(d_l)+1+1) \cdot q_l&lt;/li&gt;
+&lt;li&gt;p_r +
+\sum_{l=r+1}^{j} (D_{T_{R}}(k_l)+1)+1) \cdot p_l +
+\sum_{l=r+1-1}^{j} (D_{T_{R}}(d_l)+1)+1) \cdot q_l \&lt;br&gt;
+&amp;amp; =
+E(T_{L}) + (\sum_{l=i}^{r-1} p_l + \sum_{l=i-1}^{r-1} q_l)&lt;/li&gt;
+&lt;li&gt;p_r +
+E(T_{R}) + (\sum_{l=r+1}^{j} p_l + \sum_{l=r+1-1}^{j} q_l)
+\end{aligned}
+$$&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;为简便表达，对于包含关键字序列 $&amp;lt; k_i,\cdots,k_j &amp;gt;$ 的子树，我们记所有结点的概率和为：&lt;/p&gt;
+&lt;p&gt;$$w(i,j)=\sum_{l=i}^{j} p_l + \sum_{l=i-1}^{j} q_l$$&lt;/p&gt;
+&lt;p&gt;则上面推导结果进一步表示为：&lt;/p&gt;
+&lt;p&gt;$$
+\begin{aligned}
+E(T)
+&amp;amp; = E(T_{left}) + w(i,r-1) + p_r + E(T_{right}) + w(r+1,j) \&lt;br&gt;
+&amp;amp; = E(T_{left}) + E(T_{right}) + w(i,r-1) + p_r + w(r+1,j) \&lt;br&gt;
+&amp;amp; = E(T_{left}) + E(T_{right}) + w(i,j)
+\end{aligned}
+$$&lt;/p&gt;
+&lt;p&gt;其中 $T_{L}$ 对应关键字序列 $&amp;lt; k_i,\cdots,k_{r-1} &amp;gt;$， $T_{R}$ 对应关键字序列 $&amp;lt; k_{r+1},\cdots,k_j &amp;gt;$。现在我们分别用 $e[i,r-1]$ 和 $e[r+1,j]$ 表示它们对应的期望代价。&lt;/p&gt;
+&lt;p&gt;类似于钢条切割和矩阵连乘，序列 $&amp;lt; k_i,\cdots,k_j &amp;gt;$ 有 $r=j-i+1$ 个关键字可以作为根结点 $k_r$ $(i \leq r \leq j)$ 把序列划分成左子树和右子树。我们遍历这段序列中每一个可能的关键字来尝试构造二叉搜索树，然后取期望代价最小的那个方案作为最优解（同钢条切割和矩阵连乘，可以用“剪切-粘贴”反证法证明：如果 $E(T)$ 如果是最优解，那么 $E(T_{L})$ 和 $E(T_{R})$ 一定分别是左子树和右子树的最优解）并存储起来。因此我们可以得到最终递推公式：&lt;/p&gt;
+&lt;p&gt;$$
+e[i,j] =
+\begin{cases}
+q_{i-1}，&amp;amp; \text{if $j=i-1$} \&lt;br&gt;
+min_{i \leq r \leq j} { e[i,r-1]+e[r+1,j]+w(i,j) } &amp;amp; \text{if $i \leq j$}
+\end{cases}
+$$&lt;/p&gt;
+&lt;p&gt;四、实现&lt;/p&gt;
+&lt;p&gt;为降低算法复杂度，我们使用自底向上带备忘的动态规划法而不是递归求解。&lt;/p&gt;
+&lt;p&gt;我们使用一个二维数组 $e[1&amp;hellip;n+1][0&amp;hellip;n]$ 来保存 $e[i,j]$ 的值。第一维下标上界为 $n+1$ 而不是 $n$，原因在于对于只包含伪关键字 $d_n$ 的子树，我们需要计算并保存 $e[n+1,n]$。第二维下标下界为 $0$，是因为对于只包含伪关键字 $d_0$ 的子树，我们需要计算并保存 $e[1,0]$。我们实际上只使用满足 $j \geq i-1$ 的表项 $e[i][j]$。&lt;/p&gt;
+&lt;p&gt;对于 $w(i,j)$，为了避免在每次计算 $e[i,j]$ 时都要重新计算 $w(i,j)$，我们使用一个二维数组 $w[1&amp;hellip;n+1][0&amp;hellip;n]$ 来保存它。当子树为空即只包含伪关键字的情况（$j=i-1$），有 $w[i][i-1]=q_{i-1}$；对其他一般情况（$j \geq i$），有 $w[i][j]=w[i][j-1]+p_j+q_j$。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;public static double OptimalBST(double[] p, double[] q, int n) {
+    
+    double[][] e = new double[n + 2][n + 1];
+    double[][] w = new double[n + 2][n + 1];
+    
+    for (int i = 1; i &amp;lt;= n + 1; i++) {
+        e[i][i - 1] = q[i - 1];
+        w[i][i - 1] = q[i - 1];
+    }
+    
+    for (int length = 1; length &amp;lt;= n; length++) {
+        for (int i = 1; i &amp;lt;= n - length + 1; i++) {
+            int j = i + length - 1;
+            e[i][j] = Double.MAX_VALUE;
+            w[i][j] = w[i][j - 1] + p[j] + q[j];
+            for (int r = i; r &amp;lt;= j; r++) {
+                double temp = e[i][r - 1] + e[r + 1][j] + w[i][j];
+                if (temp &amp;lt; e[i][j])
+                    e[i][j] = temp;
+            }
+        }
+    }
+    
+    return e[1][n];
+}
+
+public static void main(String[] args) {
+    double[] p = {0, 0.15, 0.10, 0.05, 0.10, 0.20};
+    double[] q = {0.05, 0.10, 0.05, 0.05, 0.05, 0.10};
+    System.out.println(OptimalBST(p, q, 5));
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;因为算法包含三个 $for$ 循环，每重循环的下标最多取 $n$ 个值，所以算法的时间复杂度是 $O(n^3)$。&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>最长公共子序列</title>
+      <link>https://utopizza.github.io/posts/algorithm/2017-09-18-%E7%AE%97%E6%B3%95-%E6%9C%80%E9%95%BF%E5%85%AC%E5%85%B1%E5%AD%90%E5%BA%8F%E5%88%97/</link>
+      <pubDate>Mon, 18 Sep 2017 15:50:00 +0000</pubDate>
+      
+      <guid>https://utopizza.github.io/posts/algorithm/2017-09-18-%E7%AE%97%E6%B3%95-%E6%9C%80%E9%95%BF%E5%85%AC%E5%85%B1%E5%AD%90%E5%BA%8F%E5%88%97/</guid>
+      <description>&lt;p&gt;一、问题：给定两个序列 $X=&amp;lt; x_1, x_2, \cdots, x_m &amp;gt;$ 和 $Y=&amp;lt; y_1, y_2, \cdots, y_n &amp;gt;$，求它们的最长公共子序列（longest-common-subsequence，LCS）。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;子序列定义：给定一个序列 $X=&amp;lt; x_1, x_2, \cdots , x_m &amp;gt;$，另一个序列 $Z=&amp;lt; z_1, z_2, \cdots, z_k &amp;gt;$ 满足如下条件时成为 $X$ 的子序列，即存在一个严格递增的 $X$ 的下标序列 $&amp;lt; i_1, i_2, \cdots, i_k &amp;gt;$，对所有的 $j=1, 2, \cdots, k$，满足 $x_{i_j}=z_j$。例如，$Z=&amp;lt; B,C,D,B &amp;gt;$ 是 $X=&amp;lt; A,B,C,B,D,A,B &amp;gt;$ 的子序列。&lt;/li&gt;
+&lt;li&gt;公共子序列定义：给定两个序列 $X$ 和 $Y$，如果 $Z$ 是 $X$ 的子序列，也是 $Y$ 的子序列，则称它是 $X$ 和 $Y$ 的公共子序列。例如，如果 $X=&amp;lt; A,B,C,B,D,A,B &amp;gt;$，$Y=&amp;lt; B,D,C,A,B,A &amp;gt;$，则 $&amp;lt; B,C,A &amp;gt;$ 是它们的一个公共子序列，但不是最长公共子序列，$&amp;lt; B,C,B,A &amp;gt;$ 和 $&amp;lt; B,D,A,B &amp;gt;$ 才是最长公共子序列。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;二、划分子问题，导出递推式&lt;/p&gt;
+&lt;p&gt;LCS的最优子结构定理：给定两个序列 $X=&amp;lt; x_1, x_2, \cdots, x_m &amp;gt;$ 和 $Y=&amp;lt; y_1, y_2, \cdots, y_n &amp;gt;$，设 $Z=&amp;lt; z_1, z_2, \cdots, z_k &amp;gt;$ 为 $X$ 和 $Y$ 的任意 LCS。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;1、如果 $x_m=y_n$，则 $z_k=x_m=y_n$，且 $Z_{k-1}$ 是 $X_{m-1}$ 和 $Y_{n-1}$ 的一个 LCS&lt;/li&gt;
+&lt;li&gt;2、如果 $x_m \neq y_n$，且 $z_k \neq x_m$ 意味着 $Z$ 是 $X_{m-1}$ 和 $Y$ 的一个 LCS&lt;/li&gt;
+&lt;li&gt;3、如果 $x_m \neq y_n$，且 $z_k \neq y_n$ 意味着 $Z$ 是 $X$ 和 $Y_{n-1}$ 的一个 LCS&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;证明：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;1、已知 $x_m=y_n$，假设 $z_k \neq x_m$ 或 $z_k \neq y_n$，那么可以将 $x_m$ 或 $y_n$ 追加到 $Z$ 中，得到一个长度为 $k+1$ 的 LCS，与 $Z$ 是 LCS 矛盾。因此必然有 $z_k=x_m=y_n$ 。这样，前缀 $Z_{k-1}$ 是 $X_{m-1}$ 和 $Y_{n-1}$ 的一个 LCS。同样用反证法证明：假设存在 $X_{m-1}$ 和 $Y_{n-1}$ 的一个长度大于 $k-1$ 的公共子序列 $W$，那么如果将 $x_m=y_n$ 追加到 $W$ 的末尾会得到 $X$ 和 $Y$ 的一个长度大于 $k$ 的公共子序列，矛盾。&lt;/li&gt;
+&lt;li&gt;2、已知 $z_k \neq x_m$，假设存在 $X_{m-1}$ 和 $Y$ 的一个长度大于 $k$ 的公共子序列 $W$，那么 $W$ 也是 $X_m$ 和 $Y$ 的一个长度大于 $k$ 的公共子序列，与 $Z$ 是 LCS 矛盾。&lt;/li&gt;
+&lt;li&gt;3、与情况2对称。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;由上述定理可以推出：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;1、如果 $x_m=y_n$，求 $X_{m-1}$ 和 $Y_{n-1}$ 的 LCS&lt;/li&gt;
+&lt;li&gt;2、如果 $x_m \neq y_n$，求以下两个子问题的 LCS，取较长的那个作为最优解：&lt;/li&gt;
+&lt;li&gt;若 $z_k \neq x_m$，求 $X_{m-1}$ 和 $Y$ 的 LCS&lt;/li&gt;
+&lt;li&gt;若 $z_k \neq y_n$，求 $X$ 和 $Y_{n-1}$ 的 LCS&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;定义 $c[i,j]$ 表示 $X_i$ 和 $Y_j$ 的LCS的长度，由上述得出递推式：&lt;/p&gt;
+&lt;p&gt;$$
+c[i,j]=
+\begin{cases}
+0，&amp;amp; \text{if $i=0$，或 $j=0$} \&lt;br&gt;
+c[i-1,j-1]+1，&amp;amp; \text{if $i,j&amp;gt;0$ 且 $x_{i}=y_{j}$} \&lt;br&gt;
+max(c[i-1,j],c[i,j-1])，&amp;amp; \text{if $i,j&amp;gt;0$ 且 $x_{i} \neq y_{j}$}
+\end{cases}
+$$&lt;/p&gt;
+&lt;p&gt;三、实现&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;public static int LCSBottonUp(char[] X_0, char[] Y_0) {
+
+    int x = X_0.length;
+    char[] X = new char[x + 1];
+    for (int i = 0; i &amp;lt; x; i++)
+        X[i + 1] = X_0[i];
+
+    int y = Y_0.length;
+    char[] Y = new char[y + 1];
+    for (int i = 0; i &amp;lt; y; i++)
+        Y[i + 1] = Y_0[i];
+
+    int[][] c = new int[x + 1][y + 1];
+
+    for (int i = 0; i &amp;lt;= x; i++) {
+        for (int j = 0; j &amp;lt;= y; j++) {
+            if (i == 0 || j == 0) c[i][j] = 0;
+            else {
+                if (X[i] == Y[j]) c[i][j] = c[i - 1][j - 1] + 1;
+                else c[i][j] = Math.max(c[i - 1][j], c[i][j - 1]);
+            }
+        }
+    }
+
+    return c[x][y];
+}
+
+
+public static void main(String[] args) {
+    char[] X = {&amp;#39;A&amp;#39;, &amp;#39;B&amp;#39;, &amp;#39;C&amp;#39;, &amp;#39;B&amp;#39;, &amp;#39;D&amp;#39;, &amp;#39;B&amp;#39;, &amp;#39;A&amp;#39;};
+    char[] Y = {&amp;#39;B&amp;#39;, &amp;#39;D&amp;#39;, &amp;#39;C&amp;#39;, &amp;#39;A&amp;#39;, &amp;#39;B&amp;#39;, &amp;#39;A&amp;#39;};
+    System.out.println(LCSBottonUp(X, Y));
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;为了方便理解，通过预处理，使输入的序列下标从 $1$ 开始使用，即 $X[i]$ 表示 $x_i$，$Y[j]$ 表示 $y_j$，$c[i][j]$ 表示 $X_i$ 和 $Y_j$ 的公共子序列长度。由于外层循环的执行次数为输入序列 $X$ 的长度 $m$，内存循环的执行次数为输入序列 $Y$ 的长度 $n$，因此算法的时间复杂度为 $O(mn)$。另外使用了大小为 $m \cdot n$ 的二维数组，因此空间复杂度为 $O(mn)$。&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>矩阵连乘</title>
+      <link>https://utopizza.github.io/posts/algorithm/2017-09-17-%E7%AE%97%E6%B3%95-%E7%9F%A9%E9%98%B5%E8%BF%9E%E4%B9%98/</link>
+      <pubDate>Sun, 17 Sep 2017 15:02:00 +0000</pubDate>
+      
+      <guid>https://utopizza.github.io/posts/algorithm/2017-09-17-%E7%AE%97%E6%B3%95-%E7%9F%A9%E9%98%B5%E8%BF%9E%E4%B9%98/</guid>
+      <description>&lt;p&gt;一、问题：给定 $n$ 个矩阵的链 $&amp;lt; A_1, A_2, \cdots , A_n &amp;gt;$，其中矩阵 $A_i$ $ (1 \leq i \leq n)$ 的规模为 $p_{i-1}  \cdot  p_i$，求完全括号化方案，使得计算乘积 $A_1A_2 \cdots\ A_n$ 所需标量乘法次数最少。&lt;/p&gt;
+&lt;p&gt;二、举例&lt;/p&gt;
+&lt;p&gt;以 $&amp;lt; A_1, A_2, A_3 &amp;gt;$ 相乘为例，假设三个矩阵的规模分别为 $10 \cdot 100，100 \cdot 5，5 \cdot 50$ 。&lt;/p&gt;
+&lt;p&gt;如果按 $ ((A_1  \cdot  A_2)  \cdot  A_3) $ 的顺序计算，则需要做 $ 10 \cdot 100 \cdot 5+10 \cdot 5 \cdot 50=5000+2500=7500 $ 次标量乘法运算。&lt;/p&gt;
+&lt;p&gt;如果按 $ (A_1  \cdot  (A_2  \cdot  A_3)) $ 的顺序计算，则需要做 $100 \cdot 5 \cdot 50+10 \cdot 100 \cdot 50=25000+50000=75000 $ 次标量乘法运算。&lt;/p&gt;
+&lt;p&gt;可以看到，第二种括号化方案导致的运算量是第一种情况的10倍。采取适当的括号化方案，能够极大的提高矩阵相乘运算的速度。&lt;/p&gt;
+&lt;p&gt;三、构造最优子结构，导出子问题递推式&lt;/p&gt;
+&lt;p&gt;对于 $n$ 个矩阵相乘进行括号化，可以先把前 $i$ $(1 \leq i \leq n-1)$ 个矩阵和后 $n-i$ 个矩阵加括号，也就是把这条矩阵链分成长度为 $i$ 和 $n-i$ 的两条子矩阵链，再继续对各子链递归地进行括号化。这样，矩阵括号化问题就类似于“钢条切割”问题了，只是这里求的是矩阵相乘的最小总标量乘法次数，而不是“钢条段的最大总价格”。&lt;/p&gt;
+&lt;p&gt;现在我们对某段矩阵链 $&amp;lt; A_i \cdots A_j &amp;gt;$ 进行一次括号化，我们选择在第 $k$ $(1 \leq k \leq j-1)$ 个矩阵处断开该链，使得该链分成两条子链 $&amp;lt; A_i \cdots A_k &amp;gt;$ 和 $&amp;lt; A_{k+1} \cdots A_j &amp;gt;$ 。&lt;/p&gt;
+&lt;p&gt;设 $r[i,j]$ 表示链 $&amp;lt; A_i \cdots A_j &amp;gt;$ 的总标量乘法次数，则由矩阵相乘的规则得&lt;/p&gt;
+&lt;p&gt;$$r[i,j]=r[i,k]+r[k+1,j]+p(i-1) \cdot p(k) \cdot p(j)$$&lt;/p&gt;
+&lt;p&gt;式中&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;$r[i,k]$ 和 $r[k+1,j]$ 分别表示两条子链的各自的总标量乘法次数&lt;/li&gt;
+&lt;li&gt;$ p(i-1) \cdot p(k) \cdot p(j) $ 表示两条子链合并时的标量乘法次数&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;对上面公式，同理于“钢条切割问题”，如果 $r[i,j]$ 是对链 $&amp;lt; A_i \cdots A_j &amp;gt;$ 括号化的所有方案中，总标量乘法次数最小（最优解），那么 $r[i,k]$ 和 $r[k+1,j]$ 一定是各自子链的最小总标量乘法次数（最优解）。&lt;/p&gt;
+&lt;p&gt;（因为当选定某个 $k$ 后，合并子链的代价随之确定，即公式中 $p(i-1) \cdot p(k) \cdot p(j)$ 部分。假设 $r[i,k]$ 和 $r[k+1,j]$ 不是两条子链各自的最优解，那么如果用它们各自的最优解（更小的 $r[i,k]$ 和 $r[k+1,j]$）代换进上面公式，那么必然产生比 $r[i,j]$ 更小的值，与 $r[i,j]$ 是最优解的假设矛盾。）&lt;/p&gt;
+&lt;p&gt;设 $m[i,j]$ 表示链 $&amp;lt; A_i \cdots A_j &amp;gt;$ 的最小总标量乘法次数（最优解），由上述思考过程可以得出最优解递推式：&lt;/p&gt;
+&lt;p&gt;$$
+m[i,j]=
+\begin{cases}
+0, &amp;amp; \text{if $i=j$} \&lt;br&gt;
+min_{i \leq k \leq j-1} (m[i,k]+m[k+1,j]+p(i-1) \cdot p(k) \cdot p(j)), &amp;amp; \text{if $i &amp;lt; j$}
+\end{cases}
+$$&lt;/p&gt;
+&lt;p&gt;四、动态规划法求解&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;public static int matrixChainBottonUp(int n, int[] s) {
+
+    if (n &amp;lt; 2)
+        return 0;
+    int[] p = new int[s.length + 1];
+    for (int i = 0; i &amp;lt; s.length; i++) {
+        p[i + 1] = s[i];
+    }
+
+    int[][] m = new int[n + 1][n + 1];
+
+
+    for (int length = 0; length &amp;lt;= n - 1; length++) {
+        for (int i = 1; i + length &amp;lt;= n; i++) {
+            int j = i + length;
+            if (i == j) m[i][j] = 0;
+            else {
+                int min = Integer.MAX_VALUE;
+                for (int k = i; k &amp;lt;= j - 1; k++) {
+                    int temp = m[i][k] + m[k + 1][j] + p[2 * i - 1] * p[2 * k] * p[2 * j];
+                    if (temp &amp;lt; min) min = temp;
+                }
+                m[i][j] = min;
+            }
+        }
+    }
+
+    return m[1][n];
+}
+
+
+public static void main(String[] args) {
+    int n1 = 2;
+    int[] p1 = {30, 35, 35, 15, 15, 5, 5, 10, 10, 20, 20, 25};
+    int n2 = 3;
+    int[] p2 = {10, 100, 100, 5, 5, 50};
+    System.out.println(matrixChainBottonUp(n1, p1));
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;为了便于理解，通过预处理使所有数组的下标从 $1$ 开始使用，这样第 $i$ 个矩阵的行和列就分别是 $p[2 \cdot i-1]$ 和 $p[2 \cdot i]$，二维 $m$ 数组的元素 $m[i][j]$ 表示矩阵链 $&amp;lt; A_i \cdots A_j &amp;gt;$ 的最优解。&lt;/p&gt;
+&lt;p&gt;根据自底向上的思路，代码的计算过程为：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;m[1][1]，m[2][2]，m[3][3]，m[4][4]，m[5][5]，m[6][6]&lt;/li&gt;
+&lt;li&gt;m[1][2]，m[2][3]，m[3][4]，m[4][5]，m[5][6]&lt;/li&gt;
+&lt;li&gt;m[1][3]，m[2][4]，m[3][5]，m[4][6]&lt;/li&gt;
+&lt;li&gt;m[1][4]，m[2][5]，m[3][6]&lt;/li&gt;
+&lt;li&gt;m[1][5]，m[2][6]&lt;/li&gt;
+&lt;li&gt;m[1][6]&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;其中，对 m[2][5]，算法会尝试在每一处$（2 \leq k &amp;lt; 5）$把链断开，然后求最优解：&lt;/p&gt;
+&lt;p&gt;$$
+\begin{aligned}
+m[2][5] &amp;amp; = min
+\begin{cases}
+m[2][2]+m[3][5]+p[2 \cdot 2-1] \cdot p[2 \cdot 2] \cdot p[5 \cdot 2]=13000 \&lt;br&gt;
+m[2][3]+m[4][5]+p[2 \cdot 2-1] \cdot p[3 \cdot 2] \cdot p[5 \cdot 2]=7125 \&lt;br&gt;
+m[2][4]+m[4][5]+p[2 \cdot 2-1] \cdot p[4 \cdot 2] \cdot p[5 \cdot 2]=11375
+\end{cases} \&lt;br&gt;
+&amp;amp; = 7125
+\end{aligned}
+$$&lt;/p&gt;
+&lt;p&gt;由于循环嵌套的深度为三层，每层的循环变量 $i,j,k$ 最多取 $n-1$ 个值，因此算法的运行时间为 $O(n^3)$。另外还需要大小为 $n*n$ 的二维数组来存放中间过程，因此算法的空间开销为 $O(n^2)$。&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>钢条切割</title>
+      <link>https://utopizza.github.io/posts/algorithm/2017-09-15-%E7%AE%97%E6%B3%95-%E9%92%A2%E6%9D%A1%E5%88%87%E5%89%B2/</link>
+      <pubDate>Fri, 15 Sep 2017 19:54:00 +0000</pubDate>
+      
+      <guid>https://utopizza.github.io/posts/algorithm/2017-09-15-%E7%AE%97%E6%B3%95-%E9%92%A2%E6%9D%A1%E5%88%87%E5%89%B2/</guid>
+      <description>&lt;p&gt;一、问题：给定一段长度为 $n$ 的钢条和一个价格表 $p_i(i=1,2,&amp;hellip;,n)$ ，求切割钢条方案，使得切割后所有钢条的总价格最大。钢条长度 $i$ 均为正整数，对应的价格为 $p_i$ :&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th align=&#34;center&#34;&gt;长度 i&lt;/th&gt;
+&lt;th align=&#34;center&#34;&gt;1&lt;/th&gt;
+&lt;th align=&#34;center&#34;&gt;2&lt;/th&gt;
+&lt;th align=&#34;center&#34;&gt;3&lt;/th&gt;
+&lt;th align=&#34;center&#34;&gt;4&lt;/th&gt;
+&lt;th align=&#34;center&#34;&gt;5&lt;/th&gt;
+&lt;th align=&#34;center&#34;&gt;6&lt;/th&gt;
+&lt;th align=&#34;center&#34;&gt;7&lt;/th&gt;
+&lt;th align=&#34;center&#34;&gt;8&lt;/th&gt;
+&lt;th align=&#34;center&#34;&gt;9&lt;/th&gt;
+&lt;th align=&#34;center&#34;&gt;10&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td align=&#34;center&#34;&gt;价格 pi&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;1&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;5&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;8&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;9&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;10&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;17&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;17&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;20&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;24&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;30&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;二、举例&lt;/p&gt;
+&lt;p&gt;以下用 $n$ 表示钢条长度，用 $r_n$ 表示切割长度为 $n$ 的钢条的最大总价格。&lt;/p&gt;
+&lt;p&gt;现在有一段长度为 3 的钢条，切割方案有：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;$n=3$，切割后总价：$r=8$&lt;/li&gt;
+&lt;li&gt;$n=1+2$，切割后总价：$r=1+5=6$&lt;/li&gt;
+&lt;li&gt;$n=1+1+1$，切割后总价：$r=1+1+1=3$&lt;/li&gt;
+&lt;li&gt;$n=2+1$，切割后总价：$r=5+1=6$ （这种方法其实和上面第二种一样）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;综上，最优的切割方案是 $n=3$，即不切割直接销售，此时 $r_3$=8&lt;/p&gt;
+&lt;p&gt;三、划分子问题，导出递推式&lt;/p&gt;
+&lt;p&gt;现在考虑每一步的切割：暂时先不考虑整条销售的情况，那么需要对钢条进行切割以取得最大销售总价格。&lt;/p&gt;
+&lt;p&gt;我们规定，每一步切割只选择一个切割点进行一次切割，这次切割只把一段钢条一分为二，分成两条更小的钢条。&lt;/p&gt;
+&lt;p&gt;对一段长度为 $n$ 的钢条，因为最小切割长度为 1（钢条长度被规定为正整数），所以对该段钢条一共有 $n-1$ 个可选择的切割点。&lt;/p&gt;
+&lt;p&gt;对该钢条，假设在第 $i$（$1 \leq i \leq n-1$） 个切割点进行切割是最优的方案。该次切割后，把该段钢条分成更小的两段：$i$ 和 $n-i$ 。因此这次切割的总价格为：&lt;/p&gt;
+&lt;p&gt;$$ r_n = r_i + r_{n-i} $$&lt;/p&gt;
+&lt;p&gt;由这条公式显然可以推出，要使 $r_n$ 最大，$r_i$ 和 $r_{n-i}$ 也应该最大，因为 $r_n$ 是它们的和。&lt;/p&gt;
+&lt;p&gt;换句话说，要使 $r_n$ 是本次切割的最大总价（最优解），那么 $r_i$ 和 $r_{n-i}$ 必须分别是：对长度为 $i$ 的钢条进行切割的最大价格，对长度为 $n-i$ 的钢条进行切割的最大价格。&lt;/p&gt;
+&lt;p&gt;（反证法证明：假设本次切割的最大价格为 $r_n$，且 $ r_n = r^{&#39;}&lt;em&gt;i + r^{&#39;}&lt;/em&gt;{n-i} $，其中 $r^{&#39;}&lt;em&gt;i$ 和 $r^{&#39;}&lt;/em&gt;{n-i}$ 分别是切割长度为 $i$ 和 长度为 $n-i$ 的钢条的总价格，但它们并不是最大各自的最大价格。现在我们用它们的最优解 $r_i(&amp;gt; r^{&#39;}&lt;em&gt;i)$ 和 $r&lt;/em&gt;{n-i}(&amp;gt; r^{&#39;}&lt;em&gt;{n-i})$ 来替换公式中的 $r^{&#39;}&lt;em&gt;i$ 和 $r^{&#39;}&lt;/em&gt;{n-i}$，将得到：$r_i + r&lt;/em&gt;{n-i} &amp;gt; r^{&#39;}&lt;em&gt;i + r^{&#39;}&lt;/em&gt;{n-i} = r_n$，即存在比 $r_n$ 更大的总价格，与“ $r_n$是本次切割的最大价格 ”这一假设矛盾。因此如果 $r_n$ 是本次切割的最大价格，那么 $r_i$ 和 $r_{n-i}$ 必定也是切割各自钢条的所有方案中的最大价格，否则就会存在比 $r_n$ 更优的切割方案。）&lt;/p&gt;
+&lt;p&gt;考虑到长度为 $n$ 的钢条一共有 $n-1$ 个切割点，以及不切割的方案，我们可以得到每一次切割的最优方案为：&lt;/p&gt;
+&lt;p&gt;$$
+r_n=
+\begin{cases}
+p_1, &amp;amp; \text{if $n=1$} \&lt;br&gt;
+max ( p_n，r_1+r_{n-1}，\cdots，r_{n-1}+r_1 ), &amp;amp; \text{if $n&amp;gt;1$}
+\end{cases}
+$$&lt;/p&gt;
+&lt;p&gt;四、递归方法求解&lt;/p&gt;
+&lt;p&gt;按照上面的递推式，可以直接写出用递归求解的代码&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;public static int cutSteelRecursive(int[] p, int n) {
+    if (n == 1)
+        return p[1];
+    int max = -1;
+    for (int i = 1; i &amp;lt;= n - 1; i++) {
+        int temp = cutSteelRecursive(p, i) + cutSteelRecursive(p, n - i);
+        if (temp &amp;gt; max) max = temp;
+    }
+    return Math.max(p[n], max);
+}
+
+public static void main(String[] args) {
+    int[] p = {0, 1, 5, 8, 9, 10, 17, 17, 20, 24, 30};
+    int result = cutSteelRecursive(p, n);
+    System.out.println(result);
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;但是用这样递归的方法会造成大量的重复计算，因为很多子问题都是重复的。如计算 $r_4$ 时，需要计算 $r_3$，$r_2$，$r_1$。其中计算 $r_3$ 时要先计算 $r_2$，$r_1$。计算好 $r_3$ 后返回最顶层，又要重新计算 $r_2$，$r_1$。&lt;/p&gt;
+&lt;p&gt;另外，长度为 $n$ 的钢条一共有 $n-1$ 个切割点，在每个切割点上，我们都可以有选择“切割”和“不切割”两种方案，所以一共有 $2^{n-1}$ 种切割方案。显然，递归的方法搜索了每一段钢条的每一个切割点的切割方案，因此复杂度为 $O(2^{n})$。&lt;/p&gt;
+&lt;p&gt;五、自底向上的动态规划&lt;/p&gt;
+&lt;p&gt;为了避免如上面递归方法对子问题重复计算，我们使用“备忘录”方法，把计算过的子问题的最优解存放到一个数组中，并从最小的子问题开始求解，再求解基于这个子问题的上一层的子问题，因此称为自底向上求解。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;public static int cutSteelBottonUp(int[] p, int n) {
+    int[] r = new int[n + 1];
+    for (int i = 1; i &amp;lt;= n; i++) {
+        int max = -1;
+        for (int j = 1; j &amp;lt; i; j++) {
+            int temp = r[j] + r[i - j];
+            if (temp &amp;gt; max) max = temp;
+        }
+        r[i] = Math.max(p[i], max);
+    }
+    return r[n];
+}
+
+public static void main(String[] args) {
+    int[] p = {0, 1, 5, 8, 9, 10, 17, 17, 20, 24, 30};
+    int result = cutSteelBottonUp(p, n);
+    System.out.println(result);
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;使用迭代的方法，从 $r_1$ 开始逐步计算 $r_2$，$r_3$ 直到 $r_n$，在每次计算出第 $i$ 个子问题的最优解后，立即存储到数组元素 $r[i]$ 中，供后续的求解利用：&lt;code&gt;int temp = r[j] + r[i - j];&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;对第 $i$ 个子问题 $r[i]$，内部循环一共执行 $i-1$ 次。当算法输入规模为 $n$ 时，总执行次数为： $0+1+2+\cdots+n-1=\frac{(n-1)^{2}}{2}$。因此对长度为 $n$ 的钢条，自底向上带备忘的迭代求解方法的复杂度为 $O(n^2)$ 。&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>仅用递归逆序一个栈</title>
+      <link>https://utopizza.github.io/posts/algorithm/2017-09-13-%E7%AE%97%E6%B3%95-%E4%BB%85%E7%94%A8%E9%80%92%E5%BD%92%E9%80%86%E5%BA%8F%E4%B8%80%E4%B8%AA%E6%A0%88/</link>
+      <pubDate>Wed, 13 Sep 2017 19:15:00 +0000</pubDate>
+      
+      <guid>https://utopizza.github.io/posts/algorithm/2017-09-13-%E7%AE%97%E6%B3%95-%E4%BB%85%E7%94%A8%E9%80%92%E5%BD%92%E9%80%86%E5%BA%8F%E4%B8%80%E4%B8%AA%E6%A0%88/</guid>
+      <description>&lt;p&gt;递归调用方法时，系统会把方法隐式地存到一个“系统栈”里面，即在方法即将进入下一层（即下一次调用自身）前，把本层内部的变量存储到系统的某些位置（我们不用关心），当递归调用从最底层开始回退，回退到本层的时候，方法会自动重新加载之前存储的数据。我们可以利用这一点来隐式地存储我们逆序目标栈过程中需要存储的数据。另外需要注意的是，在JAVA中按引用传参时，形参和实参指向同一个对象，此时方法内部对形参的操作实际上是对实参的操作。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;import java.util.Stack;
+
+public void stackReverse(Stack&amp;lt;Integer&amp;gt; stack){
+    if(stack.isEmpty())
+        return
+    else{
+        int botton=getAndRemoveBotton(stack);
+        stackReverse(stack);
+        stack.push(botton);
+    }
+}
+
+public int getAndRemoveBotton(Stack&amp;lt;Integer&amp;gt; stack){
+    int top=stack.pop();
+    if(stack.isEmpty())
+        return top;
+    else{
+        int t=getAndRemoveBotton(stack);
+        stack.push(top);
+        return t;
+    }
+}
+
+public static void main(String[] args){
+    Stack&amp;lt;Integer&amp;gt; stack=new Stack&amp;lt;Integer&amp;gt;();
+    stack.push(1);
+    stack.push(2);
+    stack.push(3);
+    stack.push(4);
+    stack.push(5);
+    
+    stackReverse(stack);
+    
+    while(!stack.isEmpty()){
+        System.out.println(stack.pop());
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ul&gt;
+&lt;li&gt;stackReverse：依次取出栈底元素：1-&amp;gt;2-&amp;gt;3-&amp;gt;4-&amp;gt;5，存储在每一层的递归调用中（botton）。栈空后，方法开始回退，逐层执行push，（逆序地）把原栈底元素（botton）重新入栈：5-&amp;gt;4-&amp;gt;3-&amp;gt;2-&amp;gt;1。此时栈已逆序，算法完成。&lt;/li&gt;
+&lt;li&gt;getAndRemoveBotton：取出栈底元素，使栈的高度减一，其余元素顺序不变。该方法在每一层调用时先取出栈顶元素，一直递归地往下取到栈空（利用“系统栈”来存储目标栈的元素）为止。当栈被取空，说明刚被取出的元素为栈底元素。此时开始回退递归，在每一层把pop出来的栈顶元素（top）又push回去，保持了栈的顺序不变，并把栈底元素一层层return上来（t）。如此即可在不改变栈顺序的情况下取出栈底元素。&lt;/li&gt;
+&lt;li&gt;算法的关键是：巧妙利用方法递归调用、回退的顺序，和栈元素出栈、入栈的顺序的对应关系来实现操作过程中数据的存储。&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>渐近记号</title>
+      <link>https://utopizza.github.io/posts/algorithm/2017-09-06-%E7%AE%97%E6%B3%95-%E6%B8%90%E8%BF%91%E8%AE%B0%E5%8F%B7/</link>
+      <pubDate>Wed, 06 Sep 2017 15:20:10 +0000</pubDate>
+      
+      <guid>https://utopizza.github.io/posts/algorithm/2017-09-06-%E7%AE%97%E6%B3%95-%E6%B8%90%E8%BF%91%E8%AE%B0%E5%8F%B7/</guid>
+      <description>&lt;p&gt;一、算法分析&lt;/p&gt;
+&lt;p&gt;1、RAM 模型&lt;/p&gt;
+&lt;p&gt;分析算法的结果意味着预测算法需要的资源。虽然有时候需要关心像内存、通信宽带或计算机硬件这类资源，但是对算法进行分析时，我们一般主要关注算法的计算时间。在能够分析一个算法之前，我们需要有一个实现技术的模型，在《算法导论》一书中，假定了一种通用的单处理器计算模型——随机访问机 (RAM) 来作为实现技术，算法可以用计算机程序来实现。在 RAM 模型中，指令一条一条地执行，没有并发操作。严格来说，我们应该精确定义 RAM 模型的指令以及代价。但是这样即乏味又对算法的设计与分析没有太多意义。因此，在 RAM 模型中，我们不对计算机的内层次如高速缓存、虚拟内存等进行建模，把精力集中于算法的数学上的复杂度分析。&lt;/p&gt;
+&lt;p&gt;2、运行时间&lt;/p&gt;
+&lt;p&gt;一个算法在特定输入上的&lt;strong&gt;运行时间&lt;/strong&gt;是指执行的基本操作数或者步数。我们认为计算机执行每一行代码需要的时间为常量（这个观点与 RAM 模型是一致的）。因此，我们核心关注的问题是：在给定&lt;strong&gt;输入规模 n&lt;/strong&gt; 条件下，算法代码执行完成并输出正确结果所需要的总步数（次数）。如插入排序算法在 n 个值的输入上的最坏运行时间为 $T(n)=an^2+bn+c$&lt;/p&gt;
+&lt;p&gt;3、增长量级&lt;/p&gt;
+&lt;p&gt;现在我们做出一种更简化的抽象：我们更感兴趣的是运行时间的增长率或增长量级。所以我们只考虑公式中最重要的项（例如，$an^2$），因为当 n 很大时，低阶项相对来说不太重要。同时我们也忽略最重要的项的系数，因为对大的输入，在确定计算效率时，常量因子不如增长率重要。在忽略了低阶项和最重要的项的系数后，只剩下最重要的项的因子。我们记某算法最坏情况下运行时间为 $\Theta(g(n))$，如插入排序的的最坏运行时间为 $\Theta(n^2)$。如果一个算法的最坏情况运行时间比另一个算法具有更低的增量级，那么我们认为前者比后者更有效。例如，一个 $\Theta(n^2)$ 的算法，在足够大的输入规模 n 下，比一个 $\Theta(n^3)$ 的算法要快。&lt;/p&gt;
+&lt;p&gt;二、渐近记号&lt;/p&gt;
+&lt;p&gt;1、$\Theta$ 记号&lt;/p&gt;
+&lt;p&gt;对一个给定的函数 $g(n)$，用 $\Theta(g(n))$ 来表示以下函数的集合：
+$\Theta(g(n))={ f(n):存在正常量c_1,c_2和n_0,对所有n \geq n_0,有 0  \leq c_1g(n) \leq f(n) \leq c_2g(n) } $&lt;/p&gt;
+&lt;p&gt;字面上来说：若存在正常量 $c_1,c_2和n_0$，使得对足够大的 n ，函数 $f(n)$ 能被夹入 $c_1g(n)与c_2g(n)$ 之间，则 $f(n)$ 属于集合 $\Theta(g(n))$ 。我们记 $f(n)=\Theta(g(n))$ 以表示 $f(n)$ 是函数集合 $\Theta(g(n))$ 的成员。换句话说，对所有 $n \geq n_0$，函数 $f(n)$ 在一个常量因子内等于 $g(n)$ 。我们也称 $g(n)$ 是 $f(n)$ 的一个渐近确界。&lt;/p&gt;
+&lt;p&gt;直觉上来说，我们可以通过忽略低阶项和最高阶项系数来直接求出 $\Theta(g(n))$ , 如 $\frac{1}{2}n^2 - 3n = \Theta(n^2)$。（只需证明存在正数 $c_1和c_2$ 使 $c_1n^2 \leq \frac{1}{2}n^2 - 3n \leq c_2n^2$ 即可。）&lt;/p&gt;
+&lt;p&gt;2、$O$ 记号&lt;/p&gt;
+&lt;p&gt;$\Theta$ 记号渐近地给出一个函数的上界和下界。对于给定函数 $f(n)$，当只有一个渐近上界时，使用 $O$ 记号，表示以下函数的集合：
+$O(g(n))={ f(n):存在正常量c和n_0，使得对所有n \geq n_0，有0 \leq f(n) \leq cg(n) }$&lt;/p&gt;
+&lt;p&gt;3、$\Omega$ 记号&lt;/p&gt;
+&lt;p&gt;正如 $O$ 记号提供了一个函数的渐近上界，$\Omega$ 记号提供了渐近下界。对于给定函数 $f(n)$，用 $\Omega$ 表示以下函数的集合：
+$\Omega(g(n))={ f(n):存在正常量c和n_0，使得对所有n \geq n_0，有0 \leq cg(n) \leq f(n) }$&lt;/p&gt;
+&lt;p&gt;4、$o$ 记号&lt;/p&gt;
+&lt;p&gt;由 $O$ 记号提供的渐近上界可能是也可能不是渐近紧确的。我们使用 $o$ 记号来表示一个非渐近紧确的上界：
+$o(g(n))={ f(n):存在正常量c和n_0，使得对所有n \geq n_0，有0 \leq f(n) &amp;lt; cg(n) }$
+例如，$2n^2=O(n^2)$，$2n=o(n^2)$，但 $2n^2 \neq o(n^2)$。&lt;/p&gt;
+&lt;p&gt;5、$\omega$ 记号&lt;/p&gt;
+&lt;p&gt;类似地，我们使用 $\omega$ 记号来表示一个非渐近紧确的下界：
+$\omega(g(n))={ f(n):存在正常量c和n_0，使得对所有n \geq n_0，有0 \leq cg(n) &amp;lt; f(n) }$
+例如，$\frac{n^2}{2}=\Omega(n^2)$，$\frac{n^2}{2}=\omega(n)$，但 $\frac{n^2}{2} \neq \Omega(n^2)$。&lt;/p&gt;
+&lt;p&gt;三、类比总结&lt;/p&gt;
+&lt;p&gt;$f(n)=O(g(n))$ 类似于 $a \leq b$
+$f(n)=\Omega(g(n))$ 类似于 $a \geq b$
+$f(n)=\Theta(g(n))$ 类似于 $a = b$
+$f(n)=o(g(n))$ 类似于 $a &amp;lt; b$
+$f(n)=\omega(g(n))$ 类似于 $a &amp;gt; b$&lt;/p&gt;
+&lt;p&gt;另，实数的三分性不能携带到渐近记号。&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

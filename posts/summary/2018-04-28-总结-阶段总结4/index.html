@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Language" content="en">
+
+    <meta name="author" content="Yusheng Wang">
+    <meta name="description" content="快到五一了，抽空稍微总结一下4月份的情况。
+从3月底到4月15号左右，一直在赶项目和改Bug，还有找老师验收。因为同届的专硕要回去学校写论文和答辩，准备毕业了。项目一直各种Bug，各种改，一直拖到了15号左右才正式全部验收完成。总算解放了，这个项目业务逻辑真的太复杂，一直占用了我巨量的时间，以至于我3月份和4月份基本没有自己的时间来准备实习招聘的面试，错过了很多机会。上一次阶段总结制定的计划基本没有时间推进，书基本没看，进度落下了很多。眼睁睁看着舍友们同学们各种收割大厂offer，压力很大，心里很不是滋味。
+从4月15号开始，我从项目中解放出来，开始看书。我根据目前收集到的消息，综合各方面考虑，决定先打好基础，考虑 Java 研发工程师的方向，不再死磕算法工程师的岗位。原因有以下几点：
+ 从长远来看，感觉机器学习、深度学习有点过度泡沫的迹象了。资本和企业都在疯狂砸钱招算法工程师做研究，但是真正把这些高级算法落地、实现盈收的企业的很少，更别说作为主要收入了。可以设想等这波热潮过去，资本撤离之后，还会有多少企业养得起这么多高薪而且不一定能为企业挣钱的算法工程师。 从就业情况来看，随着涌进来的人越来越多，竞争自然越来越激烈，门槛自然越来越高。据资料显示，这两年算法岗的要求比前几年高了很多。牛客网上很多这样的例子，前些年的学长学姐没有比赛没有项目没有论文，能力也不是很强，就靠刷几本书一些公开课视频就可以拿大厂的算法岗。然而这两年尤其是今年，很多天池大赛拿到top名次、有深度学习项目经历、有顶会论文、实力很强的同学都觉得非常难进大厂的算法岗，甚至有的同学抱怨连实习都找不到。 从自身角度来看，我应该属于比较劣势的情况。上述的top名次、项目、论文我都没有，没有十分核心的竞争力。只有两个top20左右的天池大赛，决赛都没有进。书和公开课也刷的很少，主要是被老师的项目占去了太多的时间，经常熬夜打比赛就已经精疲力尽了。  另外，前一段时间和老师讨论了下，也和大神舍友交流过，受到蛮多的启发。首先大神舍友的建议是，不要死磕算法岗，目前这个条件要进大厂算法岗确实比较困难。然后老师给我的建议是，“要考虑自己的长处是什么，不要拿自己的短处去硬碰别人的长处。我们计算机科班出身的同学，长处应该是深刻理解计算机系统（组成原理、操作系统、网络、数据库、并发、web框架等），数据结构和算法（不是机器学习深度学习的那些算法），能够把复杂的逻辑、业务、算法转化成可靠的代码和稳定的程序，实现具体的功能。机器学习深度学习那些算法从根本上来讲就是数学和统计学，不是我们的长处”。我认为老师说的有一定的道理，虽然不是完全认可他的想法（未免有点狭隘）。计算机的基础确实应该成为我们的长处，虽然算法岗确实薪水高待遇好，但是如果自身没有远超同届竞争者的优势，要得到一份好的工作是不太现实的。所以我决定需要好好复习，打好作为计算机专业学生的基础，至少保证能够达到软件研发工程师的水平，学有余力再向算法工程师进阶。
+从16号开始到月末的这两周，我看完的书有：
+ 《操作系统》 《计算机网络》的传输层和网络层 《数据库系统概论》 《java编程思想》前半部分  接下来打算准备的看的内容：
+ 《深入理解Java虚拟机》 《Java多线程编程》、《Java并发编程》 《高性能Mysql》、《Spring》、《MyBatis》 《设计模式》  再加上之前计划中的那些算法书和面试准备书，差不多这些了。至于项目，时间不多了，大概只能准备个秒杀系统之类的小系统。">
+    <meta name="keywords" content="blog,developer,personal">
+
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="阶段总结(4)"/>
+<meta name="twitter:description" content="快到五一了，抽空稍微总结一下4月份的情况。
+从3月底到4月15号左右，一直在赶项目和改Bug，还有找老师验收。因为同届的专硕要回去学校写论文和答辩，准备毕业了。项目一直各种Bug，各种改，一直拖到了15号左右才正式全部验收完成。总算解放了，这个项目业务逻辑真的太复杂，一直占用了我巨量的时间，以至于我3月份和4月份基本没有自己的时间来准备实习招聘的面试，错过了很多机会。上一次阶段总结制定的计划基本没有时间推进，书基本没看，进度落下了很多。眼睁睁看着舍友们同学们各种收割大厂offer，压力很大，心里很不是滋味。
+从4月15号开始，我从项目中解放出来，开始看书。我根据目前收集到的消息，综合各方面考虑，决定先打好基础，考虑 Java 研发工程师的方向，不再死磕算法工程师的岗位。原因有以下几点：
+ 从长远来看，感觉机器学习、深度学习有点过度泡沫的迹象了。资本和企业都在疯狂砸钱招算法工程师做研究，但是真正把这些高级算法落地、实现盈收的企业的很少，更别说作为主要收入了。可以设想等这波热潮过去，资本撤离之后，还会有多少企业养得起这么多高薪而且不一定能为企业挣钱的算法工程师。 从就业情况来看，随着涌进来的人越来越多，竞争自然越来越激烈，门槛自然越来越高。据资料显示，这两年算法岗的要求比前几年高了很多。牛客网上很多这样的例子，前些年的学长学姐没有比赛没有项目没有论文，能力也不是很强，就靠刷几本书一些公开课视频就可以拿大厂的算法岗。然而这两年尤其是今年，很多天池大赛拿到top名次、有深度学习项目经历、有顶会论文、实力很强的同学都觉得非常难进大厂的算法岗，甚至有的同学抱怨连实习都找不到。 从自身角度来看，我应该属于比较劣势的情况。上述的top名次、项目、论文我都没有，没有十分核心的竞争力。只有两个top20左右的天池大赛，决赛都没有进。书和公开课也刷的很少，主要是被老师的项目占去了太多的时间，经常熬夜打比赛就已经精疲力尽了。  另外，前一段时间和老师讨论了下，也和大神舍友交流过，受到蛮多的启发。首先大神舍友的建议是，不要死磕算法岗，目前这个条件要进大厂算法岗确实比较困难。然后老师给我的建议是，“要考虑自己的长处是什么，不要拿自己的短处去硬碰别人的长处。我们计算机科班出身的同学，长处应该是深刻理解计算机系统（组成原理、操作系统、网络、数据库、并发、web框架等），数据结构和算法（不是机器学习深度学习的那些算法），能够把复杂的逻辑、业务、算法转化成可靠的代码和稳定的程序，实现具体的功能。机器学习深度学习那些算法从根本上来讲就是数学和统计学，不是我们的长处”。我认为老师说的有一定的道理，虽然不是完全认可他的想法（未免有点狭隘）。计算机的基础确实应该成为我们的长处，虽然算法岗确实薪水高待遇好，但是如果自身没有远超同届竞争者的优势，要得到一份好的工作是不太现实的。所以我决定需要好好复习，打好作为计算机专业学生的基础，至少保证能够达到软件研发工程师的水平，学有余力再向算法工程师进阶。
+从16号开始到月末的这两周，我看完的书有：
+ 《操作系统》 《计算机网络》的传输层和网络层 《数据库系统概论》 《java编程思想》前半部分  接下来打算准备的看的内容：
+ 《深入理解Java虚拟机》 《Java多线程编程》、《Java并发编程》 《高性能Mysql》、《Spring》、《MyBatis》 《设计模式》  再加上之前计划中的那些算法书和面试准备书，差不多这些了。至于项目，时间不多了，大概只能准备个秒杀系统之类的小系统。"/>
+
+    <meta property="og:title" content="阶段总结(4)" />
+<meta property="og:description" content="快到五一了，抽空稍微总结一下4月份的情况。
+从3月底到4月15号左右，一直在赶项目和改Bug，还有找老师验收。因为同届的专硕要回去学校写论文和答辩，准备毕业了。项目一直各种Bug，各种改，一直拖到了15号左右才正式全部验收完成。总算解放了，这个项目业务逻辑真的太复杂，一直占用了我巨量的时间，以至于我3月份和4月份基本没有自己的时间来准备实习招聘的面试，错过了很多机会。上一次阶段总结制定的计划基本没有时间推进，书基本没看，进度落下了很多。眼睁睁看着舍友们同学们各种收割大厂offer，压力很大，心里很不是滋味。
+从4月15号开始，我从项目中解放出来，开始看书。我根据目前收集到的消息，综合各方面考虑，决定先打好基础，考虑 Java 研发工程师的方向，不再死磕算法工程师的岗位。原因有以下几点：
+ 从长远来看，感觉机器学习、深度学习有点过度泡沫的迹象了。资本和企业都在疯狂砸钱招算法工程师做研究，但是真正把这些高级算法落地、实现盈收的企业的很少，更别说作为主要收入了。可以设想等这波热潮过去，资本撤离之后，还会有多少企业养得起这么多高薪而且不一定能为企业挣钱的算法工程师。 从就业情况来看，随着涌进来的人越来越多，竞争自然越来越激烈，门槛自然越来越高。据资料显示，这两年算法岗的要求比前几年高了很多。牛客网上很多这样的例子，前些年的学长学姐没有比赛没有项目没有论文，能力也不是很强，就靠刷几本书一些公开课视频就可以拿大厂的算法岗。然而这两年尤其是今年，很多天池大赛拿到top名次、有深度学习项目经历、有顶会论文、实力很强的同学都觉得非常难进大厂的算法岗，甚至有的同学抱怨连实习都找不到。 从自身角度来看，我应该属于比较劣势的情况。上述的top名次、项目、论文我都没有，没有十分核心的竞争力。只有两个top20左右的天池大赛，决赛都没有进。书和公开课也刷的很少，主要是被老师的项目占去了太多的时间，经常熬夜打比赛就已经精疲力尽了。  另外，前一段时间和老师讨论了下，也和大神舍友交流过，受到蛮多的启发。首先大神舍友的建议是，不要死磕算法岗，目前这个条件要进大厂算法岗确实比较困难。然后老师给我的建议是，“要考虑自己的长处是什么，不要拿自己的短处去硬碰别人的长处。我们计算机科班出身的同学，长处应该是深刻理解计算机系统（组成原理、操作系统、网络、数据库、并发、web框架等），数据结构和算法（不是机器学习深度学习的那些算法），能够把复杂的逻辑、业务、算法转化成可靠的代码和稳定的程序，实现具体的功能。机器学习深度学习那些算法从根本上来讲就是数学和统计学，不是我们的长处”。我认为老师说的有一定的道理，虽然不是完全认可他的想法（未免有点狭隘）。计算机的基础确实应该成为我们的长处，虽然算法岗确实薪水高待遇好，但是如果自身没有远超同届竞争者的优势，要得到一份好的工作是不太现实的。所以我决定需要好好复习，打好作为计算机专业学生的基础，至少保证能够达到软件研发工程师的水平，学有余力再向算法工程师进阶。
+从16号开始到月末的这两周，我看完的书有：
+ 《操作系统》 《计算机网络》的传输层和网络层 《数据库系统概论》 《java编程思想》前半部分  接下来打算准备的看的内容：
+ 《深入理解Java虚拟机》 《Java多线程编程》、《Java并发编程》 《高性能Mysql》、《Spring》、《MyBatis》 《设计模式》  再加上之前计划中的那些算法书和面试准备书，差不多这些了。至于项目，时间不多了，大概只能准备个秒杀系统之类的小系统。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://utopizza.github.io/posts/summary/2018-04-28-%E6%80%BB%E7%BB%93-%E9%98%B6%E6%AE%B5%E6%80%BB%E7%BB%934/" />
+<meta property="article:published_time" content="2018-04-28T10:48:00+00:00" />
+<meta property="article:modified_time" content="2018-04-28T10:48:00+00:00" />
+
+
+    
+      <base href="https://utopizza.github.io/posts/summary/2018-04-28-%E6%80%BB%E7%BB%93-%E9%98%B6%E6%AE%B5%E6%80%BB%E7%BB%934/">
+    
+    <title>
+  阶段总结(4) · Utopizza
+</title>
+
+    
+      <link rel="canonical" href="https://utopizza.github.io/posts/summary/2018-04-28-%E6%80%BB%E7%BB%93-%E9%98%B6%E6%AE%B5%E6%80%BB%E7%BB%934/">
+    
+
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700%7CMerriweather:300,700%7CSource+Code+Pro:400,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.13.0/css/all.css" integrity="sha384-Bfad6CLCknfcloXFOyFnlgtENryhrpZCe29RTifKEixXQZ38WheV+i/6YWSzkz3V" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" integrity="sha256-l85OmPOjvil/SOvVt3HnSSjzF1TUMyT9eV0c2BzEGzU=" crossorigin="anonymous" />
+
+    
+      
+      
+      <link rel="stylesheet" href="https://utopizza.github.io/css/coder.min.a4f332213a21ce8eb521670c614470c58923aaaf385e2a73982c31dd7642decb.css" integrity="sha256-pPMyITohzo61IWcMYURwxYkjqq84XipzmCwx3XZC3ss=" crossorigin="anonymous" media="screen" />
+    
+
+    
+
+    
+      
+        
+        
+        <link rel="stylesheet" href="https://utopizza.github.io/css/coder-dark.min.e78e80fc3a585a4d1c8fc7f58623b6ff852411e38431a9cd1792877ecaa160f6.css" integrity="sha256-546A/DpYWk0cj8f1hiO2/4UkEeOEManNF5KHfsqhYPY=" crossorigin="anonymous" media="screen" />
+      
+    
+
+    
+
+    
+
+    <link rel="icon" type="image/png" href="https://utopizza.github.io/images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="https://utopizza.github.io/images/favicon-16x16.png" sizes="16x16">
+
+    <meta name="generator" content="Hugo 0.69.2" />
+  </head>
+
+  
+  
+    
+  
+  <body class="colorscheme-auto">
+    <main class="wrapper">
+      <nav class="navigation">
+  <section class="container">
+    <a class="navigation-title" href="https://utopizza.github.io/">
+      Utopizza
+    </a>
+    
+    <input type="checkbox" id="menu-toggle" />
+    <label class="menu-button float-right" for="menu-toggle"><i class="fas fa-bars"></i></label>
+    <ul class="navigation-list">
+      
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/about/">About</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/posts/">Blog</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/projects/">Projects</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/contact/">Contact me</a>
+          </li>
+        
+      
+      
+    </ul>
+    
+  </section>
+</nav>
+
+
+      <div class="content">
+        
+  <section class="container post">
+    <article>
+      <header>
+        <div class="post-title">
+          <h1 class="title">阶段总结(4)</h1>
+        </div>
+        <div class="post-meta">
+          <div class="date">
+            <span class="posted-on">
+              <i class="fas fa-calendar"></i>
+              <time datetime='2018-04-28T10:48:00Z'>
+                April 28, 2018
+              </time>
+            </span>
+            <span class="reading-time">
+              <i class="fas fa-clock"></i>
+              1-minute read
+            </span>
+          </div>
+          <div class="categories">
+  <i class="fas fa-folder"></i>
+    <a href="https://utopizza.github.io/categories/summary/">Summary</a></div>
+
+          
+        </div>
+      </header>
+
+      <div>
+        
+        <p>快到五一了，抽空稍微总结一下4月份的情况。</p>
+<p>从3月底到4月15号左右，一直在赶项目和改Bug，还有找老师验收。因为同届的专硕要回去学校写论文和答辩，准备毕业了。项目一直各种Bug，各种改，一直拖到了15号左右才正式全部验收完成。总算解放了，这个项目业务逻辑真的太复杂，一直占用了我巨量的时间，以至于我3月份和4月份基本没有自己的时间来准备实习招聘的面试，错过了很多机会。上一次阶段总结制定的计划基本没有时间推进，书基本没看，进度落下了很多。眼睁睁看着舍友们同学们各种收割大厂offer，压力很大，心里很不是滋味。</p>
+<p>从4月15号开始，我从项目中解放出来，开始看书。我根据目前收集到的消息，综合各方面考虑，决定先打好基础，考虑 Java 研发工程师的方向，不再死磕算法工程师的岗位。原因有以下几点：</p>
+<ol>
+<li>从长远来看，感觉机器学习、深度学习有点过度泡沫的迹象了。资本和企业都在疯狂砸钱招算法工程师做研究，但是真正把这些高级算法落地、实现盈收的企业的很少，更别说作为主要收入了。可以设想等这波热潮过去，资本撤离之后，还会有多少企业养得起这么多高薪而且不一定能为企业挣钱的算法工程师。</li>
+<li>从就业情况来看，随着涌进来的人越来越多，竞争自然越来越激烈，门槛自然越来越高。据资料显示，这两年算法岗的要求比前几年高了很多。牛客网上很多这样的例子，前些年的学长学姐没有比赛没有项目没有论文，能力也不是很强，就靠刷几本书一些公开课视频就可以拿大厂的算法岗。然而这两年尤其是今年，很多天池大赛拿到top名次、有深度学习项目经历、有顶会论文、实力很强的同学都觉得非常难进大厂的算法岗，甚至有的同学抱怨连实习都找不到。</li>
+<li>从自身角度来看，我应该属于比较劣势的情况。上述的top名次、项目、论文我都没有，没有十分核心的竞争力。只有两个top20左右的天池大赛，决赛都没有进。书和公开课也刷的很少，主要是被老师的项目占去了太多的时间，经常熬夜打比赛就已经精疲力尽了。</li>
+</ol>
+<p>另外，前一段时间和老师讨论了下，也和大神舍友交流过，受到蛮多的启发。首先大神舍友的建议是，不要死磕算法岗，目前这个条件要进大厂算法岗确实比较困难。然后老师给我的建议是，“要考虑自己的长处是什么，不要拿自己的短处去硬碰别人的长处。我们计算机科班出身的同学，长处应该是深刻理解计算机系统（组成原理、操作系统、网络、数据库、并发、web框架等），数据结构和算法（不是机器学习深度学习的那些算法），能够把复杂的逻辑、业务、算法转化成可靠的代码和稳定的程序，实现具体的功能。机器学习深度学习那些算法从根本上来讲就是数学和统计学，不是我们的长处”。我认为老师说的有一定的道理，虽然不是完全认可他的想法（未免有点狭隘）。计算机的基础确实应该成为我们的长处，虽然算法岗确实薪水高待遇好，但是如果自身没有远超同届竞争者的优势，要得到一份好的工作是不太现实的。所以我决定需要好好复习，打好作为计算机专业学生的基础，至少保证能够达到软件研发工程师的水平，学有余力再向算法工程师进阶。</p>
+<p>从16号开始到月末的这两周，我看完的书有：</p>
+<ol>
+<li>《操作系统》</li>
+<li>《计算机网络》的传输层和网络层</li>
+<li>《数据库系统概论》</li>
+<li>《java编程思想》前半部分</li>
+</ol>
+<p>接下来打算准备的看的内容：</p>
+<ol>
+<li>《深入理解Java虚拟机》</li>
+<li>《Java多线程编程》、《Java并发编程》</li>
+<li>《高性能Mysql》、《Spring》、《MyBatis》</li>
+<li>《设计模式》</li>
+</ol>
+<p>再加上之前计划中的那些算法书和面试准备书，差不多这些了。至于项目，时间不多了，大概只能准备个秒杀系统之类的小系统。</p>
+
+      </div>
+
+
+      <footer>
+        
+
+
+        
+        
+        
+      </footer>
+    </article>
+
+    
+  </section>
+
+      </div>
+
+      <script type="text/javascript"
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+    </main>
+
+    
+
+    
+
+    <script>
+(function(f, a, t, h, o, m){
+	a[h]=a[h]||function(){
+		(a[h].q=a[h].q||[]).push(arguments)
+	};
+	o=f.createElement('script'),
+	m=f.getElementsByTagName('script')[0];
+	o.async=1; o.src=t; o.id='fathom-script';
+	m.parentNode.insertBefore(o,m)
+})(document, window, '//analytics.example.com/tracker.js', 'fathom');
+fathom('set', 'siteId', 'ABCDE');
+fathom('trackPageview');
+</script>
+
+
+  </body>
+
+</html>

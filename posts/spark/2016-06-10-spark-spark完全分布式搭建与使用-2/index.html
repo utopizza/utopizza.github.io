@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Language" content="en">
+
+    <meta name="author" content="Yusheng Wang">
+    <meta name="description" content="八、安装Hadoop-2.7.2
+ 说明：如果是想用 “Spark on Standalon” 模式就不用安装Hadoop，如果想用 “Spark on Yarn” 或者需要去hdfs取数据则应先装Hadoop 参见：  CentOS7 上安装Hadoop 2.7.2 的安装 和 初步使用） Hadoop2.6, Red hat Linux 6.6 x64集群完全分布式安装 CentOS7安装Hadoop2.7完整流程    1、下载地址：Apache Hadoop Releases Download
+这里我选择binary文件进行下载，这种是已经编译好的源码，下载的文件名是hadoop-2.6.4.tar.gz；如果喜欢自己编译，可以选择source文件进行下载，下载的文件名是hadoop-2.7.2-src.tar.gz。（参考：hadoop两个安装包分别是干啥的？）
+2、将安装包移动到到路径：/usr/local/，并解压
+[root@master ~]# cd /usr/local [root@master ~]# tar -xzvf hadoop-2.7.2.tar.gz 3、判断Hadoop版本
+[root@master ~]# /usr/local/hadoop-2.7.2/bin/hadoop version 4、配置环境变量
+[root@master ~]# vim /etc/profile export HADOOP_HOME=/usr/local/hadoop-2.7.2 export PATH=$PATH:{HADOOP_HOME}/bin:{HADOOP_HOME}/sbin [root@master ~]# source /etc/profile 同步到worker1和worker2
+[root@master ~]# scp /etc/profile root@worker1:/etc/profile [root@master ~]# ssh root@worker1 [root@worker1 ~]# source /etc/profile [root@worker1 ~]# exit [root@master ~]# scp /etc/profile root@worker2:/etc/profile [root@master ~]# ssh root@worker2 [root@worker2 ~]# source /etc/profile [root@worker2 ~]# exit 5、配置Hadoop文件">
+    <meta name="keywords" content="blog,developer,personal">
+
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Spark完全分布式搭建与使用(2)"/>
+<meta name="twitter:description" content="八、安装Hadoop-2.7.2
+ 说明：如果是想用 “Spark on Standalon” 模式就不用安装Hadoop，如果想用 “Spark on Yarn” 或者需要去hdfs取数据则应先装Hadoop 参见：  CentOS7 上安装Hadoop 2.7.2 的安装 和 初步使用） Hadoop2.6, Red hat Linux 6.6 x64集群完全分布式安装 CentOS7安装Hadoop2.7完整流程    1、下载地址：Apache Hadoop Releases Download
+这里我选择binary文件进行下载，这种是已经编译好的源码，下载的文件名是hadoop-2.6.4.tar.gz；如果喜欢自己编译，可以选择source文件进行下载，下载的文件名是hadoop-2.7.2-src.tar.gz。（参考：hadoop两个安装包分别是干啥的？）
+2、将安装包移动到到路径：/usr/local/，并解压
+[root@master ~]# cd /usr/local [root@master ~]# tar -xzvf hadoop-2.7.2.tar.gz 3、判断Hadoop版本
+[root@master ~]# /usr/local/hadoop-2.7.2/bin/hadoop version 4、配置环境变量
+[root@master ~]# vim /etc/profile export HADOOP_HOME=/usr/local/hadoop-2.7.2 export PATH=$PATH:{HADOOP_HOME}/bin:{HADOOP_HOME}/sbin [root@master ~]# source /etc/profile 同步到worker1和worker2
+[root@master ~]# scp /etc/profile root@worker1:/etc/profile [root@master ~]# ssh root@worker1 [root@worker1 ~]# source /etc/profile [root@worker1 ~]# exit [root@master ~]# scp /etc/profile root@worker2:/etc/profile [root@master ~]# ssh root@worker2 [root@worker2 ~]# source /etc/profile [root@worker2 ~]# exit 5、配置Hadoop文件"/>
+
+    <meta property="og:title" content="Spark完全分布式搭建与使用(2)" />
+<meta property="og:description" content="八、安装Hadoop-2.7.2
+ 说明：如果是想用 “Spark on Standalon” 模式就不用安装Hadoop，如果想用 “Spark on Yarn” 或者需要去hdfs取数据则应先装Hadoop 参见：  CentOS7 上安装Hadoop 2.7.2 的安装 和 初步使用） Hadoop2.6, Red hat Linux 6.6 x64集群完全分布式安装 CentOS7安装Hadoop2.7完整流程    1、下载地址：Apache Hadoop Releases Download
+这里我选择binary文件进行下载，这种是已经编译好的源码，下载的文件名是hadoop-2.6.4.tar.gz；如果喜欢自己编译，可以选择source文件进行下载，下载的文件名是hadoop-2.7.2-src.tar.gz。（参考：hadoop两个安装包分别是干啥的？）
+2、将安装包移动到到路径：/usr/local/，并解压
+[root@master ~]# cd /usr/local [root@master ~]# tar -xzvf hadoop-2.7.2.tar.gz 3、判断Hadoop版本
+[root@master ~]# /usr/local/hadoop-2.7.2/bin/hadoop version 4、配置环境变量
+[root@master ~]# vim /etc/profile export HADOOP_HOME=/usr/local/hadoop-2.7.2 export PATH=$PATH:{HADOOP_HOME}/bin:{HADOOP_HOME}/sbin [root@master ~]# source /etc/profile 同步到worker1和worker2
+[root@master ~]# scp /etc/profile root@worker1:/etc/profile [root@master ~]# ssh root@worker1 [root@worker1 ~]# source /etc/profile [root@worker1 ~]# exit [root@master ~]# scp /etc/profile root@worker2:/etc/profile [root@master ~]# ssh root@worker2 [root@worker2 ~]# source /etc/profile [root@worker2 ~]# exit 5、配置Hadoop文件" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://utopizza.github.io/posts/spark/2016-06-10-spark-spark%E5%AE%8C%E5%85%A8%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%AD%E5%BB%BA%E4%B8%8E%E4%BD%BF%E7%94%A8-2/" />
+<meta property="article:published_time" content="2016-06-10T16:11:00+00:00" />
+<meta property="article:modified_time" content="2016-06-10T16:11:00+00:00" />
+
+
+    
+      <base href="https://utopizza.github.io/posts/spark/2016-06-10-spark-spark%E5%AE%8C%E5%85%A8%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%AD%E5%BB%BA%E4%B8%8E%E4%BD%BF%E7%94%A8-2/">
+    
+    <title>
+  Spark完全分布式搭建与使用(2) · Utopizza
+</title>
+
+    
+      <link rel="canonical" href="https://utopizza.github.io/posts/spark/2016-06-10-spark-spark%E5%AE%8C%E5%85%A8%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%AD%E5%BB%BA%E4%B8%8E%E4%BD%BF%E7%94%A8-2/">
+    
+
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700%7CMerriweather:300,700%7CSource+Code+Pro:400,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.13.0/css/all.css" integrity="sha384-Bfad6CLCknfcloXFOyFnlgtENryhrpZCe29RTifKEixXQZ38WheV+i/6YWSzkz3V" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" integrity="sha256-l85OmPOjvil/SOvVt3HnSSjzF1TUMyT9eV0c2BzEGzU=" crossorigin="anonymous" />
+
+    
+      
+      
+      <link rel="stylesheet" href="https://utopizza.github.io/css/coder.min.a4f332213a21ce8eb521670c614470c58923aaaf385e2a73982c31dd7642decb.css" integrity="sha256-pPMyITohzo61IWcMYURwxYkjqq84XipzmCwx3XZC3ss=" crossorigin="anonymous" media="screen" />
+    
+
+    
+
+    
+      
+        
+        
+        <link rel="stylesheet" href="https://utopizza.github.io/css/coder-dark.min.e78e80fc3a585a4d1c8fc7f58623b6ff852411e38431a9cd1792877ecaa160f6.css" integrity="sha256-546A/DpYWk0cj8f1hiO2/4UkEeOEManNF5KHfsqhYPY=" crossorigin="anonymous" media="screen" />
+      
+    
+
+    
+
+    
+
+    <link rel="icon" type="image/png" href="https://utopizza.github.io/images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="https://utopizza.github.io/images/favicon-16x16.png" sizes="16x16">
+
+    <meta name="generator" content="Hugo 0.69.2" />
+  </head>
+
+  
+  
+    
+  
+  <body class="colorscheme-auto">
+    <main class="wrapper">
+      <nav class="navigation">
+  <section class="container">
+    <a class="navigation-title" href="https://utopizza.github.io/">
+      Utopizza
+    </a>
+    
+    <input type="checkbox" id="menu-toggle" />
+    <label class="menu-button float-right" for="menu-toggle"><i class="fas fa-bars"></i></label>
+    <ul class="navigation-list">
+      
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/about/">About</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/posts/">Blog</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/projects/">Projects</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/contact/">Contact me</a>
+          </li>
+        
+      
+      
+    </ul>
+    
+  </section>
+</nav>
+
+
+      <div class="content">
+        
+  <section class="container post">
+    <article>
+      <header>
+        <div class="post-title">
+          <h1 class="title">Spark完全分布式搭建与使用(2)</h1>
+        </div>
+        <div class="post-meta">
+          <div class="date">
+            <span class="posted-on">
+              <i class="fas fa-calendar"></i>
+              <time datetime='2016-06-10T16:11:00Z'>
+                June 10, 2016
+              </time>
+            </span>
+            <span class="reading-time">
+              <i class="fas fa-clock"></i>
+              2-minute read
+            </span>
+          </div>
+          <div class="categories">
+  <i class="fas fa-folder"></i>
+    <a href="https://utopizza.github.io/categories/spark/">Spark</a></div>
+
+          
+        </div>
+      </header>
+
+      <div>
+        
+        <p>八、安装Hadoop-2.7.2</p>
+<ul>
+<li>说明：如果是想用 “Spark on Standalon” 模式就不用安装Hadoop，如果想用 “Spark on Yarn” 或者需要去hdfs取数据则应先装Hadoop</li>
+<li>参见：
+<ul>
+<li><a href="http://blog.csdn.net/remote_roamer/article/details/50579874">CentOS7 上安装Hadoop 2.7.2 的安装 和 初步使用</a>）</li>
+<li><a href="http://www.dataguru.cn/thread-530951-1-1.html">Hadoop2.6, Red hat Linux 6.6 x64集群完全分布式安装</a></li>
+<li><a href="http://www.open-open.com/lib/view/open1435761287778.html">CentOS7安装Hadoop2.7完整流程</a></li>
+</ul>
+</li>
+</ul>
+<p>1、下载地址：<a href="http://hadoop.apache.org/releases.html">Apache Hadoop Releases Download</a></p>
+<p>这里我选择binary文件进行下载，这种是已经编译好的源码，下载的文件名是hadoop-2.6.4.tar.gz；如果喜欢自己编译，可以选择source文件进行下载，下载的文件名是hadoop-2.7.2-src.tar.gz。（参考：<a href="http://www.itpub.net/thread-1875856-1-1.html">hadoop两个安装包分别是干啥的？</a>）</p>
+<p><img src="https://utopizza.github.io/2016-06-10-Spark-Spark%E5%AE%8C%E5%85%A8%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%AD%E5%BB%BA%E4%B8%8E%E4%BD%BF%E7%94%A8-2/download.jpg" alt=""></p>
+<p>2、将安装包移动到到路径：<code>/usr/local/</code>，并解压</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">[root@master ~]# cd  /usr/local
+[root@master ~]# tar  -xzvf  hadoop-2.7.2.tar.gz
+</code></pre></div><p>3、判断Hadoop版本</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">[root@master ~]# /usr/local/hadoop-2.7.2/bin/hadoop  version
+</code></pre></div><p>4、配置环境变量</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">[root@master ~]# vim  /etc/profile
+
+export  HADOOP_HOME=/usr/local/hadoop-2.7.2
+export  PATH=$PATH:{HADOOP_HOME}/bin:{HADOOP_HOME}/sbin
+
+[root@master ~]# source  /etc/profile
+</code></pre></div><p>同步到worker1和worker2</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">[root@master ~]# scp  /etc/profile  root@worker1:/etc/profile
+[root@master ~]# ssh  root@worker1
+[root@worker1 ~]# source  /etc/profile
+[root@worker1 ~]# exit
+
+[root@master ~]# scp  /etc/profile  root@worker2:/etc/profile
+[root@master ~]# ssh  root@worker2
+[root@worker2 ~]# source  /etc/profile
+[root@worker2 ~]# exit
+</code></pre></div><p>5、配置Hadoop文件</p>
+<p>step 1：在master本地创建以下文件夹</p>
+<ul>
+<li>/home/Hadoop/name</li>
+<li>/home/hadoop/data</li>
+<li>/home/hadoop/temp</li>
+</ul>
+<p>step 2：进入目录 <code>/usr/local/hadoop-2.7.2/etc/hadoop/</code> ，修改配置文件，共7个</p>
+<p>(1) hadoop-env.sh：修改 <code>JAVA_HOME</code> 值</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">export  JAVA_HOME=/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.101.x86_64
+</code></pre></div><p>(2) yarn-env.sh：修改 <code>JAVA_HOME</code> 值</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">export  JAVA_HOME=/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.101.x86_64
+</code></pre></div><p>(3) slaves：写入</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">worker1
+worker2
+</code></pre></div><p>(4) core-site.xml</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">&lt;configuration&gt;
+        &lt;property&gt;
+                &lt;name&gt;fs.defaultFS&lt;/name&gt;
+                &lt;value&gt;hdfs://master:9000&lt;/value&gt;
+        &lt;/property&gt;
+        &lt;property&gt;
+                &lt;name&gt;hadoop.tmp.dir&lt;/name&gt;
+                &lt;value&gt;file:/home/hadoop/temp&lt;/value&gt;
+                &lt;description&gt;Abase for other temporary directories.&lt;/description&gt;
+        &lt;/property&gt;
+&lt;/configuration&gt;
+</code></pre></div><p>(5) hdfs-site.xml</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">&lt;configuration&gt;
+         &lt;property&gt;
+               &lt;name&gt;dfs.namenode.secondary.http-address&lt;/name&gt;
+               &lt;value&gt;master:9001&lt;/value&gt;
+         &lt;/property&gt;
+         &lt;property&gt;
+                 &lt;name&gt;dfs.namenode.name.dir&lt;/name&gt;
+                 &lt;value&gt;file:/home/hadoop/name&lt;/value&gt;
+         &lt;/property&gt;
+         &lt;property&gt;
+                 &lt;name&gt;dfs.datanode.data.dir&lt;/name&gt;
+                 &lt;value&gt;file:/home/hadoop/data&lt;/value&gt;
+         &lt;/property&gt;
+         &lt;property&gt;
+                 &lt;name&gt;dfs.replication&lt;/name&gt;
+                 &lt;value&gt;2&lt;/value&gt;
+         &lt;/property&gt;
+         &lt;property&gt;
+                 &lt;name&gt;dfs.webhdfs.enabled&lt;/name&gt;
+                 &lt;value&gt;true&lt;/value&gt;
+         &lt;/property&gt;
+&lt;/configuration&gt;
+</code></pre></div><p>(6) mapred-site.xml</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">&lt;configuration&gt;
+                &lt;property&gt;
+                         &lt;name&gt;mapreduce.framework.name&lt;/name&gt;
+                         &lt;value&gt;yarn&lt;/value&gt;
+                &lt;/property&gt;
+                &lt;property&gt;
+                         &lt;name&gt;mapreduce.jobhistory.address&lt;/name&gt;
+                         &lt;value&gt;master:10020&lt;/value&gt;
+                &lt;/property&gt;
+                &lt;property&gt;
+                         &lt;name&gt;mapreduce.jobhistory.webapp.address&lt;/name&gt;
+                         &lt;value&gt; master:19888&lt;/value&gt;
+                &lt;/property&gt;
+&lt;/configuration&gt;
+</code></pre></div><p>(7) yarn-site.xml</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">&lt;configuration&gt;
+        &lt;property&gt;
+               &lt;name&gt;yarn.nodemanager.aux-services&lt;/name&gt;
+               &lt;value&gt;mapreduce_shuffle&lt;/value&gt;
+        &lt;/property&gt;
+        &lt;property&gt;
+               &lt;name&gt;yarn.nodemanager.aux-services.mapreduce.shuffle.class&lt;/name&gt;
+               &lt;value&gt;org.apache.hadoop.mapred.ShuffleHandler&lt;/value&gt;
+        &lt;/property&gt;
+        &lt;property&gt;
+               &lt;name&gt;yarn.resourcemanager.address&lt;/name&gt;
+               &lt;value&gt; master:8032&lt;/value&gt;
+       &lt;/property&gt;
+       &lt;property&gt;
+               &lt;name&gt;yarn.resourcemanager.scheduler.address&lt;/name&gt;
+               &lt;value&gt;master:8030&lt;/value&gt;
+       &lt;/property&gt;
+       &lt;property&gt;
+               &lt;name&gt;yarn.resourcemanager.resource-tracker.address&lt;/name&gt;
+               &lt;value&gt;master:8031&lt;/value&gt;
+       &lt;/property&gt;
+       &lt;property&gt;
+               &lt;name&gt;yarn.resourcemanager.admin.address&lt;/name&gt;
+               &lt;value&gt; master:8033&lt;/value&gt;
+       &lt;/property&gt;
+       &lt;property&gt;
+               &lt;name&gt;yarn.resourcemanager.webapp.address&lt;/name&gt;
+               &lt;value&gt; master:8088&lt;/value&gt;
+       &lt;/property&gt;
+&lt;/configuration&gt;
+</code></pre></div><p>step 3：复制整个hadoop目录到worker1和worker2</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">[root@master ~]# scp  –r  /usr/local/hadoop-2.7.2  root@worker1:/usr/local/hadoop-2.7.2
+[root@master ~]# scp  –r  /usr/local/hadoop-2.7.2  root@worker2:/usr/local/hadoop-2.7.2
+</code></pre></div><p>6、启动 hadoop</p>
+<p>step 1：进入安装目录</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">[root@master ~]# cd  /usr/local/hadoop-2.7.2
+</code></pre></div><p>step 2：格式化 namenode，成功的话会看到“successfully formatted”和“exitting with status 0”</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">[root@master ~]# ./bin/hdfs  namenode  -format
+</code></pre></div><p>注意，<strong>以后重新格式化可能导致datanode无法启动，需要手动更新集群ID</strong>，参考：</p>
+<ul>
+<li><a href="http://blog.csdn.net/yeruby/article/details/21542465">重新格式化HDFS的方法</a></li>
+<li><a href="https://my.oschina.net/HIJAY/blog/220816">Hadoop中重新格式化namenode</a></li>
+</ul>
+<p>step 3：启动 hdfs</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">[root@master ~]# ./sbin/start-dfs.sh
+</code></pre></div><p>step 4：启动 yarn</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">[root@master ~]# ./sbin/start-yarn.sh
+</code></pre></div><p>step 5：用 <code>jps</code> 命令来查看是否启动成功，若成功会看到master上面有</p>
+<ul>
+<li>namenode</li>
+<li>secondarynamenode</li>
+<li>resourcemanager</li>
+</ul>
+<p>在worker1和worker2上面有</p>
+<ul>
+<li>datanode</li>
+<li>nodemanager</li>
+</ul>
+<p>step 6：查看集群状态</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">[root@master ~]# ./sbin/hdfs  dfsadmin  -report
+</code></pre></div><p>或者在浏览器打开：<code>http://master:50070</code> 和 <code>http://master:8088</code> 查看。注意 <code>live nodes</code> 的个数</p>
+<p><img src="https://utopizza.github.io/2016-06-10-Spark-Spark%E5%AE%8C%E5%85%A8%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%AD%E5%BB%BA%E4%B8%8E%E4%BD%BF%E7%94%A8-2/hadoop-1.jpg" alt=""></p>
+<p><img src="https://utopizza.github.io/2016-06-10-Spark-Spark%E5%AE%8C%E5%85%A8%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%AD%E5%BB%BA%E4%B8%8E%E4%BD%BF%E7%94%A8-2/hadoop-2.jpg" alt=""></p>
+<p>7、HadoopH的其他操作，略。参考：<a href="http://book.2cto.com/201401/39823.html">Hadoop的启动与停止</a></p>
+
+      </div>
+
+
+      <footer>
+        
+
+
+        
+        
+        
+      </footer>
+    </article>
+
+    
+  </section>
+
+      </div>
+
+      <script type="text/javascript"
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+    </main>
+
+    
+
+    
+
+    <script>
+(function(f, a, t, h, o, m){
+	a[h]=a[h]||function(){
+		(a[h].q=a[h].q||[]).push(arguments)
+	};
+	o=f.createElement('script'),
+	m=f.getElementsByTagName('script')[0];
+	o.async=1; o.src=t; o.id='fathom-script';
+	m.parentNode.insertBefore(o,m)
+})(document, window, '//analytics.example.com/tracker.js', 'fathom');
+fathom('set', 'siteId', 'ABCDE');
+fathom('trackPageview');
+</script>
+
+
+  </body>
+
+</html>

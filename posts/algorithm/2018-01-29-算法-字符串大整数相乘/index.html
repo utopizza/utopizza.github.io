@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Language" content="en">
+
+    <meta name="author" content="Yusheng Wang">
+    <meta name="description" content="在 leetcode 上看到一个巨强的解法，记录一下以加深记忆。原文参见：Easiest JAVA Solution with Graph Explanation
+题目：Multiply Strings
+题目大意为，给定两个字符串形式的非负整数，求它的乘积，以字符串形式返回。并且：
+ 两个字符串的长度小于 110. 两个字符串只包含 0 到 9 的数字. 两个字符串不以任何 ‘0’ 开头. 不能使用编程语言内置的大整数库函数，也不能直接转换成整数求解.  leetcode 上某大神给出的思路：
+ 位数分别为 $m$ 和 $n$ 的两个整数相乘，乘积的位数最大不超过 $m&#43;n$ 从左至右地，乘数的第 $[i]$ 位与被乘数的第 $[j]$ 位相乘的积，将被加到最终结果的第 $[i&#43;j]$ 位和第 $[i&#43;j&#43;1]$ 位  因此，整个计算过程就可以直接模拟我们小学就学的竖式乘法计算过程。这也是令我惊讶的地方，小学就学会了的竖式乘法计算，但是十几年来（我）都没有发现这两个十分有用的规律
+public static String multiply(String num1, String num2) { int m = num1.length(); int n = num2.length(); int[] pos = new int[m &#43; n]; for (int i = m - 1; i &gt;= 0; i--) { for (int j = n - 1; j &gt;= 0; j--) { int mul = (num1.">
+    <meta name="keywords" content="blog,developer,personal">
+
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="字符串大整数相乘"/>
+<meta name="twitter:description" content="在 leetcode 上看到一个巨强的解法，记录一下以加深记忆。原文参见：Easiest JAVA Solution with Graph Explanation
+题目：Multiply Strings
+题目大意为，给定两个字符串形式的非负整数，求它的乘积，以字符串形式返回。并且：
+ 两个字符串的长度小于 110. 两个字符串只包含 0 到 9 的数字. 两个字符串不以任何 ‘0’ 开头. 不能使用编程语言内置的大整数库函数，也不能直接转换成整数求解.  leetcode 上某大神给出的思路：
+ 位数分别为 $m$ 和 $n$ 的两个整数相乘，乘积的位数最大不超过 $m&#43;n$ 从左至右地，乘数的第 $[i]$ 位与被乘数的第 $[j]$ 位相乘的积，将被加到最终结果的第 $[i&#43;j]$ 位和第 $[i&#43;j&#43;1]$ 位  因此，整个计算过程就可以直接模拟我们小学就学的竖式乘法计算过程。这也是令我惊讶的地方，小学就学会了的竖式乘法计算，但是十几年来（我）都没有发现这两个十分有用的规律
+public static String multiply(String num1, String num2) { int m = num1.length(); int n = num2.length(); int[] pos = new int[m &#43; n]; for (int i = m - 1; i &gt;= 0; i--) { for (int j = n - 1; j &gt;= 0; j--) { int mul = (num1."/>
+
+    <meta property="og:title" content="字符串大整数相乘" />
+<meta property="og:description" content="在 leetcode 上看到一个巨强的解法，记录一下以加深记忆。原文参见：Easiest JAVA Solution with Graph Explanation
+题目：Multiply Strings
+题目大意为，给定两个字符串形式的非负整数，求它的乘积，以字符串形式返回。并且：
+ 两个字符串的长度小于 110. 两个字符串只包含 0 到 9 的数字. 两个字符串不以任何 ‘0’ 开头. 不能使用编程语言内置的大整数库函数，也不能直接转换成整数求解.  leetcode 上某大神给出的思路：
+ 位数分别为 $m$ 和 $n$ 的两个整数相乘，乘积的位数最大不超过 $m&#43;n$ 从左至右地，乘数的第 $[i]$ 位与被乘数的第 $[j]$ 位相乘的积，将被加到最终结果的第 $[i&#43;j]$ 位和第 $[i&#43;j&#43;1]$ 位  因此，整个计算过程就可以直接模拟我们小学就学的竖式乘法计算过程。这也是令我惊讶的地方，小学就学会了的竖式乘法计算，但是十几年来（我）都没有发现这两个十分有用的规律
+public static String multiply(String num1, String num2) { int m = num1.length(); int n = num2.length(); int[] pos = new int[m &#43; n]; for (int i = m - 1; i &gt;= 0; i--) { for (int j = n - 1; j &gt;= 0; j--) { int mul = (num1." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://utopizza.github.io/posts/algorithm/2018-01-29-%E7%AE%97%E6%B3%95-%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%A4%A7%E6%95%B4%E6%95%B0%E7%9B%B8%E4%B9%98/" />
+<meta property="article:published_time" content="2018-01-29T22:07:00+00:00" />
+<meta property="article:modified_time" content="2018-01-29T22:07:00+00:00" />
+
+
+    
+      <base href="https://utopizza.github.io/posts/algorithm/2018-01-29-%E7%AE%97%E6%B3%95-%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%A4%A7%E6%95%B4%E6%95%B0%E7%9B%B8%E4%B9%98/">
+    
+    <title>
+  字符串大整数相乘 · Utopizza
+</title>
+
+    
+      <link rel="canonical" href="https://utopizza.github.io/posts/algorithm/2018-01-29-%E7%AE%97%E6%B3%95-%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%A4%A7%E6%95%B4%E6%95%B0%E7%9B%B8%E4%B9%98/">
+    
+
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700%7CMerriweather:300,700%7CSource+Code+Pro:400,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.13.0/css/all.css" integrity="sha384-Bfad6CLCknfcloXFOyFnlgtENryhrpZCe29RTifKEixXQZ38WheV+i/6YWSzkz3V" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" integrity="sha256-l85OmPOjvil/SOvVt3HnSSjzF1TUMyT9eV0c2BzEGzU=" crossorigin="anonymous" />
+
+    
+      
+      
+      <link rel="stylesheet" href="https://utopizza.github.io/css/coder.min.a4f332213a21ce8eb521670c614470c58923aaaf385e2a73982c31dd7642decb.css" integrity="sha256-pPMyITohzo61IWcMYURwxYkjqq84XipzmCwx3XZC3ss=" crossorigin="anonymous" media="screen" />
+    
+
+    
+
+    
+      
+        
+        
+        <link rel="stylesheet" href="https://utopizza.github.io/css/coder-dark.min.e78e80fc3a585a4d1c8fc7f58623b6ff852411e38431a9cd1792877ecaa160f6.css" integrity="sha256-546A/DpYWk0cj8f1hiO2/4UkEeOEManNF5KHfsqhYPY=" crossorigin="anonymous" media="screen" />
+      
+    
+
+    
+
+    
+
+    <link rel="icon" type="image/png" href="https://utopizza.github.io/images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="https://utopizza.github.io/images/favicon-16x16.png" sizes="16x16">
+
+    <meta name="generator" content="Hugo 0.69.2" />
+  </head>
+
+  
+  
+    
+  
+  <body class="colorscheme-auto">
+    <main class="wrapper">
+      <nav class="navigation">
+  <section class="container">
+    <a class="navigation-title" href="https://utopizza.github.io/">
+      Utopizza
+    </a>
+    
+    <input type="checkbox" id="menu-toggle" />
+    <label class="menu-button float-right" for="menu-toggle"><i class="fas fa-bars"></i></label>
+    <ul class="navigation-list">
+      
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/about/">About</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/posts/">Blog</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/projects/">Projects</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/contact/">Contact me</a>
+          </li>
+        
+      
+      
+    </ul>
+    
+  </section>
+</nav>
+
+
+      <div class="content">
+        
+  <section class="container post">
+    <article>
+      <header>
+        <div class="post-title">
+          <h1 class="title">字符串大整数相乘</h1>
+        </div>
+        <div class="post-meta">
+          <div class="date">
+            <span class="posted-on">
+              <i class="fas fa-calendar"></i>
+              <time datetime='2018-01-29T22:07:00Z'>
+                January 29, 2018
+              </time>
+            </span>
+            <span class="reading-time">
+              <i class="fas fa-clock"></i>
+              1-minute read
+            </span>
+          </div>
+          <div class="categories">
+  <i class="fas fa-folder"></i>
+    <a href="https://utopizza.github.io/categories/algorithm/">Algorithm</a></div>
+
+          
+        </div>
+      </header>
+
+      <div>
+        
+        <p>在 leetcode 上看到一个巨强的解法，记录一下以加深记忆。原文参见：<a href="https://leetcode.com/problems/multiply-strings/discuss/17605/Easiest-JAVA-Solution-with-Graph-Explanation">Easiest JAVA Solution with Graph Explanation</a></p>
+<p>题目：<a href="https://leetcode.com/problems/multiply-strings/description/">Multiply Strings</a></p>
+<p>题目大意为，给定两个字符串形式的非负整数，求它的乘积，以字符串形式返回。并且：</p>
+<ol>
+<li>两个字符串的长度小于 110.</li>
+<li>两个字符串只包含 0 到 9 的数字.</li>
+<li>两个字符串不以任何 ‘0’ 开头.</li>
+<li>不能使用编程语言内置的大整数库函数，也不能直接转换成整数求解.</li>
+</ol>
+<p>leetcode 上某大神给出的思路：</p>
+<ol>
+<li>位数分别为 $m$ 和 $n$ 的两个整数相乘，乘积的位数最大不超过 $m+n$</li>
+<li>从左至右地，乘数的第 $[i]$ 位与被乘数的第 $[j]$ 位相乘的积，将被加到最终结果的第 $[i+j]$ 位和第 $[i+j+1]$ 位</li>
+</ol>
+<p><img src="https://utopizza.github.io/2018-01-29-%E7%AE%97%E6%B3%95-%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%A4%A7%E6%95%B4%E6%95%B0%E7%9B%B8%E4%B9%98/123.jpg" alt=""></p>
+<p>因此，整个计算过程就可以直接模拟我们小学就学的竖式乘法计算过程。这也是令我惊讶的地方，小学就学会了的竖式乘法计算，但是十几年来（我）都没有发现这两个十分有用的规律</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">public static String multiply(String num1, String num2) {
+    int m = num1.length();
+    int n = num2.length();
+    int[] pos = new int[m + n];
+
+    for (int i = m - 1; i &gt;= 0; i--) {
+        for (int j = n - 1; j &gt;= 0; j--) {
+            int mul = (num1.charAt(i) - &#39;0&#39;) * (num2.charAt(j) - &#39;0&#39;);
+            int p1 = i + j;
+            int p2 = i + j + 1;
+            int sum = mul + pos[p2];
+
+            pos[p1] += sum / 10;
+            pos[p2] = sum % 10;
+        }
+    }
+
+    StringBuilder sb = new StringBuilder();
+    for (int p : pos)
+        if (!(sb.length() == 0 &amp;&amp; p == 0))
+            sb.append(p);
+
+    return sb.length() == 0 ? &#34;0&#34; : sb.toString();
+}
+</code></pre></div>
+      </div>
+
+
+      <footer>
+        
+
+
+        
+        
+        
+      </footer>
+    </article>
+
+    
+  </section>
+
+      </div>
+
+      <script type="text/javascript"
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+    </main>
+
+    
+
+    
+
+    <script>
+(function(f, a, t, h, o, m){
+	a[h]=a[h]||function(){
+		(a[h].q=a[h].q||[]).push(arguments)
+	};
+	o=f.createElement('script'),
+	m=f.getElementsByTagName('script')[0];
+	o.async=1; o.src=t; o.id='fathom-script';
+	m.parentNode.insertBefore(o,m)
+})(document, window, '//analytics.example.com/tracker.js', 'fathom');
+fathom('set', 'siteId', 'ABCDE');
+fathom('trackPageview');
+</script>
+
+
+  </body>
+
+</html>

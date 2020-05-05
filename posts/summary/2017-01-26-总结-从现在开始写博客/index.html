@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Language" content="en">
+
+    <meta name="author" content="Yusheng Wang">
+    <meta name="description" content="研一上学期已经过去。在这学期里，我接触到了些非常厉害的同学。通过和他们的交流，我发现他们本科时候就到达的对计算机专业的见识和视野，还有技术水平和能力，让我感到震惊。
+就拿我的舍友S来说，他来自厦门大学软件学院，他从大一就加入了他们学校的ACM俱乐部，大一就开始注重算法的学习，经过俱乐部大牛师兄师姐的指导，和高强度的训练，还有本科四年的积累，他的算法水平非常高。另一方面，他的很多老师在学校外面有自己的公司，他经常利用寒暑假去他老师的公司实习，学到了很多工程性应用的技术，例如HTML、PHP、.net、Android等。到了大三大四，他还和他们学校的同学组队刷面试题，在leetcode、poj等各种oj系统刷算法，在牛客网刷面试题，参加各种大大小小公司的招聘笔试面试，最后华为、美团、花旗均给了offer，其中美团更是开出了年薪18万的高薪，对于一个本科生来说，只有非常优秀突出的学生才能有这样待遇。而且我们毕业这年，是互联网的寒潮，很多互联网企业缩招，包括BAT。后来他没有选择工作，而是选择了保研。他拿到了HUST和南京大学的保研offer，但因为南京大学给的offer比较迟，他等不及了就给了HUST确认。
+通过与其交谈，你会发现他的逻辑思维非常严密严谨，这得益于他读过很多讲逻辑思维，讲编程的书。我问他要了一个书单，他看过的基本都是非常著名的牛作，如《编程之美》、《数学之美》、《编程珠玑》、《暗时间》、《时间简史》、《算法导论》、《程序员面试宝典》等等。他还看了很多网易公开课上的、TED上的、coursera上的讲算法和数学的视频。他非常喜欢数学，喜欢思考，和他讨论问题，经常被他的严密论证所折服。
+相比之下，我就差太多了。本科四年，除了成绩还好、利用课余时间加入一个编程俱乐部dreamtech做过不少.net和android的项目，我基本没有意识到要注重过编程功底和算法、数学功底的修炼，没有系统的训练，没有规划，不知道自己要干什么，就是跟着大浪潮瞎学新技术，一会儿学.net，一会儿学android，一会儿做mvc，一会儿学点php，sqlserver，MySQL，html，JavaScript，一会儿又跑去搞数学建模，虽然拿了一点儿奖，看起来好像很厉害，什么都会，但其实都是浅尝则止，没有学通，更没有学精。
+这学期通过对身边的牛人（包括导师、同学，还有社区一些技术大牛）的观察，我深刻认识到，作为计算机专业的学生，最核心的竞争力就是算法功底和数学功底，还有最重要的逻辑思维能力。尤其是看了牛人刘未鹏先生的《暗时间》后，眼界大开，深深为之震撼。我终于明白，必须从现在开始恶补算法和数学功底，还要培养好逻辑思维能力。另外，还要开始记录和积累，养成写博客记录技术和心得的习惯。最后，希望这三年研究生，好好努力，让自己的技术水平和思维能力，有个质的飞跃。">
+    <meta name="keywords" content="blog,developer,personal">
+
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="从现在开始写博客"/>
+<meta name="twitter:description" content="研一上学期已经过去。在这学期里，我接触到了些非常厉害的同学。通过和他们的交流，我发现他们本科时候就到达的对计算机专业的见识和视野，还有技术水平和能力，让我感到震惊。
+就拿我的舍友S来说，他来自厦门大学软件学院，他从大一就加入了他们学校的ACM俱乐部，大一就开始注重算法的学习，经过俱乐部大牛师兄师姐的指导，和高强度的训练，还有本科四年的积累，他的算法水平非常高。另一方面，他的很多老师在学校外面有自己的公司，他经常利用寒暑假去他老师的公司实习，学到了很多工程性应用的技术，例如HTML、PHP、.net、Android等。到了大三大四，他还和他们学校的同学组队刷面试题，在leetcode、poj等各种oj系统刷算法，在牛客网刷面试题，参加各种大大小小公司的招聘笔试面试，最后华为、美团、花旗均给了offer，其中美团更是开出了年薪18万的高薪，对于一个本科生来说，只有非常优秀突出的学生才能有这样待遇。而且我们毕业这年，是互联网的寒潮，很多互联网企业缩招，包括BAT。后来他没有选择工作，而是选择了保研。他拿到了HUST和南京大学的保研offer，但因为南京大学给的offer比较迟，他等不及了就给了HUST确认。
+通过与其交谈，你会发现他的逻辑思维非常严密严谨，这得益于他读过很多讲逻辑思维，讲编程的书。我问他要了一个书单，他看过的基本都是非常著名的牛作，如《编程之美》、《数学之美》、《编程珠玑》、《暗时间》、《时间简史》、《算法导论》、《程序员面试宝典》等等。他还看了很多网易公开课上的、TED上的、coursera上的讲算法和数学的视频。他非常喜欢数学，喜欢思考，和他讨论问题，经常被他的严密论证所折服。
+相比之下，我就差太多了。本科四年，除了成绩还好、利用课余时间加入一个编程俱乐部dreamtech做过不少.net和android的项目，我基本没有意识到要注重过编程功底和算法、数学功底的修炼，没有系统的训练，没有规划，不知道自己要干什么，就是跟着大浪潮瞎学新技术，一会儿学.net，一会儿学android，一会儿做mvc，一会儿学点php，sqlserver，MySQL，html，JavaScript，一会儿又跑去搞数学建模，虽然拿了一点儿奖，看起来好像很厉害，什么都会，但其实都是浅尝则止，没有学通，更没有学精。
+这学期通过对身边的牛人（包括导师、同学，还有社区一些技术大牛）的观察，我深刻认识到，作为计算机专业的学生，最核心的竞争力就是算法功底和数学功底，还有最重要的逻辑思维能力。尤其是看了牛人刘未鹏先生的《暗时间》后，眼界大开，深深为之震撼。我终于明白，必须从现在开始恶补算法和数学功底，还要培养好逻辑思维能力。另外，还要开始记录和积累，养成写博客记录技术和心得的习惯。最后，希望这三年研究生，好好努力，让自己的技术水平和思维能力，有个质的飞跃。"/>
+
+    <meta property="og:title" content="从现在开始写博客" />
+<meta property="og:description" content="研一上学期已经过去。在这学期里，我接触到了些非常厉害的同学。通过和他们的交流，我发现他们本科时候就到达的对计算机专业的见识和视野，还有技术水平和能力，让我感到震惊。
+就拿我的舍友S来说，他来自厦门大学软件学院，他从大一就加入了他们学校的ACM俱乐部，大一就开始注重算法的学习，经过俱乐部大牛师兄师姐的指导，和高强度的训练，还有本科四年的积累，他的算法水平非常高。另一方面，他的很多老师在学校外面有自己的公司，他经常利用寒暑假去他老师的公司实习，学到了很多工程性应用的技术，例如HTML、PHP、.net、Android等。到了大三大四，他还和他们学校的同学组队刷面试题，在leetcode、poj等各种oj系统刷算法，在牛客网刷面试题，参加各种大大小小公司的招聘笔试面试，最后华为、美团、花旗均给了offer，其中美团更是开出了年薪18万的高薪，对于一个本科生来说，只有非常优秀突出的学生才能有这样待遇。而且我们毕业这年，是互联网的寒潮，很多互联网企业缩招，包括BAT。后来他没有选择工作，而是选择了保研。他拿到了HUST和南京大学的保研offer，但因为南京大学给的offer比较迟，他等不及了就给了HUST确认。
+通过与其交谈，你会发现他的逻辑思维非常严密严谨，这得益于他读过很多讲逻辑思维，讲编程的书。我问他要了一个书单，他看过的基本都是非常著名的牛作，如《编程之美》、《数学之美》、《编程珠玑》、《暗时间》、《时间简史》、《算法导论》、《程序员面试宝典》等等。他还看了很多网易公开课上的、TED上的、coursera上的讲算法和数学的视频。他非常喜欢数学，喜欢思考，和他讨论问题，经常被他的严密论证所折服。
+相比之下，我就差太多了。本科四年，除了成绩还好、利用课余时间加入一个编程俱乐部dreamtech做过不少.net和android的项目，我基本没有意识到要注重过编程功底和算法、数学功底的修炼，没有系统的训练，没有规划，不知道自己要干什么，就是跟着大浪潮瞎学新技术，一会儿学.net，一会儿学android，一会儿做mvc，一会儿学点php，sqlserver，MySQL，html，JavaScript，一会儿又跑去搞数学建模，虽然拿了一点儿奖，看起来好像很厉害，什么都会，但其实都是浅尝则止，没有学通，更没有学精。
+这学期通过对身边的牛人（包括导师、同学，还有社区一些技术大牛）的观察，我深刻认识到，作为计算机专业的学生，最核心的竞争力就是算法功底和数学功底，还有最重要的逻辑思维能力。尤其是看了牛人刘未鹏先生的《暗时间》后，眼界大开，深深为之震撼。我终于明白，必须从现在开始恶补算法和数学功底，还要培养好逻辑思维能力。另外，还要开始记录和积累，养成写博客记录技术和心得的习惯。最后，希望这三年研究生，好好努力，让自己的技术水平和思维能力，有个质的飞跃。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://utopizza.github.io/posts/summary/2017-01-26-%E6%80%BB%E7%BB%93-%E4%BB%8E%E7%8E%B0%E5%9C%A8%E5%BC%80%E5%A7%8B%E5%86%99%E5%8D%9A%E5%AE%A2/" />
+<meta property="article:published_time" content="2017-01-26T00:29:00+00:00" />
+<meta property="article:modified_time" content="2017-01-26T00:29:00+00:00" />
+
+
+    
+      <base href="https://utopizza.github.io/posts/summary/2017-01-26-%E6%80%BB%E7%BB%93-%E4%BB%8E%E7%8E%B0%E5%9C%A8%E5%BC%80%E5%A7%8B%E5%86%99%E5%8D%9A%E5%AE%A2/">
+    
+    <title>
+  从现在开始写博客 · Utopizza
+</title>
+
+    
+      <link rel="canonical" href="https://utopizza.github.io/posts/summary/2017-01-26-%E6%80%BB%E7%BB%93-%E4%BB%8E%E7%8E%B0%E5%9C%A8%E5%BC%80%E5%A7%8B%E5%86%99%E5%8D%9A%E5%AE%A2/">
+    
+
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700%7CMerriweather:300,700%7CSource+Code+Pro:400,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.13.0/css/all.css" integrity="sha384-Bfad6CLCknfcloXFOyFnlgtENryhrpZCe29RTifKEixXQZ38WheV+i/6YWSzkz3V" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" integrity="sha256-l85OmPOjvil/SOvVt3HnSSjzF1TUMyT9eV0c2BzEGzU=" crossorigin="anonymous" />
+
+    
+      
+      
+      <link rel="stylesheet" href="https://utopizza.github.io/css/coder.min.a4f332213a21ce8eb521670c614470c58923aaaf385e2a73982c31dd7642decb.css" integrity="sha256-pPMyITohzo61IWcMYURwxYkjqq84XipzmCwx3XZC3ss=" crossorigin="anonymous" media="screen" />
+    
+
+    
+
+    
+      
+        
+        
+        <link rel="stylesheet" href="https://utopizza.github.io/css/coder-dark.min.e78e80fc3a585a4d1c8fc7f58623b6ff852411e38431a9cd1792877ecaa160f6.css" integrity="sha256-546A/DpYWk0cj8f1hiO2/4UkEeOEManNF5KHfsqhYPY=" crossorigin="anonymous" media="screen" />
+      
+    
+
+    
+
+    
+
+    <link rel="icon" type="image/png" href="https://utopizza.github.io/images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="https://utopizza.github.io/images/favicon-16x16.png" sizes="16x16">
+
+    <meta name="generator" content="Hugo 0.69.2" />
+  </head>
+
+  
+  
+    
+  
+  <body class="colorscheme-auto">
+    <main class="wrapper">
+      <nav class="navigation">
+  <section class="container">
+    <a class="navigation-title" href="https://utopizza.github.io/">
+      Utopizza
+    </a>
+    
+    <input type="checkbox" id="menu-toggle" />
+    <label class="menu-button float-right" for="menu-toggle"><i class="fas fa-bars"></i></label>
+    <ul class="navigation-list">
+      
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/about/">About</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/posts/">Blog</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/projects/">Projects</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/contact/">Contact me</a>
+          </li>
+        
+      
+      
+    </ul>
+    
+  </section>
+</nav>
+
+
+      <div class="content">
+        
+  <section class="container post">
+    <article>
+      <header>
+        <div class="post-title">
+          <h1 class="title">从现在开始写博客</h1>
+        </div>
+        <div class="post-meta">
+          <div class="date">
+            <span class="posted-on">
+              <i class="fas fa-calendar"></i>
+              <time datetime='2017-01-26T00:29:00Z'>
+                January 26, 2017
+              </time>
+            </span>
+            <span class="reading-time">
+              <i class="fas fa-clock"></i>
+              1-minute read
+            </span>
+          </div>
+          <div class="categories">
+  <i class="fas fa-folder"></i>
+    <a href="https://utopizza.github.io/categories/summary/">Summary</a></div>
+
+          
+        </div>
+      </header>
+
+      <div>
+        
+        <p>研一上学期已经过去。在这学期里，我接触到了些非常厉害的同学。通过和他们的交流，我发现他们本科时候就到达的对计算机专业的见识和视野，还有技术水平和能力，让我感到震惊。</p>
+<p>就拿我的舍友S来说，他来自厦门大学软件学院，他从大一就加入了他们学校的ACM俱乐部，大一就开始注重算法的学习，经过俱乐部大牛师兄师姐的指导，和高强度的训练，还有本科四年的积累，他的算法水平非常高。另一方面，他的很多老师在学校外面有自己的公司，他经常利用寒暑假去他老师的公司实习，学到了很多工程性应用的技术，例如HTML、PHP、.net、Android等。到了大三大四，他还和他们学校的同学组队刷面试题，在leetcode、poj等各种oj系统刷算法，在牛客网刷面试题，参加各种大大小小公司的招聘笔试面试，最后华为、美团、花旗均给了offer，其中美团更是开出了年薪18万的高薪，对于一个本科生来说，只有非常优秀突出的学生才能有这样待遇。而且我们毕业这年，是互联网的寒潮，很多互联网企业缩招，包括BAT。后来他没有选择工作，而是选择了保研。他拿到了HUST和南京大学的保研offer，但因为南京大学给的offer比较迟，他等不及了就给了HUST确认。</p>
+<p>通过与其交谈，你会发现他的逻辑思维非常严密严谨，这得益于他读过很多讲逻辑思维，讲编程的书。我问他要了一个书单，他看过的基本都是非常著名的牛作，如《编程之美》、《数学之美》、《编程珠玑》、《暗时间》、《时间简史》、《算法导论》、《程序员面试宝典》等等。他还看了很多网易公开课上的、TED上的、coursera上的讲算法和数学的视频。他非常喜欢数学，喜欢思考，和他讨论问题，经常被他的严密论证所折服。</p>
+<p>相比之下，我就差太多了。本科四年，除了成绩还好、利用课余时间加入一个编程俱乐部dreamtech做过不少.net和android的项目，我基本没有意识到要注重过编程功底和算法、数学功底的修炼，没有系统的训练，没有规划，不知道自己要干什么，就是跟着大浪潮瞎学新技术，一会儿学.net，一会儿学android，一会儿做mvc，一会儿学点php，sqlserver，MySQL，html，JavaScript，一会儿又跑去搞数学建模，虽然拿了一点儿奖，看起来好像很厉害，什么都会，但其实都是浅尝则止，没有学通，更没有学精。</p>
+<p>这学期通过对身边的牛人（包括导师、同学，还有社区一些技术大牛）的观察，我深刻认识到，作为计算机专业的学生，最核心的竞争力就是算法功底和数学功底，还有最重要的逻辑思维能力。尤其是看了牛人刘未鹏先生的《暗时间》后，眼界大开，深深为之震撼。我终于明白，必须从现在开始恶补算法和数学功底，还要培养好逻辑思维能力。另外，还要开始记录和积累，养成写博客记录技术和心得的习惯。最后，希望这三年研究生，好好努力，让自己的技术水平和思维能力，有个质的飞跃。</p>
+
+      </div>
+
+
+      <footer>
+        
+
+
+        
+        
+        
+      </footer>
+    </article>
+
+    
+  </section>
+
+      </div>
+
+      <script type="text/javascript"
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+    </main>
+
+    
+
+    
+
+    <script>
+(function(f, a, t, h, o, m){
+	a[h]=a[h]||function(){
+		(a[h].q=a[h].q||[]).push(arguments)
+	};
+	o=f.createElement('script'),
+	m=f.getElementsByTagName('script')[0];
+	o.async=1; o.src=t; o.id='fathom-script';
+	m.parentNode.insertBefore(o,m)
+})(document, window, '//analytics.example.com/tracker.js', 'fathom');
+fathom('set', 'siteId', 'ABCDE');
+fathom('trackPageview');
+</script>
+
+
+  </body>
+
+</html>

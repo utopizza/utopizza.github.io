@@ -1,0 +1,473 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Thesis on Utopizza</title>
+    <link>https://utopizza.github.io/categories/thesis/</link>
+    <description>Recent content in Thesis on Utopizza</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Thu, 09 May 2019 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://utopizza.github.io/categories/thesis/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Spark</title>
+      <link>https://utopizza.github.io/posts/thesis/2019-05-09-%E8%AE%BA%E6%96%87-spark/</link>
+      <pubDate>Thu, 09 May 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://utopizza.github.io/posts/thesis/2019-05-09-%E8%AE%BA%E6%96%87-spark/</guid>
+      <description>&lt;p&gt;一、背景及问题&lt;/p&gt;
+&lt;p&gt;在谷歌提出了 MapReduce 编程模型之后，UC Berkeley 在此基础上提出了一个更加高效的模型，称为 Spark。其核心思想是将 MapReduce 的中间结果缓存到内存中，使得 Workers 可以快速读取数据而无需启动延迟极大的磁盘读取操作。这种编程模型针对一些迭代次数高、需要反复使用或者修改数据的计算任务尤其有效。根据论文的实验，Spark 在一些高迭代次数的算法实验中处理速度是 MapReduce 的 10 倍以上。&lt;/p&gt;
+&lt;p&gt;然而因为没有了将中间结果写磁盘的操作来保证容灾和恢复，因此 Spark 设计了一套别的方案来达到该目的，那就是 RDD + Lineage。RDD(Resilient Distribute Datasets)称为弹性数据集，它是一种对被操作数据的抽象，而 Lineage 称为“血统”，顾名思义它记录了每一个 RDD 演变过程中的上下文信息。当故障出现时，可以根据丢失的 RDD 的 Lineage 来追寻它的祖先 RDD ，然后重新执行演化即可恢复出丢失的 RDD。&lt;/p&gt;
+&lt;p&gt;二、Spark 编程模型&lt;/p&gt;
+&lt;p&gt;使用 Spark 的用户通过编写一个称为 Driver Program 的程序来实现自己的计算任务。Spark 为用户的并行化编程提供了三个组件：resilient distribution dataset、 parallel operations、 parallel operations。&lt;/p&gt;
+&lt;p&gt;(1) Resilient Distribution Datasets(RDDs)：一个 RDD 是一个可恢复的只读对象集合，它无须存储在磁盘中。每次对一个 RDD 的操作都会被记录下来，从而每个 RDD 可以沿着它的演化过程一直追寻它的祖先 RDD，甚至可以追寻到最开始的第一次从磁盘读取初始数据。因此这个机制保证了任何一个 RDD 都可以被恢复。具体在 Spark 系统中，RDD 由 Scala 对象来表达。论文中规定了 RDD 仅可以从四种方式构造：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;从文件系统中构造，例如从 HDFS 中读取数据&lt;/li&gt;
+&lt;li&gt;并行化处理 Scala 对象，例如将 Scala 的数组分片&lt;/li&gt;
+&lt;li&gt;从另一个 RDD 转化&lt;/li&gt;
+&lt;li&gt;改变一个 RDD 的持久化状态&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;(2) Parallel Operations：Spark 支持的并行化操作，大体上类似于 MapReduce 的 Map 和 Reduce。有以下三类：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;reduce&lt;/li&gt;
+&lt;li&gt;collect&lt;/li&gt;
+&lt;li&gt;foreach&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;(3) Shared Variables：Spark 支持的共享变量，在机器集群中可以传递并共享这些变量。有两类共享变量：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Broadcast variables：被定义为这种变量的数据会被复制到每一个 Worker，并且只复制一次。一般用于一些只读的并且需要被每个 Worker 使用的数据，例如 lookup table 等。&lt;/li&gt;
+&lt;li&gt;Accumulators：一般用于进行计数求和的数据。没看太懂论文中这段的解释。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;三、编程示例&lt;/p&gt;
+&lt;p&gt;(1) Text Search：类似于 MapReduce 论文中给出的统计单词示例。这里是统计日志文件中出现 “ERROR” 的行数。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;val file = spark.textFile(&amp;#34;hdfs://...&amp;#34;)
+val errs = file.filter(_.contains(&amp;#34;ERROR&amp;#34;))
+val ones = errs.map(_ =&amp;gt; 1)
+val count = ones.reduce(_+_)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;(2) Logistic Regression：逻辑回归学习的 Spark 并行化版本。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;// Read points from a text file and cache them
+val points = spark.textFile(&amp;#34;hdfs://...&amp;#34;).map(parsePoint).cache()
+
+// Initialize w to random D-dimensional vector
+var w = Vector.random(D)
+
+// Run multiple iterations to update w
+for (i &amp;lt;- 1 to ITERATIONS) {
+    val grad = spark.accumulator(new Vector(D))
+    for (p &amp;lt;- points) { // Runs in parallel
+        val s = (1/(1+exp(-p.y*(w dot p.x)))-1)*p.y
+        grad += s * p.x
+    }
+    w -= grad.value
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;(3) Alternating Least Squares：ALS 算法的 Spark 并行版本&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;val Rb = spark.broadcast(R)
+for (i &amp;lt;- 1 to ITERATIONS) {
+    U = spark.parallelize(0 until u).map(j =&amp;gt; updateUser(j, Rb, M)).collect()
+    M = spark.parallelize(0 until m).map(j =&amp;gt; updateUser(j, Rb, U)).collect()
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;四、Spark 实现细节&lt;/p&gt;
+&lt;p&gt;这一节论文也没有讲得很详细，具体细节可以考虑参考工具书&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://book.douban.com/subject/27035127/&#34;&gt;Spark: The Definitive Guide: Big Data Processing Made Simple&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://book.douban.com/subject/22139960/&#34;&gt;Learning Spark: Lightning-Fast Big Data Analysis&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>MapReduce</title>
+      <link>https://utopizza.github.io/posts/thesis/2019-05-08-%E8%AE%BA%E6%96%87-mapreduce/</link>
+      <pubDate>Wed, 08 May 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://utopizza.github.io/posts/thesis/2019-05-08-%E8%AE%BA%E6%96%87-mapreduce/</guid>
+      <description>&lt;p&gt;一、背景及问题&lt;/p&gt;
+&lt;p&gt;这两天总算把谷歌三大论文之一的 MapReduce 看了。这篇论文的影响力就不多说了，谷歌AI首席科学家 Jeffrey Dean 的代表作之一。该论文主要提出了一个称为 MapReduce 的编程模型，主要是为了解决谷歌公司自身需要处理海量数据的问题。众所周知，谷歌的主要业务是搜索引擎，每天需要处理爬取到的海量文件和网页，以及对这些数据进行索引计算、处理查询请求等等。显然单台机器难以完成这样巨大的计算任务，必须使用机器集群。但如果使用专业的服务器，集群的成本就太高了。为了降低成本，谷歌采用了普通的计算机来搭建这个集群。为了实现这个目的，必须设计一套可以自动并行化计算、自我管理调度、以及拥有良好容错性的集群计算方案，因此 Jeffrey Dean 提出了这套编程模型，只要按照这个编程模型来调用接口实现计算任务，这些计算就可以自动地在一个由普通机器搭建的分布式集群上被并行地执行。&lt;/p&gt;
+&lt;p&gt;二、解决方案&lt;/p&gt;
+&lt;p&gt;具体来说，MapReduce 这个编程模型可以简单地分为 Map 部分以及 Reduce 部分。&lt;/p&gt;
+&lt;p&gt;Map 函数：由用户实现该接口，其功能是使算法输入的初始 key-value 对转化成用户定义的新 key-value 对。接下来系统会自动把它们按新 key 分组，即一个新 key 对应一组 values（key-values），并传递给 Reduce 函数。这一步类似 SQL 中的 Select GroupBy 操作。&lt;/p&gt;
+&lt;p&gt;$$key_{1}/value_{1} \stackrel{Map}\implies key_{2}/value_{2} \stackrel{Group}\implies key_{2}/value_{2}(s)$$&lt;/p&gt;
+&lt;p&gt;Reduce 函数：由用户实现该接口，其功能是使从 Map 函数接收过来的 key-values 组按用户定义的计算方式进行 Merge，然后输出每个 key 组的最终结果。这一步类似定义 SQL 中对被 GroupBy 的字段的聚合函数。&lt;/p&gt;
+&lt;p&gt;$$key_{2}/value_{2}(s) \stackrel{Reduce}\implies key_{2}/value_{3} $$&lt;/p&gt;
+&lt;p&gt;论文中给出了一个具体例子，从一个巨大的文档集中统计每个单词的出现次数。每个单词可以看作 key，它的出现次数就是最终想得到的 value。按照 MapReduce 编程范式，可以分为两步，在 Map 阶段输入文档集合，为每个文档拆解出每个单词，并为每个单词赋值它的 value 为 1，表示这个单词在此出现了一次；在 Reduce 阶段，把每个单词对应的分组进行 value 的求和，即可得到每个单词的总出现次数。&lt;/p&gt;
+&lt;p&gt;Map 函数伪代码如下：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;// key: document name
+// value: document content
+map(String key, String value):
+    foreach word in value:
+        EmitIntermediate(word,&amp;#34;1&amp;#34;);
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Reduce 函数伪代码如下：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;// key: a word
+// values: a lists of counts
+reduce(String key, Iterator values):
+    int results=0;
+    foreach value in values:
+        result += ParseInt(value);
+    Emit(AsString(result));
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;论文中还提到另外一些使用了该编程模型的例子，例如&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Distributed Grep&lt;/li&gt;
+&lt;li&gt;Count of URL Access Frequency&lt;/li&gt;
+&lt;li&gt;Reverse Web-Link Graph&lt;/li&gt;
+&lt;li&gt;Term-Vector per Host&lt;/li&gt;
+&lt;li&gt;Inverted Index&lt;/li&gt;
+&lt;li&gt;Distributed Sort&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;论文接下来就是介绍 MapReduce 系统的实现。总的来说，其架构采用 Master-Slaves 结构，Master 节点负责分配计算任务与分发数据以及监视 Workers 节点的状态。Workers 节点负责执行被分配给自己的任务，为了保证系统的容错性以及减少网络带宽消耗，Workers 的中间计算结果写入本地存储，并且尽可能由本地的 Worker 来读取。工作流程及其架构如下图所示。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://utopizza.github.io/2019-05-08-%E8%AE%BA%E6%96%87-MapReduce/MapReduce.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;其他一些具体特性如系统容错性、数据备份方案、工作任务粒度等等具体参见论文。&lt;/p&gt;
+&lt;p&gt;三、总结&lt;/p&gt;
+&lt;p&gt;论文主要针对并行处理海量数据的问题，提出了称为 MapReduce 的编程模型，只要用户将按照该范式实现 Map 和 Reduce 两个接口，该计算任务就可以自动地被一个由普通机器搭建而成的集群正确地分布式执行，而用户无需关心底层的具体执行情况。&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>MCI</title>
+      <link>https://utopizza.github.io/posts/thesis/2019-01-27-%E8%AE%BA%E6%96%87-mci/</link>
+      <pubDate>Sun, 27 Jan 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://utopizza.github.io/posts/thesis/2019-01-27-%E8%AE%BA%E6%96%87-mci/</guid>
+      <description>&lt;p&gt;该文章依然是针对 APT 攻击而提出的一种基于模型推断的攻击因果分析。该方法比以往方法的优势在于不需要在系统中做任何修改，只需要启动日志，对系统事件进行记录即可。该方法的核心技术是使用一种称为 LDX 的动态分析方案，可以在系统调用之间进行因果推断。&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Oblix</title>
+      <link>https://utopizza.github.io/posts/thesis/2019-01-19-%E8%AE%BA%E6%96%87-oblix/</link>
+      <pubDate>Sat, 19 Jan 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://utopizza.github.io/posts/thesis/2019-01-19-%E8%AE%BA%E6%96%87-oblix/</guid>
+      <description>&lt;p&gt;一、背景及问题&lt;/p&gt;
+&lt;p&gt;索引（Index）是很多系统和应用的基础构件。最近，大量的研究专注于如何保护索引这样的敏感数据，例如，如何在对索引进行加密的同时允许客户端在索引上进行查询。这些研究提出的方案一般是这样的：当用户通过客户端发起查询请求时，客户端会先为用户输入的关键词（keyword）生成查询令牌(search token)，然后将令牌发送给服务端而不是直接发送用户的关键词，从而向服务端屏蔽用户输入的关键词（假设攻击者控制了服务端的内存，但不能控制服务端的处理器）。然后，服务器通过令牌去在已经加密的索引上执行检索，最后把匹配成功的加密数据返回给客户端。客户端对数据进行解密，显示给用户。&lt;/p&gt;
+&lt;p&gt;虽然加密索引的研究取得了重大进步，但是很多方案都有一个很严重的漏洞，就是泄漏了存取模式（access patterns）：关键词与数据的匹配过程。虽然关键词和索引都是已经加密的，但是它们的匹配过程是在服务端的内存进行的，而服务端的内存是被攻击者掌控的，因此攻击者可以对匹配的过程进行分析，从而从加密的索引中恢复敏感信息。除了存取模式的遗漏，还有如果攻击者可以获得匹配成功的文件数（result size），也可以恢复出敏感信息。&lt;/p&gt;
+&lt;p&gt;一种很直接的隐藏存取模式的方法就是使用 ORAM（Oblivious RAM），然而这个方案的成本十分昂贵，因此很少方案采用这个方法。针对这个问题，文章提出了一个称为 Oblix (OBLivious IndeX) 的索引方案，这个方案既不会泄漏任何的存取模式，也不会泄漏匹配文件数。进一步，Oblix 允许索引进行插入和删除、支持多用户。&lt;/p&gt;
+&lt;p&gt;二、解决方案&lt;/p&gt;
+&lt;p&gt;文章提出的 Oblix 主要针对以下四种问题进行解决：&lt;/p&gt;
+&lt;p&gt;1、高复杂度：对于 ORAM 系统，客户端维护一个位置映射数据结构（position map），该数据结构记录了索引与数据库中某个数据的位置的对应关系。由于索引的大小与数据库的数据量成线性关系，因此客户端不能直接存储整个 map。一种标准的方案是使用树形结构将一个数据库分解成多级数据库（类似于多级索引），以减小客户端需要的存储空间。但是如此一来就会需要重复多次查询来确定最终的位置，显然树搜索的时间复杂度是 O(logN)，这样的复杂度会带来查询延迟。文章使用的解决方案是使用飞地技术（enclave），把整个 ORAM 的客户端放进飞地中，这样让客户端和服务端就在同一台机器上进行，不需要通过网络，从而减小网络延迟。&lt;/p&gt;
+&lt;p&gt;2、飞地可能会被攻击者利用：有研究发现飞地即使物理上隔离了外界的控制，但是也可能被攻击者通过分析它的物理页级的存取模式（page-level access pattern）来恢复被加密的数据。因为飞地自身的内存空间很小，当飞地处理的数据量较大时，它就会使用二级存储，使用计算机中的内存。而计算机中的内存是会被攻击者控制的，因此攻击者可以通过观察飞地如果使用计算机主存来进行攻击。文章的解决方案：首先，提出一个称为 ODS (oblivious data structure) 的数据结构来取代 position map，这个数据结构保证不可被攻击者利用。其次，提出一个称为 doubly oblivious 的方案，该方案同时保证对服务端的存取、对客户端自己的内存空间的存取模式都是不可被攻击者利用的（oblivious）。&lt;/p&gt;
+&lt;p&gt;3、查询结果数的隐藏：前面提到，查询结果数可能也会被攻击者用，因此需要对其进行隐藏。一种最简单的做法是“worst-case upper bound”，但是这种做法代价太昂贵。文章提出的解决方案：对查询结果进行打分排序，只返回得分最高的前 r 条数据。&lt;/p&gt;
+&lt;p&gt;4、请求列表、查询效率：客户端可以一次向服务端发送多个请求，也就请求列表。特别地，其中包含插入和删除得操作时，执行效率就尤其重要。文章解决方案：提出一个称为 DOSM
+(doubly-oblivious sorted multimap) 的数据结构，支持高效的范围查询、插入、删除等操作。它实际上是一个树形的数据结构，插入和删除的复杂度是 O(logN) 而不是 O(n)。另外再结合特定的查询算法来保证范围查询的高效性。&lt;/p&gt;
+&lt;p&gt;三、总结&lt;/p&gt;
+&lt;p&gt;文章主要针对存取模式的漏洞来进行修复。攻击虽然无法直接攻击飞地，无法直接攻击加密数据，但是可以通过应用对主存的存取模式进行分析从而恢复加密数据。这种存取模式在文章中是指例如索引这样的负责映射数据的数据结构。&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Winnower</title>
+      <link>https://utopizza.github.io/posts/thesis/2019-01-12-%E8%AE%BA%E6%96%87-winnower/</link>
+      <pubDate>Sat, 12 Jan 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://utopizza.github.io/posts/thesis/2019-01-12-%E8%AE%BA%E6%96%87-winnower/</guid>
+      <description>&lt;p&gt;一、背景及问题&lt;/p&gt;
+&lt;p&gt;这篇文章针对的问题和前面看过的 《Dependence-Preserving Data Compaction for Scalable Forensic Analysis》和 这篇文章类似，目标都是减小日志文件的体积，以减少存储空间并提高攻击侦查的速度。&lt;/p&gt;
+&lt;p&gt;这篇文章主要针对的是分布式服务器集群下的 APT 攻击。在这样的情景中，服务器集群有一个中心监控节点（Monitor node），以及大量的工作节点（Worker nodes）。监控节点与所有的工作节点保持通信。工作节点在生产环境中不断地产生日志记录。当发起监控节点攻击侦查分析时，它需要从多个工作节点上拷贝日志文件到本地，再进行攻击分析。问题就出现在这里，大量的工作节点每天都产生大量的日志记录，监控节点几乎不可能从所有工作节点上拷贝全部的日志记录，因为这样的拷贝任务不但需要消耗大量的网络资源，并且需要消耗大量的存储空间。&lt;/p&gt;
+&lt;p&gt;二、解决方案&lt;/p&gt;
+&lt;p&gt;这篇文章和上述的那篇文章有点类似，其核心思想都是通过对资源图（Provenance Graph）进行剪枝、压缩、优化，从而减小对应的日志记录体积。不同的只是他们使用的剪枝算法不同而已，这篇文章使用的算法是一个称为 Deterministic Finite Automata (DFA) 的算法，这个算法可以对一个复杂的图中的每一个节点、边（对应系统日志记录中的事件以及信息流向）进行推断，判断出它是不是冗余的，如果是冗余的就可以去掉，从而极大提精简了日志记录。&lt;/p&gt;
+&lt;p&gt;文章提出的模型称为 Winnower，具体剪枝算法较复杂，主要分为图抽象（Provenance Graph Abstraction）和图推断（Provenance Graph Induction）两部分，其中涉及一些图语义学习（Graph Grammar Learning）的知识，以前没怎么接触过，感觉不太懂，以后有时间再补一下这方面的学习。&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>PriorTracker</title>
+      <link>https://utopizza.github.io/posts/thesis/2019-01-05-%E8%AE%BA%E6%96%87-priortracker/</link>
+      <pubDate>Sat, 05 Jan 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://utopizza.github.io/posts/thesis/2019-01-05-%E8%AE%BA%E6%96%87-priortracker/</guid>
+      <description>&lt;p&gt;一、背景及问题&lt;/p&gt;
+&lt;p&gt;APT（Advanced Persistent Threat）攻击是一种长期、多步骤的攻击，它往往会涉及多个系统事件和文件。因此一旦发现系统收到这种攻击时，必须执行攻击因果分析（Attack Causality Analysis ），即从一个受到攻击的事件或者文件作为入口，向前追踪其攻击源头，并且向后分析所有被攻击牵涉中的其他文件或数据。&lt;/p&gt;
+&lt;p&gt;一般来说，攻击因果分析是基于系统资源的依赖图进行的。依赖图记录了系统中各种事件的先后次序和信息流，因此依赖图往往十分巨大，特别对于拥有大量机器的大型企业来说。以往的研究都是关注于如何对这个巨大的依赖图进行剪枝，以减少需要分析的数据量。但是这些研究都没有考虑执行分析时的时间限制，只对所有数据一视同仁地依次执行分析。文章提出，时效性对与攻击因果分析来说是非常重要的，因为在发现受到攻击后，越快地分析出攻击源以及受到污染的数据，就能越快地采取隔离措施或者修复措施，减少企业损失。据统计，90% 的 APT  攻击都是在数分钟内完成的。因此目前的问题就是，如何在保证攻击不会被遗漏和 CPU 运算能力一定的前提下，如何尽可能快地执行攻击因果分析？&lt;/p&gt;
+&lt;p&gt;二、解决方案&lt;/p&gt;
+&lt;p&gt;文章提出一个称为 PriorTracker 的模型， 其基本思路是，以往的研究没有办法加速攻击因果分析的的原因是，他们没有办法区分出异常的系统事件和正常的系统事件，因此他们只能对依赖图中的所有路径一视同仁地去执行分析，包括一些复杂但实际上与攻击无关的正常的系统调用事件，这就导致了分析的时候花费了大量的时间和算力在无关的数据上。如果我们能够有办法区分出异常的系统事件和正常的系统事件，那么就可以优先对异常事件进行分析，最快地命中攻击。&lt;/p&gt;
+&lt;p&gt;那么如果甄别出系统中的异常事件？文章提出的一个方案是，用算法对每个系统事件（System Event）计算一个优先权（Priority Score），优先权高的事件先执行分析。优先权的计算由如下公式给出&lt;/p&gt;
+&lt;p&gt;$$PriorityScore(e)=\alpha \cdot RarenessScore(e) + \beta \cdot FanoutScore(e)$$&lt;/p&gt;
+&lt;p&gt;其中 $e$ 表示资源依赖图中的一个系统事件；$RarenessScore$ 表示事件的稀有得分，因为异常事件必定是正常系统的过往历史中很少出现的事件；$FanoutScore$ 表示扇出得分，如果一个事件的扇出（也即在资源依赖图中的一个节点的出度）越多，那么执行这个事件的分析所花费的时间越多。另外从统计经验知道，一般来说一些正常的系统事件例如更新进程数据等等的扇出度是非常巨大的，但是这类数据对攻击分析是没什么贡献的，只会浪费 CPU 时间。因此一个自然的想法是优先计算扇出较小的事件节点，别免浪费时间。当然这也会导致分析覆盖面的减小，但是这样的 tradeoff 总的来说是需要的。而 $\alpha$ 和 $\beta$ 是两者的平滑系数，文章中使用机器学习方法来训练这两个参数。两者的计算公式如下：&lt;/p&gt;
+&lt;p&gt;$$RarenessScore(e)=
+\begin{cases}
+1, &amp;amp;  \text{if e has not been observed by reference model} \&lt;br&gt;
+\frac{1}{ref(e)}, &amp;amp; \text{otherwise}
+\end{cases}$$&lt;/p&gt;
+&lt;p&gt;$$FanoutScore(e)=
+\begin{cases}
+0,&amp;amp; \text{if e reaches a read-only file in backtracking} \&lt;br&gt;
+\delta,&amp;amp; \text{if e reaches a write-only file in forward tracking} \&lt;br&gt;
+\frac{1}{fanout(e)}, &amp;amp; \text{otherwise}
+\end{cases}
+$$&lt;/p&gt;
+&lt;p&gt;其中 $ref(e)$ 由文章定义的一个称为 $Reference Model$ 的模型给出，其主要思想是统计一个系统事件在一个时间段（一周或者一个月，这个可以根据企业的生产情况自行调节）内的出现总次数。而 $fanout(e)$ 文章没有给出计算公式，估计就是节点出度？&lt;/p&gt;
+&lt;p&gt;现在有了每个事件的优先权后，就可以加速因果分析了。具体做法很简单，就是维护一个优先队列，类似于广度优先遍历，先把以捕获到的一个确认被攻击的结点放入队列作为分析起点，然后不断从队列中取出队头节点，分析它的前驱节点或者后继节点，以及这些节点的优先权，然后加入优先队列中去。如此循环，直至到达限定的时间或者依赖图的所有节点都被分析完。&lt;/p&gt;
+&lt;p&gt;三、总结&lt;/p&gt;
+&lt;p&gt;文章提出了一种利用优先权的方法来优先分析计算可疑的系统事件，加速攻击因果分析，使得能在最短时间内命中受到攻击的系统事件和数据。其中，虽然优先权的计算是比较启发式的、经验导向的公式，但是它们的平滑系数是通过机器学习来确定。&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>PII</title>
+      <link>https://utopizza.github.io/posts/thesis/2018-12-29-%E8%AE%BA%E6%96%87-pii/</link>
+      <pubDate>Sat, 29 Dec 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://utopizza.github.io/posts/thesis/2018-12-29-%E8%AE%BA%E6%96%87-pii/</guid>
+      <description>&lt;p&gt;一、背景及问题&lt;/p&gt;
+&lt;p&gt;最近一些广告平台（Data Broker）例如 Facebook、Google 等推出了新的广告投放策略：广告投放商（Advertiser）可以在平台中上传目标用户的个人身份信息（Personally Identifying Information，PII）如用户的姓名、邮箱地址、电话号码、住址、生日等，以在该平台中直接定位目标用户并针对性地投放广告。与传统的数据经销商直接把数据访问权限卖给给广告投放商的方式不同，这些数据平台只允许广告投放商上传目标用户的 PII，然后平台在内部匹配这些用户，返回一个匹配成功并进行舍入（Rounding）后的广告投放目标用户（Audience）总数给广告投放商。&lt;/p&gt;
+&lt;p&gt;然而这样的策略会威胁到用户的隐私安全。虽然广告投放商不能直接访问用户的数据，但是依然可以利用这个策略的漏洞来推测用户的其他隐私信息，例如恶意的广告投放商可以利用它们手中的一些用户邮箱地址，通过平台以及某些手段来推出这些用户的姓名、电话号码、住址等等其他隐私信息。&lt;/p&gt;
+&lt;p&gt;这个策略的漏洞就是上述平台返回的匹配成功的用户总数。虽然 Facebook 等平台对该数进行了舍入（Rounding），返回的用户总数是模糊的，但是只要攻击者通过不断提交差别很小的请求，依然可以把取整策略的阈值测试出来，然后就可以反推出在阈值边界上的目标用户（Threshold audiences）的信息。例如当攻击者在第二次提交请求时，只比第一次请求多添加一个用户，而返回的成功匹配用户数从原来的 80 变成了 90，那么很显然这个用户就是在阈值边界上并且符合攻击者的匹配目标的用户。整篇文章所提的攻击都是通过此漏洞来进行的，论文原话：“We use threshold audiences throughout the paper to enable our attacks”&lt;/p&gt;
+&lt;p&gt;二、解决方案&lt;/p&gt;
+&lt;p&gt;具体地说，文章介绍的的攻击手段主要有以下三种：&lt;/p&gt;
+&lt;p&gt;1、逆匿名网页浏览用户（De-anonymizing web visitors）：广告投放商可以在一些外部网页上安装一个 Facebook 的 JavaScript 插件，Facebook 可以通过该插件追踪浏览过此网页的用户，然后将这些用户记录下来，作为广告目标用户集合（注意，这些用户对广告投放商来说是透明的，只有 Facebook 知道这些用户）。现在，攻击者（恶意的广告投放商）可以利用上述的漏洞来反推出某个用户 $V$ 是否访问了这个网页。攻击方法是：
+(1) 先确定 $V$ 是否是 Facebook 平台中的用户：提交一系列不含攻击目标 $V$ 的请求 ${ L_1,L_2,\cdots,L_n }$，每次请求只比上一次请求多一个用户，Facebook 返回的匹配用户总数分别为 ${A_1,A_2,\cdots,A_n }$。先测试出一个舍入阈值下界，例如，假设 $A_1$、$A_2$ 是 810，而 $A_3$ 是 820，那么 $A_2=810$ 是一个舍入下界。然后我们再在 $L_2$ 这个集合中加入攻击目标 $V$ 即 ${L_2 \bigcup V }$ 并提交给 Facebook，如果返回的是 810，那么 $V$ 不是 Facebook 平台中的用户，如果返回的是 820，那么说明 $V$ 是 Facebook 中的一个用户。
+(2) 接下来，确定 $V$ 是否在 Facebook 追踪的网页浏览者名单中：同样地，提交一系列包含 $V$ 的请求，每个请求只比前一个请求多一个用户，然后测试出舍入上界，例如 ${L_1 \bigcup V}$、${L_2 \bigcup V}$ 是 930，而 ${L_3 \bigcup V}$ 是 940，那么 $A_3 = 940$ 就是攻击者要找的上界。此时，再提交不含 $V$ 的 ${L_4}$，看返回的结果是否下降到 930，如果下降了，说明 $V$ 就在浏览者名单中，即可以确定攻击目标 $V$ 浏览过了攻击者的网页。&lt;/p&gt;
+&lt;p&gt;2、推断用户的身份信息（Inferring a victim’s PII）：Facebook 对多次提交的请求集合，只会返回它们命中的用户的并集的总数，即不会对同一个用户多次计数。利用这一点，以及上述的舍入规则，攻击者只要拥有某个用户 $V$ 的其中某一项 PII 例如电子邮箱地址（或者其他任意一项），就可以推断出该用户的其他 PII 如电话号码。假设攻击者现在有某个 PII 集合 $L$，上传到 Facebook 后生成一个广告目标用户集合 $A$（注意，这个集合是维护在 Facebook平台内部的，对攻击者透明的），得到返回的一个舍入处理后的用户总数。假设攻击者现在要攻击的某个用户是 $V$（攻击者已知 $V$ 的邮箱地址），攻击方法是：
+(1) 先确定攻击目标 $V$ 是否在 $A$ 中：最简单的办法就是再上传一个只包含 $V$ 的集合，然后向 Facebook 查询这个集合与 $A$ 的交集，如果返回的交集结果不为 0，那么就可以直接确定 $V$ 在 $A$ 中了。然而 Facebook 不允许这样做，它要求查询交集的集合必须大于 1000，并且对交集结果的 $5%$ 进行舍入。因此攻击者需要稍微复杂一些的操作。取两个额外集合 ，分别为含 1949 条记录的集合 $R$、含 50 条记录的集合 $J$，要求是 $R、J、L$ 三个集合两两不相交。现在取 $C_1=R \bigcup L$，$C_2=R \bigcup J \bigcup V$，提交这个两个并集，然后向 Facebook 查询交集大小。显然，如果 $V$ 在 $A$ 中，那么结果将是 $|R|$（1949 舍入后是 1900）；否则结果是 $|R|+1$（1950 舍入后是 2000）。
+(2) 推断用户的电话号码：将整个电话号码的空间划分成若干个子集，例如，如果电话号码有 11 位，那么将得到 11×10 个子集，第一个子集表示电话号码第一位是 0 的所有电话号码，第二个子集表示电话号码第一位是 1 的子集，由于每一位有 0 ~ 9 共 10 种数字，因此一共 11×10 个子集。每个子集由于只固定一位数字，其余 10 位的每一位都有 10 种可能，因此每个子集的大小是 10^10。只要对这 11×10 个大小为 10^10 的电话号码集合，不断利用步骤 (1) 的方法，判断 $V$ 是否在该电话号码集合 $L$ 生成的 $A$ 中，就可以逐位推断出 $V$ 的 11 位电话号码&lt;/p&gt;
+&lt;p&gt;3、逆匿名全体用户（De-anonymizing users en masse）：意思和前面两点差不多，通过结合前两种攻击方法，可以获取所有访问过攻击者页面的用户的 PII，如电话号码等。限于篇幅不展开了。&lt;/p&gt;
+&lt;p&gt;针对以上三种攻击，文章提出了一些修补漏洞的技术方案，并提交给了 Facebook，得到了 Facebook 的采纳。由于修复方案比较多而且较多数学理论，就不展开了。由于文章提出的解决方案过于复杂，最后 Facebook 也只是采取了最简单暴力的修复方式——直接取消返回任何统计数字给广告投放商，关闭交集查询功能&amp;hellip;&amp;hellip;&lt;/p&gt;
+&lt;p&gt;三、总结&lt;/p&gt;
+&lt;p&gt;文章针对 Facebook 的提供给广告投放商的应用接口，发现了基于这些接口实现的用户隐私攻击，并给出了详细复杂的解决方案。最后得到了 Facebook 的采纳。&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>SVIM</title>
+      <link>https://utopizza.github.io/posts/thesis/2018-12-22-%E8%AE%BA%E6%96%87-svim/</link>
+      <pubDate>Sat, 22 Dec 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://utopizza.github.io/posts/thesis/2018-12-22-%E8%AE%BA%E6%96%87-svim/</guid>
+      <description>&lt;p&gt;差分隐私（Differential Privacy）模型是微软研究院的 Cynthia Dwork 等人于 2006 年提出的一个严谨的数学模型，目标在于提出用以修改隐私数据的技术，使得修改后的数据可以安全发布(以供第三方进行研究)，而不会遭受去匿名化等隐私攻击。同时，修改后的数据要在保护隐私的前提下最大限度地保留原数据的整体信息，否则被发布的数据将毫无研究价值。&lt;/p&gt;
+&lt;p&gt;该论文主要提出了一个称为 Set-Value Item Mining (SVIM) 的协议，用于在隐私保护约束条件下提高本地差分隐私数据的精确度。由于差分隐私主要是纯理论的模型，没有具体的实现和应用，限于篇幅此文不展开论述。此处主要了解差分隐私的一些背景即可。&lt;/p&gt;
+&lt;p&gt;相关资料：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;a href=&#34;https://segmentfault.com/a/1190000012080126&#34;&gt;差分隐私学习总结&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.zhihu.com/question/47492648&#34;&gt;苹果的 Differential Privacy 差分隐私技术是什么原理？&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://my.oschina.net/keyven/blog/730740&#34;&gt;大数据下的信息安全-差分隐私保护技术&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>EnclaveDB</title>
+      <link>https://utopizza.github.io/posts/thesis/2018-12-15-%E8%AE%BA%E6%96%87-enclavedb/</link>
+      <pubDate>Sat, 15 Dec 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://utopizza.github.io/posts/thesis/2018-12-15-%E8%AE%BA%E6%96%87-enclavedb/</guid>
+      <description>&lt;p&gt;一、背景及问题&lt;/p&gt;
+&lt;p&gt;目前一些云端的数据处理服务经常受到可能来自数据库管理员、服务器管理员、利用操作系统漏洞的黑客等的攻击。虽然一般意义上的数据加密可以为静态数据和数据传输提供强力高效的保护，但是却无法为数据处理系统提供足够的保护，因为数据处理系统在处理查询的时会在内存解密敏感数据。而内存是容易被攻击者入侵并掌控的区域，因此这会导致数据的不安全。&lt;/p&gt;
+&lt;p&gt;一种实现安全查询（secure query）的方法是，一些系统如 CryptDB，Monomi 以及 Seabed 等通过使用 property-preserving encryption 技术来进行在已加密数据上的安全查询。然而这种方法只能处理十分有限的查询请求，并且有信息泄漏的风险。&lt;/p&gt;
+&lt;p&gt;另一种实现安全查询的方法是在受信任的执行环境（trusted execution environment）或者内飞地（enclaves） 中执行查询。系统的内飞地如 Intel Software Guard Extensions (SGX) 可以保护敏感数据和代码，即使攻击者控制了整个操作系统或者主机。虽然如此，使用内飞地存在几个问题：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;为了实现安全保护，需要仔细地对应用程序进行重构，分解出可信任部分和不可信任部分&lt;/li&gt;
+&lt;li&gt;为了实现高层次的安全特性如机密性（confidentiality）、完整性（integrity）、时新性（freshness），需要增加额外的逻辑和机制来确保机密信息在进入和离开内飞地的时候不会被泄漏&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;这些问题对于一些简单的应用程序来说并不困难，但是对于一些大型复杂系统如数据库系统来说则非常不容易。先前的一些研究例如 CipherBase、TrustedDB 等采取的方式是将查询引擎（query engine）的一小部分放置于受信任的硬件之上，这种方式的问题是无法提供上述的机密性、完整性、时新性。另一种选择是将整个数据库放置于内飞地之中，但这显然会导致大量的 trusted computing base (TCB) 以及服务性能的下降，并且无法阻止来自数据库管理员的攻击。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;【根据维基百科，飞地指在某个地理区划境内有一块隶属于他地的区域。根据地区与国家之间的相对关系，飞地又可以分为“外飞地”（Exclave）与“内飞地”（Enclave）两种概念，其关系如下：
+内飞地（enclave）：意指某个国家境内有块土地，其主权属于另外一个国家，则该地区称为此国家的内飞地。
+外飞地（exclave）：某国家拥有一块与本国分离开来的领土，该领土被其他国家包围，则该领土称为某国的外飞地。】
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;二、解决方案&lt;/p&gt;
+&lt;p&gt;文章提出了一个称为 EnclaveDB 的数据库，它可以为查询和数据提供机密性、完整性、时新性。它与传统关系型数据库一样提供了数据处理、SQL查询、存储过程等基本功能。与传统数据库不同的是：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;EnclaveDB 通过把所有敏感数据（tables, indexes, queries and other intermediate state）维护在内飞地的内存中来保护数据库状态&lt;/li&gt;
+&lt;li&gt;EnclaveDB 使用可信任的 EnclaveDB 客户端来预编译查询代码，并进行加密&lt;/li&gt;
+&lt;li&gt;预编译代码后，受信任的 EnclaveDB 客户端与不受信任的服务器上的内飞地直接建立一个安全的加密通道，然后将已加密的查询和参数发送过去&lt;/li&gt;
+&lt;li&gt;不受信任的服务器上的内飞地收到查询请求后，对请求进行验证、解密、执行查询、对查询结果进行加密、返回给客户端&lt;/li&gt;
+&lt;li&gt;EnclaveDB 重新设计了数据库的日志与恢复机制，以确保服务器无法对数据库的日志进行攻击&lt;/li&gt;
+&lt;li&gt;EnclaveDB 采取了一些优化手段，减少线程上下文切换，减少服务器开销&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;img src=&#34;https://utopizza.github.io/2018-12-15-%E8%AE%BA%E6%96%87-EnclaveDB/EnclaveDB.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;三、总结&lt;/p&gt;
+&lt;p&gt;文章提出了一个通过使用内飞地来实现不信任服务器上的安全数据库。通过可信任客户端的预编译、加密安全通道的通信、内飞地的隔离保护、重新设计数据库的日志与恢复机制等一系列措施，实现了机密性、完整性、时新性这三个重要的安全特性。&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>FDSD</title>
+      <link>https://utopizza.github.io/posts/thesis/2018-12-08-%E8%AE%BA%E6%96%87-fdsd/</link>
+      <pubDate>Sat, 08 Dec 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://utopizza.github.io/posts/thesis/2018-12-08-%E8%AE%BA%E6%96%87-fdsd/</guid>
+      <description>&lt;p&gt;一、背景及问题&lt;/p&gt;
+&lt;p&gt;目前一些高级的网络攻击例如 APT (Advanced Persistent Threat) 引起了工业界和学术界的广泛关注和研究。这种攻击的特点是隐性、长期、多步骤。当一次攻击被发现后，鉴定分析 (Forensic Analysis) 系统就会开始被执行以确定攻击的入口以及攻击的影响范围。鉴定分析是基于系统日志进行的，它通过分析日志文件（Log）中记录的所有系统操作（例如网络事件、文件读写事件、进程间通信事件）之间的信息流，来追踪攻击源头，以及被攻击所污染的所有实体。由此可知，如果要使的分析结果越精确，那么日志文件则需要越详细地记录系统发生的一切事件，如此一来日志文件就不得不变得更大。再考虑到 APT 的一次攻击可能持续几个月的时间，以及大型企业一般都会有成千上万台主机（Host），在这种情况下日志文件可以轻松达到 PB 级别，不但需要占用巨大的存储空间，而且还会拖慢鉴定分析的速度。&lt;/p&gt;
+&lt;p&gt;此问题吸引了众多研究团体的兴趣，他们主要关注于如何在保证不影响鉴定分析的精确率的前提下，减小日志体积，提高鉴定分析的效率。&lt;/p&gt;
+&lt;p&gt;二、解决方案&lt;/p&gt;
+&lt;p&gt;文章提出了一种基于依赖图（Dependence Graph）的日志压缩技术，在不影响鉴定分析准确性的前提下，可以大幅度减少日志记录。大体思路如下：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;系统日志记录的系统事件可以用依赖图表示。系统内的实体（如进程、文件、网络等）用结点表示，系统事件（如系统调用，读写文件、进程间消息通讯、网络数据传输等）用带时间戳的有向边表示，其指向方向与信息/数据流动方向一致&lt;/li&gt;
+&lt;li&gt;只针对 read、write、load 三类系统事件进行压缩，其他系统事件如 fork、execve、remove、rename、chmod 等等不考虑压缩直接保留。因为根据经验统计，系统中超过 95% 的事件是读写事件，只要这部分的日志减下来即可。并且只对读写事件进行压缩可以降低算法模型的复杂度，提高可读性&lt;/li&gt;
+&lt;li&gt;根据前向可达性（Forward Reachability）和后向可达性（Backward Reachability），定义两种子图保留方案：全依赖 (Full Dependence FD) 保留，资源依赖（Source Dependence，SD）保留&lt;/li&gt;
+&lt;li&gt;由于依赖图的边（即系统事件）是带时间戳的，当执行可达性计算时，需要对一个节点按时间戳的先后顺序多次计算，而不能像标准的图算法那样对所有结点一视同仁地一次性计算并进行中间结果缓存。这样显然会提高算法的复杂度，因此文章提出了一个算法，将带时间戳的依赖图转化标准图（边不带时间戳），具体方法是对结点进行多版本化（Versioning）&lt;/li&gt;
+&lt;li&gt;但是如果只简单地进行结点的多版本化，又会增大图的复杂度，增大日志的体积，因此在多版本化后，文章提出了几种剪枝优化算法来简化依赖图：Redundant edge optimization (REO)、Global Redundant Edge Optimization (REO*)、Redundant node optimization (RNO)、 Redundant node optimization (RNO)&lt;/li&gt;
+&lt;li&gt;通过以上步骤对依赖图进行简化之后，就可以将依赖图还原成日志文件，此时的日志文件中只保留了关键的信息，体积大大减小。但是文章认为日志文件原来的格式不够节省空间，于是提出了一种新的压缩文件格式 CSR ，可以进一步减少空间占用&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;三、总结&lt;/p&gt;
+&lt;p&gt;文章主要针对鉴定分析需要的日志文件过大问题，提出了一种在保证不影响侦查分析准确性的前提下，优化依赖子图、减少日志文件体积、提高鉴定分析效率的方案，其主要思路是通过前后可达性和后向可达性来保证依赖子图保留了关键的结点和边。&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>SAQL</title>
+      <link>https://utopizza.github.io/posts/thesis/2018-11-30-%E8%AE%BA%E6%96%87-saql/</link>
+      <pubDate>Fri, 30 Nov 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://utopizza.github.io/posts/thesis/2018-11-30-%E8%AE%BA%E6%96%87-saql/</guid>
+      <description>&lt;p&gt;一、背景及问题&lt;/p&gt;
+&lt;p&gt;目前一些高级的网络攻击如 APT（advanced persistent threats）威胁并损害着很多公司的信息安全。它们利用主机的各种弱点，通过一系列步骤来进行攻击。&lt;/p&gt;
+&lt;p&gt;为了应对这些攻击，一些基于系统监控（System Monitoring）的方法被提出，用于快速侦查异常，或者定位存在风险的系统事件（System Event）。这些方法主要通过对主机的系统调用（system calls）进行监控，收集系统事件的信息，来实现系统异常的侦查。然而，目前这些方法存在几点问题和困难：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;时间要求严格。要避免主机受到进一步的伤害导致无法修复，该监控系统必须做到实时在线保护主机，实时侦查主机内的异常事件，这就犹如进行实时的“大海捞针”&lt;/li&gt;
+&lt;li&gt;如何让监控系统实时地结合系统管理员、安全专家、数据分析专家们的领域知识（domain knowledge）？因为这些领域知识对于系统异常的侦查是非常有帮助的，甚至是必要的&lt;/li&gt;
+&lt;li&gt;实时的系统监控自然会产生海量的日志数据，这就要求分析数据侦查异常的算法必须非常高效，因为是实时的&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;遗憾的是目前没有任何一个监控系统能够解决以上问题，尤其是第二点——已有的监控系统往往只专注于特定的异常侦查，无法提供足够的支持以便用户可以灵活地引入专家的领域知识。&lt;/p&gt;
+&lt;p&gt;二、解决方案&lt;/p&gt;
+&lt;p&gt;论文提出了一个基于流的异常查询系统，以及一种基于流的异常查询语言（Streambased Anomaly Query Language，SAQL）。该系统主要面向 4 种异常：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Rule-based Anomaly:基于规则的异常，某个进程在短时间内读取大量的命令日志文件，这种异常通常意味着某个非法的用户想要探测合法用户的常用命令或者操作习惯。为了侦查这种异常，SAQL 使用事件模式（event patterns）来表达操作系统中的各种活动：定义一个事件表示为 {subject-operation-object}，例如 {process p1 write file f2}。有了如此统一定义的形式，用户就可以在查询的时间灵活地定义领域知识，甚至可以定制基于特定规则的异常检测&lt;/li&gt;
+&lt;li&gt;Time-Series Anomaly:时间序列的异常，某个进程在一段时间内不正常地传送了大量的数据。为了探测到这种异常，SAQL 构造带状态的滑动窗口，将数据流进行分段，那么只要通过与历史滑动窗口的状态进行比较，就可以检测到某个时间段对应的数据量是否异常地增大&lt;/li&gt;
+&lt;li&gt;Invariant-based Anomaly:基于不变的异常？一个进程启动了一个异常的进程，如 apache.exe 本应该启动 httpd.exe，但却启动了一个在训练模型时从来未出现过的进程 java.exe。这种情况同样可以使用上述带状态滑动窗口的模型，只要提前训练学习好正常情况下的系统状态（可用窗口状态表达），便可检测此类异常。&lt;/li&gt;
+&lt;li&gt;Outlier-based Anomaly:基于异常的异常，通过与同等的进程的比较来确定异常。例如，通过比较发现，某个进程向某个 IP 地址传送的数据量比同等进程向其他 IP 地址传送的数据量大太多，那么这个进程就值得怀疑。SAQL 可以使用聚类算法对事件进行聚类，以便在同类的事件中进行比较并发现异常。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;除此之外，系统往往需要同时处理大批量的异常检测查询，而目前一般的检测系统如 Siddhi、Esper、Flink 采取的做法都是为每一个 query 复制一份数据，由于操作系统的日志文件是非常巨大的，这样的复制操作会使得系统非常低效。针对这个问题，论文提出一个名为 master-dependent-query 的查询模式，它把用户提交的各种查询进行兼容性分析，然后将兼容的查询分到同一个组，每个组的查询都共用一份数据，这样避免了大量的数据复制，提高了查询分析的效率。&lt;/p&gt;
+&lt;p&gt;三、总结&lt;/p&gt;
+&lt;p&gt;总的来说，文章的主要工作是提出了一个用于描述操作系统事件的形式化语言 SAQL，使得用户和系统可以统一地描述各种正常和异常的事件，从而可以灵活地加入专家领域知识并进行异常检测，无需改动系统本身。另外提高为查询效率，文章提出了查询分组的模型，让可以相互兼容的查询共用日志数据，避免了为每个查询复制一次数据的低效模式。&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>RTAG</title>
+      <link>https://utopizza.github.io/posts/thesis/2018-11-24-%E8%AE%BA%E6%96%87-rtag/</link>
+      <pubDate>Sat, 24 Nov 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://utopizza.github.io/posts/thesis/2018-11-24-%E8%AE%BA%E6%96%87-rtag/</guid>
+      <description>&lt;p&gt;一、背景及问题&lt;/p&gt;
+&lt;p&gt;目前出现一些高级的多主机攻击手段，它们通过使用“command-and-control(C&amp;amp;C)”通道或者代理服务器来实现攻击者隐藏和攻击方式隐藏。例如 &lt;a href=&#34;https://github.com/nccgroup/gitpwnd&#34;&gt;GitPwnd&lt;/a&gt; 攻击，它利用了 Git 的同步机制来泄漏被攻击者的私有数据，大致过程如下：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;攻击者事先在一个流行的 git repository 的镜像中 放置一个钩子脚本，这个脚本会指向一个恶意的 C&amp;amp;C repository&lt;/li&gt;
+&lt;li&gt;当被攻击者用 git 复制该 repository 镜像时，git 会自动地连带那个恶意 C&amp;amp;C repository 一起复制到被攻击者的 git 服务器&lt;/li&gt;
+&lt;li&gt;当被攻击者在 repository 上执行某些特定操作如 git commit 时，恶意 C&amp;amp;C repository 被触发，把被攻击者的数据私下发送到攻击者的主机而不会被察觉&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;针对这类攻击，一种称为动态信息流追踪（Dynamic information flow tracking , DIFT）的技术被提出并应用于攻击侦查。然而，目前存在的大多数攻击侦查系统只能对单个主机的攻击进行侦查，例如对某个主机下的 system-call-level 或 instruction-level 的事件进行监控，而无法侦查如上述 GitPwnd 之类的跨主机攻击。&lt;/p&gt;
+&lt;p&gt;二、解决方案&lt;/p&gt;
+&lt;p&gt;论文提出了一种基于记录-回放的信息流标签和追踪系统（a record-and-replay-based data flow tagging and tracking system, called RTAG）。RTAG 首先通过隔断标签依赖关系（主机之间的信息流）来摆脱多个主机之间信息流顺序的约束，使 DIFT 可以并行执行。其次，RTAG 通过精心设计的数据结构来减少 DIFT 的内存消耗（90%）和时间消耗（60%-90%）。&lt;/p&gt;
+&lt;p&gt;标签系统 RTAG 的大致设计思路如下：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;使用 &amp;lt;主机 mac 地址 + inode + dev + crtime + byte-offset&amp;gt; 来实现全局唯一标签（global tag），标识感兴趣文件中的每个字节，实现对文件在多个主机之间的信息流的追踪&lt;/li&gt;
+&lt;li&gt;使用与 RAIN 系统一样的资源图（provenance graph） 来追踪程序之间的信息流，如程序到文件、程序到程序、文件到程序&lt;/li&gt;
+&lt;li&gt;使用可达性分析算法，对多主机的全局资源图进行剪枝，得到只与攻击相关的资源子图，减少后续分析的计算量。为实现此跨主机的可达性追踪，RAIN 需要在 socket 层次（TCP &amp;amp; UDP）上对主机之间的网络通讯进行监控&lt;/li&gt;
+&lt;li&gt;采用与 RAIN 系统一样的记录-回放策略（record-and-replay），即平时只记录信息流动的信息，只有在执行攻击分析查询时再通过回放记录来执行 DIFT（因为计算量和内存消耗较大，无法实时在线执行）&lt;/li&gt;
+&lt;li&gt;使用 32-bit 的数据版本号来隔断 tags 之间的依赖关系，使得每个 replay 可以单独执行而无需执行所依赖的数据版本的 replay。数据版本号在数据（即文件的数据）被执行 write() 之类的系统调用时自动增加&lt;/li&gt;
+&lt;li&gt;使用 global tag 和 local tag 转换技术来减低资源消耗量。因为在单个主机内执行攻击分析时，没有必要因为使用 global tag 而耗费内存资源。因此在执行这种单个主机内的 DIFT 之前，RTAG 会先把 global tag 转换成 local tag，待执行完后再换回来&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;三、总结&lt;/p&gt;
+&lt;p&gt;总的来说，文章提出的 RTAG 系统是在原有的 RAIN 系统上，对其标签系统（tagging system）进行扩展而得到的。它通过使用全局标签来进行跨主机的信息流追踪，使用全局-局部标签转换来降低计算量等等，使得原有的单主机 DIFT 系统 RAIN 扩展到了多主机的攻击侦查。&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>推荐系统相关学术会议</title>
+      <link>https://utopizza.github.io/posts/thesis/2017-09-21-%E8%AE%BA%E6%96%87-%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E7%9B%B8%E5%85%B3%E5%AD%A6%E6%9C%AF%E4%BC%9A%E8%AE%AE/</link>
+      <pubDate>Thu, 21 Sep 2017 18:45:00 +0000</pubDate>
+      
+      <guid>https://utopizza.github.io/posts/thesis/2017-09-21-%E8%AE%BA%E6%96%87-%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E7%9B%B8%E5%85%B3%E5%AD%A6%E6%9C%AF%E4%BC%9A%E8%AE%AE/</guid>
+      <description>&lt;p&gt;一、学术会议&lt;/p&gt;
+&lt;p&gt;1、SIGKDD&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;CCF评级：A类&lt;/li&gt;
+&lt;li&gt;全称：Special Interest Group on Knowledge Discovery and Data Mining&lt;/li&gt;
+&lt;li&gt;出版社：ACM&lt;/li&gt;
+&lt;li&gt;网址：http://www.kdd.org/&lt;/li&gt;
+&lt;li&gt;DBLP：http://dblp.uni-trier.de/db/conf/kdd/&lt;/li&gt;
+&lt;li&gt;时间：每年8月&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;2、SIGIR&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;CCF评级：A类&lt;/li&gt;
+&lt;li&gt;全称：Special Interest Group on Information Retrieval&lt;/li&gt;
+&lt;li&gt;出版社：ACM&lt;/li&gt;
+&lt;li&gt;网址：http://sigir.org/&lt;/li&gt;
+&lt;li&gt;DBLP：http://dblp.uni-trier.de/db/conf/sigir/&lt;/li&gt;
+&lt;li&gt;时间：每年7月至8月&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;3、ICDE&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;CCF评级：A类&lt;/li&gt;
+&lt;li&gt;全称：International Conference on Data Engineering&lt;/li&gt;
+&lt;li&gt;出版社：IEEE&lt;/li&gt;
+&lt;li&gt;网址：https://www.icde.org/&lt;/li&gt;
+&lt;li&gt;DBLP：http://dblp.uni-trier.de/db/conf/icde/&lt;/li&gt;
+&lt;li&gt;时间：每年4月至5月&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;4、AAAI&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;CCF评级：A类&lt;/li&gt;
+&lt;li&gt;全称：Association for the Advancement of Artificial Intelligence&lt;/li&gt;
+&lt;li&gt;出版社：AAAI&lt;/li&gt;
+&lt;li&gt;网址：https://www.aaai.org/&lt;/li&gt;
+&lt;li&gt;DBLP：http://dblp.uni-trier.de/db/conf/aaai/&lt;/li&gt;
+&lt;li&gt;时间：2014年之前每年7月到8月，2015年开始改到了每年1月到2月&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;5、TKDE&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;CCF评级：A类&lt;/li&gt;
+&lt;li&gt;全称：IEEE Transactions on Knowledge and Data Engineering&lt;/li&gt;
+&lt;li&gt;出版社：IEEE&lt;/li&gt;
+&lt;li&gt;网址：https://www.computer.org/web/tkde&lt;/li&gt;
+&lt;li&gt;DBLP：http://dblp.uni-trier.de/db/journals/tkde/&lt;/li&gt;
+&lt;li&gt;时间：每年1月&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;6、WWW&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;CCF评级：A类&lt;/li&gt;
+&lt;li&gt;全称：International World Wide Web Conferences&lt;/li&gt;
+&lt;li&gt;出版社：ACM&lt;/li&gt;
+&lt;li&gt;网址：http://www.iw3c2.org/&lt;/li&gt;
+&lt;li&gt;DBLP：http://dblp.uni-trier.de/db/conf/www/&lt;/li&gt;
+&lt;li&gt;时间：每年4月到5月&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;7、CIKM&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;CCF评级：B类&lt;/li&gt;
+&lt;li&gt;全称：International Conference on Information and Knowledge Management&lt;/li&gt;
+&lt;li&gt;出版社：ACM&lt;/li&gt;
+&lt;li&gt;网址：http://www.cikmconference.org/&lt;/li&gt;
+&lt;li&gt;DBLP：http://dblp.uni-trier.de/db/conf/cikm/&lt;/li&gt;
+&lt;li&gt;时间：每年10月至11月&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;8、ICDM&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;CCF评级：B类&lt;/li&gt;
+&lt;li&gt;全称：IEEE International Conference on Data Mining&lt;/li&gt;
+&lt;li&gt;出版社：IEEE&lt;/li&gt;
+&lt;li&gt;网址：http://www.cs.uvm.edu/~icdm/&lt;/li&gt;
+&lt;li&gt;DBLP：http://dblp.uni-trier.de/db/conf/icdm/&lt;/li&gt;
+&lt;li&gt;时间：每年11月至12月&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;9、WSDN&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;CCF评级：B类&lt;/li&gt;
+&lt;li&gt;全称：ACM International Conference on Web Search and Data Mining&lt;/li&gt;
+&lt;li&gt;出版社：ACM&lt;/li&gt;
+&lt;li&gt;网址：http://www.wsdm-conference.org/&lt;/li&gt;
+&lt;li&gt;DBLP：http://dblp.uni-trier.de/db/conf/wsdm/&lt;/li&gt;
+&lt;li&gt;时间：每年2月&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;10、RecSys&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;CCF评级：无&lt;/li&gt;
+&lt;li&gt;全称：ACM Conference on Recommender Systems&lt;/li&gt;
+&lt;li&gt;出版社：ACM&lt;/li&gt;
+&lt;li&gt;网址：https://recsys.acm.org/&lt;/li&gt;
+&lt;li&gt;DBLP：http://dblp.uni-trier.de/db/conf/recsys/&lt;/li&gt;
+&lt;li&gt;时间：每年8月到9月&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;二、相关链接&lt;/p&gt;
+&lt;p&gt;1、中国计算机学会推荐国际学术会议和期刊目录：http://www.ccf.org.cn/xspj/gyml/&lt;/p&gt;
+&lt;p&gt;2、数据挖掘领域顶级会议期刊及其分析：http://blog.csdn.net/yaoyepeng/article/details/6533745&lt;/p&gt;
+&lt;p&gt;3、人工智能与数据挖掘顶级会议：http://blog.csdn.net/zongzhiyuan/article/details/49964813&lt;/p&gt;
+&lt;p&gt;4、学术会议搜索：http://www.searchconf.net/&lt;/p&gt;
+&lt;p&gt;5、Grouplens小组：https://grouplens.org/&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

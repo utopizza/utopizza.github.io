@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Language" content="en">
+
+    <meta name="author" content="Yusheng Wang">
+    <meta name="description" content="一、选择排序
+输入长度为 $n$ 的数组，依次选择数组第 $i$ 小的元素，交换到数组第 $i$ 个位置。使用内外两个循环，外循环负责定位到数组第 $i$ 个位置，内循环负责从数组第 $i&#43;1$ 个位置 遍历到数组末端，记录最小的元素，交换到数组第 $i$ 个位置上。
+无论输入数组元素的初始序列如何，内循环都需要迭代 $n-i$ 次，所以选择排序的总比较次数始终为 $(n-1)&#43;(n-2)&#43; \cdots &#43;2&#43;1=\frac{n(n-1)}{2} \approx \frac{n^2}{2}$ ，时间复杂度为 $O(n^2)$。
+public class SortSelection extends Sort { public static void sort(Comparable[] a) { for (int i = 0; i &lt; a.length; i&#43;&#43;) { int minIndex = i; for (int j = i &#43; 1; j &lt; a.length; j&#43;&#43;) { if (less(a[j], a[minIndex])) { minIndex = j; } } exchange(a, i, minIndex); } } } 二、插入排序">
+    <meta name="keywords" content="blog,developer,personal">
+
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="排序算法"/>
+<meta name="twitter:description" content="一、选择排序
+输入长度为 $n$ 的数组，依次选择数组第 $i$ 小的元素，交换到数组第 $i$ 个位置。使用内外两个循环，外循环负责定位到数组第 $i$ 个位置，内循环负责从数组第 $i&#43;1$ 个位置 遍历到数组末端，记录最小的元素，交换到数组第 $i$ 个位置上。
+无论输入数组元素的初始序列如何，内循环都需要迭代 $n-i$ 次，所以选择排序的总比较次数始终为 $(n-1)&#43;(n-2)&#43; \cdots &#43;2&#43;1=\frac{n(n-1)}{2} \approx \frac{n^2}{2}$ ，时间复杂度为 $O(n^2)$。
+public class SortSelection extends Sort { public static void sort(Comparable[] a) { for (int i = 0; i &lt; a.length; i&#43;&#43;) { int minIndex = i; for (int j = i &#43; 1; j &lt; a.length; j&#43;&#43;) { if (less(a[j], a[minIndex])) { minIndex = j; } } exchange(a, i, minIndex); } } } 二、插入排序"/>
+
+    <meta property="og:title" content="排序算法" />
+<meta property="og:description" content="一、选择排序
+输入长度为 $n$ 的数组，依次选择数组第 $i$ 小的元素，交换到数组第 $i$ 个位置。使用内外两个循环，外循环负责定位到数组第 $i$ 个位置，内循环负责从数组第 $i&#43;1$ 个位置 遍历到数组末端，记录最小的元素，交换到数组第 $i$ 个位置上。
+无论输入数组元素的初始序列如何，内循环都需要迭代 $n-i$ 次，所以选择排序的总比较次数始终为 $(n-1)&#43;(n-2)&#43; \cdots &#43;2&#43;1=\frac{n(n-1)}{2} \approx \frac{n^2}{2}$ ，时间复杂度为 $O(n^2)$。
+public class SortSelection extends Sort { public static void sort(Comparable[] a) { for (int i = 0; i &lt; a.length; i&#43;&#43;) { int minIndex = i; for (int j = i &#43; 1; j &lt; a.length; j&#43;&#43;) { if (less(a[j], a[minIndex])) { minIndex = j; } } exchange(a, i, minIndex); } } } 二、插入排序" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://utopizza.github.io/posts/algorithm/2017-11-04-%E7%AE%97%E6%B3%95-%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95/" />
+<meta property="article:published_time" content="2017-11-04T16:49:00+00:00" />
+<meta property="article:modified_time" content="2017-11-04T16:49:00+00:00" />
+
+
+    
+      <base href="https://utopizza.github.io/posts/algorithm/2017-11-04-%E7%AE%97%E6%B3%95-%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95/">
+    
+    <title>
+  排序算法 · Utopizza
+</title>
+
+    
+      <link rel="canonical" href="https://utopizza.github.io/posts/algorithm/2017-11-04-%E7%AE%97%E6%B3%95-%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95/">
+    
+
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700%7CMerriweather:300,700%7CSource+Code+Pro:400,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.13.0/css/all.css" integrity="sha384-Bfad6CLCknfcloXFOyFnlgtENryhrpZCe29RTifKEixXQZ38WheV+i/6YWSzkz3V" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" integrity="sha256-l85OmPOjvil/SOvVt3HnSSjzF1TUMyT9eV0c2BzEGzU=" crossorigin="anonymous" />
+
+    
+      
+      
+      <link rel="stylesheet" href="https://utopizza.github.io/css/coder.min.a4f332213a21ce8eb521670c614470c58923aaaf385e2a73982c31dd7642decb.css" integrity="sha256-pPMyITohzo61IWcMYURwxYkjqq84XipzmCwx3XZC3ss=" crossorigin="anonymous" media="screen" />
+    
+
+    
+
+    
+      
+        
+        
+        <link rel="stylesheet" href="https://utopizza.github.io/css/coder-dark.min.e78e80fc3a585a4d1c8fc7f58623b6ff852411e38431a9cd1792877ecaa160f6.css" integrity="sha256-546A/DpYWk0cj8f1hiO2/4UkEeOEManNF5KHfsqhYPY=" crossorigin="anonymous" media="screen" />
+      
+    
+
+    
+
+    
+
+    <link rel="icon" type="image/png" href="https://utopizza.github.io/images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="https://utopizza.github.io/images/favicon-16x16.png" sizes="16x16">
+
+    <meta name="generator" content="Hugo 0.69.2" />
+  </head>
+
+  
+  
+    
+  
+  <body class="colorscheme-auto">
+    <main class="wrapper">
+      <nav class="navigation">
+  <section class="container">
+    <a class="navigation-title" href="https://utopizza.github.io/">
+      Utopizza
+    </a>
+    
+    <input type="checkbox" id="menu-toggle" />
+    <label class="menu-button float-right" for="menu-toggle"><i class="fas fa-bars"></i></label>
+    <ul class="navigation-list">
+      
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/about/">About</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/posts/">Blog</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/projects/">Projects</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/contact/">Contact me</a>
+          </li>
+        
+      
+      
+    </ul>
+    
+  </section>
+</nav>
+
+
+      <div class="content">
+        
+  <section class="container post">
+    <article>
+      <header>
+        <div class="post-title">
+          <h1 class="title">排序算法</h1>
+        </div>
+        <div class="post-meta">
+          <div class="date">
+            <span class="posted-on">
+              <i class="fas fa-calendar"></i>
+              <time datetime='2017-11-04T16:49:00Z'>
+                November 4, 2017
+              </time>
+            </span>
+            <span class="reading-time">
+              <i class="fas fa-clock"></i>
+              4-minute read
+            </span>
+          </div>
+          <div class="categories">
+  <i class="fas fa-folder"></i>
+    <a href="https://utopizza.github.io/categories/algorithm/">Algorithm</a></div>
+
+          
+        </div>
+      </header>
+
+      <div>
+        
+        <p>一、选择排序</p>
+<p>输入长度为 $n$ 的数组，依次选择数组第 $i$ 小的元素，交换到数组第 $i$ 个位置。使用内外两个循环，外循环负责定位到数组第 $i$ 个位置，内循环负责从数组第 $i+1$ 个位置 遍历到数组末端，记录最小的元素，交换到数组第 $i$ 个位置上。</p>
+<p>无论输入数组元素的初始序列如何，内循环都需要迭代 $n-i$ 次，所以选择排序的总比较次数始终为 $(n-1)+(n-2)+ \cdots +2+1=\frac{n(n-1)}{2} \approx \frac{n^2}{2}$ ，时间复杂度为 $O(n^2)$。</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">public class SortSelection extends Sort {
+    public static void sort(Comparable[] a) {
+        for (int i = 0; i &lt; a.length; i++) {
+            int minIndex = i;
+            for (int j = i + 1; j &lt; a.length; j++) {
+                if (less(a[j], a[minIndex])) {
+                    minIndex = j;
+                }
+            }
+            exchange(a, i, minIndex);
+        }
+    }
+}
+</code></pre></div><p>二、插入排序</p>
+<p>模仿扑克卡牌等的整理过程，从最左边开始，将元素逐个插入到左边有序元素序列中适当的位置。同样使用两层循环，外循环负责定位到第 $i$ 个位置，内循环负责从第 $i-1$ 到第 $1$ 个位置找到能让第 $i$ 个元素插入的合适位置（找到第一个比它小的元素时停止内循环，该元素后一个位置即为适合插入的位置）并进行插入。外循环每层迭代结束时，都保证数组从左边第 $1$ 到第 $i$ 个位置是有序的。</p>
+<p>与选择排序不同，插入排序的总比较次数与输入的初始序列有关，这取决于插入排序内循环的比较次数。最好的情况就是输入的数组直接就是有序的，那么每次内循环都只需要比较一次就结束，因为合适的位置就是本身。考虑到外循环迭代 $n$ 次，因此总比较次数为 $(n-1) \cdot 1=n-1$ 次，即最好情况下时间复杂度为 $O(n)$。相反地，最坏的情况就是输入的数组是刚好逆序的，此时每次内循环都需要从第 $i-1$ 位一直比较到数组最左端的第 $1$ 位，需比较 $i-1$ 次。考虑外循环，此时总比较次数为 $0+1+\cdots+(n-1)=\frac{n(n-1)}{2} \approx \frac{n^2}{2}$，即最坏情况下时间复杂度为 $O(n^2)$。因此对局部或者全部有序的输入数组，插入排序要比选择排序快。</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">public class SortInsertion extends Sort {
+    public static void sort(Comparable[] a) {
+        for (int i = 0; i &lt; a.length; i++) {
+            for (int j = i; j &gt; 0 &amp;&amp; less(a[j], a[j - 1]); j--) {
+                exchange(a, j, (j - 1));
+            }
+        }
+    }
+}
+</code></pre></div><p>三、希尔排序</p>
+<p>希尔排序是基于插入排序的一种改进版本。由上面分析知道，对于大规模乱序的数组，插入排序的效率是平方级别的，非常低，因为它只能一点一点地把元素从数组右边移动到左边。例如，如果最小的元素正好在数组尽头，那么将它插入正确位置就需要移动 $n-1$ 次，从数组最右边移到最左端。希尔排序为了加快速度，选择跨若干个元素交换的方式而不是相邻元素交换的方式。例如，跨 $h$ 个元素进行交互，那么一遍下来就可以保证任意间隔为 $h$ 的子数组是有序的。这样的数组被称为 $h$ 有序数组。当这些数组都有序后，开始减小 $h$，直至 $h=1$，这样整个数组便有序了。</p>
+<p>至于复杂度分析，根据《算法（第四版）》一书所描述：</p>
+<blockquote>
+<p>透彻理解希尔排序性能至今仍然是一项挑战，也是唯一无法准确描述其对于乱序数组的性能特征的排序方式。</p>
+</blockquote>
+<p>但作者通过一些简单的实验，给出了一些结论：</p>
+<blockquote>
+<p>希尔排序比插入排序和选择排序要快得多，并且数组越大，优势越大。目前最重要的结论是它的运行时间达不到平方级别。已知的最坏的情况下的比较次数和 $N^{3/2}$ 成正比。</p>
+</blockquote>
+<p>关于选择递增序列 $h$：</p>
+<blockquote>
+<p>如何选择递增序列？要回答这个问题并不简单。算法的性能不仅取决于 $h$，还取决于 $h$ 之间的数学性质，例如它们的公因子等。有很多论文研究了各种不同的递增序列，但都无法证明某个序列是“最优”的。</p>
+</blockquote>
+<p>书中样例代码使用的 $h$ 序列为 $3h+1$，如：1，4，13，40，&hellip;</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">public class SortShell extends Sort {
+    public static void sort(Comparable[] a) {
+        int len = a.length;
+        int h = 1;
+        while (h &lt; len / 3) 
+            h = 3 * h + 1;
+        while (h &gt;= 1) {
+            for (int i = h; i &lt; len; i++) {
+                for (int j = i; j &gt;= h &amp;&amp; less(a[j], a[j - h]); j -= h) {
+                    exchange(a, j, (j - h));
+                }
+            }
+            h = h / 3;
+        }
+    }
+}
+</code></pre></div><p>四、归并排序</p>
+<p>将两个已经有序的数组，合并成一个有序数组。</p>
+<p>1、归并（原地）</p>
+<p>我们假设输入是一个数组 $a$，该数组的第 $lo$ 位到第 $mid$ 位，第 $mid$ 位到第 $hi$ 位分别已经有序，现在需要将两部分合并，并使使其有序，返回原数组。思路非常简单，使用辅助数组先把这两部分复制出去，然后不断比较两个部分的队头元素，谁最小谁就出队回来原数组。如果忽略新建辅助数组并复制过去的操作，显然进行归并时每个元素都只需要扫描一次。因此时间复杂度是线性的，若需要归并的元素总个数为 $n$，则时间复杂度为 $O(n)$。（注意这里仅指归并两个子数组的复杂度，不是整个完整归并排序的复杂度）</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">// merge a[lo..mid] and a[mid+1..hi] to a[lo...hi]
+public static void merge(Comparable[] a, int lo, int mid, int hi) {
+    int i = lo, j = mid + 1;
+    for (int k = lo; k &lt;= hi; k++)//copy a[lo..hi] to aux[lo..hi]
+        aux[k] = a[k];
+    for (int k = lo; k &lt;= hi; k++)//move items back
+        if (i &gt; mid)
+            a[k] = aux[j++];
+        else if (j &gt; hi)
+            a[k] = aux[i++];
+        else if (less(aux[j], aux[i]))
+            a[k] = aux[j++];
+        else
+            a[k] = aux[i++];
+}
+</code></pre></div><p>2、排序</p>
+<p>有了归并操作的基础后，后面的排序就有两种选择方式：自顶向下，自底向上。</p>
+<p>(1)、自顶向下</p>
+<p>自顶向下的思路是，在每一层递归函数中，先把数组切分成左半边和右半边，然后把这两部分分别放给下一层递归来处理（直到切分到子数组只有一个元素为止，便返回上一层），当左右两部分都完成排序返回到本层递归时，归并这两部分，返回上一层递归。</p>
+<p>至于时间复杂度，我们可以把归并排序处理过程想象成一棵树，根节点是最顶层的递归函数，对应原数组 $a[0&hellip;(n-1)]$ 的归并，这层需归并 $n$ 个元素；树的第二层是根节点的左右两个孩子，分别对应为原数组的左右两部分，左孩子处理 $a[0&hellip;\frac{n-1}{2}]$ 的归并，右孩子处理 $a[\frac{n-1}{2}+1&hellip;(n-1)]$ 的归并，因此该层也是一共需要归并 $n$ 个元素；如此一直到最底层叶节点，数组被切分成长度为2的 $\frac{n}{2}$ 个子数组：$a[0&hellip;1]，a[2..3],\cdots,a[(n-2)&hellip;(n-1)]$，该层同样共需处理 $n$ 个元素的归并。由于每层递归都是把对应子数组再分成两个子数组，因此该树是棵二叉树，树的高度为 $log_2(n)$。由上面分析知道每一层需归并处理的元素都是 $n$ 个，因此整棵树的处理代价，也即自顶向下归并排序的时间复杂度为 $O(n \cdot log_2(n))$。</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">public class SortMerge extends Sort {
+
+    private static Comparable[] aux;
+
+    public static void sort(Comparable[] a) {
+        aux = new Comparable[a.length];
+        recursiveSort(a, 0, a.length - 1);
+    }
+
+    public static void recursiveSort(Comparable[] a, int lo, int hi) {
+        if (lo &gt;= hi)
+            return;
+        int mid = lo + (hi - lo) / 2;
+        recursiveSort(a, lo, mid);
+        recursiveSort(a, (mid + 1), hi);
+        merge(a, lo, mid, hi);
+    }
+}
+</code></pre></div><p>(2)、自底向上</p>
+<p>自底向上的思路是，使用迭代而不是递归的方式，对数组进行两两归并，四四归并，八八归并，一直到整个数组被归并。使用两层循环，外循环迭代地改变子数组的大小：1，2，4，8，依次类推；内循环对子数组执行归并排序。</p>
+<p>显然外循环共执行 $log_2(n)$ 次；对外循环的每一层，内循环需要对所有子数组总共 $n$ 个元素进行归并排序，因此自底向上归并排序的时间复杂度也是 $O(n \cdot log_2(n))$。</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">public class SortMergeBU extends Sort {
+
+    private static Comparable[] aux;
+
+    public static void sort(Comparable[] a) {
+        aux = new Comparable[a.length];
+        for (int subsize = 1; subsize &lt; a.length; subsize += subsize) {
+            for (int lo = 0; lo &lt; a.length - subsize; lo += subsize + subsize)
+                merge(a, lo, (lo + subsize - 1), Math.min(lo + subsize + subsize - 1, a.length - 1));
+        }
+    }
+}
+</code></pre></div><p>五、快速排序</p>
+<p>快速排序是应用最广泛的排序算法，因为它实现简单，并且是原地排序，几乎不需要额外空间，同时也能做到时间复杂度为 $O(n \cdot log_2(n))$，在一般应用中，快速排序比其他排序算法都要快得多。</p>
+<p>快速排序的基本思路是分治法。从输入数组中，随机地（或者有目的地）挑选某个元素，并以该元素为分界点，使用两个指针同时从数组左右两端往中间扫描，不断交换左右两边的元素，使小于分界点的元素被交换到左边，大于分界点的元素被交换到右边，直到两个指针在分界点相遇，则此一轮交换结束。此时，分界点左边的元素全部小于分界点，右边的元素全部大于分界点。接着分别对左边的数组，右边的数组重复执行如上操作，直到子数组不可再切分（子数组长度为1），此时原数组排序完成。在算法实现上非常简单，使用递归方式即可：先选择某个元素把数组切分成左右两部分，左边部分小于切分点，右边部分大于切分点。然后递归调用自己分别处理左边部分子数组和右边部分子数组（和归并排序刚好相反，归并排序是先排序好左边部分和右边部分，然后再合并两部分）。</p>
+<p>快速排序对输入数据敏感，它的效率依赖于切分数组的效果，即依赖于切分元素的选择。快速排序的最好情况是每次都正好能将数组对半分，此时比较次数正好满足分治递归公式：$C_n=2 \cdot C_{n/2}+n$，其中 $2 \cdot C_{n/2}$ 表示将左右两个子数组排序的成本，$n$ 表示本层递归切分元素和所有元素比较的成本。由此公式可以推出，最好情况下快速排序的时间复杂度为 $O(n \cdot log_2(n))$（可以类比上面归并排序的树来帮助思考）。相反地，最坏情况呢？最坏情况就是每次选择的分界点元素，都是子数组最小或者最大的元素，此时把长度为 $n$ 的数组切分成长度为 $1$ 和长度为 $n-1$ 的两个子数组。此时虽然每一层递归中，切分元素和所有元素的比较次数仍然为 $n$ 次，但是递归的层数（切分次数）增加到了 $n$ 层，而不是 $log_2(n)$ 层。因此，最坏情况下快速排序的时间复杂度为 $O(n^2)$。**为了避免这种情况，一般会对输入数组进行一些预处理，例如随机打乱数组等等**。</p>
+<p>可以利用树的结构来分析：设根节点大小为 $n$， 如果左右孩子结点大小均分得父结点的一半，那么这棵树将向左右同时平衡生长，最终为一棵完美平衡的二叉树，高度为 $log_2(n)$；如果左孩子只分得 $1$，右孩子分得剩余的全部，那么这棵树会一直沿着右子树生长，高度为 $n$。</p>
+<p>为了简便表达基本思想，《算法（第四版）》书中给出的快速排序的代码不考虑输入数组乱序等预处理，并且每次切分只简单地选取子数组第一个元素作为切分点。作者在后面讨论了一些快速排序的高级改进，例如三取样切分等，还没时间仔细研究，等后面有空再回来补。</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">public class SortQuick extends Sort {
+
+    public static void sort(Comparable[] a) {
+        //StdRandom.shuffle(a);
+        sort(a, 0, (a.length - 1));
+    }
+
+    private static void sort(Comparable[] a, int lo, int hi) {
+        if (hi &lt;= lo) return;
+        int j = partition(a, lo, hi);
+        sort(a, lo, (j - 1));
+        sort(a, (j + 1), hi);
+    }
+
+    private static int partition(Comparable[] a, int lo, int hi) {
+        int i = lo, j = hi + 1;
+        Comparable v = a[lo];
+        while (true) {
+            while (less(a[++i], v)) if (i == hi) break;
+            while (less(v, a[--j])) if (j == lo) break;
+            if (i &gt;= j) break;
+            exchange(a, i, j);
+        }
+        exchange(a, lo, j);
+        return j;
+    }
+
+}
+</code></pre></div><p>六、（二叉）堆排序</p>
+<p>堆的定义：堆是一个数组，它可以被看成一个近似的完全二叉树，树上每个结点对应数组中的一个元素。当这棵树的每个结点都大于等于（或小于等于）它的两个孩子结点时，它被称为堆有序。父结点大于等于孩子借点时的堆称为最大堆，反之则称为最小堆。因为一个有序堆是一棵完全二叉树，因此堆中位置（即数组下标）为 $k$ 的结点，我们可以直接计算得知它的父结点位置为 $\frac{k}{2}$，它的两个孩子结点的位置为 $2k$ 和 $2k+1$。</p>
+<p>建堆：输入长度为 $n$ 的数组，就是最初始的无序的堆。为了方便计算，我们先预处理输入的数组：把输入数组复制到一个新建数组 $aux[n+1]$，从 $aux[1]$ 开始放入元素，这样就不用考虑下标为 $0$ 的情况，便于利用上面的父子结点位置公式。然后，从数组的中间位置开始，往左边扫描每个元素，并调用 $sink()$ 方法往下不断调整父子结点的相对位置，如果此堆是最大堆，那么 $sink()$ 方法会使小的结点下沉，大的结点上浮。当扫描完成，则可以保证每个子堆都是父结点大于两个孩子结点，此时堆有序，建堆完成。</p>
+<p>下沉排序：堆有序后，堆顶点那个元素即为数组最大元素。利用这个性质，只要在取出堆顶点后调整修复堆使其有序，然后不断重复取出堆顶点直到堆空，就可以得到有序的数组，即排序完成。那么如何取出顶点并修复堆呢？《算法（第四版）》给出的方案是，让堆顶点和堆的最后一个元素交换（其实就是取出顶点之后，用堆的最后一个元素补上，再修复），此时堆的大小减一，然后对新的顶点调用 $sink()$ 方法来修复堆的有序即可。如此这般，一直操作到堆的大小为0，则排序完成。如果该堆是最大堆，则排序的结果是升序，因为最先取出的顶点最大，放在数组最后面。</p>
+<p>建堆的时间复杂度为 $O(n)$（详细推导另写一篇博客）；对于排序，每次取堆顶的时间复杂度为 $O(1)$，把最后一个元素放到堆顶并从上到下修复堆的时间复杂度为 $O(log_2(n))$，由于完成排序共需取 $n$ 次堆顶，因此排序的时间复杂度为 $O(n \cdot log_2(n))$。</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">public class SortHeap extends Sort {
+
+    public static Comparable[] sort(Comparable[] a) {
+
+        int N = a.length;
+
+        Comparable[] aux = new Comparable[N + 1];// let index start from 1
+        for (int i = 0; i &lt; N; i++) {
+            aux[i + 1] = a[i];
+        }
+
+        for (int k = N / 2; k &gt;= 1; k--)
+            sink(aux, k, N);
+        while (N &gt; 1) {
+            exchange(aux, 1, N--);
+            sink(aux, 1, N);
+        }
+
+        return aux;
+    }
+
+    private static void sink(Comparable[] a, int k, int N) {
+        while (k * 2 &lt;= N) {
+            int j = k * 2;
+            if (j &lt; N &amp;&amp; less(a[j], a[j + 1]))
+                j++;
+            if (!less(a[k], a[j]))
+                break;
+            exchange(a, k, j);
+            k = j;
+        }
+    }
+
+}
+</code></pre></div><p>七、基于比较的排序算法的下界</p>
+<p>上面总结的选择排序、插入排序、希尔排序、归并排序、快速排序、堆排序都是基于元素两两比较决定相对位置的排序方式。这种基于比较的排序，最好的时间复杂度为 $O(n \cdot log_2(n))$。凡是基于比较的排序都不可能有比这更小的时间复杂度。理论证明参见《算法导论》第八章第一节：排序算法的下界。</p>
+
+      </div>
+
+
+      <footer>
+        
+
+
+        
+        
+        
+      </footer>
+    </article>
+
+    
+  </section>
+
+      </div>
+
+      <script type="text/javascript"
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+    </main>
+
+    
+
+    
+
+    <script>
+(function(f, a, t, h, o, m){
+	a[h]=a[h]||function(){
+		(a[h].q=a[h].q||[]).push(arguments)
+	};
+	o=f.createElement('script'),
+	m=f.getElementsByTagName('script')[0];
+	o.async=1; o.src=t; o.id='fathom-script';
+	m.parentNode.insertBefore(o,m)
+})(document, window, '//analytics.example.com/tracker.js', 'fathom');
+fathom('set', 'siteId', 'ABCDE');
+fathom('trackPageview');
+</script>
+
+
+  </body>
+
+</html>

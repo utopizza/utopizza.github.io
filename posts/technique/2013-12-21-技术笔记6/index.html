@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Language" content="en">
+
+    <meta name="author" content="Yusheng Wang">
+    <meta name="description" content="刚学ASP.NET时用的比较多的一个简单版的SqlHelper：
+using System; using System.Configuration; using System.Data; using System.Data.SqlClient; using System.Collections; namespace TICSystemCommon { public abstract class SqlHelper { //Database connection strings public static readonly string ConnectionStringShop = ConfigurationManager.ConnectionStrings[&#34;ConnectionString&#34;].ConnectionString; /// &lt;param name=&#34;connectionString&#34;&gt;a valid connection string for a SqlConnection&lt;/param&gt; /// &lt;param name=&#34;commandType&#34;&gt;the CommandType (stored procedure, text, etc.)&lt;/param&gt; /// &lt;param name=&#34;commandText&#34;&gt;the stored procedure name or T-SQL command&lt;/param&gt; /// &lt;param name=&#34;commandParameters&#34;&gt;an array of SqlParamters used to execute the command&lt;/param&gt; /// &lt;returns&gt;an int representing the number of rows affected by the command&lt;/returns&gt; public static int ExecuteNonQuery(string connectionString, CommandType cmdType, string cmdText, params SqlParameter[] commandParameters) { SqlCommand cmd = new SqlCommand(); using (SqlConnection conn = new SqlConnection(connectionString)) { PrepareCommand(cmd, conn, null, cmdType, cmdText, commandParameters); int val = cmd.">
+    <meta name="keywords" content="blog,developer,personal">
+
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="技术笔记(6)-SqlHelper"/>
+<meta name="twitter:description" content="刚学ASP.NET时用的比较多的一个简单版的SqlHelper：
+using System; using System.Configuration; using System.Data; using System.Data.SqlClient; using System.Collections; namespace TICSystemCommon { public abstract class SqlHelper { //Database connection strings public static readonly string ConnectionStringShop = ConfigurationManager.ConnectionStrings[&#34;ConnectionString&#34;].ConnectionString; /// &lt;param name=&#34;connectionString&#34;&gt;a valid connection string for a SqlConnection&lt;/param&gt; /// &lt;param name=&#34;commandType&#34;&gt;the CommandType (stored procedure, text, etc.)&lt;/param&gt; /// &lt;param name=&#34;commandText&#34;&gt;the stored procedure name or T-SQL command&lt;/param&gt; /// &lt;param name=&#34;commandParameters&#34;&gt;an array of SqlParamters used to execute the command&lt;/param&gt; /// &lt;returns&gt;an int representing the number of rows affected by the command&lt;/returns&gt; public static int ExecuteNonQuery(string connectionString, CommandType cmdType, string cmdText, params SqlParameter[] commandParameters) { SqlCommand cmd = new SqlCommand(); using (SqlConnection conn = new SqlConnection(connectionString)) { PrepareCommand(cmd, conn, null, cmdType, cmdText, commandParameters); int val = cmd."/>
+
+    <meta property="og:title" content="技术笔记(6)-SqlHelper" />
+<meta property="og:description" content="刚学ASP.NET时用的比较多的一个简单版的SqlHelper：
+using System; using System.Configuration; using System.Data; using System.Data.SqlClient; using System.Collections; namespace TICSystemCommon { public abstract class SqlHelper { //Database connection strings public static readonly string ConnectionStringShop = ConfigurationManager.ConnectionStrings[&#34;ConnectionString&#34;].ConnectionString; /// &lt;param name=&#34;connectionString&#34;&gt;a valid connection string for a SqlConnection&lt;/param&gt; /// &lt;param name=&#34;commandType&#34;&gt;the CommandType (stored procedure, text, etc.)&lt;/param&gt; /// &lt;param name=&#34;commandText&#34;&gt;the stored procedure name or T-SQL command&lt;/param&gt; /// &lt;param name=&#34;commandParameters&#34;&gt;an array of SqlParamters used to execute the command&lt;/param&gt; /// &lt;returns&gt;an int representing the number of rows affected by the command&lt;/returns&gt; public static int ExecuteNonQuery(string connectionString, CommandType cmdType, string cmdText, params SqlParameter[] commandParameters) { SqlCommand cmd = new SqlCommand(); using (SqlConnection conn = new SqlConnection(connectionString)) { PrepareCommand(cmd, conn, null, cmdType, cmdText, commandParameters); int val = cmd." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://utopizza.github.io/posts/technique/2013-12-21-%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B06/" />
+<meta property="article:published_time" content="2013-12-21T17:44:00+00:00" />
+<meta property="article:modified_time" content="2013-12-21T17:44:00+00:00" />
+
+
+    
+      <base href="https://utopizza.github.io/posts/technique/2013-12-21-%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B06/">
+    
+    <title>
+  技术笔记(6)-SqlHelper · Utopizza
+</title>
+
+    
+      <link rel="canonical" href="https://utopizza.github.io/posts/technique/2013-12-21-%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B06/">
+    
+
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700%7CMerriweather:300,700%7CSource+Code+Pro:400,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.13.0/css/all.css" integrity="sha384-Bfad6CLCknfcloXFOyFnlgtENryhrpZCe29RTifKEixXQZ38WheV+i/6YWSzkz3V" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" integrity="sha256-l85OmPOjvil/SOvVt3HnSSjzF1TUMyT9eV0c2BzEGzU=" crossorigin="anonymous" />
+
+    
+      
+      
+      <link rel="stylesheet" href="https://utopizza.github.io/css/coder.min.a4f332213a21ce8eb521670c614470c58923aaaf385e2a73982c31dd7642decb.css" integrity="sha256-pPMyITohzo61IWcMYURwxYkjqq84XipzmCwx3XZC3ss=" crossorigin="anonymous" media="screen" />
+    
+
+    
+
+    
+      
+        
+        
+        <link rel="stylesheet" href="https://utopizza.github.io/css/coder-dark.min.e78e80fc3a585a4d1c8fc7f58623b6ff852411e38431a9cd1792877ecaa160f6.css" integrity="sha256-546A/DpYWk0cj8f1hiO2/4UkEeOEManNF5KHfsqhYPY=" crossorigin="anonymous" media="screen" />
+      
+    
+
+    
+
+    
+
+    <link rel="icon" type="image/png" href="https://utopizza.github.io/images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="https://utopizza.github.io/images/favicon-16x16.png" sizes="16x16">
+
+    <meta name="generator" content="Hugo 0.69.2" />
+  </head>
+
+  
+  
+    
+  
+  <body class="colorscheme-auto">
+    <main class="wrapper">
+      <nav class="navigation">
+  <section class="container">
+    <a class="navigation-title" href="https://utopizza.github.io/">
+      Utopizza
+    </a>
+    
+    <input type="checkbox" id="menu-toggle" />
+    <label class="menu-button float-right" for="menu-toggle"><i class="fas fa-bars"></i></label>
+    <ul class="navigation-list">
+      
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/about/">About</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/posts/">Blog</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/projects/">Projects</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/contact/">Contact me</a>
+          </li>
+        
+      
+      
+    </ul>
+    
+  </section>
+</nav>
+
+
+      <div class="content">
+        
+  <section class="container post">
+    <article>
+      <header>
+        <div class="post-title">
+          <h1 class="title">技术笔记(6)-SqlHelper</h1>
+        </div>
+        <div class="post-meta">
+          <div class="date">
+            <span class="posted-on">
+              <i class="fas fa-calendar"></i>
+              <time datetime='2013-12-21T17:44:00Z'>
+                December 21, 2013
+              </time>
+            </span>
+            <span class="reading-time">
+              <i class="fas fa-clock"></i>
+              3-minute read
+            </span>
+          </div>
+          <div class="categories">
+  <i class="fas fa-folder"></i>
+    <a href="https://utopizza.github.io/categories/technology/">Technology</a></div>
+
+          
+        </div>
+      </header>
+
+      <div>
+        
+        <p>刚学ASP.NET时用的比较多的一个简单版的SqlHelper：</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">using System;
+using System.Configuration;
+using System.Data;
+using System.Data.SqlClient;
+using System.Collections;
+
+namespace TICSystemCommon 
+{
+    public abstract class SqlHelper
+    {
+        //Database connection strings
+        public static readonly string ConnectionStringShop = ConfigurationManager.ConnectionStrings[&#34;ConnectionString&#34;].ConnectionString;
+
+        /// &lt;param name=&#34;connectionString&#34;&gt;a valid connection string for a SqlConnection&lt;/param&gt;
+        /// &lt;param name=&#34;commandType&#34;&gt;the CommandType (stored procedure, text, etc.)&lt;/param&gt;
+        /// &lt;param name=&#34;commandText&#34;&gt;the stored procedure name or T-SQL command&lt;/param&gt;
+        /// &lt;param name=&#34;commandParameters&#34;&gt;an array of SqlParamters used to execute the command&lt;/param&gt;
+        /// &lt;returns&gt;an int representing the number of rows affected by the command&lt;/returns&gt;
+        public static int ExecuteNonQuery(string connectionString, CommandType cmdType, string cmdText, params SqlParameter[] commandParameters)
+        {
+            SqlCommand cmd = new SqlCommand();
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                PrepareCommand(cmd, conn, null, cmdType, cmdText, commandParameters);
+                int val = cmd.ExecuteNonQuery();
+                //cmd.Parameters.Clear();
+                return val;
+            }
+        }
+
+        /// &lt;param name=&#34;connectionString&#34;&gt;a valid connection string for a SqlConnection&lt;/param&gt;
+        /// &lt;param name=&#34;commandType&#34;&gt;the CommandType (stored procedure, text, etc.)&lt;/param&gt;
+        /// &lt;param name=&#34;commandText&#34;&gt;the stored procedure name or T-SQL command&lt;/param&gt;
+        /// &lt;param name=&#34;commandParameters&#34;&gt;an array of SqlParamters used to execute the command&lt;/param&gt;
+        /// &lt;returns&gt;A SqlDataReader containing the results&lt;/returns&gt;
+        public static SqlDataReader ExecuteReader(string connectionString, CommandType cmdType, string cmdText, params SqlParameter[] commandParameters)
+        {
+            SqlCommand cmd = new SqlCommand();
+            SqlConnection conn = new SqlConnection(connectionString);
+
+            // we use a try/catch here because if the method throws an exception we want to 
+            // close the connection throw code, because no datareader will exist, hence the 
+            // commandBehaviour.CloseConnection will not work
+            try
+            {
+                PrepareCommand(cmd, conn, null, cmdType, cmdText, commandParameters);
+                SqlDataReader rdr = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+                //cmd.Parameters.Clear();
+                return rdr;
+            }
+            catch(Exception e)
+            {
+                conn.Close();
+                throw e;
+            }
+        }
+
+        /// &lt;param name=&#34;connectionString&#34;&gt;a valid connection string for a SqlConnection&lt;/param&gt;
+        /// &lt;param name=&#34;commandType&#34;&gt;the CommandType (stored procedure, text, etc.)&lt;/param&gt;
+        /// &lt;param name=&#34;commandText&#34;&gt;the stored procedure name or T-SQL command&lt;/param&gt;
+        /// &lt;param name=&#34;commandParameters&#34;&gt;an array of SqlParamters used to execute the command&lt;/param&gt;
+        /// &lt;returns&gt; the first column of the first record against an existing database connection&lt;/returns&gt;
+        public static object ExecuteScalar(string connectionString, CommandType cmdType, string cmdText, params SqlParameter[] commandParameters)
+        {
+            SqlCommand cmd = new SqlCommand();
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                PrepareCommand(cmd, connection, null, cmdType, cmdText, commandParameters);
+                object val = cmd.ExecuteScalar();
+                cmd.Parameters.Clear();
+                return val;
+            }
+        }
+
+        /// &lt;summary&gt;
+        /// Prepare a command for execution
+        /// &lt;/summary&gt;
+        /// &lt;param name=&#34;cmd&#34;&gt;SqlCommand object&lt;/param&gt;
+        /// &lt;param name=&#34;conn&#34;&gt;SqlConnection object&lt;/param&gt;
+        /// &lt;param name=&#34;trans&#34;&gt;SqlTransaction object&lt;/param&gt;
+        /// &lt;param name=&#34;cmdType&#34;&gt;Cmd type e.g. stored procedure or text&lt;/param&gt;
+        /// &lt;param name=&#34;cmdText&#34;&gt;Command text, e.g. Select * from Products&lt;/param&gt;
+        /// &lt;param name=&#34;cmdParms&#34;&gt;SqlParameters to use in the command&lt;/param&gt;
+        private static void PrepareCommand(SqlCommand cmd, SqlConnection conn, SqlTransaction trans, CommandType cmdType, string cmdText, SqlParameter[] cmdParms)
+        {
+
+            if (conn.State != ConnectionState.Open)
+                conn.Open();
+
+            cmd.Connection = conn;
+            cmd.CommandText = cmdText;
+
+            if (trans != null)
+                cmd.Transaction = trans;
+
+            cmd.CommandType = cmdType;
+
+            if (cmdParms != null)
+            {
+                foreach (SqlParameter parm in cmdParms)
+                    cmd.Parameters.Add(parm);
+            }
+        }
+    
+    
+    }
+}
+</code></pre></div><p>在DAL层调用SqlHelper：</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">using System.Text;
+using TICSystemCommon;
+using TICSystemModel;
+using System.Data;
+using System.Data.SqlClient;
+
+namespace TICSystemDAL
+{
+    public class AccidentInfoDal
+    {
+        
+        public AccidentInfoModel GetAccidentInfoByAccidentId(int AccidentId)
+        {
+            AccidentInfoModel AccidentInfo = new AccidentInfoModel();
+            string sql = &#34;Proc_GetAccidentInfoByAccidentId&#34;;
+            DataTable dt = new DataTable();
+            SqlParameter[] para = new SqlParameter[]
+            {
+                new SqlParameter(&#34;@AccidentId&#34;,AccidentId)
+            };
+            try
+            {
+                using (SqlDataReader dr = SqlHelper.ExecuteReader(SqlHelper.ConnectionStringShop, CommandType.StoredProcedure, sql, para))
+                {
+                    if (dr.Read())
+                    {
+                        AccidentInfo.AccidentId = Convert.ToInt32(dr[&#34;AccidentId&#34;].ToString());
+                        AccidentInfo.AccidentPlace = dr[&#34;AccidentPlace&#34;].ToString();
+                        AccidentInfo.AccidentTime = dr[&#34;AccidentTime&#34;].ToString();
+                        AccidentInfo.PersonName = dr[&#34;PersonName&#34;].ToString();
+                        AccidentInfo.PersonPhone = dr[&#34;PersonPhone&#34;].ToString();
+                        AccidentInfo.CarNumber = dr[&#34;CarNumber&#34;].ToString();
+                        AccidentInfo.IsDealed = Convert.ToBoolean(dr[&#34;IsDealed&#34;].ToString());
+                    }
+                }
+                return AccidentInfo;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }       
+        
+    }
+}
+</code></pre></div><p>这里有个帖子说如果项目中需要考虑多线程并发和事务，则不能把数据库操作类设置成static，而是应该进行实例化来调用：</p>
+<p><a href="http://www.cnblogs.com/cyq1162/p/5745325.html?utm_source=tuicool&amp;utm_medium=referral#!comments">不该活着的SqlHelper和DBHelper</a></p>
+
+      </div>
+
+
+      <footer>
+        
+
+
+        
+        
+        
+      </footer>
+    </article>
+
+    
+  </section>
+
+      </div>
+
+      <script type="text/javascript"
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+    </main>
+
+    
+
+    
+
+    <script>
+(function(f, a, t, h, o, m){
+	a[h]=a[h]||function(){
+		(a[h].q=a[h].q||[]).push(arguments)
+	};
+	o=f.createElement('script'),
+	m=f.getElementsByTagName('script')[0];
+	o.async=1; o.src=t; o.id='fathom-script';
+	m.parentNode.insertBefore(o,m)
+})(document, window, '//analytics.example.com/tracker.js', 'fathom');
+fathom('set', 'siteId', 'ABCDE');
+fathom('trackPageview');
+</script>
+
+
+  </body>
+
+</html>

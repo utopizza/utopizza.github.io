@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Language" content="en">
+
+    <meta name="author" content="Yusheng Wang">
+    <meta name="description" content="一、提升方法（boosting）
+提升方法主要用于分类问题，它的基本思想是，通过改变训练样本的权重，学习多个不同的分类器，最后把这些基本分类器（也称弱分类器）通过线性组合，得到最终的强分类器。
+这里所谓的提升，通俗地说其实就是将一个分类问题交给多个分类器来处理，“对于一个复杂任务来说，将多个专家的判断进行适当的综合，得出的最终判断，要比任何一个专家单独的判断要好”。虽然每一个弱分类器都是只是一个窄领域的专家，但是把一系列这样的弱分类组合到一起，得到的分类能力并不比单个强分类器差。而且直接学习一个强分类器远比学习一个弱分类器难。
+目前大多数提升方法是通过不断改变训练数据的概率分布（样本权重分布）来不断学习出一系列弱分类器。那么这样需要确定两个问题：
+ 在每一轮如何改变训练样本的权值或者概率分布 如何将这些弱分类器组合成一个强分类器  提升方法中的代表性算法有 Adaboost 算法，它的做法是：
+ 在每一轮学习后，提高前一轮学习中被错误分类的样本的权值，降低前一轮学习中被正确分类的样本的权值。这样，后面学习的分类器将会专注于前面的分类器不能很好处理的那些样本，弥补了前面的分类器的不足（窄领域）。举个例子，小明和小红在学习分类一堆水果，小明先学习，他在学习分类的时候由于精力和时间有限，在一轮学习后，小明只能很好地对体积大的水果进行分类，对那些体积小的水果经常分错类。然后到小红学习的时候，为了保证两个人最终能够把这堆水果都正确分类，那么聪明的小红应该知道，自己应该专注于对那些小明不擅长的体积小的水果进行学习，因为如果小明能够很好地分类体积大的水果，而自己能够很好地分类体积小的水果，那么两个人组合互补起来得到的分类能力，远比两个人都强行学习对所有水果分类的效果好得多。 对于弱分类器的组合，Adaboost 采取加权多数表决的方法，即加大分类误差小的弱分类器的权值，使其在最终表决的时候起较大作用，减小分类误差较大的弱分类器的权值，使其在最终表决中起较小作用。这个很容易理解，谁分类的误差小、准确度高，当然谁在最终的表决里就有更大的话语权了。  二、Adaboost 算法
+算法目标：给定一个二分类的训练数据集 $T={(x_1,y_1),(x_2,y_2),\cdots,(x_N,y_N)}$，其中 $x_i \in R^n$ 是样本实例，$y_i \in {-1,&#43;1}$ 是样本类别标记。本算法目标是从该训练数据集中，学习出 $M$ 个弱分类器，最后将这些弱分类器通过线性组合，得到最终的一个强分类器。
+输入：训练数据集 $T$，弱学习算法 输出：最终分类器 $G(x)$
+1、初始化训练集 $N$ 个样本的权重分布
+$$D_1=(w_{1,1},\cdots,w_{1,i},\cdots,w_{1,N})$$
+$$w_{1,i}=\frac{1}{N}，i=1,2,\cdots,N$$
+2、对 $M$ 个分类器，开展对应的 $m=1,2,\cdots,M$ 轮学习。对第 $m$ 轮学习：
+(1)、用训练数据集 $T$、第 $m$ 轮的样本权重 $D_m$、和弱分类器学习算法，学习得到第 $m$ 个弱分类器
+$$G_m(x):X \to {-1,&#43;1}$$
+(2)、计算 $G_m(x)$ 在训练集上的分类误差率
+$$e_m=P(G_m(x_i) \neq y_i)=\sum_{i=1}^{N}w_{m,i}I(G_m(x_i) \neq y_i)$$
+(3)、计算 $G_m(x)$ 的权重
+$$\alpha_m=\frac{1}{2}\ln(\frac{1}{e_m}-1)$$
+(4)、计算下一轮学习的样本权重分布
+$$D_{m&#43;1}=(w_{m&#43;1,1},\cdots,w_{m&#43;1,i},\cdots,w_{m&#43;1,N})$$
+$$ w_{m&#43;1,i}=\frac {w_{m,i} \cdot e^{-\alpha_m y_i G_m(x_i)}} {\sum_{i=1}^{N} w_{m,i} \cdot e^{-\alpha_m y_i G_m(x_i)}} ，i=1,2,\cdots,N $$">
+    <meta name="keywords" content="blog,developer,personal">
+
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Adaboost算法"/>
+<meta name="twitter:description" content="一、提升方法（boosting）
+提升方法主要用于分类问题，它的基本思想是，通过改变训练样本的权重，学习多个不同的分类器，最后把这些基本分类器（也称弱分类器）通过线性组合，得到最终的强分类器。
+这里所谓的提升，通俗地说其实就是将一个分类问题交给多个分类器来处理，“对于一个复杂任务来说，将多个专家的判断进行适当的综合，得出的最终判断，要比任何一个专家单独的判断要好”。虽然每一个弱分类器都是只是一个窄领域的专家，但是把一系列这样的弱分类组合到一起，得到的分类能力并不比单个强分类器差。而且直接学习一个强分类器远比学习一个弱分类器难。
+目前大多数提升方法是通过不断改变训练数据的概率分布（样本权重分布）来不断学习出一系列弱分类器。那么这样需要确定两个问题：
+ 在每一轮如何改变训练样本的权值或者概率分布 如何将这些弱分类器组合成一个强分类器  提升方法中的代表性算法有 Adaboost 算法，它的做法是：
+ 在每一轮学习后，提高前一轮学习中被错误分类的样本的权值，降低前一轮学习中被正确分类的样本的权值。这样，后面学习的分类器将会专注于前面的分类器不能很好处理的那些样本，弥补了前面的分类器的不足（窄领域）。举个例子，小明和小红在学习分类一堆水果，小明先学习，他在学习分类的时候由于精力和时间有限，在一轮学习后，小明只能很好地对体积大的水果进行分类，对那些体积小的水果经常分错类。然后到小红学习的时候，为了保证两个人最终能够把这堆水果都正确分类，那么聪明的小红应该知道，自己应该专注于对那些小明不擅长的体积小的水果进行学习，因为如果小明能够很好地分类体积大的水果，而自己能够很好地分类体积小的水果，那么两个人组合互补起来得到的分类能力，远比两个人都强行学习对所有水果分类的效果好得多。 对于弱分类器的组合，Adaboost 采取加权多数表决的方法，即加大分类误差小的弱分类器的权值，使其在最终表决的时候起较大作用，减小分类误差较大的弱分类器的权值，使其在最终表决中起较小作用。这个很容易理解，谁分类的误差小、准确度高，当然谁在最终的表决里就有更大的话语权了。  二、Adaboost 算法
+算法目标：给定一个二分类的训练数据集 $T={(x_1,y_1),(x_2,y_2),\cdots,(x_N,y_N)}$，其中 $x_i \in R^n$ 是样本实例，$y_i \in {-1,&#43;1}$ 是样本类别标记。本算法目标是从该训练数据集中，学习出 $M$ 个弱分类器，最后将这些弱分类器通过线性组合，得到最终的一个强分类器。
+输入：训练数据集 $T$，弱学习算法 输出：最终分类器 $G(x)$
+1、初始化训练集 $N$ 个样本的权重分布
+$$D_1=(w_{1,1},\cdots,w_{1,i},\cdots,w_{1,N})$$
+$$w_{1,i}=\frac{1}{N}，i=1,2,\cdots,N$$
+2、对 $M$ 个分类器，开展对应的 $m=1,2,\cdots,M$ 轮学习。对第 $m$ 轮学习：
+(1)、用训练数据集 $T$、第 $m$ 轮的样本权重 $D_m$、和弱分类器学习算法，学习得到第 $m$ 个弱分类器
+$$G_m(x):X \to {-1,&#43;1}$$
+(2)、计算 $G_m(x)$ 在训练集上的分类误差率
+$$e_m=P(G_m(x_i) \neq y_i)=\sum_{i=1}^{N}w_{m,i}I(G_m(x_i) \neq y_i)$$
+(3)、计算 $G_m(x)$ 的权重
+$$\alpha_m=\frac{1}{2}\ln(\frac{1}{e_m}-1)$$
+(4)、计算下一轮学习的样本权重分布
+$$D_{m&#43;1}=(w_{m&#43;1,1},\cdots,w_{m&#43;1,i},\cdots,w_{m&#43;1,N})$$
+$$ w_{m&#43;1,i}=\frac {w_{m,i} \cdot e^{-\alpha_m y_i G_m(x_i)}} {\sum_{i=1}^{N} w_{m,i} \cdot e^{-\alpha_m y_i G_m(x_i)}} ，i=1,2,\cdots,N $$"/>
+
+    <meta property="og:title" content="Adaboost算法" />
+<meta property="og:description" content="一、提升方法（boosting）
+提升方法主要用于分类问题，它的基本思想是，通过改变训练样本的权重，学习多个不同的分类器，最后把这些基本分类器（也称弱分类器）通过线性组合，得到最终的强分类器。
+这里所谓的提升，通俗地说其实就是将一个分类问题交给多个分类器来处理，“对于一个复杂任务来说，将多个专家的判断进行适当的综合，得出的最终判断，要比任何一个专家单独的判断要好”。虽然每一个弱分类器都是只是一个窄领域的专家，但是把一系列这样的弱分类组合到一起，得到的分类能力并不比单个强分类器差。而且直接学习一个强分类器远比学习一个弱分类器难。
+目前大多数提升方法是通过不断改变训练数据的概率分布（样本权重分布）来不断学习出一系列弱分类器。那么这样需要确定两个问题：
+ 在每一轮如何改变训练样本的权值或者概率分布 如何将这些弱分类器组合成一个强分类器  提升方法中的代表性算法有 Adaboost 算法，它的做法是：
+ 在每一轮学习后，提高前一轮学习中被错误分类的样本的权值，降低前一轮学习中被正确分类的样本的权值。这样，后面学习的分类器将会专注于前面的分类器不能很好处理的那些样本，弥补了前面的分类器的不足（窄领域）。举个例子，小明和小红在学习分类一堆水果，小明先学习，他在学习分类的时候由于精力和时间有限，在一轮学习后，小明只能很好地对体积大的水果进行分类，对那些体积小的水果经常分错类。然后到小红学习的时候，为了保证两个人最终能够把这堆水果都正确分类，那么聪明的小红应该知道，自己应该专注于对那些小明不擅长的体积小的水果进行学习，因为如果小明能够很好地分类体积大的水果，而自己能够很好地分类体积小的水果，那么两个人组合互补起来得到的分类能力，远比两个人都强行学习对所有水果分类的效果好得多。 对于弱分类器的组合，Adaboost 采取加权多数表决的方法，即加大分类误差小的弱分类器的权值，使其在最终表决的时候起较大作用，减小分类误差较大的弱分类器的权值，使其在最终表决中起较小作用。这个很容易理解，谁分类的误差小、准确度高，当然谁在最终的表决里就有更大的话语权了。  二、Adaboost 算法
+算法目标：给定一个二分类的训练数据集 $T={(x_1,y_1),(x_2,y_2),\cdots,(x_N,y_N)}$，其中 $x_i \in R^n$ 是样本实例，$y_i \in {-1,&#43;1}$ 是样本类别标记。本算法目标是从该训练数据集中，学习出 $M$ 个弱分类器，最后将这些弱分类器通过线性组合，得到最终的一个强分类器。
+输入：训练数据集 $T$，弱学习算法 输出：最终分类器 $G(x)$
+1、初始化训练集 $N$ 个样本的权重分布
+$$D_1=(w_{1,1},\cdots,w_{1,i},\cdots,w_{1,N})$$
+$$w_{1,i}=\frac{1}{N}，i=1,2,\cdots,N$$
+2、对 $M$ 个分类器，开展对应的 $m=1,2,\cdots,M$ 轮学习。对第 $m$ 轮学习：
+(1)、用训练数据集 $T$、第 $m$ 轮的样本权重 $D_m$、和弱分类器学习算法，学习得到第 $m$ 个弱分类器
+$$G_m(x):X \to {-1,&#43;1}$$
+(2)、计算 $G_m(x)$ 在训练集上的分类误差率
+$$e_m=P(G_m(x_i) \neq y_i)=\sum_{i=1}^{N}w_{m,i}I(G_m(x_i) \neq y_i)$$
+(3)、计算 $G_m(x)$ 的权重
+$$\alpha_m=\frac{1}{2}\ln(\frac{1}{e_m}-1)$$
+(4)、计算下一轮学习的样本权重分布
+$$D_{m&#43;1}=(w_{m&#43;1,1},\cdots,w_{m&#43;1,i},\cdots,w_{m&#43;1,N})$$
+$$ w_{m&#43;1,i}=\frac {w_{m,i} \cdot e^{-\alpha_m y_i G_m(x_i)}} {\sum_{i=1}^{N} w_{m,i} \cdot e^{-\alpha_m y_i G_m(x_i)}} ，i=1,2,\cdots,N $$" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://utopizza.github.io/posts/machinelearning/2017-11-22-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-adaboost%E7%AE%97%E6%B3%95/" />
+<meta property="article:published_time" content="2017-11-22T14:17:00+00:00" />
+<meta property="article:modified_time" content="2017-11-22T14:17:00+00:00" />
+
+
+    
+      <base href="https://utopizza.github.io/posts/machinelearning/2017-11-22-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-adaboost%E7%AE%97%E6%B3%95/">
+    
+    <title>
+  Adaboost算法 · Utopizza
+</title>
+
+    
+      <link rel="canonical" href="https://utopizza.github.io/posts/machinelearning/2017-11-22-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-adaboost%E7%AE%97%E6%B3%95/">
+    
+
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700%7CMerriweather:300,700%7CSource+Code+Pro:400,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.13.0/css/all.css" integrity="sha384-Bfad6CLCknfcloXFOyFnlgtENryhrpZCe29RTifKEixXQZ38WheV+i/6YWSzkz3V" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" integrity="sha256-l85OmPOjvil/SOvVt3HnSSjzF1TUMyT9eV0c2BzEGzU=" crossorigin="anonymous" />
+
+    
+      
+      
+      <link rel="stylesheet" href="https://utopizza.github.io/css/coder.min.a4f332213a21ce8eb521670c614470c58923aaaf385e2a73982c31dd7642decb.css" integrity="sha256-pPMyITohzo61IWcMYURwxYkjqq84XipzmCwx3XZC3ss=" crossorigin="anonymous" media="screen" />
+    
+
+    
+
+    
+      
+        
+        
+        <link rel="stylesheet" href="https://utopizza.github.io/css/coder-dark.min.e78e80fc3a585a4d1c8fc7f58623b6ff852411e38431a9cd1792877ecaa160f6.css" integrity="sha256-546A/DpYWk0cj8f1hiO2/4UkEeOEManNF5KHfsqhYPY=" crossorigin="anonymous" media="screen" />
+      
+    
+
+    
+
+    
+
+    <link rel="icon" type="image/png" href="https://utopizza.github.io/images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="https://utopizza.github.io/images/favicon-16x16.png" sizes="16x16">
+
+    <meta name="generator" content="Hugo 0.69.2" />
+  </head>
+
+  
+  
+    
+  
+  <body class="colorscheme-auto">
+    <main class="wrapper">
+      <nav class="navigation">
+  <section class="container">
+    <a class="navigation-title" href="https://utopizza.github.io/">
+      Utopizza
+    </a>
+    
+    <input type="checkbox" id="menu-toggle" />
+    <label class="menu-button float-right" for="menu-toggle"><i class="fas fa-bars"></i></label>
+    <ul class="navigation-list">
+      
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/about/">About</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/posts/">Blog</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/projects/">Projects</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/contact/">Contact me</a>
+          </li>
+        
+      
+      
+    </ul>
+    
+  </section>
+</nav>
+
+
+      <div class="content">
+        
+  <section class="container post">
+    <article>
+      <header>
+        <div class="post-title">
+          <h1 class="title">Adaboost算法</h1>
+        </div>
+        <div class="post-meta">
+          <div class="date">
+            <span class="posted-on">
+              <i class="fas fa-calendar"></i>
+              <time datetime='2017-11-22T14:17:00Z'>
+                November 22, 2017
+              </time>
+            </span>
+            <span class="reading-time">
+              <i class="fas fa-clock"></i>
+              1-minute read
+            </span>
+          </div>
+          <div class="categories">
+  <i class="fas fa-folder"></i>
+    <a href="https://utopizza.github.io/categories/machinelearning/">MachineLearning</a></div>
+
+          
+        </div>
+      </header>
+
+      <div>
+        
+        <p>一、提升方法（boosting）</p>
+<p>提升方法主要用于分类问题，它的基本思想是，通过改变训练样本的权重，学习多个不同的分类器，最后把这些基本分类器（也称弱分类器）通过线性组合，得到最终的强分类器。</p>
+<p>这里所谓的提升，通俗地说其实就是将一个分类问题交给多个分类器来处理，“对于一个复杂任务来说，将多个专家的判断进行适当的综合，得出的最终判断，要比任何一个专家单独的判断要好”。虽然每一个弱分类器都是只是一个窄领域的专家，但是把一系列这样的弱分类组合到一起，得到的分类能力并不比单个强分类器差。而且直接学习一个强分类器远比学习一个弱分类器难。</p>
+<p>目前大多数提升方法是通过不断改变训练数据的概率分布（样本权重分布）来不断学习出一系列弱分类器。那么这样需要确定两个问题：</p>
+<ol>
+<li>在每一轮如何改变训练样本的权值或者概率分布</li>
+<li>如何将这些弱分类器组合成一个强分类器</li>
+</ol>
+<p>提升方法中的代表性算法有 Adaboost 算法，它的做法是：</p>
+<ol>
+<li>在每一轮学习后，提高前一轮学习中被错误分类的样本的权值，降低前一轮学习中被正确分类的样本的权值。这样，后面学习的分类器将会专注于前面的分类器不能很好处理的那些样本，弥补了前面的分类器的不足（窄领域）。举个例子，小明和小红在学习分类一堆水果，小明先学习，他在学习分类的时候由于精力和时间有限，在一轮学习后，小明只能很好地对体积大的水果进行分类，对那些体积小的水果经常分错类。然后到小红学习的时候，为了保证两个人最终能够把这堆水果都正确分类，那么聪明的小红应该知道，自己应该专注于对那些小明不擅长的体积小的水果进行学习，因为如果小明能够很好地分类体积大的水果，而自己能够很好地分类体积小的水果，那么两个人组合互补起来得到的分类能力，远比两个人都强行学习对所有水果分类的效果好得多。</li>
+<li>对于弱分类器的组合，Adaboost 采取加权多数表决的方法，即加大分类误差小的弱分类器的权值，使其在最终表决的时候起较大作用，减小分类误差较大的弱分类器的权值，使其在最终表决中起较小作用。这个很容易理解，谁分类的误差小、准确度高，当然谁在最终的表决里就有更大的话语权了。</li>
+</ol>
+<p>二、Adaboost 算法</p>
+<p>算法目标：给定一个二分类的训练数据集 $T={(x_1,y_1),(x_2,y_2),\cdots,(x_N,y_N)}$，其中 $x_i \in R^n$ 是样本实例，$y_i \in {-1,+1}$ 是样本类别标记。本算法目标是从该训练数据集中，学习出 $M$ 个弱分类器，最后将这些弱分类器通过<strong>线性组合</strong>，得到最终的一个强分类器。</p>
+<p>输入：训练数据集 $T$，弱学习算法
+输出：最终分类器 $G(x)$</p>
+<p>1、初始化训练集 $N$ 个样本的权重分布</p>
+<p>$$D_1=(w_{1,1},\cdots,w_{1,i},\cdots,w_{1,N})$$</p>
+<p>$$w_{1,i}=\frac{1}{N}，i=1,2,\cdots,N$$</p>
+<p>2、对 $M$ 个分类器，开展对应的 $m=1,2,\cdots,M$ 轮学习。对第 $m$ 轮学习：</p>
+<p>(1)、用训练数据集 $T$、第 $m$ 轮的样本权重 $D_m$、和弱分类器学习算法，学习得到第 $m$ 个弱分类器</p>
+<p>$$G_m(x):X \to {-1,+1}$$</p>
+<p>(2)、计算 $G_m(x)$ 在训练集上的分类误差率</p>
+<p>$$e_m=P(G_m(x_i) \neq y_i)=\sum_{i=1}^{N}w_{m,i}I(G_m(x_i) \neq y_i)$$</p>
+<p>(3)、计算 $G_m(x)$ 的权重</p>
+<p>$$\alpha_m=\frac{1}{2}\ln(\frac{1}{e_m}-1)$$</p>
+<p>(4)、计算下一轮学习的样本权重分布</p>
+<p>$$D_{m+1}=(w_{m+1,1},\cdots,w_{m+1,i},\cdots,w_{m+1,N})$$</p>
+<p>$$
+w_{m+1,i}=\frac
+{w_{m,i} \cdot e^{-\alpha_m y_i G_m(x_i)}}
+{\sum_{i=1}^{N} w_{m,i} \cdot e^{-\alpha_m y_i G_m(x_i)}}
+，i=1,2,\cdots,N
+$$</p>
+<p>3、执行完 $M$ 轮学习后，得到 $M$ 个弱分类器 $G_1(x),G_2(x),\cdots,G_M(x)$，通过线性组合得到最终表决</p>
+<p>$$f(x)=\sum_{m=1}^{M} \alpha_m \cdot G_m(x)$$</p>
+<p>加上符号函数 $sign()$，从而得到最终分类器</p>
+<p>$$G(x)=sign(f(x))=sign \left( \sum_{m=1}^{M} \alpha_m \cdot G_m(x) \right)$$</p>
+<p>三、Adaboost 的解释</p>
+<p>Adaboost 算法是模型为<strong>加法模型</strong>、损失函数为<strong>指数函数</strong>、学习算法为<strong>前向分步算法</strong>时的<strong>二分类</strong>学习方法。</p>
+<p>1、加法模型（additive model）：</p>
+<p>$$f(x)=\sum_{m=1}^{M} \beta_m \cdot b(x;\gamma_m)$$</p>
+<p>其中 $b(x;\gamma_m)$ 为基函数，$\gamma_m$ 为基函数的参数，$\beta_m$ 为基函数的系数。</p>
+<p>2、前向分步算法</p>
+<p>具体参见《统计学习方法》，这里直接给出结论：由前向分步算法可以推导出 Adaboost 算法，Adaboost 算法是前向分步算法的一个特例。以后有时间再回来补这部分推导。</p>
+<p>3、Adaboost 的训练误差</p>
+<p>Adaboost 的训练误差可以证明是指数下降的。</p>
+
+      </div>
+
+
+      <footer>
+        
+
+
+        
+        
+        
+      </footer>
+    </article>
+
+    
+  </section>
+
+      </div>
+
+      <script type="text/javascript"
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+    </main>
+
+    
+
+    
+
+    <script>
+(function(f, a, t, h, o, m){
+	a[h]=a[h]||function(){
+		(a[h].q=a[h].q||[]).push(arguments)
+	};
+	o=f.createElement('script'),
+	m=f.getElementsByTagName('script')[0];
+	o.async=1; o.src=t; o.id='fathom-script';
+	m.parentNode.insertBefore(o,m)
+})(document, window, '//analytics.example.com/tracker.js', 'fathom');
+fathom('set', 'siteId', 'ABCDE');
+fathom('trackPageview');
+</script>
+
+
+  </body>
+
+</html>

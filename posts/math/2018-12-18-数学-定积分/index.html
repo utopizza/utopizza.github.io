@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Language" content="en">
+
+    <meta name="author" content="Yusheng Wang">
+    <meta name="description" content="一、定积分的概念与性质
+1、定义：设函数 $f(x)$ 在 $[a,b]$ 上有界，在 $[a,b]$ 中任意插入若干分点 $a=x_0 &lt; x_1 &lt; x_2 &lt; \cdots &lt; x_{n-1} &lt; x_n=b$，把区间 $[a,b]$ 分成 $n$ 个小区 $[x_0, x_1]$，$[x_1,x_2]$，$\cdots$，$[x_{n-1},x_n]$，各个小区间的长度依次为 $\Delta x_1=x_1-x_0$, $\Delta x_2=x_2-x_1$, $\cdots$, $\Delta x_n=x_n-x_{n-1}$。在每个小区间 $[x_{i-1},x_i]$ 上任取一点 $\xi_i (x_{i-1} \leq \xi \leq x_i)$，作函数值 $f(\xi)$ 与小区间长度 $\Delta x_i$ 的乘积 $f(\xi_i) \cdot \Delta x_i$，并作和
+$$S=\sum_{i=1}^{n}f(\xi)\Delta x_i$$
+记 $\lambda=\max { \Delta x_1, \Delta x_2, \cdots, \Delta x_n }$，如果当 $\lambda \to 0$ 时，$S$ 的极限总存在，且与闭区间 $[a,b]$ 的分法及点 $\xi_i$ 的取法无关，那么称这个极限 $I$ 为函数 $f(x)$ 在区间 $[a,b]$ 上的定积分，记作 $\int_{a}^{b} f(x) dx$，即">
+    <meta name="keywords" content="blog,developer,personal">
+
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="定积分"/>
+<meta name="twitter:description" content="一、定积分的概念与性质
+1、定义：设函数 $f(x)$ 在 $[a,b]$ 上有界，在 $[a,b]$ 中任意插入若干分点 $a=x_0 &lt; x_1 &lt; x_2 &lt; \cdots &lt; x_{n-1} &lt; x_n=b$，把区间 $[a,b]$ 分成 $n$ 个小区 $[x_0, x_1]$，$[x_1,x_2]$，$\cdots$，$[x_{n-1},x_n]$，各个小区间的长度依次为 $\Delta x_1=x_1-x_0$, $\Delta x_2=x_2-x_1$, $\cdots$, $\Delta x_n=x_n-x_{n-1}$。在每个小区间 $[x_{i-1},x_i]$ 上任取一点 $\xi_i (x_{i-1} \leq \xi \leq x_i)$，作函数值 $f(\xi)$ 与小区间长度 $\Delta x_i$ 的乘积 $f(\xi_i) \cdot \Delta x_i$，并作和
+$$S=\sum_{i=1}^{n}f(\xi)\Delta x_i$$
+记 $\lambda=\max { \Delta x_1, \Delta x_2, \cdots, \Delta x_n }$，如果当 $\lambda \to 0$ 时，$S$ 的极限总存在，且与闭区间 $[a,b]$ 的分法及点 $\xi_i$ 的取法无关，那么称这个极限 $I$ 为函数 $f(x)$ 在区间 $[a,b]$ 上的定积分，记作 $\int_{a}^{b} f(x) dx$，即"/>
+
+    <meta property="og:title" content="定积分" />
+<meta property="og:description" content="一、定积分的概念与性质
+1、定义：设函数 $f(x)$ 在 $[a,b]$ 上有界，在 $[a,b]$ 中任意插入若干分点 $a=x_0 &lt; x_1 &lt; x_2 &lt; \cdots &lt; x_{n-1} &lt; x_n=b$，把区间 $[a,b]$ 分成 $n$ 个小区 $[x_0, x_1]$，$[x_1,x_2]$，$\cdots$，$[x_{n-1},x_n]$，各个小区间的长度依次为 $\Delta x_1=x_1-x_0$, $\Delta x_2=x_2-x_1$, $\cdots$, $\Delta x_n=x_n-x_{n-1}$。在每个小区间 $[x_{i-1},x_i]$ 上任取一点 $\xi_i (x_{i-1} \leq \xi \leq x_i)$，作函数值 $f(\xi)$ 与小区间长度 $\Delta x_i$ 的乘积 $f(\xi_i) \cdot \Delta x_i$，并作和
+$$S=\sum_{i=1}^{n}f(\xi)\Delta x_i$$
+记 $\lambda=\max { \Delta x_1, \Delta x_2, \cdots, \Delta x_n }$，如果当 $\lambda \to 0$ 时，$S$ 的极限总存在，且与闭区间 $[a,b]$ 的分法及点 $\xi_i$ 的取法无关，那么称这个极限 $I$ 为函数 $f(x)$ 在区间 $[a,b]$ 上的定积分，记作 $\int_{a}^{b} f(x) dx$，即" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://utopizza.github.io/posts/math/2018-12-18-%E6%95%B0%E5%AD%A6-%E5%AE%9A%E7%A7%AF%E5%88%86/" />
+<meta property="article:published_time" content="2018-12-18T00:00:00+00:00" />
+<meta property="article:modified_time" content="2018-12-18T00:00:00+00:00" />
+
+
+    
+      <base href="https://utopizza.github.io/posts/math/2018-12-18-%E6%95%B0%E5%AD%A6-%E5%AE%9A%E7%A7%AF%E5%88%86/">
+    
+    <title>
+  定积分 · Utopizza
+</title>
+
+    
+      <link rel="canonical" href="https://utopizza.github.io/posts/math/2018-12-18-%E6%95%B0%E5%AD%A6-%E5%AE%9A%E7%A7%AF%E5%88%86/">
+    
+
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700%7CMerriweather:300,700%7CSource+Code+Pro:400,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.13.0/css/all.css" integrity="sha384-Bfad6CLCknfcloXFOyFnlgtENryhrpZCe29RTifKEixXQZ38WheV+i/6YWSzkz3V" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" integrity="sha256-l85OmPOjvil/SOvVt3HnSSjzF1TUMyT9eV0c2BzEGzU=" crossorigin="anonymous" />
+
+    
+      
+      
+      <link rel="stylesheet" href="https://utopizza.github.io/css/coder.min.a4f332213a21ce8eb521670c614470c58923aaaf385e2a73982c31dd7642decb.css" integrity="sha256-pPMyITohzo61IWcMYURwxYkjqq84XipzmCwx3XZC3ss=" crossorigin="anonymous" media="screen" />
+    
+
+    
+
+    
+      
+        
+        
+        <link rel="stylesheet" href="https://utopizza.github.io/css/coder-dark.min.e78e80fc3a585a4d1c8fc7f58623b6ff852411e38431a9cd1792877ecaa160f6.css" integrity="sha256-546A/DpYWk0cj8f1hiO2/4UkEeOEManNF5KHfsqhYPY=" crossorigin="anonymous" media="screen" />
+      
+    
+
+    
+
+    
+
+    <link rel="icon" type="image/png" href="https://utopizza.github.io/images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="https://utopizza.github.io/images/favicon-16x16.png" sizes="16x16">
+
+    <meta name="generator" content="Hugo 0.69.2" />
+  </head>
+
+  
+  
+    
+  
+  <body class="colorscheme-auto">
+    <main class="wrapper">
+      <nav class="navigation">
+  <section class="container">
+    <a class="navigation-title" href="https://utopizza.github.io/">
+      Utopizza
+    </a>
+    
+    <input type="checkbox" id="menu-toggle" />
+    <label class="menu-button float-right" for="menu-toggle"><i class="fas fa-bars"></i></label>
+    <ul class="navigation-list">
+      
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/about/">About</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/posts/">Blog</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/projects/">Projects</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/contact/">Contact me</a>
+          </li>
+        
+      
+      
+    </ul>
+    
+  </section>
+</nav>
+
+
+      <div class="content">
+        
+  <section class="container post">
+    <article>
+      <header>
+        <div class="post-title">
+          <h1 class="title">定积分</h1>
+        </div>
+        <div class="post-meta">
+          <div class="date">
+            <span class="posted-on">
+              <i class="fas fa-calendar"></i>
+              <time datetime='2018-12-18T00:00:00Z'>
+                December 18, 2018
+              </time>
+            </span>
+            <span class="reading-time">
+              <i class="fas fa-clock"></i>
+              2-minute read
+            </span>
+          </div>
+          <div class="categories">
+  <i class="fas fa-folder"></i>
+    <a href="https://utopizza.github.io/categories/math/">Math</a></div>
+
+          
+        </div>
+      </header>
+
+      <div>
+        
+        <p>一、定积分的概念与性质</p>
+<p>1、定义：设函数 $f(x)$ 在 $[a,b]$ 上有界，在 $[a,b]$ 中任意插入若干分点 $a=x_0 &lt; x_1 &lt; x_2 &lt; \cdots &lt; x_{n-1} &lt; x_n=b$，把区间 $[a,b]$ 分成 $n$ 个小区 $[x_0, x_1]$，$[x_1,x_2]$，$\cdots$，$[x_{n-1},x_n]$，各个小区间的长度依次为 $\Delta x_1=x_1-x_0$, $\Delta x_2=x_2-x_1$, $\cdots$, $\Delta x_n=x_n-x_{n-1}$。在每个小区间 $[x_{i-1},x_i]$ 上任取一点 $\xi_i (x_{i-1} \leq \xi \leq x_i)$，作函数值 $f(\xi)$ 与小区间长度 $\Delta x_i$ 的乘积 $f(\xi_i) \cdot \Delta x_i$，并作和</p>
+<p>$$S=\sum_{i=1}^{n}f(\xi)\Delta x_i$$</p>
+<p>记 $\lambda=\max { \Delta x_1, \Delta x_2, \cdots, \Delta x_n }$，如果当 $\lambda \to 0$ 时，$S$ 的极限总存在，且与闭区间 $[a,b]$ 的分法及点 $\xi_i$ 的取法无关，那么称这个极限 $I$ 为函数  $f(x)$ 在区间 $[a,b]$ 上的定积分，记作 $\int_{a}^{b} f(x) dx$，即</p>
+<p>$$\int_{a}^{b} f(x) dx=I=\lim_{\lambda \to 0} \sum_{i=1}^{n} f(\xi_i) \Delta x_i$$</p>
+<p>其中 $f(x)$ 叫做被积函数，$f(x)dx$ 叫做被积表达式，$x$ 叫做积分变量，$a$ 叫做积分下限，$b$ 叫做积分上限，$[a,b]$ 叫做积分区间</p>
+<p>2、定理：设 $f(x)$ 在区间 $[a,b]$ 上连续，则 $f(x)$ 在 $[a,b]$ 上可积</p>
+<p>3、定理：设 $f(x)$ 在区间 $[a,b]$ 上有界，且只有有限个间断点，则 $f(x)$ 在 $[a,b]$ 上可积</p>
+<p>4、性质</p>
+<p>(1) 设 $\alpha$ 与 $\beta$ 均为常数，则</p>
+<p>$$\int_{a}^{b}[\alpha f(x) + \beta g(x)]dx=\alpha \int_{a}^{b} f(x)dx+ \beta \int_{a}^{b} g(x) dx$$</p>
+<p>(2) 设 $a &lt; c &lt; b$，则</p>
+<p>$$\int_{a}^{b} f(x) dx=\int_{a}^{c}f(x)dx+\int_{c}^{b}f(x)dx$$</p>
+<p>(3) 如果在区间 $[a,b]$ 上 $f(x) \equiv 1$，那么</p>
+<p>$$\int_{a}^{b} 1 dx=\int_{a}^{b}dx=b-a$$</p>
+<p>(4) 如果在区间 $[a,b]$ 上 $f(x) \geq 0$，那么</p>
+<p>$$\int_{a}^{b} f(x) dx \geq 0$$</p>
+<p>(5) 设 $M$ 及 $m$ 分别是函数 $f(x)$ 在区间 $[a,b]$ 上的最大值及最小值，则</p>
+<p>$$m(b-a) \leq \int_{a}^{b} f(x) dx \leq M(b-a)$$</p>
+<p>(6) 定积分中值定理：如果函数 f(x) 在积分区间 $[a,b]$ 上连续，那么在 $[a,b]$ 上至少存在一个点 $\xi$，使用下式成立：</p>
+<p>$$\int_{a}^{b} f(x)dx=f(\xi)(b-a)$$</p>
+<p>二、微积分基本公式</p>
+<p>1、定理：如果函数 $f(x)$ 在区间 $[a,b]$ 上连续，那么积分上限的函数</p>
+<p>$$\Phi(x)=\int_{a}^{x}f(t)dt$$</p>
+<p>在 $[a,b]$ 上可导，并且它的导数</p>
+<p>$$\Phi&rsquo;(x)=\frac{d}{dx} \int_{a}^{b} f(t)dt=f(x)$$</p>
+<p>2、定理：如果函数 $f(x)$ 在区间 $[a,b]$ 上连续，那么函数</p>
+<p>$$\Phi(x)=\int_{a}^{x} f(t)dt$$</p>
+<p>就是 $f(x)$ 在 $[a,b]$ 上的一个原函数</p>
+<p>3、定理（牛顿莱布尼茨公式、微积分基本定理）：如果函数 $F(x)$ 是连续函数 $f(x)$ 在区间 $[a,b]$ 上的一个原函数，那么</p>
+<p>$$\int_{a}^{b} f(x) dx=F(b)-F(a)=[F(x)]_{a}^{b}$$</p>
+<p>这个公式表明：一个连续函数在区间 $[a,b]$ 上的定积分等于它的任一个原函数在区间 $[a,b]$ 上的增量</p>
+<p>三、定积分的换元法和分部积分法</p>
+<p>1、定理（换元公式）：假设函数 $f(x)$ 在区间 $[a,b]$ 上连续，函数 $x=\varphi(t)$ 满足条件：
+(1) $\varphi(\alpha)=a, \varphi(\beta)=b$
+(2) $\varphi(t)$ 在 $[\alpha,\beta]$（ 或 $[\beta,\alpha]$ ） 上具有连续导数，且其值域 $R_{\varphi}=[a,b]$，则有</p>
+<p>$$\int_{a}^{b}f(x)dx=\int_{\alpha}^{beta}f[\varphi(t)] \cdot \varphi &lsquo;(t) dt$$</p>
+<p>应用换元公式时有两点值得注意：(1) 用 $x=\varphi(x)$ 把原来变量 $x$ 代换成新变量 $t$ 时，积分限也要换成相应于新变量 $t$ 的积分限；(2) 求出 $f[\varphi(t)] \cdot \varphi&rsquo;(t)$ 的一个原函数 $\Phi(t)$ 后，不必像计算不定积分那样再要把 $\Phi(t)$ 变换成原来变量 $x$ 的函数，而只要把新变量 $t$ 的上、下限分别代入 $\Phi(t)$ 中然后相减即可</p>
+<p>换元公式也可以反过来使用。为使用方便起见，把换元公式中左右两边对调位置，同时把 $t$ 改记为 $x$，而 $x$ 改记为 $t$， 得</p>
+<p>$$\int_{a}^{b}f[\varphi(x)] \cdot \varphi&rsquo;(x) dx=\int_{\alpha}^{\beta} f(t) dt$$</p>
+<p>其中 $t=\varphi(x)$，$\alpha=\varphi(a)$，$\beta=\varphi(b)$</p>
+<p>2、分部积分：</p>
+<p>$$\int_{a}^{b} uv&rsquo;dx=[uv]_{a}^{b}-\int_{a}^{b}vu&rsquo;dx$$</p>
+<p>简记为</p>
+<p>$$\int_{a}^{b} udv=[uv]_{a}^{b}-\int_{a}^{b}vdu$$</p>
+<p>四、反常积分</p>
+
+      </div>
+
+
+      <footer>
+        
+
+
+        
+        
+        
+      </footer>
+    </article>
+
+    
+  </section>
+
+      </div>
+
+      <script type="text/javascript"
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+    </main>
+
+    
+
+    
+
+    <script>
+(function(f, a, t, h, o, m){
+	a[h]=a[h]||function(){
+		(a[h].q=a[h].q||[]).push(arguments)
+	};
+	o=f.createElement('script'),
+	m=f.getElementsByTagName('script')[0];
+	o.async=1; o.src=t; o.id='fathom-script';
+	m.parentNode.insertBefore(o,m)
+})(document, window, '//analytics.example.com/tracker.js', 'fathom');
+fathom('set', 'siteId', 'ABCDE');
+fathom('trackPageview');
+</script>
+
+
+  </body>
+
+</html>

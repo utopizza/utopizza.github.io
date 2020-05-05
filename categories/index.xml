@@ -1,14 +1,96 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Categories on Uto...pizza!</title>
+    <title>Categories on Utopizza</title>
     <link>https://utopizza.github.io/categories/</link>
-    <description>Recent content in Categories on Uto...pizza!</description>
+    <description>Recent content in Categories on Utopizza</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
+    <lastBuildDate>Mon, 16 Sep 2019 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://utopizza.github.io/categories/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Summary</title>
+      <link>https://utopizza.github.io/categories/summary/</link>
+      <pubDate>Mon, 16 Sep 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://utopizza.github.io/categories/summary/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Algorithm</title>
+      <link>https://utopizza.github.io/categories/algorithm/</link>
+      <pubDate>Sun, 19 May 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://utopizza.github.io/categories/algorithm/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Thesis</title>
+      <link>https://utopizza.github.io/categories/thesis/</link>
+      <pubDate>Thu, 09 May 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://utopizza.github.io/categories/thesis/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Math</title>
+      <link>https://utopizza.github.io/categories/math/</link>
+      <pubDate>Wed, 16 Jan 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://utopizza.github.io/categories/math/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Interview</title>
+      <link>https://utopizza.github.io/categories/interview/</link>
+      <pubDate>Sat, 29 Sep 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://utopizza.github.io/categories/interview/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Projects</title>
+      <link>https://utopizza.github.io/categories/projects/</link>
+      <pubDate>Sun, 25 Mar 2018 20:37:00 +0000</pubDate>
+      
+      <guid>https://utopizza.github.io/categories/projects/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>MachineLearning</title>
+      <link>https://utopizza.github.io/categories/machinelearning/</link>
+      <pubDate>Sat, 17 Mar 2018 20:37:00 +0000</pubDate>
+      
+      <guid>https://utopizza.github.io/categories/machinelearning/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Spark</title>
+      <link>https://utopizza.github.io/categories/spark/</link>
+      <pubDate>Tue, 05 Jul 2016 22:44:00 +0000</pubDate>
+      
+      <guid>https://utopizza.github.io/categories/spark/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Technology</title>
+      <link>https://utopizza.github.io/categories/technology/</link>
+      <pubDate>Wed, 14 Oct 2015 20:47:00 +0000</pubDate>
+      
+      <guid>https://utopizza.github.io/categories/technology/</guid>
+      <description></description>
+    </item>
     
   </channel>
 </rss>

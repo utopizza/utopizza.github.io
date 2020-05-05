@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Language" content="en">
+
+    <meta name="author" content="Yusheng Wang">
+    <meta name="description" content="一、问题：给定两个序列 $X=&lt; x_1, x_2, \cdots, x_m &gt;$ 和 $Y=&lt; y_1, y_2, \cdots, y_n &gt;$，求它们的最长公共子序列（longest-common-subsequence，LCS）。
+ 子序列定义：给定一个序列 $X=&lt; x_1, x_2, \cdots , x_m &gt;$，另一个序列 $Z=&lt; z_1, z_2, \cdots, z_k &gt;$ 满足如下条件时成为 $X$ 的子序列，即存在一个严格递增的 $X$ 的下标序列 $&lt; i_1, i_2, \cdots, i_k &gt;$，对所有的 $j=1, 2, \cdots, k$，满足 $x_{i_j}=z_j$。例如，$Z=&lt; B,C,D,B &gt;$ 是 $X=&lt; A,B,C,B,D,A,B &gt;$ 的子序列。 公共子序列定义：给定两个序列 $X$ 和 $Y$，如果 $Z$ 是 $X$ 的子序列，也是 $Y$ 的子序列，则称它是 $X$ 和 $Y$ 的公共子序列。例如，如果 $X=&lt; A,B,C,B,D,A,B &gt;$，$Y=&lt; B,D,C,A,B,A &gt;$，则 $&lt; B,C,A &gt;$ 是它们的一个公共子序列，但不是最长公共子序列，$&lt; B,C,B,A &gt;$ 和 $&lt; B,D,A,B &gt;$ 才是最长公共子序列。  二、划分子问题，导出递推式">
+    <meta name="keywords" content="blog,developer,personal">
+
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="最长公共子序列"/>
+<meta name="twitter:description" content="一、问题：给定两个序列 $X=&lt; x_1, x_2, \cdots, x_m &gt;$ 和 $Y=&lt; y_1, y_2, \cdots, y_n &gt;$，求它们的最长公共子序列（longest-common-subsequence，LCS）。
+ 子序列定义：给定一个序列 $X=&lt; x_1, x_2, \cdots , x_m &gt;$，另一个序列 $Z=&lt; z_1, z_2, \cdots, z_k &gt;$ 满足如下条件时成为 $X$ 的子序列，即存在一个严格递增的 $X$ 的下标序列 $&lt; i_1, i_2, \cdots, i_k &gt;$，对所有的 $j=1, 2, \cdots, k$，满足 $x_{i_j}=z_j$。例如，$Z=&lt; B,C,D,B &gt;$ 是 $X=&lt; A,B,C,B,D,A,B &gt;$ 的子序列。 公共子序列定义：给定两个序列 $X$ 和 $Y$，如果 $Z$ 是 $X$ 的子序列，也是 $Y$ 的子序列，则称它是 $X$ 和 $Y$ 的公共子序列。例如，如果 $X=&lt; A,B,C,B,D,A,B &gt;$，$Y=&lt; B,D,C,A,B,A &gt;$，则 $&lt; B,C,A &gt;$ 是它们的一个公共子序列，但不是最长公共子序列，$&lt; B,C,B,A &gt;$ 和 $&lt; B,D,A,B &gt;$ 才是最长公共子序列。  二、划分子问题，导出递推式"/>
+
+    <meta property="og:title" content="最长公共子序列" />
+<meta property="og:description" content="一、问题：给定两个序列 $X=&lt; x_1, x_2, \cdots, x_m &gt;$ 和 $Y=&lt; y_1, y_2, \cdots, y_n &gt;$，求它们的最长公共子序列（longest-common-subsequence，LCS）。
+ 子序列定义：给定一个序列 $X=&lt; x_1, x_2, \cdots , x_m &gt;$，另一个序列 $Z=&lt; z_1, z_2, \cdots, z_k &gt;$ 满足如下条件时成为 $X$ 的子序列，即存在一个严格递增的 $X$ 的下标序列 $&lt; i_1, i_2, \cdots, i_k &gt;$，对所有的 $j=1, 2, \cdots, k$，满足 $x_{i_j}=z_j$。例如，$Z=&lt; B,C,D,B &gt;$ 是 $X=&lt; A,B,C,B,D,A,B &gt;$ 的子序列。 公共子序列定义：给定两个序列 $X$ 和 $Y$，如果 $Z$ 是 $X$ 的子序列，也是 $Y$ 的子序列，则称它是 $X$ 和 $Y$ 的公共子序列。例如，如果 $X=&lt; A,B,C,B,D,A,B &gt;$，$Y=&lt; B,D,C,A,B,A &gt;$，则 $&lt; B,C,A &gt;$ 是它们的一个公共子序列，但不是最长公共子序列，$&lt; B,C,B,A &gt;$ 和 $&lt; B,D,A,B &gt;$ 才是最长公共子序列。  二、划分子问题，导出递推式" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://utopizza.github.io/posts/algorithm/2017-09-18-%E7%AE%97%E6%B3%95-%E6%9C%80%E9%95%BF%E5%85%AC%E5%85%B1%E5%AD%90%E5%BA%8F%E5%88%97/" />
+<meta property="article:published_time" content="2017-09-18T15:50:00+00:00" />
+<meta property="article:modified_time" content="2017-09-18T15:50:00+00:00" />
+
+
+    
+      <base href="https://utopizza.github.io/posts/algorithm/2017-09-18-%E7%AE%97%E6%B3%95-%E6%9C%80%E9%95%BF%E5%85%AC%E5%85%B1%E5%AD%90%E5%BA%8F%E5%88%97/">
+    
+    <title>
+  最长公共子序列 · Utopizza
+</title>
+
+    
+      <link rel="canonical" href="https://utopizza.github.io/posts/algorithm/2017-09-18-%E7%AE%97%E6%B3%95-%E6%9C%80%E9%95%BF%E5%85%AC%E5%85%B1%E5%AD%90%E5%BA%8F%E5%88%97/">
+    
+
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700%7CMerriweather:300,700%7CSource+Code+Pro:400,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.13.0/css/all.css" integrity="sha384-Bfad6CLCknfcloXFOyFnlgtENryhrpZCe29RTifKEixXQZ38WheV+i/6YWSzkz3V" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" integrity="sha256-l85OmPOjvil/SOvVt3HnSSjzF1TUMyT9eV0c2BzEGzU=" crossorigin="anonymous" />
+
+    
+      
+      
+      <link rel="stylesheet" href="https://utopizza.github.io/css/coder.min.a4f332213a21ce8eb521670c614470c58923aaaf385e2a73982c31dd7642decb.css" integrity="sha256-pPMyITohzo61IWcMYURwxYkjqq84XipzmCwx3XZC3ss=" crossorigin="anonymous" media="screen" />
+    
+
+    
+
+    
+      
+        
+        
+        <link rel="stylesheet" href="https://utopizza.github.io/css/coder-dark.min.e78e80fc3a585a4d1c8fc7f58623b6ff852411e38431a9cd1792877ecaa160f6.css" integrity="sha256-546A/DpYWk0cj8f1hiO2/4UkEeOEManNF5KHfsqhYPY=" crossorigin="anonymous" media="screen" />
+      
+    
+
+    
+
+    
+
+    <link rel="icon" type="image/png" href="https://utopizza.github.io/images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="https://utopizza.github.io/images/favicon-16x16.png" sizes="16x16">
+
+    <meta name="generator" content="Hugo 0.69.2" />
+  </head>
+
+  
+  
+    
+  
+  <body class="colorscheme-auto">
+    <main class="wrapper">
+      <nav class="navigation">
+  <section class="container">
+    <a class="navigation-title" href="https://utopizza.github.io/">
+      Utopizza
+    </a>
+    
+    <input type="checkbox" id="menu-toggle" />
+    <label class="menu-button float-right" for="menu-toggle"><i class="fas fa-bars"></i></label>
+    <ul class="navigation-list">
+      
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/about/">About</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/posts/">Blog</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/projects/">Projects</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/contact/">Contact me</a>
+          </li>
+        
+      
+      
+    </ul>
+    
+  </section>
+</nav>
+
+
+      <div class="content">
+        
+  <section class="container post">
+    <article>
+      <header>
+        <div class="post-title">
+          <h1 class="title">最长公共子序列</h1>
+        </div>
+        <div class="post-meta">
+          <div class="date">
+            <span class="posted-on">
+              <i class="fas fa-calendar"></i>
+              <time datetime='2017-09-18T15:50:00Z'>
+                September 18, 2017
+              </time>
+            </span>
+            <span class="reading-time">
+              <i class="fas fa-clock"></i>
+              3-minute read
+            </span>
+          </div>
+          <div class="categories">
+  <i class="fas fa-folder"></i>
+    <a href="https://utopizza.github.io/categories/algorithm/">Algorithm</a></div>
+
+          
+        </div>
+      </header>
+
+      <div>
+        
+        <p>一、问题：给定两个序列 $X=&lt; x_1, x_2, \cdots, x_m &gt;$ 和 $Y=&lt; y_1, y_2, \cdots, y_n &gt;$，求它们的最长公共子序列（longest-common-subsequence，LCS）。</p>
+<ul>
+<li>子序列定义：给定一个序列 $X=&lt; x_1, x_2, \cdots , x_m &gt;$，另一个序列 $Z=&lt; z_1, z_2, \cdots, z_k &gt;$ 满足如下条件时成为 $X$ 的子序列，即存在一个严格递增的 $X$ 的下标序列 $&lt; i_1, i_2, \cdots, i_k &gt;$，对所有的 $j=1, 2, \cdots, k$，满足 $x_{i_j}=z_j$。例如，$Z=&lt; B,C,D,B &gt;$ 是 $X=&lt; A,B,C,B,D,A,B &gt;$ 的子序列。</li>
+<li>公共子序列定义：给定两个序列 $X$ 和 $Y$，如果 $Z$ 是 $X$ 的子序列，也是 $Y$ 的子序列，则称它是 $X$ 和 $Y$ 的公共子序列。例如，如果 $X=&lt; A,B,C,B,D,A,B &gt;$，$Y=&lt; B,D,C,A,B,A &gt;$，则 $&lt; B,C,A &gt;$ 是它们的一个公共子序列，但不是最长公共子序列，$&lt; B,C,B,A &gt;$ 和 $&lt; B,D,A,B &gt;$ 才是最长公共子序列。</li>
+</ul>
+<p>二、划分子问题，导出递推式</p>
+<p>LCS的最优子结构定理：给定两个序列 $X=&lt; x_1, x_2, \cdots, x_m &gt;$ 和 $Y=&lt; y_1, y_2, \cdots, y_n &gt;$，设 $Z=&lt; z_1, z_2, \cdots, z_k &gt;$ 为 $X$ 和 $Y$ 的任意 LCS。</p>
+<ul>
+<li>1、如果 $x_m=y_n$，则 $z_k=x_m=y_n$，且 $Z_{k-1}$ 是 $X_{m-1}$ 和 $Y_{n-1}$ 的一个 LCS</li>
+<li>2、如果 $x_m \neq y_n$，且 $z_k \neq x_m$ 意味着 $Z$ 是 $X_{m-1}$ 和 $Y$ 的一个 LCS</li>
+<li>3、如果 $x_m \neq y_n$，且 $z_k \neq y_n$ 意味着 $Z$ 是 $X$ 和 $Y_{n-1}$ 的一个 LCS</li>
+</ul>
+<p>证明：</p>
+<ul>
+<li>1、已知 $x_m=y_n$，假设 $z_k \neq x_m$ 或 $z_k \neq y_n$，那么可以将 $x_m$ 或 $y_n$ 追加到 $Z$ 中，得到一个长度为 $k+1$ 的 LCS，与 $Z$ 是 LCS 矛盾。因此必然有 $z_k=x_m=y_n$ 。这样，前缀 $Z_{k-1}$ 是 $X_{m-1}$ 和 $Y_{n-1}$ 的一个 LCS。同样用反证法证明：假设存在 $X_{m-1}$ 和 $Y_{n-1}$ 的一个长度大于 $k-1$ 的公共子序列 $W$，那么如果将 $x_m=y_n$ 追加到 $W$ 的末尾会得到 $X$ 和 $Y$ 的一个长度大于 $k$ 的公共子序列，矛盾。</li>
+<li>2、已知 $z_k \neq x_m$，假设存在 $X_{m-1}$ 和 $Y$ 的一个长度大于 $k$ 的公共子序列 $W$，那么 $W$ 也是 $X_m$ 和 $Y$ 的一个长度大于 $k$ 的公共子序列，与 $Z$ 是 LCS 矛盾。</li>
+<li>3、与情况2对称。</li>
+</ul>
+<p>由上述定理可以推出：</p>
+<ul>
+<li>1、如果 $x_m=y_n$，求 $X_{m-1}$ 和 $Y_{n-1}$ 的 LCS</li>
+<li>2、如果 $x_m \neq y_n$，求以下两个子问题的 LCS，取较长的那个作为最优解：</li>
+<li>若 $z_k \neq x_m$，求 $X_{m-1}$ 和 $Y$ 的 LCS</li>
+<li>若 $z_k \neq y_n$，求 $X$ 和 $Y_{n-1}$ 的 LCS</li>
+</ul>
+<p>定义 $c[i,j]$ 表示 $X_i$ 和 $Y_j$ 的LCS的长度，由上述得出递推式：</p>
+<p>$$
+c[i,j]=
+\begin{cases}
+0，&amp; \text{if $i=0$，或 $j=0$} \<br>
+c[i-1,j-1]+1，&amp; \text{if $i,j&gt;0$ 且 $x_{i}=y_{j}$} \<br>
+max(c[i-1,j],c[i,j-1])，&amp; \text{if $i,j&gt;0$ 且 $x_{i} \neq y_{j}$}
+\end{cases}
+$$</p>
+<p>三、实现</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">public static int LCSBottonUp(char[] X_0, char[] Y_0) {
+
+    int x = X_0.length;
+    char[] X = new char[x + 1];
+    for (int i = 0; i &lt; x; i++)
+        X[i + 1] = X_0[i];
+
+    int y = Y_0.length;
+    char[] Y = new char[y + 1];
+    for (int i = 0; i &lt; y; i++)
+        Y[i + 1] = Y_0[i];
+
+    int[][] c = new int[x + 1][y + 1];
+
+    for (int i = 0; i &lt;= x; i++) {
+        for (int j = 0; j &lt;= y; j++) {
+            if (i == 0 || j == 0) c[i][j] = 0;
+            else {
+                if (X[i] == Y[j]) c[i][j] = c[i - 1][j - 1] + 1;
+                else c[i][j] = Math.max(c[i - 1][j], c[i][j - 1]);
+            }
+        }
+    }
+
+    return c[x][y];
+}
+
+
+public static void main(String[] args) {
+    char[] X = {&#39;A&#39;, &#39;B&#39;, &#39;C&#39;, &#39;B&#39;, &#39;D&#39;, &#39;B&#39;, &#39;A&#39;};
+    char[] Y = {&#39;B&#39;, &#39;D&#39;, &#39;C&#39;, &#39;A&#39;, &#39;B&#39;, &#39;A&#39;};
+    System.out.println(LCSBottonUp(X, Y));
+}
+</code></pre></div><p>为了方便理解，通过预处理，使输入的序列下标从 $1$ 开始使用，即 $X[i]$ 表示 $x_i$，$Y[j]$ 表示 $y_j$，$c[i][j]$ 表示 $X_i$ 和 $Y_j$ 的公共子序列长度。由于外层循环的执行次数为输入序列 $X$ 的长度 $m$，内存循环的执行次数为输入序列 $Y$ 的长度 $n$，因此算法的时间复杂度为 $O(mn)$。另外使用了大小为 $m \cdot n$ 的二维数组，因此空间复杂度为 $O(mn)$。</p>
+
+      </div>
+
+
+      <footer>
+        
+
+
+        
+        
+        
+      </footer>
+    </article>
+
+    
+  </section>
+
+      </div>
+
+      <script type="text/javascript"
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+    </main>
+
+    
+
+    
+
+    <script>
+(function(f, a, t, h, o, m){
+	a[h]=a[h]||function(){
+		(a[h].q=a[h].q||[]).push(arguments)
+	};
+	o=f.createElement('script'),
+	m=f.getElementsByTagName('script')[0];
+	o.async=1; o.src=t; o.id='fathom-script';
+	m.parentNode.insertBefore(o,m)
+})(document, window, '//analytics.example.com/tracker.js', 'fathom');
+fathom('set', 'siteId', 'ABCDE');
+fathom('trackPageview');
+</script>
+
+
+  </body>
+
+</html>

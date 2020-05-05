@@ -1,0 +1,614 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Math on Utopizza</title>
+    <link>https://utopizza.github.io/categories/math/</link>
+    <description>Recent content in Math on Utopizza</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Wed, 16 Jan 2019 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://utopizza.github.io/categories/math/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>一维随机变量</title>
+      <link>https://utopizza.github.io/posts/math/2019-01-16-%E6%A6%82%E7%8E%87-%E4%B8%80%E7%BB%B4%E9%9A%8F%E6%9C%BA%E5%8F%98%E9%87%8F/</link>
+      <pubDate>Wed, 16 Jan 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://utopizza.github.io/posts/math/2019-01-16-%E6%A6%82%E7%8E%87-%E4%B8%80%E7%BB%B4%E9%9A%8F%E6%9C%BA%E5%8F%98%E9%87%8F/</guid>
+      <description>&lt;p&gt;一、随机变量&lt;/p&gt;
+&lt;p&gt;随机变量就是“其值随机会而定”的变量。随机变量主要分为两类，一类是离散型随机变量，它有若干个不同的可枚举的取值，这些取值以不同（或相同）的概率出现，例如扔一个骰子可能会出现的点数。另一类是连续型随机变量，它的全部可能取值不仅是无穷多的，并且还不能无遗漏地逐一排列，而是充满一个区间，例如称量一个物体重量的误差。&lt;/p&gt;
+&lt;p&gt;二、离散型随机变量&lt;/p&gt;
+&lt;p&gt;1、离散型随机变量的概率分布：设 $X$ 为离散型随机变量，其全部可能取值 ${a_1,a_2,\cdots}$。则&lt;/p&gt;
+&lt;p&gt;$$p_i=P(X=a_i) \quad (i=1,2,\cdots)$$&lt;/p&gt;
+&lt;p&gt;称为 $X$ 的概率分布。根据概率的定义，显然有&lt;/p&gt;
+&lt;p&gt;$$p_i \geq 0$$&lt;/p&gt;
+&lt;p&gt;$$p_1+p_2+\cdots=1$$&lt;/p&gt;
+&lt;p&gt;用分布表的形式给出为&lt;/p&gt;
+&lt;p&gt;$$
+\begin{array}{c|lcr}
+\text{可能值} &amp;amp; a_1 &amp;amp; a_2 &amp;amp; \cdots &amp;amp; a_i \cdots \&lt;br&gt;
+\hline
+\text{概率} &amp;amp; p_1 &amp;amp; p_2 &amp;amp; \cdots &amp;amp;p_i \cdots
+\end{array}
+$$&lt;/p&gt;
+&lt;p&gt;2、离散型随机变量的分布函数：设 $X$ 为一离散型随机变量，则函数&lt;/p&gt;
+&lt;p&gt;$$F(x)=P(X \leq x)=\sum_{{i|a_i \leq x}}p_i \quad (-\infty &amp;lt; x &amp;lt; +\infty)$$&lt;/p&gt;
+&lt;p&gt;称为 $X$ 的分布函数。实质上就是随机变量 $X$ 的部分可能取值的概率之和。分布函数有下面的一般性质：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;当 $x_1 &amp;lt; x_2$ 时，有 $F(x_1) \leq F(x_2)$&lt;/li&gt;
+&lt;li&gt;当 $x \to +\infty$ 时，$F(x) \to 1$；当 $x \to -\infty$ 时，$F(x) \to 0$&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;3、常见的离散型随机变量&lt;/p&gt;
+&lt;p&gt;(1)、二项分布：设在某一个试验中，有且仅有两种可能结果：事件 $A$ 发生，或者 $A$ 不发生。其中 $A$ 发生的概率记为 $p$，则 $A$ 不发生的概率显然为 $1-p$。现把这个试验独立地重复 $n$ 次，记 $A$ 发生的次数为 $X$ ，则显然 $X$ 的可能取值为 $0,1,2,\cdots,n$。显然这是一个组合问题，$n$ 个试验结果中设有 $i$ 次为 $A$，那么必定 $n-i$ 次为 $\bar{A}$。因此 $X=i$ 的概率即为从 $n$ 个试验中取 $i$ 个 $p$，$n-i$ 个 $1-p$，即&lt;/p&gt;
+&lt;p&gt;$$P(X=i)=C_{n}^{i} p^i (1-p)^{n-i} \quad (i=0,1,\cdots,n)$$&lt;/p&gt;
+&lt;p&gt;此时 $X$ 所遵从的概率分布称为二项分布，记为 $B(n,p)$。而 $X$ 服从二项分布记为 $X \sim B(n,p)$&lt;/p&gt;
+&lt;p&gt;(2)、泊松分布：若随机变量 $X$ 的可能取值为 $0,1,2,\cdots$，且概率分布为&lt;/p&gt;
+&lt;p&gt;$$P(X=i)=\frac{e^{-\lambda}\lambda^i}{i!}$$&lt;/p&gt;
+&lt;p&gt;则称 $X$ 服从泊松分布，记为 $X \sim P(\lambda)$。此处，$\lambda &amp;gt; 0$ 是某一常数。该分布是最重要的离散型分布之一，它多出现在当 $X$ 表示某时间或空间内出现的事件个数或者事件的频率分布。该分布可以看做是二项分布的极限形式，即若取 $\lambda$ 为二项分布 $B(n,p)$ 的期望，即 $\lambda=pn$，则当二项分布的试验次数 $n \to +\infty$ 时，&lt;/p&gt;
+&lt;p&gt;$$
+\begin{aligned}
+P(X=i) &amp;amp;=C_{n}^{i} (\frac{\lambda}{n})^i (1-\frac{\lambda}{n})^{n-i}\&lt;br&gt;
+&amp;amp;=\frac{C_n^i}{n^i} \cdot \lambda^i \cdot (1-\frac{\lambda}{n})^n \&lt;br&gt;
+&amp;amp;=\frac{1}{i!} \cdot \lambda^i \cdot e^{-\lambda} \&lt;br&gt;
+&amp;amp;=\frac{e^{-\lambda}\lambda^i}{i!}
+\end{aligned}
+$$&lt;/p&gt;
+&lt;p&gt;在实际应用中， $\lambda$ 往往就取随机变量的期望，例如某用户在某段时间内重复购买某件商品的次数的期望，例如 2 次。确定了 $\lambda$ 后，该用户重复购买商品次数的泊松分布模型就可以完全确定，从而可以计算用户在同样的时间段内重复购买 0 次、1 次、3 次、5次等次数的概率。&lt;/p&gt;
+&lt;p&gt;三、连续型随机变量&lt;/p&gt;
+&lt;p&gt;1、连续型随机变量的概率分布：对于连续型随机变量的概率分布，不能用像离散型随机变量那种方法去描述，因为连续型变量的取值是充满一个区间的，无法一一枚举，并且要研究连续型变量恰好取某个精确的值意义也不大，例如“射击靶面恰好精准命中某一个点”是几乎不可能也毫无意义的事，一般认为这样概率为 0。对于连续型随机变量，我们研究的要点是“该变量的取值落在某个区间内的概率多大”，而不是“该变量的取值恰好等于某个无限精确的值的概率有多大”。&lt;/p&gt;
+&lt;p&gt;2、连续型随机变量的分布函数：设 $X$ 为一连续型随机变量，则函数&lt;/p&gt;
+&lt;p&gt;$$F(x)=P(X \leq x)=\int_{-\infty}^{x} f(t) dt$$&lt;/p&gt;
+&lt;p&gt;称为 $X$ 的分布函数。其中 $f(x)=F’(x)$ 称为 $X$ 的概率密度函数。引用陈希孺教授《概率论与数理统计》中对“概率密度”的解释：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;“概率密度”这个名词的来由可以解释如下：取定一个点 $x$，则按分布函数的定义，事件 ${x &amp;lt; X \leq  x+\Delta x}$ 的概率应为 $F(x+\Delta x)-F(x)$，所以比值 $\frac{F(x+\Delta x)-F(x)}{\Delta x}$ 可解释为在 $x$ 点附近 $\Delta x$ 长度的区间内，单位长度占有的概率。当 $\Delta x \to 0$ 时，这个比值的极限就是 $F&amp;rsquo;(x)=f(x)$，也就是在 $x$ 点处无穷小区段内单位长度的概率，它反映了概率在 $x$ 点处的“密集程度”。可以设想一条极细的无穷长的金属杆，总质量为 1，概率密度相当于杆上各点的质量密度。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;连续型随机变量 $X$ 的概率密度函数 $f(x)$ 有以下基本性质：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;$f(x) \geq 0$&lt;/li&gt;
+&lt;li&gt;$\int_{-\infty}^{+\infty} f(x)dx=1$&lt;/li&gt;
+&lt;li&gt;对任何常数 $a &amp;lt; b$，有 $P(a \leq X \leq b)=F(b)-F(a)=\int_{a}^{b}f(x)dx$&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;3、常见的连续型随机变量：&lt;/p&gt;
+&lt;p&gt;(1)、正态分布：若随机变量 $X$ 具有概率密度函数&lt;/p&gt;
+&lt;p&gt;$$f(x)=\frac{1}{\sqrt{2\pi}\delta}e^{-\frac{(x-\mu)^2}{2\delta^2}} \quad (-\infty &amp;lt; x &amp;lt; +\infty)$$&lt;/p&gt;
+&lt;p&gt;则称 $X$ 为正态随机变量，记为 $X \sim N(\mu, \delta)$。该密度函数没有显式的原函数，也即正态分布没有显式的分布函数。但是正态分布有一个重要的性质，就是任何正态分布可以转化成标准正态分布 $N(0,1)$，然后通过查标准正态分布概率表来计算原正态分布的概率。即&lt;/p&gt;
+&lt;p&gt;$$\text{ 若 } X \sim N(\mu, \delta), \text{ 则 } Y=\frac{X-\mu}{\delta} \sim N(0,1)$$&lt;/p&gt;
+&lt;p&gt;正态分布具有非常重要的意义，它的图形是关于 $x=\mu$ 对称，并在该点取得最大概率值，然后向两端逐渐降低。自然界大部分的数据都是呈现这样的分布：接近均值的概率大，接近极端值的概率小。例如一个学校的身高分布、随机采样得到的样本的误差分布等等。而更重要的是，根据中心极限定理，当随机变量的数量趋向无穷的时候，它们的和的极限分布就是正态分布。另外多维的高斯分布也是对各种真实世界中的事件进行建模的良好工具。&lt;/p&gt;
+&lt;p&gt;(2)、指数分布：若随机变量 $X$ 具有概率密度函数&lt;/p&gt;
+&lt;p&gt;$$f(x)=
+\begin{cases}
+\lambda e^{-\lambda x}, &amp;amp; x&amp;gt;0 \&lt;br&gt;
+0, &amp;amp; x \leq 0
+\end{cases}
+$$&lt;/p&gt;
+&lt;p&gt;则称 $X$ 服从指数分布，其中 $\lambda&amp;gt;0$ 为参数。利用微积分知识易求得其分布函数为&lt;/p&gt;
+&lt;p&gt;$$F(x)=\int_{-\infty}^{x}f(t)dt=
+\begin{cases}
+1-e^{-\lambda x}, &amp;amp; x &amp;gt; 0 \&lt;br&gt;
+0, &amp;amp; x \leq 0
+\end{cases}
+$$&lt;/p&gt;
+&lt;p&gt;指数分布最常见的一个场合就是寿命分布，寿命越长概率越小。&lt;/p&gt;
+&lt;p&gt;(3)、均匀分布：若随机变量 $X$ 具有概率密度函数&lt;/p&gt;
+&lt;p&gt;$$f(x)=
+\begin{cases}
+\frac{1}{b-a}, &amp;amp; a\leq x\leq b \&lt;br&gt;
+0, &amp;amp; \text{otherwise}
+\end{cases}
+$$&lt;/p&gt;
+&lt;p&gt;则称 $X$ 服从区间 $[a,b]$ 上的均匀分布，记为 $X \sim R(a,b)$。这里 $a,b$ 都是常数且 $-\infty &amp;lt; a &amp;lt; b &amp;lt; +\infty$。易求其分布函数为&lt;/p&gt;
+&lt;p&gt;$$F(x)=
+\begin{cases}
+0, &amp;amp; x \leq a \&lt;br&gt;
+\frac{x-a}{b-a}, &amp;amp; a \leq x \leq b \&lt;br&gt;
+1, &amp;amp; x \geq b
+\end{cases}
+$$&lt;/p&gt;
+&lt;p&gt;因为均匀分布的特点是区间中各点的概率密度都是相同的，因此一般用来产生均匀的随机数。&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>线性变换的矩阵</title>
+      <link>https://utopizza.github.io/posts/math/2019-01-12-%E6%95%B0%E5%AD%A6-%E7%BA%BF%E6%80%A7%E5%8F%98%E6%8D%A2%E7%9A%84%E7%9F%A9%E9%98%B5/</link>
+      <pubDate>Sat, 12 Jan 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://utopizza.github.io/posts/math/2019-01-12-%E6%95%B0%E5%AD%A6-%E7%BA%BF%E6%80%A7%E5%8F%98%E6%8D%A2%E7%9A%84%E7%9F%A9%E9%98%B5/</guid>
+      <description>&lt;p&gt;我们知道，线性空间中，在给定基的情况下，对任意一个向量 $\vec{v}$ 施予一个线性变换 $T$ 时，就让该向量的坐标向量左乘某个矩阵 $A$ 即可。例如，设在线性空间 $V_n(F)$ 中，取一组基为 ${\vec{\alpha_1},\vec{\alpha_2},\cdots,\vec{\alpha_n}}$，向量 $\vec{w}$ 在该基下的坐标为 $\vec{Y}$，向量 $\vec{v}$ 在该基下的坐标为 $\vec{X}$，即：&lt;/p&gt;
+&lt;p&gt;$$\vec{w}=(\vec{\alpha_1},\vec{\alpha_2},\cdots,\vec{\alpha_n}) \vec{Y}$$&lt;/p&gt;
+&lt;p&gt;$$\vec{v}=(\vec{\alpha_1},\vec{\alpha_2},\cdots,\vec{\alpha_n}) \vec{X}$$&lt;/p&gt;
+&lt;p&gt;如果向量 $\vec{w}$ 是由向量 $\vec{v}$ 经过线性变换 $T$ 得到的，即&lt;/p&gt;
+&lt;p&gt;$$\vec{w}=T(\vec{v})$$&lt;/p&gt;
+&lt;p&gt;那么它们的坐标关系为：&lt;/p&gt;
+&lt;p&gt;$$\vec{Y}=A \vec{X}$$&lt;/p&gt;
+&lt;p&gt;并且，线性空间中任一个线性变换 $T$ 可以由某个矩阵 $A$ 唯一对应：&lt;/p&gt;
+&lt;p&gt;$$T \iff A$$&lt;/p&gt;
+&lt;p&gt;为什么？这个矩阵 $A$ 如何得到？接下来复习一下 $A$ 的推导。需要的预备知识：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;线性空间定义&lt;/li&gt;
+&lt;li&gt;线性空间的基与坐标&lt;/li&gt;
+&lt;li&gt;线性变换定义&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;p&gt;记 $T$ 为线性空间 $V_n(F)$ 上的线性变换。记 ${\vec{\alpha_1},\vec{\alpha_2},\cdots,\vec{\alpha_n}}$ 为 $V_n(F)$ 的一组基，则对任意向量 $\forall \pmb\beta \in V_n(F)$，由基的定义可得&lt;/p&gt;
+&lt;p&gt;$$\vec{v}=(\vec{\alpha_1},\vec{\alpha_2},\cdots,\vec{\alpha_n}) \vec{X}=(\vec{\alpha_1},\vec{\alpha_2},\cdots,\vec{\alpha_n}) \begin{pmatrix} x_1 \ x_2 \ \vdots \ x_n \end{pmatrix} =x_1\vec{\alpha_1}+x_2\vec{\alpha_2}+\cdots+x_n\vec{\alpha_n}$$&lt;/p&gt;
+&lt;p&gt;对 $\vec{v}$ 施予线性变换 $T$：&lt;/p&gt;
+&lt;p&gt;$$
+\begin{aligned}
+T(\vec{v})
+&amp;amp;=T(x_1\vec{\alpha_1}+x_2\vec{\alpha_2}+\cdots+x_n\vec{\alpha_n}) \&lt;br&gt;
+&amp;amp;=T(x_1\vec{\alpha_1})+T(x_2\vec{\alpha_2})+\cdots+T(x_n\vec{\alpha_n}) \&lt;br&gt;
+&amp;amp;=x_1T(\vec{\alpha_1})+x_2T(\vec{\alpha_2})+\cdots+x_nT(\vec{\alpha_n}) \&lt;br&gt;
+&amp;amp;=(T(\vec{\alpha_1}),T(\vec{\alpha_2}),\cdots,T(\vec{\alpha_n})) \begin{pmatrix} x_1 \ x_2 \ \vdots \ x_n \end{pmatrix}
+\end{aligned}
+$$&lt;/p&gt;
+&lt;p&gt;到这里可以清楚看到，对向量 $\vec{v}$ 施予线性变换 $T$，可以转化为对基 ${ \vec{\alpha_1},\vec{\alpha_2},\cdots,\vec{\alpha_n} }$ 施予线性变换，并且在基变换后，向量 $\vec{v}$ 的坐标保持不变！因此，对空间中任意向量的线性变换，就转化到了该空间下一组基到另一组“基”的线性变换（注意，由于实际上线性变换只能保持线性相关，不能保持线性无关，因此无法保证对基进行线性变换后的向量组 ${ T(\vec{\alpha_1}),T(\vec{\alpha_2}),\cdots,T(\vec{\alpha_n}) }$ 是否仍能作为一组基。准确来讲，$T(\vec{\alpha_{i}})$ 只能是原基的“像”。但为了便于陈述和理解，暂且称这组“像”为“新基”）。&lt;/p&gt;
+&lt;p&gt;那么接下来的问题是，对基 ${ \vec{\alpha_1},\vec{\alpha_2},\cdots,\vec{\alpha_n} }$ 施予线性变换 $T$ 后，“新基” ${ T(\vec{\alpha_1}),T(\vec{\alpha_2}),\cdots,T(\vec{\alpha_n}) }$ 与原基的关系是怎么样的？&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;我们知道，对一个向量施予线性变换后仍是一个向量，因此“新基”中的每个元素也仍是一个向量。既然是向量，就一定可以用基和坐标来表示。那么我们就尝试用原基来表示“新基”中的每一个向量吧（因为我们希望知道“新基”与原基的关系），假设向量 $T(\vec{\alpha_1}),T(\vec{\alpha_2}),\cdots,T(\vec{\alpha_n})$ 在原基 $(\vec{\alpha_1},\vec{\alpha_2},\cdots,\vec{\alpha_n})$ 下的表达分别为：&lt;/p&gt;
+&lt;p&gt;$$T(\vec{\alpha_1})=(\vec{\alpha_1},\vec{\alpha_2},\cdots,\vec{\alpha_n}) \begin{pmatrix} x_{11} \ x_{21} \ \vdots \ x_{n1} \end{pmatrix}$$&lt;/p&gt;
+&lt;p&gt;$$T(\vec{\alpha_2})=(\vec{\alpha_1},\vec{\alpha_2},\cdots,\vec{\alpha_n}) \begin{pmatrix} x_{12} \ x_{22} \ \vdots \ x_{n2} \end{pmatrix}$$&lt;/p&gt;
+&lt;p&gt;$$\cdots$$&lt;/p&gt;
+&lt;p&gt;$$T(\vec{\alpha_n})=(\vec{\alpha_1},\vec{\alpha_2},\cdots,\vec{\alpha_n}) \begin{pmatrix} x_{1n} \ x_{2n} \ \vdots \ x_{nn} \end{pmatrix}$$&lt;/p&gt;
+&lt;p&gt;把以上式子写到一起：&lt;/p&gt;
+&lt;p&gt;$$(T(\vec{\alpha_1}),T(\vec{\alpha_2}),\cdots,T(\vec{\alpha_n}))=(\vec{\alpha_1},\vec{\alpha_2},\cdots,\vec{\alpha_n})
+\begin{pmatrix}
+x_{11} &amp;amp; x_{12} &amp;amp; \cdots &amp;amp; x_{1n} \&lt;br&gt;
+x_{21} &amp;amp; x_{22} &amp;amp; \cdots&amp;amp; x_{2n} \&lt;br&gt;
+\vdots &amp;amp; \vdots &amp;amp; \ddots &amp;amp; \vdots \&lt;br&gt;
+x_{n1} &amp;amp; x_{n2} &amp;amp; \cdots &amp;amp; x_{nn} \&lt;br&gt;
+\end{pmatrix}
+$$&lt;/p&gt;
+&lt;p&gt;为简便表达，用 $A$ 来表达矩阵 $[x_{ij}]$，因此&lt;/p&gt;
+&lt;p&gt;$$(T(\vec{\alpha_1}),T(\vec{\alpha_2}),\cdots,T(\vec{\alpha_n}))=(\vec{\alpha_1},\vec{\alpha_2},\cdots,\vec{\alpha_n}) A$$&lt;/p&gt;
+&lt;p&gt;这就是线性变换后 “新基” ${ T(\vec{\alpha_1}),T(\vec{\alpha_2}),\cdots,T(\vec{\alpha_n}) }$ 与原基 ${ \vec{\alpha_1},\vec{\alpha_2},\cdots,\vec{\alpha_n} }$ 的关系表达式。我们称矩阵 $A$ 为变换矩阵。&lt;/p&gt;
+&lt;p&gt;从上述过程可以知道，变换矩阵 $A$ 的第 $i$ 列就是原基中第 $i$ 个向量 $\vec{\alpha_i}$ 的像 $T(\vec{\alpha_i})$ 在原基下的坐标表示，坐标的唯一性决定了 $A$ 的唯一性。也就是说，只要选定了一组基，线性变换 $T$ 对这组基的作用（“新基”的坐标），在这组基下是唯一的。因此，在选定了一组基的情况下，线性变换 $T$ 与矩阵 $A$ 是一一对应的，即：&lt;/p&gt;
+&lt;p&gt;$$T \iff A $$&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;回到本文开头：&lt;/p&gt;
+&lt;p&gt;$$\vec{w}=(\vec{\alpha_1},\vec{\alpha_2},\cdots,\vec{\alpha_n}) \vec{Y}$$&lt;/p&gt;
+&lt;p&gt;$$\vec{v}=(\vec{\alpha_1},\vec{\alpha_2},\cdots,\vec{\alpha_n}) \vec{X}$$&lt;/p&gt;
+&lt;p&gt;如果向量 $\vec{w}$ 是由向量 $\vec{v}$ 经过线性变换 $T$ 得到的，即有&lt;/p&gt;
+&lt;p&gt;$$\vec{w}=T(\vec{v})=(\vec{\alpha_1},\vec{\alpha_2},\cdots,\vec{\alpha_n}) A \vec{X}$$&lt;/p&gt;
+&lt;p&gt;通过对比，显然有：&lt;/p&gt;
+&lt;p&gt;$$\vec{Y}=A \vec{X}$$&lt;/p&gt;
+&lt;p&gt;特别地，当基 $(\vec{\alpha_1},\vec{\alpha_2},\cdots,\vec{\alpha_n})$ 为 $R^n$ 中的自然基，即 $\vec{\alpha_1}= \begin{pmatrix} 1 \ 0 \ \vdots \ 0 \end{pmatrix}$，$\vec{\alpha_2}= \begin{pmatrix} 0 \ 1 \ \vdots \ 0 \end{pmatrix}$，$\cdots$，$\vec{\alpha_n}=\begin{pmatrix} 0 \ 0 \ \vdots \ 1 \end{pmatrix}$ 时，有&lt;/p&gt;
+&lt;p&gt;$$\vec{w}=\vec{Y}$$&lt;/p&gt;
+&lt;p&gt;$$\vec{v}=\vec{X}$$&lt;/p&gt;
+&lt;p&gt;此时有&lt;/p&gt;
+&lt;p&gt;$$\vec{w}=T(\vec{v})=A \vec{v}$$&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>泰勒展开式</title>
+      <link>https://utopizza.github.io/posts/math/2019-01-11-%E6%95%B0%E5%AD%A6-%E6%B3%B0%E5%8B%92%E5%B1%95%E5%BC%80%E5%BC%8F/</link>
+      <pubDate>Fri, 11 Jan 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://utopizza.github.io/posts/math/2019-01-11-%E6%95%B0%E5%AD%A6-%E6%B3%B0%E5%8B%92%E5%B1%95%E5%BC%80%E5%BC%8F/</guid>
+      <description>&lt;p&gt;泰勒公式是怎么被推导出来的，以及为什么可以用多项式来逼近任意函数？&lt;/p&gt;
+&lt;p&gt;根据微积分的“以直代曲”的思想，对一个连续可导的函数 $f(x)$，当因变量 $x$ 在某点 $x_0$ 附近的改变值为 $\Delta x$ 时，过该点的切线上对应的纵坐标增量为 $dy=f&amp;rsquo;(x_0) \cdot \Delta x$。虽然 $f(x)$ 实际上的纵坐标增量是 $\Delta y=f(x_0+\Delta x)-f(x_0)$，但是如果 $\Delta x$ 非常小，那么可以近似认为切线的纵坐标增量等于 $f(x)$ 的纵坐标增量。即：&lt;/p&gt;
+&lt;p&gt;$$\Delta y=f(x_0+\Delta x)-f(x_0) \approx f&amp;rsquo;(x_0) \cdot \Delta x$$&lt;/p&gt;
+&lt;p&gt;那么对于 $x_0$ 附近的任意一点 $x$，有 $\Delta x=x-x_0$，代入上式得：&lt;/p&gt;
+&lt;p&gt;$$f(x)-f(x_0) \approx f&amp;rsquo;(x_0) \cdot (x-x_0)$$&lt;/p&gt;
+&lt;p&gt;将 $f(x_0)$ 移到右边，凑出关于 $x$ 的函数表达形式：&lt;/p&gt;
+&lt;p&gt;$$f(x) \approx f(x_0)+f&amp;rsquo;(x_0) \cdot (x-x_0)$$&lt;/p&gt;
+&lt;p&gt;观察这个式子，显然它就是利用已知的一个点 $(x_0,f(x_0))$ 及在该点处的一阶导数 $f&amp;rsquo;(x_0)$ 来近似表达了在 $x_0$ 附近的原函数 $f(x)$，而且它是一个线性的函数，非常便于我们计算和处理，特别是在原函数 $f(x)$ 是一个非常复杂的函数的情况下。&lt;/p&gt;
+&lt;p&gt;到了这里，严谨的数学家肯定不满足于如此，因为这只是一个非常粗略的近似。那么如何进一步逼近原函数 $f(x)$？甚至什么时候可以取等号？这就是泰勒以及众多数学家的贡献了。&lt;/p&gt;
+&lt;p&gt;既然一阶导数和一次多项式可以用来近似代替函数 $f(x)$，而现在希望能进一步提高近似的精度，那么一个非常自然、直接的想法就是使用更高阶的导数以及更高阶的多项式。因为多项式函数无论是连续求导、变形、还是数值计算，都要比其他一些函数例如三角函数、指数函数、对数函数、幂函数等容易得多，所以自然选择多项式来作为基本构件。这其实在生活中是很常见的思路：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;当遇到一个复杂的、无法直接使用的东西时，我们自然想办法用其他一些简单的、方便使用的东西去近似模拟它，得到和它基本相近的功能&lt;/li&gt;
+&lt;li&gt;当我们要去近似模拟时，要直接一步到位是很难的，一般是先模拟一个大体的近似，然后在这个基础上，一步步去完善细节，一步步提高精度&lt;/li&gt;
+&lt;li&gt;如第一点所说，我们肯定是使用简单的零部件去构建整体，并且越简单越好，因为越简单则越容易理解和改造、控制。其实大自然亦如此，复杂如人的神经系统、大脑组织，也是由一个个十分简单、有效的神经细胞组建而成&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;相信上面的陈述应该可以说服你，像数学家那样使用高阶导数和高阶多项式来进行近似代替某个复杂但连续并且可导的函数 $f(x)$。我们知道，最简单的多项式函数表达形式如下：&lt;/p&gt;
+&lt;p&gt;$$g(x)=a_0+a_1x+a_2x^2+\cdots+a_nx^n$$&lt;/p&gt;
+&lt;p&gt;回顾一阶近似的时候，近似的函数形式是&lt;/p&gt;
+&lt;p&gt;$$f(x) \approx f(x_0)+f&amp;rsquo;(x_0) \cdot (x-x_0)$$&lt;/p&gt;
+&lt;p&gt;结合两者，我们依样画葫芦地写出：&lt;/p&gt;
+&lt;p&gt;$$f(x)=a_0+a_1(x-x_0)+a_2(x-x_0)^2+ \cdots + a_n(x-x_0)^n$$&lt;/p&gt;
+&lt;p&gt;至此泰勒展开已经完成了一半了，只剩各项的系数需要确定。对比一阶近似，一次项的系数是 $f&amp;rsquo;(x_0)$，这暗示着各项的系数与函数 $f(x)$ 在 $x_0$ 处的导数存在某种关系，启发我们往这个方向去假设和推测。以下是推导过程。&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;对 $f(x)$ 求 $1$ 至 $n$ 阶导：&lt;/p&gt;
+&lt;p&gt;$$f&amp;rsquo;(x)=a_1+2a_2(x-x_0)+3a_3(x-x_0)^2+\cdots+na_n(x-x_0)^{n-1}$$&lt;/p&gt;
+&lt;p&gt;$$f&amp;rsquo;&#39;(x)=2a_2+6a_3(x-x_0)+\cdots+n(n-1)a_n(x-x_0)^{n-2}$$&lt;/p&gt;
+&lt;p&gt;$$f&amp;rsquo;&#39;&#39;(x)=6a_3+\cdots+n(n-1)(n-2)a_n(x-x_0)^{n-3}$$&lt;/p&gt;
+&lt;p&gt;$$\cdots$$&lt;/p&gt;
+&lt;p&gt;$$f^{(n)}(x)=n(n-1)(n-2)\cdots \cdot 2 \cdot 1 \cdot a_n$$&lt;/p&gt;
+&lt;p&gt;令 $x=x_0$ 代入以上式子，得&lt;/p&gt;
+&lt;p&gt;$$f&amp;rsquo;(x_0)=1 \cdot a_1 = 1! \cdot a_1$$&lt;/p&gt;
+&lt;p&gt;$$f&amp;rsquo;&#39;(x_0)=2 \cdot 1 \cdot a_2=2! \cdot a_2$$&lt;/p&gt;
+&lt;p&gt;$$f&amp;rsquo;&#39;&#39;(x_0)=3 \cdot 2 \cdot 1 \cdot a_3=3! \cdot a_3$$&lt;/p&gt;
+&lt;p&gt;$$\cdots$$&lt;/p&gt;
+&lt;p&gt;$$f^{(n)}(x_0)= n \cdot (n-1) \cdots \cdot 2 \cdot 1 \cdot a_n=n! \cdot a_n$$&lt;/p&gt;
+&lt;p&gt;因此即得&lt;/p&gt;
+&lt;p&gt;$$a_i=\frac{f^{(i)}(x_0)}{i!},i \in [1,n]$$&lt;/p&gt;
+&lt;p&gt;因此泰勒展开式为&lt;/p&gt;
+&lt;p&gt;$$
+\begin{aligned}
+f(x) &amp;amp;=f(x_0)+f&amp;rsquo;(x_0)(x-x_0)+\frac{f&amp;rsquo;&#39;(x_0)}{2!}(x-x_0)+\cdots+\frac{f^{(n)}(x_0)}{n!}(x-x_0) \&lt;br&gt;
+&amp;amp; =f(x_0)+\sum_{i=1}^{n}\frac{f^{(i)}(x_0)}{i!}(x-x_0)^i \&lt;br&gt;
+&amp;amp; = \sum_{i=0}^{n}\frac{f^{(i)}(x_0)}{i!}(x-x_0)^i
+\end{aligned}
+$$&lt;/p&gt;
+&lt;p&gt;其实严格来说以上都不正确，因此近似始终不是等于，无论 $n$ 有多大，式子右边始终不是 $f(x)$，上述式子应该取约等号。如果要取等号，那么需要把每一项近似的误差也补完整，完整的泰勒展开为&lt;/p&gt;
+&lt;p&gt;$$f(x)=\sum_{i=0}^{n}\frac{f^{(i)}(x_0)}{i!}(x-x_0)^i+R_n(x)$$&lt;/p&gt;
+&lt;p&gt;其中 $R_n(x)$ 则为近似的总误差。一共有两位数学家先后尝试推导这个误差项 $R_n(x)$，分别为佩亚诺和拉格朗日。其中佩亚诺给出的结果称为佩亚诺余项：&lt;/p&gt;
+&lt;p&gt;$$R_n(x)=o((x-x_0)^n)$$&lt;/p&gt;
+&lt;p&gt;佩亚诺余项只是定性地说明误差项是 $(x-x_0)^n$ 高阶的无穷小，并不能具体估算误差大小，因此后来拉格朗日进一步给出了具体形式的余项，称为拉格朗日余项：&lt;/p&gt;
+&lt;p&gt;$$R_n(x)=\frac{f^{n+1}(\xi)}{(n+1)!}(x-x_0)^{n+1}$$&lt;/p&gt;
+&lt;p&gt;其中 $\xi$ 是 $x$ 与 $x_0$ 之间的某个值。要推导这个余项需要用到柯西中值定理，具体推导过程不再详述，可参考资料：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;《高等数学》同济版&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.zhihu.com/question/25627482/answer/32060408&#34;&gt;怎样更好地理解并记忆泰勒展开式？&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.zhihu.com/question/21149770?rf=22001335&#34;&gt;如何通俗地解释泰勒公式？&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.zhihu.com/question/34539650/answer/69556280&#34;&gt;泰勒公式最初是如何想到的?&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>事件与概率</title>
+      <link>https://utopizza.github.io/posts/math/2019-01-09-%E6%A6%82%E7%8E%87-%E4%BA%8B%E4%BB%B6%E4%B8%8E%E6%A6%82%E7%8E%87/</link>
+      <pubDate>Wed, 09 Jan 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://utopizza.github.io/posts/math/2019-01-09-%E6%A6%82%E7%8E%87-%E4%BA%8B%E4%BB%B6%E4%B8%8E%E6%A6%82%E7%8E%87/</guid>
+      <description>&lt;p&gt;一、概率&lt;/p&gt;
+&lt;p&gt;1、概率的公理化定义（柯氏理论体系）：事件有概率，其大小随事件而异。也即，概率是事件的函数：事件 $A$ 的概率记为 $P(A)$。&lt;/p&gt;
+&lt;p&gt;2、古典概率：设一个试验有 $N$ 个等可能的结果，而事件 $E$ 恰包含其中的 $M$ 个结果，则事件 $E$ 的概率，记为 $P(E)$，定义为&lt;/p&gt;
+&lt;p&gt;$$P(E)=\frac{M}{N}$$&lt;/p&gt;
+&lt;p&gt;3、古典概率计算归结为计算两个数 $M$ 和 $N$。这种计算大多涉及排列组合。排列组合公式：
+(1) $n$ 个相异物件取 $r(1\leq r \leq n)$ 个的不同排列总数为&lt;/p&gt;
+&lt;p&gt;$$A_{n}^{r}=n(n-1)(n-2) \cdots (n-r+1)=\frac{n!}{(n-r)!}$$&lt;/p&gt;
+&lt;p&gt;(2) $n$ 个相异物件取 $r(1\leq r \leq n)$ 个的不同组合总数为&lt;/p&gt;
+&lt;p&gt;$$C_{n}^{r}=\frac{A_{n}^{r}}{r!}=\frac{n!}{r!(n-r)!}$$&lt;/p&gt;
+&lt;p&gt;(3) 组合系数 $C_{n}^{r}$ 又常称为二项式系数，因为它出现在二项式展开的公式中：&lt;/p&gt;
+&lt;p&gt;$$(a+b)^n=\sum_{i=0}^{n}C_{n}^{i}a^{i}b^{n-i}$$&lt;/p&gt;
+&lt;p&gt;(4) $n$ 个相异物分成 $k$ 堆，各堆物件数分别为 $r_1,\cdots,r_k$，分法种数为：&lt;/p&gt;
+&lt;p&gt;$$\frac{n!}{r_1! \cdots r_k!}$$&lt;/p&gt;
+&lt;p&gt;二、事件的运算、条件概率与独立性&lt;/p&gt;
+&lt;p&gt;1、事件的蕴含、包含以及相等：在同一试验下的两个事件 $A$ 和 $B$，如果：
+(1) 当 $A$ 发生时 $B$ 必发生，则称 $A$ 蕴含 $B$，或者 $B$ 包含 A，记为 $A \subset B$
+(2) 若 $A$、$B$ 相互蕴含，即 $A \subset B$ 且 $B \subset A$，则称 $A$、$B$ 两事件相等，记为 $A=B$&lt;/p&gt;
+&lt;p&gt;2、事件的互斥和对立
+(1) 若两事件 $A$、$B$ 不能在同一次试验中都发生（但可以都不发生），则称它们是互斥的
+(2) 若 $A$、$B$ 互斥，并且当其中一个不发生时，另一个必定发生，那么称它们是对立的。记 $A$ 的对立事件为 $\bar A$&lt;/p&gt;
+&lt;p&gt;3、事件的和：设有两个事件 $A$、$B$，定义一个新事件 $C$ 为 $C$={ $A$ 发生或 $B$ 发生}={ $A$、$B$ 至少发生一个}，则称事件 $C$ 为 事件 $A$、$B$ 的和，记为 $C=A+B$&lt;/p&gt;
+&lt;p&gt;4、事件的积：设有两个事件 $A$、$B$，定义一个新事件 $C$ 为 $C$={ $A$、$B$ 都发生}，则称事件 $C$ 为 事件 $A$、$B$ 的积，记为 $C=AB$&lt;/p&gt;
+&lt;p&gt;5、事件的差：设有两个事件 $A$、$B$，定义一个新事件 $C$ 为 $C$={ $A$ 发生、$B$ 不发生}，则称事件 $C$ 为 事件 $A$、$B$ 的差，记为 $C=A-B$&lt;/p&gt;
+&lt;p&gt;6、条件概率：设有两个事件 $A$、$B$，其中 $P(B) \neq 0$。则 “在给定 $B$ 发生的条件下 $A$ 的条件概率”，记为 $P(A \mid B)$，定义为 $P(A \mid B)=\frac{P(AB)}{P(B)}$&lt;/p&gt;
+&lt;p&gt;7、事件的独立性：设有两个事件 $A$、$B$，若 $P(A)=P(A \mid B)$，则说明 $B$ 的发生与否对 $A$ 发生的可能性毫无影响。这时在概率上称 $A$、$B$ 独立。此时根据条件概率公式可推得 $P(AB)=P(A)P(B)$&lt;/p&gt;
+&lt;p&gt;三、概率定理&lt;/p&gt;
+&lt;p&gt;1、$0 \leq P(A) \leq 1$。其中当 $$ 等于 $0$ 时 $A$ 是不可能事件，等于 $1$ 时是必然事件&lt;/p&gt;
+&lt;p&gt;2、加法定理：若干个互斥事件之和的概率，等于各事件的概率之和：&lt;/p&gt;
+&lt;p&gt;$$P(A_1+A_2+\cdots)=P(A_1)+P(A_2)+\cdots$$&lt;/p&gt;
+&lt;p&gt;3、乘法定理：若干个独立事件之积的概率，等于各事件概率的乘积：&lt;/p&gt;
+&lt;p&gt;$$P(A_1 \cdots A_n)=P(A_1) \cdots P(A_n)$$&lt;/p&gt;
+&lt;p&gt;四、全概率公式与贝叶斯公式&lt;/p&gt;
+&lt;p&gt;1、全概率公式：设 $B_1,B_2,\cdots$ 为有限或无限个事件，它们两两互斥且在每次试验中至少发生一个。即&lt;/p&gt;
+&lt;p&gt;$$B_{i}B_{j} (i \neq j) = \emptyset \text{(不可能事件)}$$&lt;/p&gt;
+&lt;p&gt;$$B_1+B_2+\cdots=\Omega \text{(必然事件)}$$&lt;/p&gt;
+&lt;p&gt;有时，把具有这些性质的一组事件称为一个“完备事件群”。现考虑任一事件 $A$，因为 $\Omega$ 为必然事件，有 $A=A\Omega=AB_1+AB_2+\cdots$。因 $B_1$、$B_2$、$\cdots$ 两两互斥，所以 $AB_1$、$AB_2$、$\cdots$ 也两两互斥。故依加法定理有&lt;/p&gt;
+&lt;p&gt;$$P(A)=P(AB_1)+P(AB_2)+\cdots$$&lt;/p&gt;
+&lt;p&gt;再由条件概率的定义，有 $P(AB_i)=P(A \mid B_i)P(B_i)$，代入上式得&lt;/p&gt;
+&lt;p&gt;$$\begin{align}
+P(A) &amp;amp;=P(A \mid B_1)P(B_1)+P(A \mid B_2)P(B_2)+\cdots \&lt;br&gt;
+&amp;amp;=\sum_{i} P(A \mid B_i)P(B_i)
+\end{align}$$&lt;/p&gt;
+&lt;p&gt;可理解为事件 $A$ 的概率是从各个 $B_i$ 中 “收集” 回来的。也可以理解为 $B_i$ 是导致 $A$ 发生的一种可能 “途径”，或者 称为“原因”。&lt;/p&gt;
+&lt;p&gt;2、贝叶斯公式：在全概率公式的基础上，可以推导出：&lt;/p&gt;
+&lt;p&gt;$$P(B_i \mid A)=\frac{P(AB_i)}{P(A)}=\frac{P(A\mid B_i)P(B_i)}{\sum_{j} P(B_j)P(A\mid B_j)}$$&lt;/p&gt;
+&lt;p&gt;其实就是对分子使用条件概率公式，对分母使用全概率公式。但是它所包含的哲理意义却不普通，引用陈希儒教授的《概率论与数理统计》一书中的解释：&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;如果我们把事件 $A$ 看做“结果”，把诸事件 $B_1$、$B_2$、$\cdots$  看做导致这个结果的“原因”，则可以形象地把全概率公式看作“由原因推导结果”；而贝叶斯公式则恰好相反，其作用在于“由结果推原因”：现在有一个“结果” $A$ 已经发生了，在众多可能的“原因”中，到底是哪一个导致了这个“结果”？&lt;/p&gt;
+&lt;/blockquote&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>定积分</title>
+      <link>https://utopizza.github.io/posts/math/2018-12-18-%E6%95%B0%E5%AD%A6-%E5%AE%9A%E7%A7%AF%E5%88%86/</link>
+      <pubDate>Tue, 18 Dec 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://utopizza.github.io/posts/math/2018-12-18-%E6%95%B0%E5%AD%A6-%E5%AE%9A%E7%A7%AF%E5%88%86/</guid>
+      <description>&lt;p&gt;一、定积分的概念与性质&lt;/p&gt;
+&lt;p&gt;1、定义：设函数 $f(x)$ 在 $[a,b]$ 上有界，在 $[a,b]$ 中任意插入若干分点 $a=x_0 &amp;lt; x_1 &amp;lt; x_2 &amp;lt; \cdots &amp;lt; x_{n-1} &amp;lt; x_n=b$，把区间 $[a,b]$ 分成 $n$ 个小区 $[x_0, x_1]$，$[x_1,x_2]$，$\cdots$，$[x_{n-1},x_n]$，各个小区间的长度依次为 $\Delta x_1=x_1-x_0$, $\Delta x_2=x_2-x_1$, $\cdots$, $\Delta x_n=x_n-x_{n-1}$。在每个小区间 $[x_{i-1},x_i]$ 上任取一点 $\xi_i (x_{i-1} \leq \xi \leq x_i)$，作函数值 $f(\xi)$ 与小区间长度 $\Delta x_i$ 的乘积 $f(\xi_i) \cdot \Delta x_i$，并作和&lt;/p&gt;
+&lt;p&gt;$$S=\sum_{i=1}^{n}f(\xi)\Delta x_i$$&lt;/p&gt;
+&lt;p&gt;记 $\lambda=\max { \Delta x_1, \Delta x_2, \cdots, \Delta x_n }$，如果当 $\lambda \to 0$ 时，$S$ 的极限总存在，且与闭区间 $[a,b]$ 的分法及点 $\xi_i$ 的取法无关，那么称这个极限 $I$ 为函数  $f(x)$ 在区间 $[a,b]$ 上的定积分，记作 $\int_{a}^{b} f(x) dx$，即&lt;/p&gt;
+&lt;p&gt;$$\int_{a}^{b} f(x) dx=I=\lim_{\lambda \to 0} \sum_{i=1}^{n} f(\xi_i) \Delta x_i$$&lt;/p&gt;
+&lt;p&gt;其中 $f(x)$ 叫做被积函数，$f(x)dx$ 叫做被积表达式，$x$ 叫做积分变量，$a$ 叫做积分下限，$b$ 叫做积分上限，$[a,b]$ 叫做积分区间&lt;/p&gt;
+&lt;p&gt;2、定理：设 $f(x)$ 在区间 $[a,b]$ 上连续，则 $f(x)$ 在 $[a,b]$ 上可积&lt;/p&gt;
+&lt;p&gt;3、定理：设 $f(x)$ 在区间 $[a,b]$ 上有界，且只有有限个间断点，则 $f(x)$ 在 $[a,b]$ 上可积&lt;/p&gt;
+&lt;p&gt;4、性质&lt;/p&gt;
+&lt;p&gt;(1) 设 $\alpha$ 与 $\beta$ 均为常数，则&lt;/p&gt;
+&lt;p&gt;$$\int_{a}^{b}[\alpha f(x) + \beta g(x)]dx=\alpha \int_{a}^{b} f(x)dx+ \beta \int_{a}^{b} g(x) dx$$&lt;/p&gt;
+&lt;p&gt;(2) 设 $a &amp;lt; c &amp;lt; b$，则&lt;/p&gt;
+&lt;p&gt;$$\int_{a}^{b} f(x) dx=\int_{a}^{c}f(x)dx+\int_{c}^{b}f(x)dx$$&lt;/p&gt;
+&lt;p&gt;(3) 如果在区间 $[a,b]$ 上 $f(x) \equiv 1$，那么&lt;/p&gt;
+&lt;p&gt;$$\int_{a}^{b} 1 dx=\int_{a}^{b}dx=b-a$$&lt;/p&gt;
+&lt;p&gt;(4) 如果在区间 $[a,b]$ 上 $f(x) \geq 0$，那么&lt;/p&gt;
+&lt;p&gt;$$\int_{a}^{b} f(x) dx \geq 0$$&lt;/p&gt;
+&lt;p&gt;(5) 设 $M$ 及 $m$ 分别是函数 $f(x)$ 在区间 $[a,b]$ 上的最大值及最小值，则&lt;/p&gt;
+&lt;p&gt;$$m(b-a) \leq \int_{a}^{b} f(x) dx \leq M(b-a)$$&lt;/p&gt;
+&lt;p&gt;(6) 定积分中值定理：如果函数 f(x) 在积分区间 $[a,b]$ 上连续，那么在 $[a,b]$ 上至少存在一个点 $\xi$，使用下式成立：&lt;/p&gt;
+&lt;p&gt;$$\int_{a}^{b} f(x)dx=f(\xi)(b-a)$$&lt;/p&gt;
+&lt;p&gt;二、微积分基本公式&lt;/p&gt;
+&lt;p&gt;1、定理：如果函数 $f(x)$ 在区间 $[a,b]$ 上连续，那么积分上限的函数&lt;/p&gt;
+&lt;p&gt;$$\Phi(x)=\int_{a}^{x}f(t)dt$$&lt;/p&gt;
+&lt;p&gt;在 $[a,b]$ 上可导，并且它的导数&lt;/p&gt;
+&lt;p&gt;$$\Phi&amp;rsquo;(x)=\frac{d}{dx} \int_{a}^{b} f(t)dt=f(x)$$&lt;/p&gt;
+&lt;p&gt;2、定理：如果函数 $f(x)$ 在区间 $[a,b]$ 上连续，那么函数&lt;/p&gt;
+&lt;p&gt;$$\Phi(x)=\int_{a}^{x} f(t)dt$$&lt;/p&gt;
+&lt;p&gt;就是 $f(x)$ 在 $[a,b]$ 上的一个原函数&lt;/p&gt;
+&lt;p&gt;3、定理（牛顿莱布尼茨公式、微积分基本定理）：如果函数 $F(x)$ 是连续函数 $f(x)$ 在区间 $[a,b]$ 上的一个原函数，那么&lt;/p&gt;
+&lt;p&gt;$$\int_{a}^{b} f(x) dx=F(b)-F(a)=[F(x)]_{a}^{b}$$&lt;/p&gt;
+&lt;p&gt;这个公式表明：一个连续函数在区间 $[a,b]$ 上的定积分等于它的任一个原函数在区间 $[a,b]$ 上的增量&lt;/p&gt;
+&lt;p&gt;三、定积分的换元法和分部积分法&lt;/p&gt;
+&lt;p&gt;1、定理（换元公式）：假设函数 $f(x)$ 在区间 $[a,b]$ 上连续，函数 $x=\varphi(t)$ 满足条件：
+(1) $\varphi(\alpha)=a, \varphi(\beta)=b$
+(2) $\varphi(t)$ 在 $[\alpha,\beta]$（ 或 $[\beta,\alpha]$ ） 上具有连续导数，且其值域 $R_{\varphi}=[a,b]$，则有&lt;/p&gt;
+&lt;p&gt;$$\int_{a}^{b}f(x)dx=\int_{\alpha}^{beta}f[\varphi(t)] \cdot \varphi &amp;lsquo;(t) dt$$&lt;/p&gt;
+&lt;p&gt;应用换元公式时有两点值得注意：(1) 用 $x=\varphi(x)$ 把原来变量 $x$ 代换成新变量 $t$ 时，积分限也要换成相应于新变量 $t$ 的积分限；(2) 求出 $f[\varphi(t)] \cdot \varphi&amp;rsquo;(t)$ 的一个原函数 $\Phi(t)$ 后，不必像计算不定积分那样再要把 $\Phi(t)$ 变换成原来变量 $x$ 的函数，而只要把新变量 $t$ 的上、下限分别代入 $\Phi(t)$ 中然后相减即可&lt;/p&gt;
+&lt;p&gt;换元公式也可以反过来使用。为使用方便起见，把换元公式中左右两边对调位置，同时把 $t$ 改记为 $x$，而 $x$ 改记为 $t$， 得&lt;/p&gt;
+&lt;p&gt;$$\int_{a}^{b}f[\varphi(x)] \cdot \varphi&amp;rsquo;(x) dx=\int_{\alpha}^{\beta} f(t) dt$$&lt;/p&gt;
+&lt;p&gt;其中 $t=\varphi(x)$，$\alpha=\varphi(a)$，$\beta=\varphi(b)$&lt;/p&gt;
+&lt;p&gt;2、分部积分：&lt;/p&gt;
+&lt;p&gt;$$\int_{a}^{b} uv&amp;rsquo;dx=[uv]_{a}^{b}-\int_{a}^{b}vu&amp;rsquo;dx$$&lt;/p&gt;
+&lt;p&gt;简记为&lt;/p&gt;
+&lt;p&gt;$$\int_{a}^{b} udv=[uv]_{a}^{b}-\int_{a}^{b}vdu$$&lt;/p&gt;
+&lt;p&gt;四、反常积分&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>不定积分</title>
+      <link>https://utopizza.github.io/posts/math/2018-12-14-%E6%95%B0%E5%AD%A6-%E4%B8%8D%E5%AE%9A%E7%A7%AF%E5%88%86/</link>
+      <pubDate>Fri, 14 Dec 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://utopizza.github.io/posts/math/2018-12-14-%E6%95%B0%E5%AD%A6-%E4%B8%8D%E5%AE%9A%E7%A7%AF%E5%88%86/</guid>
+      <description>&lt;p&gt;一、不定积分的概念与性质&lt;/p&gt;
+&lt;p&gt;1、定义：如果在区间 $I$ 上，可导函数 $F(x)$ 的导函数为 $f(x)$，即对任一 $x \in I$，都有 $F&amp;rsquo;(x)=f(x)$ 或 $dF(x)=f(x)dx$，那么函数 $F(x)$ 就称为 $f(x)$（或 $f(x)dx$）在区间 $I$ 上的一个原函数&lt;/p&gt;
+&lt;p&gt;2、定理：如果函数 $f(x)$ 在区间 $I$ 上连续，那么在区间 $I$ 上存在可导函数 $F(x)$，使得对任一 $x \in I$ 都有 $F&amp;rsquo;(x)=f(x)$，也就是说连续函数一定有原函数&lt;/p&gt;
+&lt;p&gt;3、定义：在区间 $I$ 上，函数 $f(x)$ 的带有任意常数项的原函数称为 $f(x)$ （或 $f(x)dx$）在区间 $I$ 上的不定积分，记作 $\int f(x)dx$。其中记号 $\int$ 称为积分号，$f(x)$ 称为被积函数，$f(x)dx$ 称为被积表达式，$x$ 称为积分变量&lt;/p&gt;
+&lt;p&gt;4、由于 $\int f(x)dx$ 是 $f(x)$ 的原函数，所以 $\frac{d}{dx}[\int f(x)dx]=f(x)$ 或 $d[\int f(x)dx]=f(x)dx$；又由于 $F(x)$ 是 $F&amp;rsquo;(x)$  的原函数，所以 $\int F&amp;rsquo;(x) dx=F(x)+C$ 或 $\int dF(x)=F(x)+C$。由此可见，微分运算（以记号 $d$ 表示）与积分运算（以记号 $\int$ 表示）是互逆的。当此两个记号连在一起时，或者抵消，或者抵消后差一个常数。&lt;/p&gt;
+&lt;p&gt;$$\int F&amp;rsquo;(x) dx = \int dF(x)$$&lt;/p&gt;
+&lt;p&gt;5、既然积分运算是微分运算的逆运算，那么很自然地可以从导数公式得到相应的积分公式。基本积分表：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;$\int k dx=kx+C$ ($k$ 是常数)&lt;/li&gt;
+&lt;li&gt;$\int x^\mu dx=\frac{x^{\mu+1}}{\mu+1}+C$ ($\mu \neq -1$)&lt;/li&gt;
+&lt;li&gt;$\int \frac{1}{x} dx=\ln|x|+C$&lt;/li&gt;
+&lt;li&gt;$\int \frac{1}{1+x^2} dx=\arctan x +C$&lt;/li&gt;
+&lt;li&gt;$\int \frac{1}{\sqrt{1-x^2}} dx=\arcsin x+C$&lt;/li&gt;
+&lt;li&gt;$\int \cos x dx=\sin x+C$&lt;/li&gt;
+&lt;li&gt;$\int \sin x dx=- \cos x +C$&lt;/li&gt;
+&lt;li&gt;$\int \frac{1}{\cos^{2} x} dx=\int \sec^2 x dx=\tan x+C$&lt;/li&gt;
+&lt;li&gt;$\int \frac{1}{\sin^{2} x} dx=\int \csc^2 x dx=- \cot x+C$&lt;/li&gt;
+&lt;li&gt;$\int \sec x \tan x dx=\sec x+C$&lt;/li&gt;
+&lt;li&gt;$\int \csc x \cot x dx=- \csc x+C$&lt;/li&gt;
+&lt;li&gt;$\int e^x dx=e^x+C$&lt;/li&gt;
+&lt;li&gt;$\int a^x dx=\frac{a^x}{\ln a}+C$&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;6、性质1：设函数 $f(x)$ 及 $g(x)$ 的原函数存在，则&lt;/p&gt;
+&lt;p&gt;$$\int [f(x)+g(x)]dx=\int f(x)dx + \int g(x)dx$$&lt;/p&gt;
+&lt;p&gt;7、性质2：设函数 $f(x)$ 的原函数存在，$k$ 为非零常数，则&lt;/p&gt;
+&lt;p&gt;$$\int k \cdot f(x)dx = k \cdot \int f(x)dx$$&lt;/p&gt;
+&lt;p&gt;二、换元积分法&lt;/p&gt;
+&lt;p&gt;1、定理1：设 $f(x)$ 具有原函数，$u=\varphi(x)$ 可导，则有换元公式&lt;/p&gt;
+&lt;p&gt;$$\int f[\varphi(x)] \cdot \varphi&amp;rsquo;(x) dx=[\int f(u) du]_{u=\varphi(x)}$$&lt;/p&gt;
+&lt;p&gt;2、定理2：设 $x=\psi(t)$ 是单调的可导函数，并且 $\psi(t) \neq 0$。又设 $f[\psi(t)] \cdot \psi(t)$ 具有原函数。则有换元公式&lt;/p&gt;
+&lt;p&gt;$$\int f(x) dx=[\int f[\psi(t)] \cdot \psi&amp;rsquo;(t) dt]_{t=\psi^{-1}(x)}$$&lt;/p&gt;
+&lt;p&gt;其中 $\psi^{-1}(x)$ 是 $x=\psi(t)$ 的反函数&lt;/p&gt;
+&lt;p&gt;3、基本积分表续（以下 $a &amp;gt; 0$）&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;$\int \tan x dx=-\ln |\cos x|+C$&lt;/li&gt;
+&lt;li&gt;$\int \cot x dx=\ln |\sin x|+C$&lt;/li&gt;
+&lt;li&gt;$\int \sec x dx=\ln |\sec x+\tan x|+C$&lt;/li&gt;
+&lt;li&gt;$\int \csc x dx=\ln |\csc x-\cot x|+C$&lt;/li&gt;
+&lt;li&gt;$\int \frac{1}{a^2+x^2} dx=\frac{1}{a} \arctan \frac{x}{a}+C$&lt;/li&gt;
+&lt;li&gt;$\int \frac{1}{x^2-a^2} dx=\frac{1}{2a} \ln |\frac{x-a}{x+a}|+C$&lt;/li&gt;
+&lt;li&gt;$\int \frac{1}{\sqrt{a^2-x^2}} dx=\arcsin \frac{x}{a}+C$&lt;/li&gt;
+&lt;li&gt;$\int \frac{1}{\sqrt{a^2+x^2}} dx=\ln(x+\sqrt{a^2+x^2})+C$&lt;/li&gt;
+&lt;li&gt;$\int \frac{1}{\sqrt{x^2-a^2}} dx=\ln |x+\sqrt{x^2-a^2}|+C$&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;三、分部积分法&lt;/p&gt;
+&lt;p&gt;设函数 $u=u(x)$ 及 $v=v(x)$ 具有连续导数，则两个函数乘积的导数公式为&lt;/p&gt;
+&lt;p&gt;$$(uv)&amp;lsquo;=u&amp;rsquo;v+uv&#39;$$&lt;/p&gt;
+&lt;p&gt;移项，得&lt;/p&gt;
+&lt;p&gt;$$uv&#39;=(uv)&#39;-u&amp;rsquo;v$$&lt;/p&gt;
+&lt;p&gt;两边同时求不定几积分，得&lt;/p&gt;
+&lt;p&gt;$$\int uv&amp;rsquo; dx=uv-\int u&amp;rsquo;v dx$$&lt;/p&gt;
+&lt;p&gt;也可以写成&lt;/p&gt;
+&lt;p&gt;$$\int udv=uv-\int vdu$$&lt;/p&gt;
+&lt;p&gt;四、有理函数的积分&lt;/p&gt;
+&lt;p&gt;1、定义：两个多项式子的商 $\frac{P(x)}{Q(x)}$ 称为有理函数，又称有理分式（假定分子多项式与分母之间没有公因式）。当分子多项式 $P(x)$ 的次数小于分母多项式 $Q(x)$ 的次数时，称这有理函数为真分式，否则为假分式。&lt;/p&gt;
+&lt;p&gt;2、对于假分式，利用多项式除法，总可以将一个假分式化成一个多项式与一个真分式之和的形式&lt;/p&gt;
+&lt;p&gt;3、对于真分式 $\frac{P(x)}{Q(x)}$，如果分母可分解为两个多项式的乘积 $Q(x)=Q_1(x)Q_2(x)$ 且 $Q_1(x)$ 与 $Q_2(x)$ 没有公因式，那么它可拆分为两个真分式之和&lt;/p&gt;
+&lt;p&gt;$$\frac{P(x)}{Q(x)}=\frac{P_1(x)}{Q_1(x)}+\frac{P_2(x)}{Q_2(x)}$$&lt;/p&gt;
+&lt;p&gt;上述步骤称为把真分式化成部分分式之和。如果 $Q_1(x)$ 或 $Q_2(x)$ 还能分解成两个没有公因式的多项式的乘积，那么如此继续拆分。最后，有理函数的分解式中只出现多项式、$\frac{P_1(x)}{(x-a)^k}$、$\frac{P_2(x)}{(x^2+px+q)^l}$ 等三类函数，在进行求解。&lt;/p&gt;
+&lt;p&gt;五、积分表的使用&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>微分中值定理与导数的应用</title>
+      <link>https://utopizza.github.io/posts/math/2018-12-11-%E6%95%B0%E5%AD%A6-%E5%BE%AE%E5%88%86%E4%B8%AD%E5%80%BC%E5%AE%9A%E7%90%86%E4%B8%8E%E5%AF%BC%E6%95%B0%E7%9A%84%E5%BA%94%E7%94%A8/</link>
+      <pubDate>Tue, 11 Dec 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://utopizza.github.io/posts/math/2018-12-11-%E6%95%B0%E5%AD%A6-%E5%BE%AE%E5%88%86%E4%B8%AD%E5%80%BC%E5%AE%9A%E7%90%86%E4%B8%8E%E5%AF%BC%E6%95%B0%E7%9A%84%E5%BA%94%E7%94%A8/</guid>
+      <description>&lt;p&gt;一、微分中值定理&lt;/p&gt;
+&lt;p&gt;1、费马引理：设函数 $f(x)$ 在点 $x_0$ 的某邻域 $U(x_0)$ 内有定义，并且在 $x_0$ 处可导，如果对任意的 $x \in U(x_0)$ 有 $f(x) \leq f(x_0)$ （或 $f(x) \geq f(x_0)$），那么 $f&amp;rsquo;(x_0)=0$&lt;/p&gt;
+&lt;p&gt;2、罗尔定理：如果函数 $f(x)$ 满足：(1) 在闭区间 $[a,b]$ 上连续；(2) 在开区间 $(a,b)$ 内可导；(3) 在区间端点处的函数值相等，即 $f(a)=f(b)$，那么在 $(a,b)$ 内至少有一点 $\xi (a &amp;lt; \xi &amp;lt; b)$，使得 $f&amp;rsquo;(\xi)=0$&lt;/p&gt;
+&lt;p&gt;3、拉格朗日中值定理：如果函数 $f(x)$ 满足：(1) 在闭区间 $[a,b]$ 上连续；(2) 在开区间 $(a,b)$ 内可导，那么在 $(a,b)$ 内至少有一点 $\xi (a &amp;lt; \xi &amp;lt; b)$，使得 $f(b)-f(a)=f&amp;rsquo;(\xi) \cdot (b-a)$。其几何意义是，如果连续曲线 $y=f(x)$ 的弧 $\widetilde{AB}$ 上除端点外处处具有不垂直于 $x$ 轴的切线，那么这弧上至少有一点 $C$，使得曲线在 $C$ 处的切线平行于弦 $AB$。该定理也称为微分中值定理&lt;/p&gt;
+&lt;p&gt;4、柯西中值定理：如果函数 $f(x)$ 及 $F(x)$ 满足：(1) 在闭区间 $[a,b]$ 上连续；(2) 在开区间 $(a,b)$ 内可导；(3) 对任一 $x \in (a,b)$，$F&amp;rsquo;(x) \neq 0$，那么在 $(a,b)$ 内至少有一点 $\xi (a &amp;lt; \xi &amp;lt; b)$，使得 $\frac{f(b)-f(a)}{F(b)-F(a)}=\frac{f&amp;rsquo;(\xi)}{F&amp;rsquo;(\xi)}$。该定理是参数方程形式下的拉格朗日中值定理的更一般性的表达形式，当取 $F(x)=x$ 时便得到拉格朗日中值定理&lt;/p&gt;
+&lt;p&gt;二、洛必达法则&lt;/p&gt;
+&lt;p&gt;1、定理：设 (1) 当 $x \to a$ 时，函数 $f(x)$ 及 $F(x)$ 都趋向于零；(2) 在点 $a$ 的某去心邻域内 $f&amp;rsquo;(x)$ 及 $F&amp;rsquo;(x)$ 都存在且 $F&amp;rsquo;(x) \neq 0$；(3) $\lim_{x \to a} \frac{f&amp;rsquo;(x)}{F&amp;rsquo;(x)}$ 存在（或为无限大），则
+$$\lim_{x \to a} \frac{f(x)}{F(x)}=\lim_{x \to a} \frac{f&amp;rsquo;(x)}{F&amp;rsquo;(x)}$$&lt;/p&gt;
+&lt;p&gt;2、定理：设 (1) 当 $x \to \infty $ 时，函数 $f(x)$ 及 $F(x)$ 都趋于零；(2) 当 $|x| &amp;gt; N$ 时，$f&amp;rsquo;(x)$ 与 $F&amp;rsquo;(x)$ 都存在且 $F&amp;rsquo;(x) \neq 0$；(3) $\lim_{x \to \infty} \frac{f&amp;rsquo;(x)}{F&amp;rsquo;(x)}$ 存在（或为无穷大），则
+$$\lim_{x \to \infty} \frac{f(x)}{F(x)}=\lim_{x \to \infty} \frac{f&amp;rsquo;(x)}{F&amp;rsquo;(x)}$$&lt;/p&gt;
+&lt;p&gt;三、泰勒公式&lt;/p&gt;
+&lt;p&gt;1、泰勒中值定理1：如果函数 $f(x)$ 在 $x_0$ 处具有 $n$ 阶导数，那么存在 $x_0$ 的一个邻域，对于该邻域的任一 $x$，有
+$$f(x)=f(x_0)+f&amp;rsquo;(x_0)(x-x_0)+\frac{f&amp;rsquo;&#39;(x_0)}{2!}(x-x_0)^2+&amp;hellip;+\frac{f^{(n)}(x_0)}{n!}(x-x_0)^n+R_n(x)$$
+其中 $R_n(x)=o((x-x_0)^n)$&lt;/p&gt;
+&lt;p&gt;2、泰勒中值定理2：如果函数 $f(x)$ 在 $x_0$ 处具有 $n+1$ 阶导数，那么对于任一 $x \in U(x_0)$，有
+$$f(x)=f(x_0)+f&amp;rsquo;(x_0)(x-x_0)+\frac{f&amp;rsquo;&#39;(x_0)}{2!}(x-x_0)^2+&amp;hellip;+\frac{f^{(n)}(x_0)}{n!}(x-x_0)^n+R_n(x)$$
+其中 $R_n(x)=\frac{f^{(n+1)}(\xi)}{(n+1)!}(x-x_0)^{n+1}$，这里 $\xi$ 是 $x_0$ 与 $x$ 之间的某个值&lt;/p&gt;
+&lt;p&gt;四、函数的单调性与曲线的凹凸性&lt;/p&gt;
+&lt;p&gt;1、定理：设函数 $y=f(x)$ 在 $[a,b]$ 上连续，在 $(a,b)$ 内可导
+(1) 如果在 $(a,b)$ 内 $f&amp;rsquo;(x) \geq 0$，且等号仅在有限多个点处成立，那么函数 $y=f(x)$ 在 $[a,b]$ 上单调增加
+(2) 如果在 $(a,b)$ 内 $f&amp;rsquo;(x) \leq 0$，且等号仅在有限多个点处成立，那么函数 $y=f(x)$ 在 $[a,b]$ 上单调减少&lt;/p&gt;
+&lt;p&gt;2、定义：设 $f(x)$ 在区间 $I$ 上连续，如果对 $I$ 上任意两点 $x_1$，$x_2$，恒有 $f(\frac{x_1+x_2}{2}) &amp;lt; \frac{f(x_1)+f(x_2)}{2}$，那么称 $f(x)$ 在 $I$ 上的图形是凹的；如果恒有 $f(\frac{x_1+x_2}{2}) &amp;gt; \frac{f(x_1)+f(x_2)}{2}$，那么称图形是凸的&lt;/p&gt;
+&lt;p&gt;3、定理：设 $f(x)$ 在 $[a,b]$ 上连续，在 $(a,b)$ 内具有一阶和二阶导数，那么
+(1) 若在 $(a,b)$ 内 $f&amp;rsquo;&#39;(x) &amp;gt; 0$，则 $f(x)$ 在 $[a,b]$ 上的图形是凹的
+(2) 若在 $(a,b)$ 内 $f&amp;rsquo;&#39;(x) &amp;lt; 0$，则 $f(x)$ 在 $[a,b]$ 上的图形是凸的&lt;/p&gt;
+&lt;p&gt;五、函数的极值与最大值最小值&lt;/p&gt;
+&lt;p&gt;1、定义：设函数 $f(x)$ 在点 $x_0$ 的某个去心邻域 $U(x_0)$ 内有定义，如果对于该去心邻域内的任一 $x$，有 $f(x) &amp;lt; f(x_0)$，那么就称 $f(x_0)$ 是函数 $f(x)$ 的一个极大值；如果 $f(x) &amp;gt; f(x_0)$，那么称为极小值&lt;/p&gt;
+&lt;p&gt;2、定理：设函数 $f(x)$ 在 $x_0$ 处可导，且在 $x_0$ 处取得极值，那么 $f&amp;rsquo;(x_0)=0$&lt;/p&gt;
+&lt;p&gt;3、定理：设函数 $f(x)$ 在 $x_0$ 处连续，且在 $x_0$ 的某去心邻域 $U(x_0,\delta)$ 内可导.
+(1) 若 $x \in (x_0-\delta, x_0)$ 时 $f&amp;rsquo;(x) &amp;gt; 0$，而 $x \in (x0, x_0+\delta)$ 时 $f&amp;rsquo;(x) &amp;lt; 0$，则 $f(x)$ 在 $x_0$ 处取得极大值
+(2) 若 $x \in (x_0-\delta, x_0)$ 时 $f&amp;rsquo;(x) &amp;lt; 0$，而 $x \in (x0, x_0+\delta)$ 时 $f&amp;rsquo;(x) &amp;gt; 0$，则 $f(x)$ 在 $x_0$ 处取得极小值&lt;/p&gt;
+&lt;p&gt;4、定理：设函数 $f(x)$ 在 $x_0$ 处具有二阶导数且 $f(x_0)=0$，$f&amp;rsquo;&#39;(x_0) \neq 0$，则
+(1) 当 $f&amp;rsquo;&#39;(x_0) &amp;lt; 0$ 时，函数 $f(x)$ 在 $x_0$ 处取得极大值
+(2) 当 $f&amp;rsquo;&#39;(x_0) &amp;gt; 0$ 时，函数 $f(x)$ 在 $x_0$ 处取得极小值&lt;/p&gt;
+&lt;p&gt;六、曲率&lt;/p&gt;
+&lt;p&gt;七、方程的近似解&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>导数与微分</title>
+      <link>https://utopizza.github.io/posts/math/2018-12-06-%E6%95%B0%E5%AD%A6-%E5%AF%BC%E6%95%B0%E4%B8%8E%E5%BE%AE%E5%88%86/</link>
+      <pubDate>Thu, 06 Dec 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://utopizza.github.io/posts/math/2018-12-06-%E6%95%B0%E5%AD%A6-%E5%AF%BC%E6%95%B0%E4%B8%8E%E5%BE%AE%E5%88%86/</guid>
+      <description>&lt;p&gt;一、导数定义&lt;/p&gt;
+&lt;p&gt;1、函数在一点处的导数：设函数 $y=f(x)$ 在点 $x_0$ 的某个邻域内有定义，当自变量 $x$ 在 $x_0$ 处取得增量 $\Delta x$（点 $x_0 + \Delta x$ 仍在该邻域内）时，相应地，因变量取得增量 $\Delta y=f(x_0+\Delta x)-f(x_0)$。如果 $\Delta y$ 与 $\Delta x$ 之比当 $\Delta x \to 0$ 时的极限存在，那么称函数 $y=f(x)$ 在点 $x_0$ 处可导，并称这个极限为函数 $y=f(x)$ 在点 $x_0$ 处的导数，记为 $f&amp;rsquo;(x_0)$，即&lt;/p&gt;
+&lt;p&gt;$$f&amp;rsquo;(x_0)=\lim_{\Delta x \to 0} \frac{\Delta y}{\Delta x}=\lim_{\Delta x \to 0} \frac{f(x_0+\Delta x)-f(x_0)}{\Delta x}$$&lt;/p&gt;
+&lt;p&gt;2、导函数：如果函数 $y=f(x)$ 在开区间的每点处都可导，那么就称函数 $f(x)$ 在开区间 $I$ 内可导。这时，对于任一 $x \in I$ 都对应着 $f(x)$ 的一个确定的导数值，这样就构成了一个新的函数，这个函数叫做函数 $y=f(x)$ 的导函数，记作 $y&#39;$, 或 $f&amp;rsquo;(x)$。导函数 $f&amp;rsquo;(x)$ 简称导数，$f&amp;rsquo;(x_0)$ 是 $f(x)$ 在 $x_0$ 处的导数，或导数 $f&amp;rsquo;(x)$ 在 $x_0$ 处的值，即 $f&amp;rsquo;(x_0)=f&amp;rsquo;(x)|_{x=x_0}$&lt;/p&gt;
+&lt;p&gt;二、函数的求导法则&lt;/p&gt;
+&lt;p&gt;1、定理：如果函数 $u=u(x)$ 和 $v=v(x)$ 都在点 x 具有导数，那么它们的和、差、积、商（除分母为零的点外）都在 x 点具有导数，且&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;$[u \pm v]&amp;rsquo; = u&amp;rsquo; \pm v&#39;$&lt;/li&gt;
+&lt;li&gt;$[uv]&amp;rsquo; = u&amp;rsquo;v+uv&#39;$&lt;/li&gt;
+&lt;li&gt;$[\frac{u}{v}]&amp;lsquo;=\frac{u&amp;rsquo;v-uv&amp;rsquo;}{v^2}$ ($v(x)\neq 0$)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;2、定理：如果函数 $x=f(y)$ 在区间 $I_y$ 内单调、可导且 $f&amp;rsquo;(y)\neq 0$，那么它的反函数 $y=f^{-1}$ 在区间 $I_{x}={ x|x=f(y),y\in I_y }$ 内也可导，且其导数等于直接函数的导数的倒数，即&lt;/p&gt;
+&lt;p&gt;$$[f^{-1}(x)]&amp;lsquo;=\frac{1}{f&amp;rsquo;(y)}$$&lt;/p&gt;
+&lt;p&gt;3、定理：如果 $u=g(x)$ 在点 $x$ 可导，而 $y=f(u)$ 在点 $u=g(x)$ 可导，那么复合函数 $y=f[g(x)]$ 在点 $x$ 可导，且其导数为&lt;/p&gt;
+&lt;p&gt;$$y&#39;=f&amp;rsquo;(u)\cdot g&amp;rsquo;(x)$$&lt;/p&gt;
+&lt;p&gt;4、基本初等函数求导公式&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;$(C)&amp;lsquo;=0$&lt;/li&gt;
+&lt;li&gt;$(x^{\mu})&amp;lsquo;=\mu x^{\mu -1}$&lt;/li&gt;
+&lt;li&gt;$(a^x)&amp;lsquo;=a^x \ln a$ ($a&amp;gt;0, a \neq 1$)&lt;/li&gt;
+&lt;li&gt;$(e^x)&amp;lsquo;=e^x$&lt;/li&gt;
+&lt;li&gt;$(\log_a x)&amp;lsquo;=\frac{1}{x \ln a}$ ($a&amp;gt;0, a \neq 1$)&lt;/li&gt;
+&lt;li&gt;$(\ln x)&amp;lsquo;=\frac{1}{x}$&lt;/li&gt;
+&lt;li&gt;$(\sin x)&amp;lsquo;=\cos x$&lt;/li&gt;
+&lt;li&gt;$(\cos x)&amp;lsquo;=- \sin x$&lt;/li&gt;
+&lt;li&gt;$(\tan x)&amp;lsquo;=\sec^{2} x$&lt;/li&gt;
+&lt;li&gt;$(\cot x)&amp;lsquo;=- \csc^{2} x$&lt;/li&gt;
+&lt;li&gt;$(\sec x)&amp;lsquo;=\sec x \cdot \tan x$&lt;/li&gt;
+&lt;li&gt;$(\csc x)&amp;lsquo;=- \csc x \cdot \cot x$&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;三、高阶导数&lt;/p&gt;
+&lt;p&gt;四、隐函数的导数、由参数方程所确定的函数的导数、相关变化率&lt;/p&gt;
+&lt;p&gt;五、函数的微分&lt;/p&gt;
+&lt;p&gt;1、定义：设函数 $y=f(x)$ 在某区间内有定义，$x_0$ 及 $x_0+\Delta x$ 在这区间内，如果函数的增量 $\Delta y=f(x_0+\Delta x)-f(x_0)$ 可表示为 $\Delta y=C \cdot \Delta x+ o(\Delta x)$，其中 $C$ 是不依赖于 $\Delta x$ 的常数，那么称函数 $y=f(x)$ 在点 $x_0$ 处是可微的，而 $C \cdot \Delta x$ 叫做函数的微分，记作 $dy$，即&lt;/p&gt;
+&lt;p&gt;$$dy=C \cdot \Delta x$$&lt;/p&gt;
+&lt;p&gt;2、可微的条件：函数 $f(x)$ 在点 $x_0$ 处可微的充分必要条件是函数 $f(x)$ 在点 $x_0$ 处可导，并且其导数 $f&amp;rsquo;(x_0)=C$。因为由导数的定义 （$\frac{\Delta y}{\Delta x}$ 在 $x_0$ 处的极限存在，记为 $f&amp;rsquo;(x_0)$），以及极限与无穷小的关系（在自变量的同一变化过程 $x \to x_0$ 中，函数 $g(x)$ 具有极限 $A$ 的充分必要条件是 $g(x)=A+\alpha$，其中 $\alpha$ 是无穷小），可得 $\frac{\Delta y}{\Delta x}=f&amp;rsquo;(x_0)+\alpha$，因此&lt;/p&gt;
+&lt;p&gt;$$\Delta y=f&amp;rsquo;(x_0) \cdot \Delta x+\alpha \cdot \Delta x=dy+o(\Delta x)$$&lt;/p&gt;
+&lt;p&gt;3、自变量的微分：通常把自变量 $x$ 的增量 $\Delta x$ 称为自变量的微分，记作 $dx$，即&lt;/p&gt;
+&lt;p&gt;$$dx=\Delta x$$&lt;/p&gt;
+&lt;p&gt;于是，函数 $y=f(x)$ 的微分 $dy=f&amp;rsquo;(x) \cdot \Delta x$ 又可以记作 $dy=f&amp;rsquo;(x) \cdot dx$。从而有 $\frac{dy}{dx}=f&amp;rsquo;(x)$，也就是说，函数的微分 $dy$ 与自变量的微分 $dx$ 之商，等于该函数的导数。因此，导数也可叫做“微商”。&lt;/p&gt;
+&lt;p&gt;$$\frac{dy}{dx}=\lim_{\Delta x \to 0}\frac{\Delta y}{\Delta x}$$&lt;/p&gt;
+&lt;p&gt;那么在 $x_0$ 处的导数定义为&lt;/p&gt;
+&lt;p&gt;$$f&amp;rsquo;(x_0) = \frac{dy}{dx} |_{x=x_0}=\lim_{\Delta x \to 0} \frac{\Delta y}{\Delta x} |_{x=x_0} =\lim_{\Delta x \to 0} \frac{f(x_0+\Delta x)-f(x_0)}{\Delta x}$$&lt;/p&gt;
+&lt;p&gt;4、微分的几何意义：对于可微函数 $y=f(x)$ 而言，当 $\Delta y$ 是曲线 $y=f(x)$ 上的点的纵坐标的增量时，$dy$ 就是曲线的切线上的点的纵坐标的相应增量。当 $|\Delta x|$ 很小时，$|\Delta y-dy|$ 比 $|\Delta x|$ 小得多。因此在某点的邻近，我们可以用切线段来近似代替曲线段。（在局部范围内用线性函数近似代替非线性函数，在几何上就是局部用切线段近似代替曲线段，这在数学上称为非线性函数的局部线性化，这是微分学的基本思想方法之一）&lt;/p&gt;
+&lt;p&gt;5、微分的运算法则：从函数的微分的表达式 $dy=f&amp;rsquo;(x)dx$ 可以看出，要计算函数的微分，只要计算函数的导数，再乘以自变量的微分即可。&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>函数与极限</title>
+      <link>https://utopizza.github.io/posts/math/2018-12-02-%E6%95%B0%E5%AD%A6-%E5%87%BD%E6%95%B0%E4%B8%8E%E6%9E%81%E9%99%90/</link>
+      <pubDate>Sun, 02 Dec 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://utopizza.github.io/posts/math/2018-12-02-%E6%95%B0%E5%AD%A6-%E5%87%BD%E6%95%B0%E4%B8%8E%E6%9E%81%E9%99%90/</guid>
+      <description>&lt;p&gt;一、映射与函数&lt;/p&gt;
+&lt;p&gt;1、映射：设 $X$、$Y$ 是两个非空集合，如果存在一个法则 $f$，使得对 $X$ 中每个元素 $x$，按法则 $f$，在 $Y$ 中有唯一确定的元素 $y$ 与之对应，那么称 $f$ 为从 $X$ 到 $Y$ 的映射，记作 $f:X \to Y$，其中 $y$ 称为元素 $x$ 在映射 $f$ 下的像，记作 $y=f(x)$，而 $x$ 称为元素 $y$ 在映射 $f$ 下的一个原像。集合 $X$ 称为映射 $f$ 的定义域，$X$ 中所有元素的像组成的集合称为映射 $f$ 的值域。&lt;/p&gt;
+&lt;p&gt;2、函数：设数集 $D \subset R$，$R$ 为实数集，则称映射 $f:D \to R$ 为定义在 $D$ 上的函数，记作 $y=f(x), x \in D$，其中 $x$ 称为自变量，$y$ 称为因变量，$D$ 称为定义域。&lt;/p&gt;
+&lt;p&gt;五类基本初等函数：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;幂函数：$y=x^{\mu}$ ( $\mu \in R$ 是常数 )&lt;/li&gt;
+&lt;li&gt;指数函数：$y=a^{x}$ ( $a&amp;gt;0$ 且 $a \neq 1$ )&lt;/li&gt;
+&lt;li&gt;对数函数：$y=\log_ax$ ( $a&amp;gt;0$ 且 $a \neq 1$ )&lt;/li&gt;
+&lt;li&gt;三角函数：$y=\sin x$，$y=\cos x$，$y=\tan x$ 等等&lt;/li&gt;
+&lt;li&gt;反三角函数：$y=\arcsin x$，$y=\arccos x$，$y=\arctan x$ 等等&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;二、数列的极限&lt;/p&gt;
+&lt;p&gt;1、定义：设 {$x_n$} 为一数列，如果存在常数 $a$，对于任意给定的正数 $\varepsilon$（不论它多么小），总存在正整数 $N$，使得当 $n&amp;gt;N$ 时，不等式 $|x_n - a| &amp;lt; \varepsilon$ 都成立，那么称常数 $a$ 是数列 $x_n$ 的极限，或者称数列 $x_n$ 收敛于 $a$，记为 $\lim_{n \to \infty} x_n=a$。上述定义可简记为：
+$$\lim_{n \to \infty} x_n=a \iff \forall \varepsilon&amp;gt;0, \exists N \in N^{+}, \text{ 当 } n&amp;gt;N \text{ 时 }, \text{ 有 } |x_n-a|&amp;lt;\varepsilon $$&lt;/p&gt;
+&lt;p&gt;2、定理（数列极限唯一性）：如果数列 $x_n$ 收敛，那么它的极限唯一&lt;/p&gt;
+&lt;p&gt;3、定理（收敛数列有界性）：如果数列 $x_n$ 收敛，那么数列 $x_n$ 一定有界&lt;/p&gt;
+&lt;p&gt;4、定理（收敛数列保号性）：如果 $\lim_{n \to \infty}x_n=a$，且 $a&amp;gt;0$（或 $a &amp;lt; 0$），那么存在正整数 $N$，当 $n&amp;gt;N$ 时，都有 $x_n&amp;gt;0$（或 $x_n &amp;lt; 0$）&lt;/p&gt;
+&lt;p&gt;5、定理（子数列收敛性）：如果数列 $x_n$ 收敛于 $a$，那么它的任一子数列也收敛于 $a$&lt;/p&gt;
+&lt;p&gt;三、函数的极限&lt;/p&gt;
+&lt;p&gt;1、定义(1)：设函数 $f(x)$ 在点 $x_0$ 的某一点去心邻域内有定义。如果存在常数 $A$，对于任意给定的正数 $\varepsilon$（不论它多么小），总存在整数 $\delta$，使得当 $x$ 满足不等式 $0&amp;lt;|x-x_0|&amp;lt;\delta$ 时，对应的函数值 $f(x)$ 都满足不等式 $|f(x)-A|&amp;lt;\varepsilon$，那么常数 $A$ 就叫做函数 $f(x)$ 当 $x \to x_0$ 时的极限，记作 $\lim_{x \to x_0}f(x)=A$。定义可简记为：
+$$\lim_{x \to x_0}f(x)=A \iff \forall \varepsilon&amp;gt;0, \exists \delta&amp;gt;0, \text{ 当 } 0&amp;lt;|x-x_0|&amp;lt;\delta \text{ 时 }, \text{ 有 } |f(x)-A|&amp;lt;\varepsilon$$&lt;/p&gt;
+&lt;p&gt;2、定义(2)：设函数 $f(x)$ 当 $|x|$ 大于某一正数时有定义。如果存在常数 $A$，对于任意给定的正数 $\varepsilon$（不论它多么小），总存在着正数 $X$，使得当 $x$ 满足不等式 $|x|&amp;gt;X$ 时，对应的函数值 $f(x)$ 都满足不等式 $|f(x)-A|&amp;lt;\varepsilon$，那么常数 $A$ 就叫做函数 $f(x)$ 当 $x \to \infty$ 时的极限，记作 $\lim_{x \to \infty} f(x)=A$。定义可简记为：
+$$\lim_{x \to \infty}f(x)=A \iff \forall \varepsilon&amp;gt;0, \exists X&amp;gt;0, \text{ 当 } |x|&amp;gt;X \text{ 时 }, \text{ 有 } |f(x)-A|&amp;lt;\varepsilon$$&lt;/p&gt;
+&lt;p&gt;3、定理（函数极限唯一性）：如果 $\lim_{x \to x_0}f(x)$ 存在，那么这极限唯一&lt;/p&gt;
+&lt;p&gt;4、定理（函数极限局部有界性）：如果 $\lim_{x \to x_0}f(x)=A$，那么存在常数 $M&amp;gt;0$ 和 $\delta &amp;gt;0$，使得当 $0&amp;lt;|x-x_0|&amp;lt;\delta$ 时，有 $|f(x)| \leq M$&lt;/p&gt;
+&lt;p&gt;5、定理（函数极限局部保号性）：如果 $\lim_{x \to x_0}f(x)=A$ 且 $A&amp;gt;0$（或 $A &amp;lt; 0$），那么存在常数 $\delta &amp;gt;0$，使得当 $0&amp;lt;|x-x_0|&amp;lt;\delta$ 时，有 $f(x)&amp;gt;0$（或 $f(x)&amp;lt; 0$）&lt;/p&gt;
+&lt;p&gt;四、无穷小与无穷大&lt;/p&gt;
+&lt;p&gt;1、无穷小：如果函数 $f(x)$ 当 $x \to x_0$（或 $x \to \infty$）时的极限为零，那么称函数 $f(x)$ 为当 $x \to x_0$（或 $x \to \infty$）时的无穷小&lt;/p&gt;
+&lt;p&gt;2、无穷大：设函数 $f(x)$ 在 $x_0$ 的某一去心邻域内有定义（或 $|x|$ 大于某一正数时有定义）。如果对于任意给定的正数 $M$（不论它多大），总存在正数 $\delta$（或正数 $X$），只要 $x$ 适合不等式 $0&amp;lt;|x-x_0|&amp;lt;\delta$（或 $|x|&amp;gt;X$），对应的函数值 $f(x)$ 总满足不等式 $|f(x)|&amp;gt;M$，那么称函数 $f(x)$ 是当 $x \to x_0$（或 $x \to \infty$）时的无穷大&lt;/p&gt;
+&lt;p&gt;3、定理：在自变量的同一变化过程 $x \to x_0$（或 $x \to \infty$）中，函数 $f(x)$ 具有极限 $A$ 的充分必要条件是 $f(x)=A+\alpha$，其中 $\alpha$ 是无穷小&lt;/p&gt;
+&lt;p&gt;4、定理：在自变量的同一变化过程中，如果 $f(x)$ 为无穷大，那么 $\frac{1}{f(x)}$ 为无穷小；反之，如果 $f(x)$ 为无穷小，且 $f(x) \neq 0$，那么 $\frac{1}{f(x)}$ 为无穷大&lt;/p&gt;
+&lt;p&gt;五、极限运算法则&lt;/p&gt;
+&lt;p&gt;1、定理：有限个无穷小的和是无穷小&lt;/p&gt;
+&lt;p&gt;2、定理：有界函数与无穷小的乘积是无穷小&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;常数与无穷小的乘积是无穷小&lt;/li&gt;
+&lt;li&gt;有限个无穷小的乘积是无穷小&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;3、定理：如果 $\lim f(x)=A$，$\lim g(x)=B$，那么&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;$\lim [f(x) \pm g(x)]=\lim f(x) \pm \lim g(x) = A \pm B$&lt;/li&gt;
+&lt;li&gt;$\lim [f(x) \cdot g(x)]=\lim f(x) \cdot \lim g(x) = A \cdot B$&lt;/li&gt;
+&lt;li&gt;若 $B \neq 0$，则 $\lim \frac{f(x)}{g(x)}=\frac{\lim f(x)}{\lim g(x)}=\frac{A}{B}$&lt;/li&gt;
+&lt;li&gt;$\lim [cf(x)]=c \lim f(x)$&lt;/li&gt;
+&lt;li&gt;$\lim [f(x)]^n=[\lim f(x)]^n$&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;4、数列极限的四则运算法则同上&lt;/p&gt;
+&lt;p&gt;5、定理：如果 $f(x) \geq g(x)$，而 $\lim f(x)=A$，$\lim g(x)=B$，那么 $A \geq B$&lt;/p&gt;
+&lt;p&gt;6、定理：设函数 $y=f[g(x)]$ 是由函数 $u=g(x)$ 与 $y=f(u)$ 复合而成，$f[g(x)]$ 在点 $x_0$ 的某去心邻域内有定义，若 $\lim_{x \to x_0}=u_0$，$lim_{u \to u_0}=A$，且存在 $\delta &amp;gt;0$，当 $x \in U(x_0,\delta_0)$ 时，有 $g(x) \neq u_0$，则 $lim_{x \to x_0}f[g(x)]=\lim_{u \to u_0}f(u)=A$&lt;/p&gt;
+&lt;p&gt;六、极限存在准则&lt;/p&gt;
+&lt;p&gt;1、准则(I)-数列：如果数列 {$x_n$}，{$y_n$} 及 {$z_n$} 满足：
+(i) 从某项起，即 $\exists n_0 \in N^{+}$，当 $n&amp;gt;n_0$  时，有 $y_n \leq x_n \leq z_n$
+(ii) $\lim_{n \to \infty} y_n=a$，$\lim_{n \to \infty}z_n=a$
+那么数列 {$x_n$} 的极限存在，且 $\lim_{n \to \infty}x_n=a$&lt;/p&gt;
+&lt;p&gt;2、准则(I)-函数：如果
+(i) 当 $x \in U(x_0, r)$ （或 $|x|&amp;gt;M$）时，$g(x) \leq f(x) \leq h(x)$
+(ii) $\lim_{x \to x_0/\infty} g(x)=A$，$\lim_{x \to x_0/\infty}h(x)=A$
+那么 $\lim_{x \to x_0/\infty} f(x)=A$&lt;/p&gt;
+&lt;p&gt;3、准则(II)-数列：单调有界函数必有极限&lt;/p&gt;
+&lt;p&gt;4、准则(II)-函数：设函数 $f(x)$ 在点 $x_0$ 的某个左邻域内单调并且有界，则 $f(x)$ 在 $x_0$ 的左极限 $f(x_0^{-})$ 必定存在&lt;/p&gt;
+&lt;p&gt;5、柯西极限存在准则：数列 {$x_n$} 收敛的充分必要条件是：对于任意给定的正数 $\varepsilon$，存在正整数 $N$，使得当 $m&amp;gt;N$，$n&amp;gt;N$ 时，有 $|x_n-x_m| &amp;lt; \varepsilon$&lt;/p&gt;
+&lt;p&gt;七、无穷小的比较&lt;/p&gt;
+&lt;p&gt;八、函数的连续性&lt;/p&gt;
+&lt;p&gt;1、定义：设函数 $y=f(x)$ 在点 $x_0$ 的某一邻域内有定义，如果
+$$\lim_{\Delta x \to 0} \Delta y = \lim_{\Delta x \to 0}[f(x_0+\Delta x)-f(x_0)]=0 $$
+，那么就称函数 $y=f(x)$ 在点 $x_0$ 连续&lt;/p&gt;
+&lt;p&gt;2、定义：设函数 $y=f(x)$ 在点 $x_0$ 的某一邻域内有定义，如果
+$$\lim_{x \to x_0} f(x)=f(x_0)$$
+，那么就称函数 $f(x)$ 在点 $x_0$ 连续&lt;/p&gt;
+&lt;p&gt;九、连续函数的运算与初等函数的连续性&lt;/p&gt;
+&lt;p&gt;十、闭区间上连续函数的性质&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

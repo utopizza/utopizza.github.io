@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Language" content="en">
+
+    <meta name="author" content="Yusheng Wang">
+    <meta name="description" content="一、TwoSum
+给定一个整型数组，和一个 target，返回数组中两个数之和等于 target 的所有组合。不能输出重复组合。例如给定数组 [2,3,1,-4,8,3]，target = 4，则满足条件的非重复组合有 [3,1] 和 [-4,8]。
+思路：因为要求输出的是数组元素而不是数组下标，因此可以对数组进行排序（注意，如果题目要求输出数组下标，就不应使用排序，而是使用 HashMap 来优化）。排序之后，使用两个指针分别从数组两头往中间移动搜索整个数组，为避免重复组合，需跳过重复的元素。当指针相遇时搜索结束，因此搜索的时间复杂度为 $O(n)$。（其实如果算上前面的排序操作那么时间复杂度不止$O(n)$。因为所有基于比较的排序算法的时间复杂度下界为 $O(nlogn)$，所以本算法的总时间复杂度实际上应是 $O(n&#43;nlogn)=O(nlogn)$）
+public List&lt;List&lt;Integer&gt;&gt; TwoSum(int[] nums, int target) { List&lt;List&lt;Integer&gt;&gt; list = new ArrayList&lt;List&lt;Integer&gt;&gt;(); Arrays.sort(nums); int lo = 0, hi = nums.length - 1; while (lo &lt; hi) { int sum = nums[lo] &#43; nums[hi]; if (sum == target) { list.add(Arrays.asList(nums[lo], nums[hi])); while (lo &lt; hi &amp;&amp; nums[lo] == nums[lo &#43; 1]) lo&#43;&#43;; while (lo &lt; hi &amp;&amp; nums[hi] == nums[hi - 1]) hi--; lo&#43;&#43;; hi--; } else if (sum &gt; target) hi--; else lo&#43;&#43;; } return list; } 二、ThreeSum">
+    <meta name="keywords" content="blog,developer,personal">
+
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="FourSum"/>
+<meta name="twitter:description" content="一、TwoSum
+给定一个整型数组，和一个 target，返回数组中两个数之和等于 target 的所有组合。不能输出重复组合。例如给定数组 [2,3,1,-4,8,3]，target = 4，则满足条件的非重复组合有 [3,1] 和 [-4,8]。
+思路：因为要求输出的是数组元素而不是数组下标，因此可以对数组进行排序（注意，如果题目要求输出数组下标，就不应使用排序，而是使用 HashMap 来优化）。排序之后，使用两个指针分别从数组两头往中间移动搜索整个数组，为避免重复组合，需跳过重复的元素。当指针相遇时搜索结束，因此搜索的时间复杂度为 $O(n)$。（其实如果算上前面的排序操作那么时间复杂度不止$O(n)$。因为所有基于比较的排序算法的时间复杂度下界为 $O(nlogn)$，所以本算法的总时间复杂度实际上应是 $O(n&#43;nlogn)=O(nlogn)$）
+public List&lt;List&lt;Integer&gt;&gt; TwoSum(int[] nums, int target) { List&lt;List&lt;Integer&gt;&gt; list = new ArrayList&lt;List&lt;Integer&gt;&gt;(); Arrays.sort(nums); int lo = 0, hi = nums.length - 1; while (lo &lt; hi) { int sum = nums[lo] &#43; nums[hi]; if (sum == target) { list.add(Arrays.asList(nums[lo], nums[hi])); while (lo &lt; hi &amp;&amp; nums[lo] == nums[lo &#43; 1]) lo&#43;&#43;; while (lo &lt; hi &amp;&amp; nums[hi] == nums[hi - 1]) hi--; lo&#43;&#43;; hi--; } else if (sum &gt; target) hi--; else lo&#43;&#43;; } return list; } 二、ThreeSum"/>
+
+    <meta property="og:title" content="FourSum" />
+<meta property="og:description" content="一、TwoSum
+给定一个整型数组，和一个 target，返回数组中两个数之和等于 target 的所有组合。不能输出重复组合。例如给定数组 [2,3,1,-4,8,3]，target = 4，则满足条件的非重复组合有 [3,1] 和 [-4,8]。
+思路：因为要求输出的是数组元素而不是数组下标，因此可以对数组进行排序（注意，如果题目要求输出数组下标，就不应使用排序，而是使用 HashMap 来优化）。排序之后，使用两个指针分别从数组两头往中间移动搜索整个数组，为避免重复组合，需跳过重复的元素。当指针相遇时搜索结束，因此搜索的时间复杂度为 $O(n)$。（其实如果算上前面的排序操作那么时间复杂度不止$O(n)$。因为所有基于比较的排序算法的时间复杂度下界为 $O(nlogn)$，所以本算法的总时间复杂度实际上应是 $O(n&#43;nlogn)=O(nlogn)$）
+public List&lt;List&lt;Integer&gt;&gt; TwoSum(int[] nums, int target) { List&lt;List&lt;Integer&gt;&gt; list = new ArrayList&lt;List&lt;Integer&gt;&gt;(); Arrays.sort(nums); int lo = 0, hi = nums.length - 1; while (lo &lt; hi) { int sum = nums[lo] &#43; nums[hi]; if (sum == target) { list.add(Arrays.asList(nums[lo], nums[hi])); while (lo &lt; hi &amp;&amp; nums[lo] == nums[lo &#43; 1]) lo&#43;&#43;; while (lo &lt; hi &amp;&amp; nums[hi] == nums[hi - 1]) hi--; lo&#43;&#43;; hi--; } else if (sum &gt; target) hi--; else lo&#43;&#43;; } return list; } 二、ThreeSum" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://utopizza.github.io/posts/algorithm/2018-01-13-%E7%AE%97%E6%B3%95-foursum/" />
+<meta property="article:published_time" content="2018-01-13T23:20:00+00:00" />
+<meta property="article:modified_time" content="2018-01-13T23:20:00+00:00" />
+
+
+    
+      <base href="https://utopizza.github.io/posts/algorithm/2018-01-13-%E7%AE%97%E6%B3%95-foursum/">
+    
+    <title>
+  FourSum · Utopizza
+</title>
+
+    
+      <link rel="canonical" href="https://utopizza.github.io/posts/algorithm/2018-01-13-%E7%AE%97%E6%B3%95-foursum/">
+    
+
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700%7CMerriweather:300,700%7CSource+Code+Pro:400,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.13.0/css/all.css" integrity="sha384-Bfad6CLCknfcloXFOyFnlgtENryhrpZCe29RTifKEixXQZ38WheV+i/6YWSzkz3V" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" integrity="sha256-l85OmPOjvil/SOvVt3HnSSjzF1TUMyT9eV0c2BzEGzU=" crossorigin="anonymous" />
+
+    
+      
+      
+      <link rel="stylesheet" href="https://utopizza.github.io/css/coder.min.a4f332213a21ce8eb521670c614470c58923aaaf385e2a73982c31dd7642decb.css" integrity="sha256-pPMyITohzo61IWcMYURwxYkjqq84XipzmCwx3XZC3ss=" crossorigin="anonymous" media="screen" />
+    
+
+    
+
+    
+      
+        
+        
+        <link rel="stylesheet" href="https://utopizza.github.io/css/coder-dark.min.e78e80fc3a585a4d1c8fc7f58623b6ff852411e38431a9cd1792877ecaa160f6.css" integrity="sha256-546A/DpYWk0cj8f1hiO2/4UkEeOEManNF5KHfsqhYPY=" crossorigin="anonymous" media="screen" />
+      
+    
+
+    
+
+    
+
+    <link rel="icon" type="image/png" href="https://utopizza.github.io/images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="https://utopizza.github.io/images/favicon-16x16.png" sizes="16x16">
+
+    <meta name="generator" content="Hugo 0.69.2" />
+  </head>
+
+  
+  
+    
+  
+  <body class="colorscheme-auto">
+    <main class="wrapper">
+      <nav class="navigation">
+  <section class="container">
+    <a class="navigation-title" href="https://utopizza.github.io/">
+      Utopizza
+    </a>
+    
+    <input type="checkbox" id="menu-toggle" />
+    <label class="menu-button float-right" for="menu-toggle"><i class="fas fa-bars"></i></label>
+    <ul class="navigation-list">
+      
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/about/">About</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/posts/">Blog</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/projects/">Projects</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/contact/">Contact me</a>
+          </li>
+        
+      
+      
+    </ul>
+    
+  </section>
+</nav>
+
+
+      <div class="content">
+        
+  <section class="container post">
+    <article>
+      <header>
+        <div class="post-title">
+          <h1 class="title">FourSum</h1>
+        </div>
+        <div class="post-meta">
+          <div class="date">
+            <span class="posted-on">
+              <i class="fas fa-calendar"></i>
+              <time datetime='2018-01-13T23:20:00Z'>
+                January 13, 2018
+              </time>
+            </span>
+            <span class="reading-time">
+              <i class="fas fa-clock"></i>
+              2-minute read
+            </span>
+          </div>
+          <div class="categories">
+  <i class="fas fa-folder"></i>
+    <a href="https://utopizza.github.io/categories/algorithm/">Algorithm</a></div>
+
+          
+        </div>
+      </header>
+
+      <div>
+        
+        <p>一、TwoSum</p>
+<p>给定一个整型数组，和一个 target，返回数组中两个数之和等于 target 的所有组合。不能输出重复组合。例如给定数组 [2,3,1,-4,8,3]，target = 4，则满足条件的非重复组合有 [3,1] 和 [-4,8]。</p>
+<p>思路：因为要求输出的是数组元素而不是数组下标，因此可以对数组进行排序（注意，如果题目要求输出数组下标，就不应使用排序，而是使用 HashMap 来优化）。排序之后，使用两个指针分别从数组两头往中间移动搜索整个数组，为避免重复组合，需跳过重复的元素。当指针相遇时搜索结束，因此搜索的时间复杂度为 $O(n)$。（其实如果算上前面的排序操作那么时间复杂度不止$O(n)$。因为所有基于比较的排序算法的时间复杂度下界为 $O(nlogn)$，所以本算法的总时间复杂度实际上应是 $O(n+nlogn)=O(nlogn)$）</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">public List&lt;List&lt;Integer&gt;&gt; TwoSum(int[] nums, int target) {
+    List&lt;List&lt;Integer&gt;&gt; list = new ArrayList&lt;List&lt;Integer&gt;&gt;();
+    Arrays.sort(nums);
+    int lo = 0, hi = nums.length - 1;
+    while (lo &lt; hi) {
+        int sum = nums[lo] + nums[hi];
+        if (sum == target) {
+            list.add(Arrays.asList(nums[lo], nums[hi]));
+            while (lo &lt; hi &amp;&amp; nums[lo] == nums[lo + 1]) lo++;
+            while (lo &lt; hi &amp;&amp; nums[hi] == nums[hi - 1]) hi--;
+            lo++;
+            hi--;
+        } else if (sum &gt; target) hi--;
+        else lo++;
+    }
+    return list;
+}
+</code></pre></div><p>二、ThreeSum</p>
+<p>上述题目的改进版，给定整型数组和一个 target，输出数组中三个数之和等于 target 的所有非重复组合。</p>
+<p>思路：可以转化成 TwoSum 问题，即对原数组中第 $i$ 个元素 $nums[i]$，用 target 减去这个元素的差作为剩下的子数组 $nums[i+1,\cdots,n-1]$ 的 TwoSum 问题的 target。相当与对每一个元素调用一次 TwoSum 来找剩下的两个元素，因为 TwoSum 的时间复杂度为 $O(n)$，因此 ThreeSum 的时间复杂度为 $O(n^2)$。</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">public List&lt;List&lt;Integer&gt;&gt; ThreeSum(int[] nums, int target) {
+    List&lt;List&lt;Integer&gt;&gt; list = new ArrayList&lt;List&lt;Integer&gt;&gt;();
+    if (nums == null || nums.length &lt; 3) return list;
+
+    Arrays.sort(nums);
+    
+    // ThreeSum
+    for (int i = 0; i &lt; nums.length - 2; i++) {
+        if (i == 0 || nums[i] != nums[i - 1]) {
+
+            // TwoSum
+            int lo = i + 1, hi = nums.length - 1, t = target - nums[i];
+            while (lo &lt; hi) {
+                int sum = nums[lo] + nums[hi];
+                if (sum == t) {
+                    list.add(Arrays.asList(nums[lo], nums[hi], nums[i]));
+                    while (lo &lt; hi &amp;&amp; nums[lo] == nums[lo + 1]) lo++;
+                    while (lo &lt; hi &amp;&amp; nums[hi] == nums[hi - 1]) hi--;
+                    lo++;
+                    hi--;
+                } else if (sum &gt; t) hi--;
+                else lo++;
+            }
+
+        }
+    }
+    return list;
+}
+</code></pre></div><p>三、FourSum</p>
+<p>再次改进版，给定一个整型数组和一个 target，求数组中四个元素之和等于 target 的所有非重复组合。</p>
+<p>思路：类似地，先排序，然后选定一个元素，把剩下的右边子数组看作 ThreeSum 问题。推理同上，时间复杂度为 $O(n^3)$。</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">public static List&lt;List&lt;Integer&gt;&gt; FourSum(int[] nums, int target) {
+    List&lt;List&lt;Integer&gt;&gt; ret = new ArrayList&lt;List&lt;Integer&gt;&gt;();
+    Arrays.sort(nums);
+
+    // four sum
+    for (int i = 0; i &lt; nums.length - 3; i++) {
+        if (i == 0 || nums[i] != nums[i - 1]) {
+
+            // three sum
+            for (int j = i + 1; j &lt; nums.length - 2; j++) {
+                if (j == i + 1 || nums[j] != nums[j - 1]) {
+
+                    // two sum
+                    int lo = j + 1, hi = nums.length - 1, t = target - nums[i] - nums[j];
+                    while (lo &lt; hi) {
+                        int sum = nums[lo] + nums[hi];
+                        if (sum == t) {
+                            ret.add(Arrays.asList(nums[i], nums[j], nums[lo], nums[hi]));
+                            while (lo &lt; hi &amp;&amp; nums[lo] == nums[lo + 1]) lo++;
+                            while (lo &lt; hi &amp;&amp; nums[hi] == nums[hi - 1]) hi--;
+                            lo++;
+                            hi--;
+                        } else if (sum &gt; t) hi--;
+                        else lo++;
+                    }
+
+                }
+            }
+
+        }
+    }
+
+    return ret;
+}
+</code></pre></div>
+      </div>
+
+
+      <footer>
+        
+
+
+        
+        
+        
+      </footer>
+    </article>
+
+    
+  </section>
+
+      </div>
+
+      <script type="text/javascript"
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+    </main>
+
+    
+
+    
+
+    <script>
+(function(f, a, t, h, o, m){
+	a[h]=a[h]||function(){
+		(a[h].q=a[h].q||[]).push(arguments)
+	};
+	o=f.createElement('script'),
+	m=f.getElementsByTagName('script')[0];
+	o.async=1; o.src=t; o.id='fathom-script';
+	m.parentNode.insertBefore(o,m)
+})(document, window, '//analytics.example.com/tracker.js', 'fathom');
+fathom('set', 'siteId', 'ABCDE');
+fathom('trackPageview');
+</script>
+
+
+  </body>
+
+</html>

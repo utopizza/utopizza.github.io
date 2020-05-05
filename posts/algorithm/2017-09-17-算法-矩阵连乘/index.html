@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Language" content="en">
+
+    <meta name="author" content="Yusheng Wang">
+    <meta name="description" content="一、问题：给定 $n$ 个矩阵的链 $&lt; A_1, A_2, \cdots , A_n &gt;$，其中矩阵 $A_i$ $ (1 \leq i \leq n)$ 的规模为 $p_{i-1} \cdot p_i$，求完全括号化方案，使得计算乘积 $A_1A_2 \cdots\ A_n$ 所需标量乘法次数最少。
+二、举例
+以 $&lt; A_1, A_2, A_3 &gt;$ 相乘为例，假设三个矩阵的规模分别为 $10 \cdot 100，100 \cdot 5，5 \cdot 50$ 。
+如果按 $ ((A_1 \cdot A_2) \cdot A_3) $ 的顺序计算，则需要做 $ 10 \cdot 100 \cdot 5&#43;10 \cdot 5 \cdot 50=5000&#43;2500=7500 $ 次标量乘法运算。
+如果按 $ (A_1 \cdot (A_2 \cdot A_3)) $ 的顺序计算，则需要做 $100 \cdot 5 \cdot 50&#43;10 \cdot 100 \cdot 50=25000&#43;50000=75000 $ 次标量乘法运算。">
+    <meta name="keywords" content="blog,developer,personal">
+
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="矩阵连乘"/>
+<meta name="twitter:description" content="一、问题：给定 $n$ 个矩阵的链 $&lt; A_1, A_2, \cdots , A_n &gt;$，其中矩阵 $A_i$ $ (1 \leq i \leq n)$ 的规模为 $p_{i-1} \cdot p_i$，求完全括号化方案，使得计算乘积 $A_1A_2 \cdots\ A_n$ 所需标量乘法次数最少。
+二、举例
+以 $&lt; A_1, A_2, A_3 &gt;$ 相乘为例，假设三个矩阵的规模分别为 $10 \cdot 100，100 \cdot 5，5 \cdot 50$ 。
+如果按 $ ((A_1 \cdot A_2) \cdot A_3) $ 的顺序计算，则需要做 $ 10 \cdot 100 \cdot 5&#43;10 \cdot 5 \cdot 50=5000&#43;2500=7500 $ 次标量乘法运算。
+如果按 $ (A_1 \cdot (A_2 \cdot A_3)) $ 的顺序计算，则需要做 $100 \cdot 5 \cdot 50&#43;10 \cdot 100 \cdot 50=25000&#43;50000=75000 $ 次标量乘法运算。"/>
+
+    <meta property="og:title" content="矩阵连乘" />
+<meta property="og:description" content="一、问题：给定 $n$ 个矩阵的链 $&lt; A_1, A_2, \cdots , A_n &gt;$，其中矩阵 $A_i$ $ (1 \leq i \leq n)$ 的规模为 $p_{i-1} \cdot p_i$，求完全括号化方案，使得计算乘积 $A_1A_2 \cdots\ A_n$ 所需标量乘法次数最少。
+二、举例
+以 $&lt; A_1, A_2, A_3 &gt;$ 相乘为例，假设三个矩阵的规模分别为 $10 \cdot 100，100 \cdot 5，5 \cdot 50$ 。
+如果按 $ ((A_1 \cdot A_2) \cdot A_3) $ 的顺序计算，则需要做 $ 10 \cdot 100 \cdot 5&#43;10 \cdot 5 \cdot 50=5000&#43;2500=7500 $ 次标量乘法运算。
+如果按 $ (A_1 \cdot (A_2 \cdot A_3)) $ 的顺序计算，则需要做 $100 \cdot 5 \cdot 50&#43;10 \cdot 100 \cdot 50=25000&#43;50000=75000 $ 次标量乘法运算。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://utopizza.github.io/posts/algorithm/2017-09-17-%E7%AE%97%E6%B3%95-%E7%9F%A9%E9%98%B5%E8%BF%9E%E4%B9%98/" />
+<meta property="article:published_time" content="2017-09-17T15:02:00+00:00" />
+<meta property="article:modified_time" content="2017-09-17T15:02:00+00:00" />
+
+
+    
+      <base href="https://utopizza.github.io/posts/algorithm/2017-09-17-%E7%AE%97%E6%B3%95-%E7%9F%A9%E9%98%B5%E8%BF%9E%E4%B9%98/">
+    
+    <title>
+  矩阵连乘 · Utopizza
+</title>
+
+    
+      <link rel="canonical" href="https://utopizza.github.io/posts/algorithm/2017-09-17-%E7%AE%97%E6%B3%95-%E7%9F%A9%E9%98%B5%E8%BF%9E%E4%B9%98/">
+    
+
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700%7CMerriweather:300,700%7CSource+Code+Pro:400,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.13.0/css/all.css" integrity="sha384-Bfad6CLCknfcloXFOyFnlgtENryhrpZCe29RTifKEixXQZ38WheV+i/6YWSzkz3V" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" integrity="sha256-l85OmPOjvil/SOvVt3HnSSjzF1TUMyT9eV0c2BzEGzU=" crossorigin="anonymous" />
+
+    
+      
+      
+      <link rel="stylesheet" href="https://utopizza.github.io/css/coder.min.a4f332213a21ce8eb521670c614470c58923aaaf385e2a73982c31dd7642decb.css" integrity="sha256-pPMyITohzo61IWcMYURwxYkjqq84XipzmCwx3XZC3ss=" crossorigin="anonymous" media="screen" />
+    
+
+    
+
+    
+      
+        
+        
+        <link rel="stylesheet" href="https://utopizza.github.io/css/coder-dark.min.e78e80fc3a585a4d1c8fc7f58623b6ff852411e38431a9cd1792877ecaa160f6.css" integrity="sha256-546A/DpYWk0cj8f1hiO2/4UkEeOEManNF5KHfsqhYPY=" crossorigin="anonymous" media="screen" />
+      
+    
+
+    
+
+    
+
+    <link rel="icon" type="image/png" href="https://utopizza.github.io/images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="https://utopizza.github.io/images/favicon-16x16.png" sizes="16x16">
+
+    <meta name="generator" content="Hugo 0.69.2" />
+  </head>
+
+  
+  
+    
+  
+  <body class="colorscheme-auto">
+    <main class="wrapper">
+      <nav class="navigation">
+  <section class="container">
+    <a class="navigation-title" href="https://utopizza.github.io/">
+      Utopizza
+    </a>
+    
+    <input type="checkbox" id="menu-toggle" />
+    <label class="menu-button float-right" for="menu-toggle"><i class="fas fa-bars"></i></label>
+    <ul class="navigation-list">
+      
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/about/">About</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/posts/">Blog</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/projects/">Projects</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/contact/">Contact me</a>
+          </li>
+        
+      
+      
+    </ul>
+    
+  </section>
+</nav>
+
+
+      <div class="content">
+        
+  <section class="container post">
+    <article>
+      <header>
+        <div class="post-title">
+          <h1 class="title">矩阵连乘</h1>
+        </div>
+        <div class="post-meta">
+          <div class="date">
+            <span class="posted-on">
+              <i class="fas fa-calendar"></i>
+              <time datetime='2017-09-17T15:02:00Z'>
+                September 17, 2017
+              </time>
+            </span>
+            <span class="reading-time">
+              <i class="fas fa-clock"></i>
+              3-minute read
+            </span>
+          </div>
+          <div class="categories">
+  <i class="fas fa-folder"></i>
+    <a href="https://utopizza.github.io/categories/algorithm/">Algorithm</a></div>
+
+          
+        </div>
+      </header>
+
+      <div>
+        
+        <p>一、问题：给定 $n$ 个矩阵的链 $&lt; A_1, A_2, \cdots , A_n &gt;$，其中矩阵 $A_i$ $ (1 \leq i \leq n)$ 的规模为 $p_{i-1}  \cdot  p_i$，求完全括号化方案，使得计算乘积 $A_1A_2 \cdots\ A_n$ 所需标量乘法次数最少。</p>
+<p>二、举例</p>
+<p>以 $&lt; A_1, A_2, A_3 &gt;$ 相乘为例，假设三个矩阵的规模分别为 $10 \cdot 100，100 \cdot 5，5 \cdot 50$ 。</p>
+<p>如果按 $ ((A_1  \cdot  A_2)  \cdot  A_3) $ 的顺序计算，则需要做 $ 10 \cdot 100 \cdot 5+10 \cdot 5 \cdot 50=5000+2500=7500 $ 次标量乘法运算。</p>
+<p>如果按 $ (A_1  \cdot  (A_2  \cdot  A_3)) $ 的顺序计算，则需要做 $100 \cdot 5 \cdot 50+10 \cdot 100 \cdot 50=25000+50000=75000 $ 次标量乘法运算。</p>
+<p>可以看到，第二种括号化方案导致的运算量是第一种情况的10倍。采取适当的括号化方案，能够极大的提高矩阵相乘运算的速度。</p>
+<p>三、构造最优子结构，导出子问题递推式</p>
+<p>对于 $n$ 个矩阵相乘进行括号化，可以先把前 $i$ $(1 \leq i \leq n-1)$ 个矩阵和后 $n-i$ 个矩阵加括号，也就是把这条矩阵链分成长度为 $i$ 和 $n-i$ 的两条子矩阵链，再继续对各子链递归地进行括号化。这样，矩阵括号化问题就类似于“钢条切割”问题了，只是这里求的是矩阵相乘的最小总标量乘法次数，而不是“钢条段的最大总价格”。</p>
+<p>现在我们对某段矩阵链 $&lt; A_i \cdots A_j &gt;$ 进行一次括号化，我们选择在第 $k$ $(1 \leq k \leq j-1)$ 个矩阵处断开该链，使得该链分成两条子链 $&lt; A_i \cdots A_k &gt;$ 和 $&lt; A_{k+1} \cdots A_j &gt;$ 。</p>
+<p>设 $r[i,j]$ 表示链 $&lt; A_i \cdots A_j &gt;$ 的总标量乘法次数，则由矩阵相乘的规则得</p>
+<p>$$r[i,j]=r[i,k]+r[k+1,j]+p(i-1) \cdot p(k) \cdot p(j)$$</p>
+<p>式中</p>
+<ul>
+<li>$r[i,k]$ 和 $r[k+1,j]$ 分别表示两条子链的各自的总标量乘法次数</li>
+<li>$ p(i-1) \cdot p(k) \cdot p(j) $ 表示两条子链合并时的标量乘法次数</li>
+</ul>
+<p>对上面公式，同理于“钢条切割问题”，如果 $r[i,j]$ 是对链 $&lt; A_i \cdots A_j &gt;$ 括号化的所有方案中，总标量乘法次数最小（最优解），那么 $r[i,k]$ 和 $r[k+1,j]$ 一定是各自子链的最小总标量乘法次数（最优解）。</p>
+<p>（因为当选定某个 $k$ 后，合并子链的代价随之确定，即公式中 $p(i-1) \cdot p(k) \cdot p(j)$ 部分。假设 $r[i,k]$ 和 $r[k+1,j]$ 不是两条子链各自的最优解，那么如果用它们各自的最优解（更小的 $r[i,k]$ 和 $r[k+1,j]$）代换进上面公式，那么必然产生比 $r[i,j]$ 更小的值，与 $r[i,j]$ 是最优解的假设矛盾。）</p>
+<p>设 $m[i,j]$ 表示链 $&lt; A_i \cdots A_j &gt;$ 的最小总标量乘法次数（最优解），由上述思考过程可以得出最优解递推式：</p>
+<p>$$
+m[i,j]=
+\begin{cases}
+0, &amp; \text{if $i=j$} \<br>
+min_{i \leq k \leq j-1} (m[i,k]+m[k+1,j]+p(i-1) \cdot p(k) \cdot p(j)), &amp; \text{if $i &lt; j$}
+\end{cases}
+$$</p>
+<p>四、动态规划法求解</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">public static int matrixChainBottonUp(int n, int[] s) {
+
+    if (n &lt; 2)
+        return 0;
+    int[] p = new int[s.length + 1];
+    for (int i = 0; i &lt; s.length; i++) {
+        p[i + 1] = s[i];
+    }
+
+    int[][] m = new int[n + 1][n + 1];
+
+
+    for (int length = 0; length &lt;= n - 1; length++) {
+        for (int i = 1; i + length &lt;= n; i++) {
+            int j = i + length;
+            if (i == j) m[i][j] = 0;
+            else {
+                int min = Integer.MAX_VALUE;
+                for (int k = i; k &lt;= j - 1; k++) {
+                    int temp = m[i][k] + m[k + 1][j] + p[2 * i - 1] * p[2 * k] * p[2 * j];
+                    if (temp &lt; min) min = temp;
+                }
+                m[i][j] = min;
+            }
+        }
+    }
+
+    return m[1][n];
+}
+
+
+public static void main(String[] args) {
+    int n1 = 2;
+    int[] p1 = {30, 35, 35, 15, 15, 5, 5, 10, 10, 20, 20, 25};
+    int n2 = 3;
+    int[] p2 = {10, 100, 100, 5, 5, 50};
+    System.out.println(matrixChainBottonUp(n1, p1));
+}
+</code></pre></div><p>为了便于理解，通过预处理使所有数组的下标从 $1$ 开始使用，这样第 $i$ 个矩阵的行和列就分别是 $p[2 \cdot i-1]$ 和 $p[2 \cdot i]$，二维 $m$ 数组的元素 $m[i][j]$ 表示矩阵链 $&lt; A_i \cdots A_j &gt;$ 的最优解。</p>
+<p>根据自底向上的思路，代码的计算过程为：</p>
+<ul>
+<li>m[1][1]，m[2][2]，m[3][3]，m[4][4]，m[5][5]，m[6][6]</li>
+<li>m[1][2]，m[2][3]，m[3][4]，m[4][5]，m[5][6]</li>
+<li>m[1][3]，m[2][4]，m[3][5]，m[4][6]</li>
+<li>m[1][4]，m[2][5]，m[3][6]</li>
+<li>m[1][5]，m[2][6]</li>
+<li>m[1][6]</li>
+</ul>
+<p>其中，对 m[2][5]，算法会尝试在每一处$（2 \leq k &lt; 5）$把链断开，然后求最优解：</p>
+<p>$$
+\begin{aligned}
+m[2][5] &amp; = min
+\begin{cases}
+m[2][2]+m[3][5]+p[2 \cdot 2-1] \cdot p[2 \cdot 2] \cdot p[5 \cdot 2]=13000 \<br>
+m[2][3]+m[4][5]+p[2 \cdot 2-1] \cdot p[3 \cdot 2] \cdot p[5 \cdot 2]=7125 \<br>
+m[2][4]+m[4][5]+p[2 \cdot 2-1] \cdot p[4 \cdot 2] \cdot p[5 \cdot 2]=11375
+\end{cases} \<br>
+&amp; = 7125
+\end{aligned}
+$$</p>
+<p>由于循环嵌套的深度为三层，每层的循环变量 $i,j,k$ 最多取 $n-1$ 个值，因此算法的运行时间为 $O(n^3)$。另外还需要大小为 $n*n$ 的二维数组来存放中间过程，因此算法的空间开销为 $O(n^2)$。</p>
+
+      </div>
+
+
+      <footer>
+        
+
+
+        
+        
+        
+      </footer>
+    </article>
+
+    
+  </section>
+
+      </div>
+
+      <script type="text/javascript"
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+    </main>
+
+    
+
+    
+
+    <script>
+(function(f, a, t, h, o, m){
+	a[h]=a[h]||function(){
+		(a[h].q=a[h].q||[]).push(arguments)
+	};
+	o=f.createElement('script'),
+	m=f.getElementsByTagName('script')[0];
+	o.async=1; o.src=t; o.id='fathom-script';
+	m.parentNode.insertBefore(o,m)
+})(document, window, '//analytics.example.com/tracker.js', 'fathom');
+fathom('set', 'siteId', 'ABCDE');
+fathom('trackPageview');
+</script>
+
+
+  </body>
+
+</html>

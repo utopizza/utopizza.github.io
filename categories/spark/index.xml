@@ -1,0 +1,522 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Spark on Utopizza</title>
+    <link>https://utopizza.github.io/categories/spark/</link>
+    <description>Recent content in Spark on Utopizza</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Tue, 05 Jul 2016 22:44:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://utopizza.github.io/categories/spark/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Spark完全分布式搭建与使用(6)</title>
+      <link>https://utopizza.github.io/posts/spark/2016-07-05-spark-spark%E5%AE%8C%E5%85%A8%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%AD%E5%BB%BA%E4%B8%8E%E4%BD%BF%E7%94%A8-6/</link>
+      <pubDate>Tue, 05 Jul 2016 22:44:00 +0000</pubDate>
+      
+      <guid>https://utopizza.github.io/posts/spark/2016-07-05-spark-spark%E5%AE%8C%E5%85%A8%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%AD%E5%BB%BA%E4%B8%8E%E4%BD%BF%E7%94%A8-6/</guid>
+      <description>&lt;p&gt;十二、运行Spark分布式程序&lt;/p&gt;
+&lt;p&gt;按照前面博客设置好Library后，选择Modules，可以看到导入的包列表如图（注意，这里包的顺序是会对项目的编译造成影响的，好像要把spark的包放在scala的包之前，否则编译的时候会报一些找不到某些函数的错误，具体问题忘了记录了，这个可以自己慢慢试试，百度上也有解决方案）&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://utopizza.github.io/2016-07-05-Spark-Spark%E5%AE%8C%E5%85%A8%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%AD%E5%BB%BA%E4%B8%8E%E4%BD%BF%E7%94%A8-6/modules.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;到这里，就可以运行单机/本地模式的spark程序了。要跑本地程序，命令如下（scala）：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;val conf=new SparkConf().setAppName(“XXXX”).setMaster(“local”)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;但是如果要运行集群模式的spark程序，必须还要将程序项目打包，并将这个程序分发到集群各个节点运行。要使程序分布式运行，命令如下：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;val conf=new SparkConf().setAppName(“XXXX”).setMaster(“spark://master:8070”).setJars(List(“XXX”))
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;其中的setMaster()里面的主机名和端口号需要根据你自己的实际配置进行设定，见第十节。而setJars()是本项目经过编译打包后的jar包的路径，要运行分布式程序必须添加这个包，否则会报错说workers找不到各种类&lt;/p&gt;
+&lt;p&gt;项目打包步骤如下：&lt;/p&gt;
+&lt;p&gt;(1) 进入 Artifacts-&amp;gt;JAR-&amp;gt;From modules with …&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://utopizza.github.io/2016-07-05-Spark-Spark%E5%AE%8C%E5%85%A8%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%AD%E5%BB%BA%E4%B8%8E%E4%BD%BF%E7%94%A8-6/package-1.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;(2) 填入所建立的scala class的名字&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://utopizza.github.io/2016-07-05-Spark-Spark%E5%AE%8C%E5%85%A8%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%AD%E5%BB%BA%E4%B8%8E%E4%BD%BF%E7%94%A8-6/package-2.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;(3) 选择Build on make，并记下项目打包输出的位置（重要！！）&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://utopizza.github.io/2016-07-05-Spark-Spark%E5%AE%8C%E5%85%A8%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%AD%E5%BB%BA%E4%B8%8E%E4%BD%BF%E7%94%A8-6/package-3.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;设置完后，编译本项目。第一次编译的时候先不要在源码使用.setJars()这个函数。让编译通过。编译通过后，打开控制台，通过刚才的目录找到生成的Jar包。修改源码，加入这个包。在这里可以删除 “output root” 下的scala和spark的包，因为这两个包的导出没有什么意义。&lt;/p&gt;
+&lt;p&gt;(4) 根据路径找到与项目同名的JAR包：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://utopizza.github.io/2016-07-05-Spark-Spark%E5%AE%8C%E5%85%A8%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%AD%E5%BB%BA%E4%B8%8E%E4%BD%BF%E7%94%A8-6/package-4.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;(5) 运行Spark的分布式程序&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://utopizza.github.io/2016-07-05-Spark-Spark%E5%AE%8C%E5%85%A8%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%AD%E5%BB%BA%E4%B8%8E%E4%BD%BF%E7%94%A8-6/package-5.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;(6) 正确运行结果&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://utopizza.github.io/2016-07-05-Spark-Spark%E5%AE%8C%E5%85%A8%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%AD%E5%BB%BA%E4%B8%8E%E4%BD%BF%E7%94%A8-6/package-6.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;注意，如果程序运行一半，没有打印结果直接结束，有可能是内存不足导致程序直接死亡。这种情况下，可能不会报任何错误，在 WEB UI 上也只是显示 Finished 。我当时给master分配的内存从2G扩展到4G，才解决了这个问题，正确运行出结果。&lt;/p&gt;
+&lt;p&gt;参考：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.cnblogs.com/gaoxing/p/4414362.html&#34;&gt;使用IDEA开发SPARK提交remote cluster执行&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://blog.csdn.net/javastart/article/details/43372977&#34;&gt;Windows下IntelliJ IDEA中调试Spark Standalone&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.cnblogs.com/shishanyuan/p/4721120.html&#34;&gt;Spark入门实战系列&amp;ndash;3.Spark编程模型（下）&amp;ndash;IDEA搭建及实战&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;十三、使用Spark的机器学习库MLlib&lt;/p&gt;
+&lt;p&gt;我运行了其中的k-means算法，比较简单这里不再赘述，可参考：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&#34;https://www.ibm.com/developerworks/cn/opensource/os-cn-spark-practice4/&#34;&gt;使用 Spark MLlib 做 K-means 聚类分析&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&#34;http://www.scala-lang.org/api/current/#scala.collection.immutable.StringLike&#34;&gt;Scala Standard Library&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&#34;http://blog.csdn.net/yunlong34574/article/details/38635853&#34;&gt;Spark学习1： 基础函数功能解读&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Spark完全分布式搭建与使用(5)</title>
+      <link>https://utopizza.github.io/posts/spark/2016-07-05-spark-spark%E5%AE%8C%E5%85%A8%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%AD%E5%BB%BA%E4%B8%8E%E4%BD%BF%E7%94%A8-5/</link>
+      <pubDate>Tue, 05 Jul 2016 16:36:00 +0000</pubDate>
+      
+      <guid>https://utopizza.github.io/posts/spark/2016-07-05-spark-spark%E5%AE%8C%E5%85%A8%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%AD%E5%BB%BA%E4%B8%8E%E4%BD%BF%E7%94%A8-5/</guid>
+      <description>&lt;p&gt;十一、搭建Spark程序开发环境IDEA&lt;/p&gt;
+&lt;p&gt;1、下载地址：&lt;a href=&#34;https://www.jetbrains.com/idea/#chooseYourEdition&#34;&gt;IDEA Download&lt;/a&gt;
+2、解压并移动到路径：&lt;code&gt;/usr/local/idea-IC-145.597.3&lt;/code&gt;
+3、安装，进入 &lt;code&gt;/usr/local/idea-IC-145.597.3/bin&lt;/code&gt;，运行&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;[root@master ~]# idea.sh
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;4、在安装导向过程中，选择下载并安装SCALA插件。参考：&lt;a href=&#34;http://www.cnblogs.com/shishanyuan/p/4721120.html&#34;&gt;Spark入门实战系列&amp;ndash;3.Spark编程模型（下）&amp;ndash;IDEA搭建及实战&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;5、安装完成后，新建SCALA工程：&lt;code&gt;File-&amp;gt;New Project-&amp;gt;Scala-&amp;gt;Scala-&amp;gt;Next&lt;/code&gt;，然后填入Project的名字，选择项目目录、SDK、Scala SDK，一般默认即可。然选择Finish。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://utopizza.github.io/2016-07-05-Spark-Spark%E5%AE%8C%E5%85%A8%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%AD%E5%BB%BA%E4%B8%8E%E4%BD%BF%E7%94%A8-5/idea-1.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;6、在src文件夹下直接新建一个scala类对象：右键 &lt;code&gt;src-&amp;gt;new-&amp;gt;scala class&lt;/code&gt;，命名，并填入代码。（这里要注意，在src文件下不要再建立嵌套的source类型的文件（像src这样的蓝色的文件夹），否则无法运行。关于这一点，上面的参考帖子里面是错的，也可能他那个是旧版本才支持的，这个问题具体我没有深入研究，我取消了中间嵌套的所有source文件夹就可以正常运行了）&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://utopizza.github.io/2016-07-05-Spark-Spark%E5%AE%8C%E5%85%A8%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%AD%E5%BB%BA%E4%B8%8E%E4%BD%BF%E7%94%A8-5/idea-2.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;7、设置library，导入jar包。添加两个即可，一个是Scala SDK Library，这里选择scala-2.10.4版本。另一个是&lt;code&gt;$SPARK_HOME/lib/spark-assembly-1.1.0-hadoop2.2.0.jar&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;(1) 进入设置界面&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://utopizza.github.io/2016-07-05-Spark-Spark%E5%AE%8C%E5%85%A8%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%AD%E5%BB%BA%E4%B8%8E%E4%BD%BF%E7%94%A8-5/library-1.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;(2) 添加JAVA包&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://utopizza.github.io/2016-07-05-Spark-Spark%E5%AE%8C%E5%85%A8%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%AD%E5%BB%BA%E4%B8%8E%E4%BD%BF%E7%94%A8-5/library-2.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;(3) 找到本地的Spark的安装目录下的lib，选择assembly包&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://utopizza.github.io/2016-07-05-Spark-Spark%E5%AE%8C%E5%85%A8%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%AD%E5%BB%BA%E4%B8%8E%E4%BD%BF%E7%94%A8-5/library-3.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;(4) 添加Scala SDK&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://utopizza.github.io/2016-07-05-Spark-Spark%E5%AE%8C%E5%85%A8%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%AD%E5%BB%BA%E4%B8%8E%E4%BD%BF%E7%94%A8-5/library-4.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;(5) 选择本地安装的scala-2.10.4&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://utopizza.github.io/2016-07-05-Spark-Spark%E5%AE%8C%E5%85%A8%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%AD%E5%BB%BA%E4%B8%8E%E4%BD%BF%E7%94%A8-5/library-5.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Spark完全分布式搭建与使用(4)</title>
+      <link>https://utopizza.github.io/posts/spark/2016-06-29-spark-spark%E5%AE%8C%E5%85%A8%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%AD%E5%BB%BA%E4%B8%8E%E4%BD%BF%E7%94%A8-4/</link>
+      <pubDate>Wed, 29 Jun 2016 21:46:00 +0000</pubDate>
+      
+      <guid>https://utopizza.github.io/posts/spark/2016-06-29-spark-spark%E5%AE%8C%E5%85%A8%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%AD%E5%BB%BA%E4%B8%8E%E4%BD%BF%E7%94%A8-4/</guid>
+      <description>&lt;p&gt;十、SPARK WEB UI问题&lt;/p&gt;
+&lt;p&gt;因为spark有本地模式Local、伪分布式Local-cluster、完全分布式Standalone（集群模式） 三种运行模式。如果不用集群模式去运行spark，在 master:8090 是看不到执行任务的记录的。只能在 master:4040 里面看得到。但是4040只能在任务执行过程中看到，任务执行完后该端口会自动关闭，任务记录被撤销。&lt;/p&gt;
+&lt;p&gt;spark默认是运行本地模式，例如：$ spark-shell
+要运行集群模式，使用：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;[root@master ~]# spark-shell  --master  spark://master:8070
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;这个端口号要按照8090页面顶头的提示来设置：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://utopizza.github.io/2016-06-29-Spark-Spark%E5%AE%8C%E5%85%A8%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%AD%E5%BB%BA%E4%B8%8E%E4%BD%BF%E7%94%A8-4/master.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;参考：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&#34;http://www.aboutyun.com/thread-12294-1-1.html&#34;&gt;Spark on YARN两种运行模式介绍&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&#34;http://blog.csdn.net/happyanger6/article/details/47070223&#34;&gt;Spark运行模式&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&#34;http://www.aboutyun.com/thread-8160-1-1.html&#34;&gt;spark 介绍及本地模式、集群模式安装&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Spark完全分布式搭建与使用(3)</title>
+      <link>https://utopizza.github.io/posts/spark/2016-06-22-spark-spark%E5%AE%8C%E5%85%A8%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%AD%E5%BB%BA%E4%B8%8E%E4%BD%BF%E7%94%A8-3/</link>
+      <pubDate>Wed, 22 Jun 2016 15:19:00 +0000</pubDate>
+      
+      <guid>https://utopizza.github.io/posts/spark/2016-06-22-spark-spark%E5%AE%8C%E5%85%A8%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%AD%E5%BB%BA%E4%B8%8E%E4%BD%BF%E7%94%A8-3/</guid>
+      <description>&lt;p&gt;九、安装Spark-1.6.1-bin-hadoop2.6&lt;/p&gt;
+&lt;p&gt;1、下载：&lt;a href=&#34;http://spark.apache.org/downloads.html&#34;&gt;Download Apache Spark&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://utopizza.github.io/2016-06-22-Spark-Spark%E5%AE%8C%E5%85%A8%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%AD%E5%BB%BA%E4%B8%8E%E4%BD%BF%E7%94%A8-3/download.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;2、将安装包移动到到路径：&lt;code&gt;/usr/local/&lt;/code&gt;，并解压&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;[root@master ~]# cd  /usr/local/
+[root@master ~]# tar  -xzvf  spark-1.6.1-bin-hadoop2.6.tar.gz
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;3、配置环境变量&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;[root@master ~]# vim  /etc/profile
+
+export  SPARK_HOME=/usr/local/spark-1.6.1-bin-hadoop2.6
+export  PATH=${SPARK_HOME}/bin: ${SPARK_HOME}/sbin
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;现在可以将所有的PATH整合到一起：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;export  JAVA_HOME=&amp;#34;/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.101.x86_64&amp;#34;
+export  JRE_HOME=${JAVA_HOME}/jre
+export  CLASS_PATH=.:${JAVA_HOME}/lib: ${JRE_HOME}/lib
+export  SCALA_HOME=/usr/lib/scala-2.10.4
+export  HADOOP_HOME=/usr/local/hadoop-2.7.2
+export  SPARK_HOME=/usr/local/spark-1.6.1-bin-hadoop2.6
+export  PATH=$PATH:${JAVA_HOME}/bin:${SCALA_HOME}/bin:${HADOOP_HOME}/bin:${HADOOP_HOME}/sbin:${SPARK_HOME}/bin: ${SPARK_HOME}/sbin
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;https://utopizza.github.io/2016-06-22-Spark-Spark%E5%AE%8C%E5%85%A8%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%AD%E5%BB%BA%E4%B8%8E%E4%BD%BF%E7%94%A8-3/path.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;配置完成后&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;[root@master ~]# source  /etc/profile
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;同步到worker1和worker2&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;[root@master ~]# scp  /etc/profile  root@worker1:/etc/profile
+[root@master ~]# ssh  root@worker1
+[root@worker1 ~]# source  /etc/profile
+[root@worker1 ~]# exit
+
+[root@master ~]# scp  /etc/profile  root@worker2:/etc/profile
+[root@master ~]# ssh  root@worker1
+[root@worker2 ~]# source  /etc/profile
+[root@worker2 ~]# exit
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;4、配置Spark文件&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;[root@master ~]# cd  /usr/local/spark-1.6.1-bin-hadoop2.6/conf
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;step 1：spark-env.sh&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;[root@master ~]# cp  spark-env.sh.template  spark-env.sh
+[root@master ~]# vim  spark-env.sh
+
+export  JAVA_HOME=/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.101.x86_64
+export  SCALA_HOME=/usr/lib/scala-2.10.4 
+export  SPARK_HOME=/usr/local/spark-1.6.1-bin-hadoop2.6
+export  SPARK_MASTER_IP=master
+export  SPARK_MASTER_PORT=8070
+export  SPARK_MASTER_WEBUI_PORT=8091
+export  SPARK_WORKER_INSTANCES=2
+export  SPARK_WORKER_MEMORY=1g
+export  HADOOP_CONF_DIR=/usr/local/hadoop-2.7.2/etc/hadoop
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;step2：slaves.template&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;[root@master ~]# cp  slaves.template  slaves
+[root@master ~]# vim  slaves
+
+// 加入
+worker1
+worker2
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;step 3：复制spark到worker1和worker2&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;[root@master ~]# scp  –r  /usr/local/spark-1.6.1-bin-hadoop2.6  root@worker1:/usr/local/spark-1.6.1-bin-hadoop2.6
+[root@master ~]# scp  –r  /usr/local/spark-1.6.1-bin-hadoop2.6  root@worker2:/usr/local/spark-1.6.1-bin-hadoop2.6
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;5、启动Spark集群&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;[root@master ~]# /usr/local/spark-1.6.1-bin-hadoop2.6/sbin/start-all.sh
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;用命令 &lt;code&gt;jps&lt;/code&gt; 查看，如果有master和worker进程说明启动成功。可以通过 &lt;code&gt;http://master:8091&lt;/code&gt; 查看集群情况和运行的applications。也可以在 &lt;code&gt;http://master:4040&lt;/code&gt; 查看application运行的job的具体信息&lt;/p&gt;
+&lt;p&gt;6、用例测试，略。&lt;/p&gt;
+&lt;p&gt;7、本文参考：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&#34;https://my.oschina.net/132722/blog/196027?fromerr=UObz2ulL&#34;&gt;Spark安装启动 and 在程序中调用spark服务&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&#34;http://www.open-open.com/lib/view/open1427935743396.html&#34;&gt;Spark 伪分布式 &amp;amp; 全分布式 安装指南&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&#34;http://www.thebigdata.cn/Hadoop/28957.html&#34;&gt;Spark1.6.0 on Hadoop-2.6.3 安装配置&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&#34;http://www.dataguru.cn/thread-530953-1-1.html&#34;&gt;Spark1.4.1完全分布集群hadoop2.6.0上部署&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Spark完全分布式搭建与使用(2)</title>
+      <link>https://utopizza.github.io/posts/spark/2016-06-10-spark-spark%E5%AE%8C%E5%85%A8%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%AD%E5%BB%BA%E4%B8%8E%E4%BD%BF%E7%94%A8-2/</link>
+      <pubDate>Fri, 10 Jun 2016 16:11:00 +0000</pubDate>
+      
+      <guid>https://utopizza.github.io/posts/spark/2016-06-10-spark-spark%E5%AE%8C%E5%85%A8%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%AD%E5%BB%BA%E4%B8%8E%E4%BD%BF%E7%94%A8-2/</guid>
+      <description>&lt;p&gt;八、安装Hadoop-2.7.2&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;说明：如果是想用 “Spark on Standalon” 模式就不用安装Hadoop，如果想用 “Spark on Yarn” 或者需要去hdfs取数据则应先装Hadoop&lt;/li&gt;
+&lt;li&gt;参见：
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://blog.csdn.net/remote_roamer/article/details/50579874&#34;&gt;CentOS7 上安装Hadoop 2.7.2 的安装 和 初步使用&lt;/a&gt;）&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.dataguru.cn/thread-530951-1-1.html&#34;&gt;Hadoop2.6, Red hat Linux 6.6 x64集群完全分布式安装&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.open-open.com/lib/view/open1435761287778.html&#34;&gt;CentOS7安装Hadoop2.7完整流程&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;1、下载地址：&lt;a href=&#34;http://hadoop.apache.org/releases.html&#34;&gt;Apache Hadoop Releases Download&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;这里我选择binary文件进行下载，这种是已经编译好的源码，下载的文件名是hadoop-2.6.4.tar.gz；如果喜欢自己编译，可以选择source文件进行下载，下载的文件名是hadoop-2.7.2-src.tar.gz。（参考：&lt;a href=&#34;http://www.itpub.net/thread-1875856-1-1.html&#34;&gt;hadoop两个安装包分别是干啥的？&lt;/a&gt;）&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://utopizza.github.io/2016-06-10-Spark-Spark%E5%AE%8C%E5%85%A8%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%AD%E5%BB%BA%E4%B8%8E%E4%BD%BF%E7%94%A8-2/download.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;2、将安装包移动到到路径：&lt;code&gt;/usr/local/&lt;/code&gt;，并解压&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;[root@master ~]# cd  /usr/local
+[root@master ~]# tar  -xzvf  hadoop-2.7.2.tar.gz
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;3、判断Hadoop版本&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;[root@master ~]# /usr/local/hadoop-2.7.2/bin/hadoop  version
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;4、配置环境变量&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;[root@master ~]# vim  /etc/profile
+
+export  HADOOP_HOME=/usr/local/hadoop-2.7.2
+export  PATH=$PATH:{HADOOP_HOME}/bin:{HADOOP_HOME}/sbin
+
+[root@master ~]# source  /etc/profile
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;同步到worker1和worker2&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;[root@master ~]# scp  /etc/profile  root@worker1:/etc/profile
+[root@master ~]# ssh  root@worker1
+[root@worker1 ~]# source  /etc/profile
+[root@worker1 ~]# exit
+
+[root@master ~]# scp  /etc/profile  root@worker2:/etc/profile
+[root@master ~]# ssh  root@worker2
+[root@worker2 ~]# source  /etc/profile
+[root@worker2 ~]# exit
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;5、配置Hadoop文件&lt;/p&gt;
+&lt;p&gt;step 1：在master本地创建以下文件夹&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;/home/Hadoop/name&lt;/li&gt;
+&lt;li&gt;/home/hadoop/data&lt;/li&gt;
+&lt;li&gt;/home/hadoop/temp&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;step 2：进入目录 &lt;code&gt;/usr/local/hadoop-2.7.2/etc/hadoop/&lt;/code&gt; ，修改配置文件，共7个&lt;/p&gt;
+&lt;p&gt;(1) hadoop-env.sh：修改 &lt;code&gt;JAVA_HOME&lt;/code&gt; 值&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;export  JAVA_HOME=/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.101.x86_64
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;(2) yarn-env.sh：修改 &lt;code&gt;JAVA_HOME&lt;/code&gt; 值&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;export  JAVA_HOME=/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.101.x86_64
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;(3) slaves：写入&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;worker1
+worker2
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;(4) core-site.xml&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&amp;lt;configuration&amp;gt;
+        &amp;lt;property&amp;gt;
+                &amp;lt;name&amp;gt;fs.defaultFS&amp;lt;/name&amp;gt;
+                &amp;lt;value&amp;gt;hdfs://master:9000&amp;lt;/value&amp;gt;
+        &amp;lt;/property&amp;gt;
+        &amp;lt;property&amp;gt;
+                &amp;lt;name&amp;gt;hadoop.tmp.dir&amp;lt;/name&amp;gt;
+                &amp;lt;value&amp;gt;file:/home/hadoop/temp&amp;lt;/value&amp;gt;
+                &amp;lt;description&amp;gt;Abase for other temporary directories.&amp;lt;/description&amp;gt;
+        &amp;lt;/property&amp;gt;
+&amp;lt;/configuration&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;(5) hdfs-site.xml&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&amp;lt;configuration&amp;gt;
+         &amp;lt;property&amp;gt;
+               &amp;lt;name&amp;gt;dfs.namenode.secondary.http-address&amp;lt;/name&amp;gt;
+               &amp;lt;value&amp;gt;master:9001&amp;lt;/value&amp;gt;
+         &amp;lt;/property&amp;gt;
+         &amp;lt;property&amp;gt;
+                 &amp;lt;name&amp;gt;dfs.namenode.name.dir&amp;lt;/name&amp;gt;
+                 &amp;lt;value&amp;gt;file:/home/hadoop/name&amp;lt;/value&amp;gt;
+         &amp;lt;/property&amp;gt;
+         &amp;lt;property&amp;gt;
+                 &amp;lt;name&amp;gt;dfs.datanode.data.dir&amp;lt;/name&amp;gt;
+                 &amp;lt;value&amp;gt;file:/home/hadoop/data&amp;lt;/value&amp;gt;
+         &amp;lt;/property&amp;gt;
+         &amp;lt;property&amp;gt;
+                 &amp;lt;name&amp;gt;dfs.replication&amp;lt;/name&amp;gt;
+                 &amp;lt;value&amp;gt;2&amp;lt;/value&amp;gt;
+         &amp;lt;/property&amp;gt;
+         &amp;lt;property&amp;gt;
+                 &amp;lt;name&amp;gt;dfs.webhdfs.enabled&amp;lt;/name&amp;gt;
+                 &amp;lt;value&amp;gt;true&amp;lt;/value&amp;gt;
+         &amp;lt;/property&amp;gt;
+&amp;lt;/configuration&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;(6) mapred-site.xml&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&amp;lt;configuration&amp;gt;
+                &amp;lt;property&amp;gt;
+                         &amp;lt;name&amp;gt;mapreduce.framework.name&amp;lt;/name&amp;gt;
+                         &amp;lt;value&amp;gt;yarn&amp;lt;/value&amp;gt;
+                &amp;lt;/property&amp;gt;
+                &amp;lt;property&amp;gt;
+                         &amp;lt;name&amp;gt;mapreduce.jobhistory.address&amp;lt;/name&amp;gt;
+                         &amp;lt;value&amp;gt;master:10020&amp;lt;/value&amp;gt;
+                &amp;lt;/property&amp;gt;
+                &amp;lt;property&amp;gt;
+                         &amp;lt;name&amp;gt;mapreduce.jobhistory.webapp.address&amp;lt;/name&amp;gt;
+                         &amp;lt;value&amp;gt; master:19888&amp;lt;/value&amp;gt;
+                &amp;lt;/property&amp;gt;
+&amp;lt;/configuration&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;(7) yarn-site.xml&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&amp;lt;configuration&amp;gt;
+        &amp;lt;property&amp;gt;
+               &amp;lt;name&amp;gt;yarn.nodemanager.aux-services&amp;lt;/name&amp;gt;
+               &amp;lt;value&amp;gt;mapreduce_shuffle&amp;lt;/value&amp;gt;
+        &amp;lt;/property&amp;gt;
+        &amp;lt;property&amp;gt;
+               &amp;lt;name&amp;gt;yarn.nodemanager.aux-services.mapreduce.shuffle.class&amp;lt;/name&amp;gt;
+               &amp;lt;value&amp;gt;org.apache.hadoop.mapred.ShuffleHandler&amp;lt;/value&amp;gt;
+        &amp;lt;/property&amp;gt;
+        &amp;lt;property&amp;gt;
+               &amp;lt;name&amp;gt;yarn.resourcemanager.address&amp;lt;/name&amp;gt;
+               &amp;lt;value&amp;gt; master:8032&amp;lt;/value&amp;gt;
+       &amp;lt;/property&amp;gt;
+       &amp;lt;property&amp;gt;
+               &amp;lt;name&amp;gt;yarn.resourcemanager.scheduler.address&amp;lt;/name&amp;gt;
+               &amp;lt;value&amp;gt;master:8030&amp;lt;/value&amp;gt;
+       &amp;lt;/property&amp;gt;
+       &amp;lt;property&amp;gt;
+               &amp;lt;name&amp;gt;yarn.resourcemanager.resource-tracker.address&amp;lt;/name&amp;gt;
+               &amp;lt;value&amp;gt;master:8031&amp;lt;/value&amp;gt;
+       &amp;lt;/property&amp;gt;
+       &amp;lt;property&amp;gt;
+               &amp;lt;name&amp;gt;yarn.resourcemanager.admin.address&amp;lt;/name&amp;gt;
+               &amp;lt;value&amp;gt; master:8033&amp;lt;/value&amp;gt;
+       &amp;lt;/property&amp;gt;
+       &amp;lt;property&amp;gt;
+               &amp;lt;name&amp;gt;yarn.resourcemanager.webapp.address&amp;lt;/name&amp;gt;
+               &amp;lt;value&amp;gt; master:8088&amp;lt;/value&amp;gt;
+       &amp;lt;/property&amp;gt;
+&amp;lt;/configuration&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;step 3：复制整个hadoop目录到worker1和worker2&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;[root@master ~]# scp  –r  /usr/local/hadoop-2.7.2  root@worker1:/usr/local/hadoop-2.7.2
+[root@master ~]# scp  –r  /usr/local/hadoop-2.7.2  root@worker2:/usr/local/hadoop-2.7.2
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;6、启动 hadoop&lt;/p&gt;
+&lt;p&gt;step 1：进入安装目录&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;[root@master ~]# cd  /usr/local/hadoop-2.7.2
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;step 2：格式化 namenode，成功的话会看到“successfully formatted”和“exitting with status 0”&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;[root@master ~]# ./bin/hdfs  namenode  -format
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;注意，&lt;strong&gt;以后重新格式化可能导致datanode无法启动，需要手动更新集群ID&lt;/strong&gt;，参考：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://blog.csdn.net/yeruby/article/details/21542465&#34;&gt;重新格式化HDFS的方法&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://my.oschina.net/HIJAY/blog/220816&#34;&gt;Hadoop中重新格式化namenode&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;step 3：启动 hdfs&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;[root@master ~]# ./sbin/start-dfs.sh
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;step 4：启动 yarn&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;[root@master ~]# ./sbin/start-yarn.sh
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;step 5：用 &lt;code&gt;jps&lt;/code&gt; 命令来查看是否启动成功，若成功会看到master上面有&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;namenode&lt;/li&gt;
+&lt;li&gt;secondarynamenode&lt;/li&gt;
+&lt;li&gt;resourcemanager&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;在worker1和worker2上面有&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;datanode&lt;/li&gt;
+&lt;li&gt;nodemanager&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;step 6：查看集群状态&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;[root@master ~]# ./sbin/hdfs  dfsadmin  -report
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;或者在浏览器打开：&lt;code&gt;http://master:50070&lt;/code&gt; 和 &lt;code&gt;http://master:8088&lt;/code&gt; 查看。注意 &lt;code&gt;live nodes&lt;/code&gt; 的个数&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://utopizza.github.io/2016-06-10-Spark-Spark%E5%AE%8C%E5%85%A8%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%AD%E5%BB%BA%E4%B8%8E%E4%BD%BF%E7%94%A8-2/hadoop-1.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://utopizza.github.io/2016-06-10-Spark-Spark%E5%AE%8C%E5%85%A8%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%AD%E5%BB%BA%E4%B8%8E%E4%BD%BF%E7%94%A8-2/hadoop-2.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;7、HadoopH的其他操作，略。参考：&lt;a href=&#34;http://book.2cto.com/201401/39823.html&#34;&gt;Hadoop的启动与停止&lt;/a&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Spark完全分布式搭建与使用(1)</title>
+      <link>https://utopizza.github.io/posts/spark/2016-05-29-spark-spark%E5%AE%8C%E5%85%A8%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%AD%E5%BB%BA%E4%B8%8E%E4%BD%BF%E7%94%A8-1/</link>
+      <pubDate>Sun, 29 May 2016 13:44:00 +0000</pubDate>
+      
+      <guid>https://utopizza.github.io/posts/spark/2016-05-29-spark-spark%E5%AE%8C%E5%85%A8%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%AD%E5%BB%BA%E4%B8%8E%E4%BD%BF%E7%94%A8-1/</guid>
+      <description>&lt;p&gt;一、实验环境&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;宿主机：winserver 2012 服务器一台&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;目标：在三台虚拟机上搭建Spark完全分布式集群，一台master，两台slaves&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;二、安装虚拟机oracle virtualbox&lt;/p&gt;
+&lt;p&gt;下载地址：&lt;a href=&#34;https://www.virtualbox.org/wiki/Downloads&#34;&gt;Download VirtualBox&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;三、安装 CentOS-6.7-x86_64.iso 镜像文件&lt;/p&gt;
+&lt;p&gt;1、下载地址：&lt;a href=&#34;http://isoredirect.centos.org/centos/6/isos/x86_64/&#34;&gt;CentOS Mirror&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;2、导入到virtualbox中进行安装。（因为三台虚拟机将要进行差不多的软件安装，所以先在一台虚拟机上部署好了master，再将这个虚拟机完全复制两份作为slaves，然后再稍微修改配置文件，这样比较省事）&lt;/p&gt;
+&lt;p&gt;3、配置：名称为CentOS6_Master，CPU为2个，内存为2G，硬盘等其他参数默认安装。在配置CPU的时候可能无法使用，因为win8 之后的微软操作系统默认安装了Hyper-V虚拟机独占了虚拟资源，可以在：控制面板-&amp;gt;程序和功能-&amp;gt;启用或关闭Windows功能-&amp;gt;启动“删除角色和功能”向导中进行禁用，问题解决。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://utopizza.github.io/2016-05-29-Spark-Spark%E5%AE%8C%E5%85%A8%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%AD%E5%BB%BA%E4%B8%8E%E4%BD%BF%E7%94%A8-1/Hyper-V-1.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://utopizza.github.io/2016-05-29-Spark-Spark%E5%AE%8C%E5%85%A8%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%AD%E5%BB%BA%E4%B8%8E%E4%BD%BF%E7%94%A8-1/Hyper-V-2.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;4、安装好后从“存储”中删除CentOS镜像文件盘片，否则每次启动虚拟机都是进行镜像安装而不是进入虚拟机。另外，安装好后如果宿主机可以上网，那么虚拟机也是可以立即上网的。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://utopizza.github.io/2016-05-29-Spark-Spark%E5%AE%8C%E5%85%A8%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%AD%E5%BB%BA%E4%B8%8E%E4%BD%BF%E7%94%A8-1/deleteDisk.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;四、安装 java-1.7.0&lt;/p&gt;
+&lt;p&gt;1、下载安装并验证，参考：&lt;a href=&#34;http://jingyan.baidu.com/article/4853e1e51d0c101909f72607.html&#34;&gt;在CentOS上安装Java环境&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;2、设置JAVA_HOME环境变量（使用 &lt;code&gt;ls  –lrt  /etc/alternatives/java&lt;/code&gt; 来定位jdk的安装路径，参考：&lt;a href=&#34;http://www.cnblogs.com/kerrycode/archive/2015/08/27/4762921.html&#34;&gt;Linux如何查看JDK的安装路径&lt;/a&gt;）&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;// 使用vim编辑器进入配置文件
+[root@master ~]# vim  /etc/profile
+
+// 修改配置文件
+export  JAVA_HOME=&amp;#34;/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.101.x86_64&amp;#34; （加入）
+export  JRE_HOME=${JAVA_HOME}/jre
+export  CLASS_PATH=.:${JAVA_HOME}/lib: ${JRE_HOME}/lib
+
+// 保存并退出编辑器
+
+// 在terminal中输入命令使其生效
+[root@master ~]# source  /etc/profile
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;（注意：我这里安装的是openjdk，与常见的sun jdk存放的位置目录不同，参见：&lt;a href=&#34;http://blog.csdn.net/wind520/article/details/9308809&#34;&gt;CentOS中JAVA_HOME的环境变量设置&lt;/a&gt;）&lt;/p&gt;
+&lt;p&gt;3、测试是否安装成功&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;[root@master ~]# java -version
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;五、安装 scala-2.10.4&lt;/p&gt;
+&lt;p&gt;1、因为spark是1.6.1版本，对应scala要用2.10.x版本，否则无法兼容&lt;/p&gt;
+&lt;p&gt;下载地址：&lt;a href=&#34;http://www.scala-lang.org/download/2.10.4.html&#34;&gt;SCALA 2.10.4&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;2、解压到系统目录 /usr/lib/ 下&lt;/p&gt;
+&lt;p&gt;3、配置环境变量&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;[root@master ~]# vim  /etc/profile
+
+export  SCALA_HOME=/usr/lib/scala-2.10.4
+export  PATH=$PATH:${SCALA_HOME}/bin
+
+[root@master ~]# source  /etc/profile
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;4、测试&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;[root@master ~]# scala  –version
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;六、安装 SSH&lt;/p&gt;
+&lt;p&gt;1、查看SSH是否已安装&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;[root@master ~]# rpm –qa | grep ssh
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;2、安装&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;[root@master ~]# yum  install  openssh-server
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;3、启动/关闭/重启&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;[root@master ~]# service  sshd  start/stop/restart
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;4、验证：查看22端口&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;[root@master ~]# netstat  –antp | grep sshd
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;5、设置开机自启/关闭&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;[root@master ~]# chkconfig  sshd  on/off
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;七、复制虚拟机并构建局域网&lt;/p&gt;
+&lt;p&gt;1、virtualbox虚拟机的网络设置形式有四种（详情参考：&lt;a href=&#34;https://www.douban.com/group/topic/15558388/&#34;&gt;VirtualBox虚拟机网络设置（四种方式）&lt;/a&gt;）：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;NAT网络地址转换模式：安装后的默认模式，虚拟机可以访问主机，主机不能访问虚拟机，虚拟机之间不能相互访问。即虚拟机不真实存在于网络中，网络服务由主机单向提供。&lt;/li&gt;
+&lt;li&gt;Bridged Adapter网桥模式：虚拟机能被分配到一个网络独立的IP，直接连接入网络中，真是存在于网络。因此虚拟机与主机、虚拟机与虚拟机之间都是可以相互访问的。&lt;/li&gt;
+&lt;li&gt;Internal内部网络模式：虚拟机与外部网络完全断开，只实现虚拟机之间的内部网络模式。虚拟无法访问主机，也不能通过主机连接外部网络。&lt;/li&gt;
+&lt;li&gt;Host-only Adapter完全主机模式：最复杂，虚拟出一张网卡供虚拟机使用，灵活性最高。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;2、复制虚拟机，选择完全复制即可，修改名字为 CentOS6_Worker1 、 CentOS6_Worker2&lt;/p&gt;
+&lt;p&gt;3、配置局域网，使三台虚拟机能相互ping通，并且能SSH免密码登录（因为本来想设置最好的Bridged Adapter网桥模式，但是尝试了几次都失败了，最后采用比较简单的Internal内部网络模式。如果你也选择该模式，请提前下载好Hadoop和Spark的安装包，因为部署好内部网络后将与外部网络断开无法上网下载）：&lt;/p&gt;
+&lt;p&gt;(1)、先在宿主机（winServer）的cmd中启动vituralbox的dhcp服务，设置一个vituralbox内部网络（参考：&lt;a href=&#34;http://blog.csdn.net/fyifei0558/article/details/45506271&#34;&gt;Virtualbox下使用internal networking做一个小局域网&lt;/a&gt;）：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&amp;gt;C:\Program Files\Oracle\VirtualBox&amp;gt;VBoxManage.exe dhcpserver add
+--netname  intnet 
+--ip  192.168.1.1 
+--netmask  255.255.255.0 
+--lowerip  192.168.1.1 
+--upperip  192.168.1.100 
+--enable
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;(2)、修改虚拟机-&amp;gt;设置-&amp;gt;网络&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://utopizza.github.io/2016-05-29-Spark-Spark%E5%AE%8C%E5%85%A8%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%AD%E5%BB%BA%E4%B8%8E%E4%BD%BF%E7%94%A8-1/intnet.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;(3)、启动三台虚拟机，分别添加新的网络连接配置“eth0”。其中，掩码都是255.255.255.0，网关都是192.168.1.1，各自IP如下：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Master：192.168.1.2&lt;/li&gt;
+&lt;li&gt;Worker1：192.168.1.3&lt;/li&gt;
+&lt;li&gt;Worker2：192.168.1.4&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src=&#34;https://utopizza.github.io/2016-05-29-Spark-Spark%E5%AE%8C%E5%85%A8%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%AD%E5%BB%BA%E4%B8%8E%E4%BD%BF%E7%94%A8-1/IP-1.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;设置完后，重启eth0端口&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;[root@master ~]# ifdown  eth0
+[root@master ~]# ifup  eth0
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;查看网络设置&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;[root@master ~]# ifconfig
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;如果下图所示就说明设置好了。（安装的无桌面版本CentOS的高手请忽略）&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://utopizza.github.io/2016-05-29-Spark-Spark%E5%AE%8C%E5%85%A8%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%AD%E5%BB%BA%E4%B8%8E%E4%BD%BF%E7%94%A8-1/IP-2.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;(4)、关闭三台虚拟机的防火墙，然后用ping分别进行测试（参考：&lt;a href=&#34;http://blog.163.com/cdma2368@126/blog/static/301742762014113103036962/&#34;&gt;centOS 6.5关闭防火墙步骤&lt;/a&gt;）&lt;/p&gt;
+&lt;p&gt;(5)、设置每台虚拟机的网络主机名，这步只是为了方便配置，不用每次都写一堆那么长的IP地址。要先获得root权限才能进行如下操作（下面以master为例）：&lt;/p&gt;
+&lt;p&gt;step 1：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;[root@master ~]# vim  /etc/hosts
+
+// 进入该配置文件后，清掉原来的默认设置，然后加入：
+127.0.0.1       localhost
+192.168.1.2     Master
+192.168.1.3     Worker1
+192.168.1.4     Worker2
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;注意：这个配置文件很关键，&lt;strong&gt;一定要把原来默认的地址全部去掉，否则之后安装hadoop的网页UI会无法正常工作&lt;/strong&gt;。参见：&lt;a href=&#34;http://blog.csdn.net/shenlan211314/article/details/7414728&#34;&gt;Hadoop在master查看live nodes为0解决方案&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;step 2：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;[root@master ~]# vim  /etc/sysconfig/network
+//将里面的HOSTNAME改为master
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;step 3：再使用hostname命令指定一次&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;[root@master ~]# hostname  master
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;step 4：
+重新登录/重启一次，这时如果配置成功，就会看见命令提示字符串变成&amp;rdquo;[root@master ~]#&amp;rdquo;&lt;/p&gt;
+&lt;p&gt;(6)、以上，三台机器都设置好各自网络主机名后，再用ping测试&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://utopizza.github.io/2016-05-29-Spark-Spark%E5%AE%8C%E5%85%A8%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%AD%E5%BB%BA%E4%B8%8E%E4%BD%BF%E7%94%A8-1/IP-3.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;(7)、设置master到两个worker虚拟机SSH免密码登录&lt;/p&gt;
+&lt;p&gt;step 1：在master上面进入root的.ssh目录&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;[root@master ~]# cd  ~/.ssh
+//如果没有该目录，就用mkdir  ~/.ssh建立并进入
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;step 2：使用 &lt;code&gt;ssh-keygen  –t  rsa&lt;/code&gt; 来生成公钥和私钥，连续回车，不设置密码&lt;/p&gt;
+&lt;p&gt;step 3：把公钥文件复制到要其他机器的root用户目录下的.ssh目录（如果不是root用户，需要在前面加/home/）&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;[root@master ~]# scp  ~/.ssh/id_rsa.pub  root@master:/root/.ssh/authorized_keys
+[root@master ~]# scp  ~/.ssh/id_rsa.pub  root@worker1:/root/.ssh/authorized_keys
+[root@master ~]# scp  ~/.ssh/id_rsa.pub  root@worker2:/root/.ssh/authorized_keys
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;step 4：检测master是否可以不需要密码登录到worker1和worker2&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;[root@master ~]# ssh  master
+[root@master ~]# ssh  root@worker1
+[root@master ~]# ssh  root@worker2
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;至此，所有准备步骤基本完成，下一步可以开始正式安装hadoop、spark&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

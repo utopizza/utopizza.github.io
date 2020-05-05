@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Language" content="en">
+
+    <meta name="author" content="Yusheng Wang">
+    <meta name="description" content="1、最长递增子序列（返回长度）
+给定数组 arr，返回它的最长递增子序列的长度。
+思路：显然对于数组的任何一个子序列，它必定以数组的某个元素结尾，因此可用 dp[i] 表示以 arr[i] 结尾的最长递增子序列的长度。那它是如何得来的呢？显然它就是在前面 i-1 个最长递增子序列后面追加或者不追加 arr[i] 而得到的 i-1 个新的递增子序列中，最长的那个。如果 arr[i] 大于 arr[j]，那么 arr[i] 就可以追加到以 arr[j] 结尾的最长递增子序列。
+边界条件：如果 arr[i] 比它前面的 i-1 个元素都小，那么以 arr[i] 结尾的最长递增子序列就是它自己了，此时 dp[i]=1。
+$$ dp[i]=\max{ dp[j]&#43;1 } \text{,} \quad (0 \leq j &lt; i , \text{,} , arr[j]&lt;arr[i]) $$
+private static int LIS(int[] arr) { if (arr == null || arr.length == 0) return 0; int[] dp = new int[arr.length]; for (int i = 0; i &lt; arr.">
+    <meta name="keywords" content="blog,developer,personal">
+
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="动态规划题(2)"/>
+<meta name="twitter:description" content="1、最长递增子序列（返回长度）
+给定数组 arr，返回它的最长递增子序列的长度。
+思路：显然对于数组的任何一个子序列，它必定以数组的某个元素结尾，因此可用 dp[i] 表示以 arr[i] 结尾的最长递增子序列的长度。那它是如何得来的呢？显然它就是在前面 i-1 个最长递增子序列后面追加或者不追加 arr[i] 而得到的 i-1 个新的递增子序列中，最长的那个。如果 arr[i] 大于 arr[j]，那么 arr[i] 就可以追加到以 arr[j] 结尾的最长递增子序列。
+边界条件：如果 arr[i] 比它前面的 i-1 个元素都小，那么以 arr[i] 结尾的最长递增子序列就是它自己了，此时 dp[i]=1。
+$$ dp[i]=\max{ dp[j]&#43;1 } \text{,} \quad (0 \leq j &lt; i , \text{,} , arr[j]&lt;arr[i]) $$
+private static int LIS(int[] arr) { if (arr == null || arr.length == 0) return 0; int[] dp = new int[arr.length]; for (int i = 0; i &lt; arr."/>
+
+    <meta property="og:title" content="动态规划题(2)" />
+<meta property="og:description" content="1、最长递增子序列（返回长度）
+给定数组 arr，返回它的最长递增子序列的长度。
+思路：显然对于数组的任何一个子序列，它必定以数组的某个元素结尾，因此可用 dp[i] 表示以 arr[i] 结尾的最长递增子序列的长度。那它是如何得来的呢？显然它就是在前面 i-1 个最长递增子序列后面追加或者不追加 arr[i] 而得到的 i-1 个新的递增子序列中，最长的那个。如果 arr[i] 大于 arr[j]，那么 arr[i] 就可以追加到以 arr[j] 结尾的最长递增子序列。
+边界条件：如果 arr[i] 比它前面的 i-1 个元素都小，那么以 arr[i] 结尾的最长递增子序列就是它自己了，此时 dp[i]=1。
+$$ dp[i]=\max{ dp[j]&#43;1 } \text{,} \quad (0 \leq j &lt; i , \text{,} , arr[j]&lt;arr[i]) $$
+private static int LIS(int[] arr) { if (arr == null || arr.length == 0) return 0; int[] dp = new int[arr.length]; for (int i = 0; i &lt; arr." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://utopizza.github.io/posts/algorithm/2018-05-01-%E7%AE%97%E6%B3%95-%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E9%A2%982/" />
+<meta property="article:published_time" content="2018-05-01T22:03:00+00:00" />
+<meta property="article:modified_time" content="2018-05-01T22:03:00+00:00" />
+
+
+    
+      <base href="https://utopizza.github.io/posts/algorithm/2018-05-01-%E7%AE%97%E6%B3%95-%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E9%A2%982/">
+    
+    <title>
+  动态规划题(2) · Utopizza
+</title>
+
+    
+      <link rel="canonical" href="https://utopizza.github.io/posts/algorithm/2018-05-01-%E7%AE%97%E6%B3%95-%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E9%A2%982/">
+    
+
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700%7CMerriweather:300,700%7CSource+Code+Pro:400,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.13.0/css/all.css" integrity="sha384-Bfad6CLCknfcloXFOyFnlgtENryhrpZCe29RTifKEixXQZ38WheV+i/6YWSzkz3V" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" integrity="sha256-l85OmPOjvil/SOvVt3HnSSjzF1TUMyT9eV0c2BzEGzU=" crossorigin="anonymous" />
+
+    
+      
+      
+      <link rel="stylesheet" href="https://utopizza.github.io/css/coder.min.a4f332213a21ce8eb521670c614470c58923aaaf385e2a73982c31dd7642decb.css" integrity="sha256-pPMyITohzo61IWcMYURwxYkjqq84XipzmCwx3XZC3ss=" crossorigin="anonymous" media="screen" />
+    
+
+    
+
+    
+      
+        
+        
+        <link rel="stylesheet" href="https://utopizza.github.io/css/coder-dark.min.e78e80fc3a585a4d1c8fc7f58623b6ff852411e38431a9cd1792877ecaa160f6.css" integrity="sha256-546A/DpYWk0cj8f1hiO2/4UkEeOEManNF5KHfsqhYPY=" crossorigin="anonymous" media="screen" />
+      
+    
+
+    
+
+    
+
+    <link rel="icon" type="image/png" href="https://utopizza.github.io/images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="https://utopizza.github.io/images/favicon-16x16.png" sizes="16x16">
+
+    <meta name="generator" content="Hugo 0.69.2" />
+  </head>
+
+  
+  
+    
+  
+  <body class="colorscheme-auto">
+    <main class="wrapper">
+      <nav class="navigation">
+  <section class="container">
+    <a class="navigation-title" href="https://utopizza.github.io/">
+      Utopizza
+    </a>
+    
+    <input type="checkbox" id="menu-toggle" />
+    <label class="menu-button float-right" for="menu-toggle"><i class="fas fa-bars"></i></label>
+    <ul class="navigation-list">
+      
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/about/">About</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/posts/">Blog</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/projects/">Projects</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/contact/">Contact me</a>
+          </li>
+        
+      
+      
+    </ul>
+    
+  </section>
+</nav>
+
+
+      <div class="content">
+        
+  <section class="container post">
+    <article>
+      <header>
+        <div class="post-title">
+          <h1 class="title">动态规划题(2)</h1>
+        </div>
+        <div class="post-meta">
+          <div class="date">
+            <span class="posted-on">
+              <i class="fas fa-calendar"></i>
+              <time datetime='2018-05-01T22:03:00Z'>
+                May 1, 2018
+              </time>
+            </span>
+            <span class="reading-time">
+              <i class="fas fa-clock"></i>
+              4-minute read
+            </span>
+          </div>
+          <div class="categories">
+  <i class="fas fa-folder"></i>
+    <a href="https://utopizza.github.io/categories/algorithm/">Algorithm</a></div>
+
+          
+        </div>
+      </header>
+
+      <div>
+        
+        <p>1、最长递增子序列（返回长度）</p>
+<p>给定数组 arr，返回它的最长递增子序列的长度。</p>
+<p>思路：显然对于数组的任何一个子序列，它必定以数组的某个元素结尾，因此可用 dp[i] 表示以 arr[i] 结尾的最长递增子序列的长度。那它是如何得来的呢？显然它就是在前面 i-1 个最长递增子序列后面追加或者不追加 arr[i] 而得到的 i-1 个新的递增子序列中，最长的那个。如果 arr[i] 大于 arr[j]，那么 arr[i] 就可以追加到以 arr[j] 结尾的最长递增子序列。</p>
+<p>边界条件：如果 arr[i] 比它前面的 i-1 个元素都小，那么以 arr[i] 结尾的最长递增子序列就是它自己了，此时 dp[i]=1。</p>
+<p>$$
+dp[i]=\max{ dp[j]+1 } \text{,} \quad (0 \leq j &lt; i , \text{,} , arr[j]&lt;arr[i])
+$$</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">private static int LIS(int[] arr) {
+    if (arr == null || arr.length == 0) return 0;
+    int[] dp = new int[arr.length];
+    for (int i = 0; i &lt; arr.length; i++) {
+        dp[i] = 1;
+        for (int j = 0; j &lt; i; j++) {
+            if (arr[i] &gt; arr[j]) {
+                dp[i] = Math.max(dp[i], dp[j] + 1);
+            }
+        }
+    }
+    int maxLen = 0;
+    for (int i = 0; i &lt; dp.length; i++) maxLen = Math.max(maxLen, dp[i]);
+    return maxLen;
+}
+</code></pre></div><p>2、最长递增子序列（返回序列）</p>
+<p>给定数组 arr，返回它的最长递增子序列。</p>
+<p>思路：先按上面所述求出 dp 数组，然后再根据 dp 数组恢复出最长的子序列。恢复过程很简单：先找到 dp 中最大的元素的位置，假设是 i ，那么说明数组 arr 的最大递增序列以 arr[i] 结尾，也就是说它是所求序列的最后一个元素。然后从 arr[i] 开始往前扫描，如果遇到一个元素满足 dp[j]=d[i]-1 并且 arr[j] 小于 arr[i]，那么 arr[j] 便是倒数第二个元素。依次类推即可。</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">private static int[] LIS2(int[] arr, int[] dp) {
+    int maxLen = 0;
+    int lastIndex = 0;
+    for (int i = 0; i &lt; dp.length; i++) {
+        if (dp[i] &gt; maxLen) {
+            maxLen = dp[i];
+            lastIndex = i;
+        }
+    }
+
+    int[] LIS = new int[maxLen];
+    int LISIndex = maxLen - 1;
+    LIS[LISIndex--] = arr[lastIndex];
+    for (int j = lastIndex; j &gt;= 0; j--) {
+        if (arr[j] &lt; arr[lastIndex] &amp;&amp; dp[j] == dp[lastIndex] - 1) {
+            LIS[LISIndex--] = arr[j];
+            lastIndex = j;
+        }
+    }
+
+    return LIS;
+}
+</code></pre></div><p>3、最长公共子序列（返回长度）</p>
+<p>给定两个数组，返回两个数组的最长公共子序列的长度。</p>
+<p>思路：用 dp[i][j] 表示 X[0&hellip;i] 与 Y[0&hellip;j] 的最长公共子序列长度。那么 dp[i][j] 是如何得到的？我们只需观察两个数组的最后一个元素 X[i] 和 Y[j]。如果 X[i] 和 Y[j] 相等，那么说明它就是 dp[i][j] 对应的公共子序列的最后一个元素。此时 dp[i][j] 由 dp[i-1][j-1]+1 得到。如果不相等，说明这个元素不是公共子序列的最后一个元素。那么此时 dp[i][j] 要么等于 dp[i-1][j]，要么等于 dp[i][j-1]。</p>
+<p>边界：注意dp[0][0]，dp[i][0] 和 dp[0][j]。</p>
+<p>$$
+dp[i][j]=
+\begin{cases}
+dp[i-1][j-1]+1，&amp; \text{if $x_{i}=y_{j}$} \<br>
+max{dp[i-1][j], , dp[i][j-1]}，&amp; \text{if $x_{i} \neq y_{j}$}
+\end{cases}
+$$</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">private static int LCS(int[] X, int[] Y) {
+    if (X == null || X.length == 0 || Y == null || Y.length == 0) return 0;
+    int[][] dp = new int[X.length][Y.length];
+    if (X[0] == Y[0]) dp[0][0] = 1;
+    for (int i = 1; i &lt; X.length; i++) dp[i][0] = Math.max(X[i] == Y[0] ? 1 : 0, dp[i - 1][0]);
+    for (int j = 1; j &lt; Y.length; j++) dp[0][j] = Math.max(X[0] == Y[j] ? 1 : 0, dp[0][j - 1]);
+    for (int i = 1; i &lt; X.length; i++) {
+        for (int j = 1; j &lt; Y.length; j++) {
+            if (X[i] == Y[j]) dp[i][j] = dp[i - 1][j - 1] + 1;
+            else dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
+        }
+    }
+    return dp[X.length - 1][Y.length - 1];
+}
+</code></pre></div><p>4、最长公共子序列（返回序列）</p>
+<p>给定两个数组，返回两个数组的最长公共子序列。</p>
+<p>思路：想按上题求出 dp 数组，然后根据它来恢复序列。思路很简答，根据上面的思路倒推回去即可。</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">private static int[] LCS2(int[] X, int[] Y, int[][] dp) {
+    int len = dp[X.length - 1][Y.length - 1];
+    int[] lsc = new int[len];
+
+    int m = X.length - 1;
+    int n = Y.length - 1;
+    int index = len - 1;
+    while (index &gt;= 0) {
+        if (n &gt; 0 &amp;&amp; dp[m][n] == dp[m][n - 1]) n--;
+        else if (m &gt; 0 &amp;&amp; dp[m][n] == dp[m - 1][n]) m--;
+        else { // X[m]==Y[n]
+            lsc[index--] = X[m];
+            m--;
+            n--;
+        }
+    }
+
+    return lsc;
+}
+</code></pre></div><p>5、最长公共子数组/子串</p>
+<p>给定两个数组，返回最长公共子数组。</p>
+<p>思路：思路类似公共子序列，但是因为子数组/子串必须是元素连续的，因此略有不同。同样构造 dp 数组，dp[i][j] 表示以 X[i] 和 Y[j] 结尾的最长公共子数组/子串的长度。如果这两个元素不相等，那么 dp[i][j]=0，如果相等则 dp[i][j]=dp[i-1][j-1]+1。</p>
+<p>边界：dp[0][0]，dp[i][0]，dp[0][j]。</p>
+<p>$$
+dp[i][j]=
+\begin{cases}
+dp[i-1][j-1]+1，&amp; \text{if $x_{i}=y_{j}$} \<br>
+0，&amp; \text{if $x_{i} \neq y_{j}$}
+\end{cases}
+$$</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">private static int[][] LCSA(int[] X, int[] Y) {
+    if (X == null || Y == null || X.length == 0 || Y.length == 0) return null;
+    int[][] dp = new int[X.length][Y.length];
+    if (X[0] == Y[0]) dp[0][0] = 1;
+    for (int i = 0; i &lt; X.length; i++) dp[i][0] = X[i] == Y[0] ? 1 : 0;
+    for (int j = 0; j &lt; Y.length; j++) dp[0][j] = X[0] == Y[j] ? 1 : 0;
+    for (int i = 1; i &lt; X.length; i++) {
+        for (int j = 1; j &lt; Y.length; j++) {
+            if (X[i] == Y[j]) dp[i][j] = dp[i - 1][j - 1] + 1;
+            else dp[i][j] = 0;
+        }
+    }
+    return dp;
+}
+</code></pre></div><p>现在根据 dp 数组来恢复出公共子数组/子串。由于 dp[i][j] 表示的是以 X[i] 和 Y[j] 结尾的最长公共子数组/子串，只有当 X[i] 和 Y[j] 相等时才会增长 dp[i][j]。因此可以看到 dp 数组必定是沿着右下方增长的。只要遍历 dp 找到最大的元素 dp[m][n]，其值即为最长公共子数组/子串的长度，并且该子数组/子串以 X[m] 或者 Y[n] 结尾。直接从 X 或者 Y 里面截取即可。</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">private static int[] LCSA2(int[] X, int[] Y, int[][] dp) {
+    int maxlen = 0;
+    int lastIndex = 0;
+    for (int i = 0; i &lt; X.length; i++) {
+        for (int j = 0; j &lt; Y.length; j++) {
+            if (dp[i][j] &gt; maxlen) {
+                lastIndex = i;
+                maxlen = dp[i][j];
+            }
+        }
+    }
+
+    int[] lcsa = new int[maxlen];
+    int index = lastIndex;
+    for (int i = maxlen - 1; i &gt;= 0; i--) {
+        lcsa[i] = X[index--];
+    }
+    return lcsa;
+}
+</code></pre></div>
+      </div>
+
+
+      <footer>
+        
+
+
+        
+        
+        
+      </footer>
+    </article>
+
+    
+  </section>
+
+      </div>
+
+      <script type="text/javascript"
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+    </main>
+
+    
+
+    
+
+    <script>
+(function(f, a, t, h, o, m){
+	a[h]=a[h]||function(){
+		(a[h].q=a[h].q||[]).push(arguments)
+	};
+	o=f.createElement('script'),
+	m=f.getElementsByTagName('script')[0];
+	o.async=1; o.src=t; o.id='fathom-script';
+	m.parentNode.insertBefore(o,m)
+})(document, window, '//analytics.example.com/tracker.js', 'fathom');
+fathom('set', 'siteId', 'ABCDE');
+fathom('trackPageview');
+</script>
+
+
+  </body>
+
+</html>

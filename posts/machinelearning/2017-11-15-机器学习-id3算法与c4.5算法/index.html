@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Language" content="en">
+
+    <meta name="author" content="Yusheng Wang">
+    <meta name="description" content="一、ID3算法
+ID3算法的核心是在决策树各个结点上应用“信息增益”准则选择特征，递归地构建决策树。具体方法：从根结点开始，对结点计算所有可能的特征的信息增益，选择信息增益最大的特征作为结点的特征，由该特征的不同取值建立子结点；再对子结点递归地调用以上方法，构建决策树，直到所有特征的信息增益均很小或没有特征可以选择为止。
+输入：训练数据集 $D$，特征集 $A$，阈值 $\varepsilon$ 输出：决策树 $T$
+ 若 $D$ 中所有实例属于同一类 $C_k$，则 $T$ 为单结点树，并将 $C_k$ 作为该结点的类标记，返回 $T$； 若 $A=\emptyset$ ，则 $T$ 为单结点树，将 $D$ 中实例数最大的类 $C_k$ 作为该结点的类标记，返回 $T$； 遍历 $A$ 中每一个特征，计算信息增益 $g(D,A)=H(D)-\sum_{i=1}^{n}\frac{|D_i|}{|D|}H(D_i)$，选择信息增益最大特征 $A_g$。如果 $A_g$ 的信息增益小于阈值 $\varepsilon$，则置 $T$ 为单结点树，并将 $D$ 中实例数最大的类 $C_k$ 作为该结点的类标记，返回 $T$；否则，对 $A_g$ 的每一个可能值 $a_i$，按照 $A_g=a_i$ 将 $D$ 分割为若干非空子集 $D_i$，对每个子集 $D_i$，将其实例数中最大的类作为标记，构建子结点，由结点及其子结点构成树 $T$，返回 $T$； 对第 $i$ 个子结点，以 $D_i$ 为训练集，以 $A- { A_g }$ 为特征集，递归地调用前3步，得到子树 $T_i$，返回 $T_i$。  以下是部分关键代码，参考《机器学习实战》第三章。这里忽略了上述算法的“信息增益阈值 $\varepsilon$ 这一条件。">
+    <meta name="keywords" content="blog,developer,personal">
+
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="ID3算法与C4.5算法"/>
+<meta name="twitter:description" content="一、ID3算法
+ID3算法的核心是在决策树各个结点上应用“信息增益”准则选择特征，递归地构建决策树。具体方法：从根结点开始，对结点计算所有可能的特征的信息增益，选择信息增益最大的特征作为结点的特征，由该特征的不同取值建立子结点；再对子结点递归地调用以上方法，构建决策树，直到所有特征的信息增益均很小或没有特征可以选择为止。
+输入：训练数据集 $D$，特征集 $A$，阈值 $\varepsilon$ 输出：决策树 $T$
+ 若 $D$ 中所有实例属于同一类 $C_k$，则 $T$ 为单结点树，并将 $C_k$ 作为该结点的类标记，返回 $T$； 若 $A=\emptyset$ ，则 $T$ 为单结点树，将 $D$ 中实例数最大的类 $C_k$ 作为该结点的类标记，返回 $T$； 遍历 $A$ 中每一个特征，计算信息增益 $g(D,A)=H(D)-\sum_{i=1}^{n}\frac{|D_i|}{|D|}H(D_i)$，选择信息增益最大特征 $A_g$。如果 $A_g$ 的信息增益小于阈值 $\varepsilon$，则置 $T$ 为单结点树，并将 $D$ 中实例数最大的类 $C_k$ 作为该结点的类标记，返回 $T$；否则，对 $A_g$ 的每一个可能值 $a_i$，按照 $A_g=a_i$ 将 $D$ 分割为若干非空子集 $D_i$，对每个子集 $D_i$，将其实例数中最大的类作为标记，构建子结点，由结点及其子结点构成树 $T$，返回 $T$； 对第 $i$ 个子结点，以 $D_i$ 为训练集，以 $A- { A_g }$ 为特征集，递归地调用前3步，得到子树 $T_i$，返回 $T_i$。  以下是部分关键代码，参考《机器学习实战》第三章。这里忽略了上述算法的“信息增益阈值 $\varepsilon$ 这一条件。"/>
+
+    <meta property="og:title" content="ID3算法与C4.5算法" />
+<meta property="og:description" content="一、ID3算法
+ID3算法的核心是在决策树各个结点上应用“信息增益”准则选择特征，递归地构建决策树。具体方法：从根结点开始，对结点计算所有可能的特征的信息增益，选择信息增益最大的特征作为结点的特征，由该特征的不同取值建立子结点；再对子结点递归地调用以上方法，构建决策树，直到所有特征的信息增益均很小或没有特征可以选择为止。
+输入：训练数据集 $D$，特征集 $A$，阈值 $\varepsilon$ 输出：决策树 $T$
+ 若 $D$ 中所有实例属于同一类 $C_k$，则 $T$ 为单结点树，并将 $C_k$ 作为该结点的类标记，返回 $T$； 若 $A=\emptyset$ ，则 $T$ 为单结点树，将 $D$ 中实例数最大的类 $C_k$ 作为该结点的类标记，返回 $T$； 遍历 $A$ 中每一个特征，计算信息增益 $g(D,A)=H(D)-\sum_{i=1}^{n}\frac{|D_i|}{|D|}H(D_i)$，选择信息增益最大特征 $A_g$。如果 $A_g$ 的信息增益小于阈值 $\varepsilon$，则置 $T$ 为单结点树，并将 $D$ 中实例数最大的类 $C_k$ 作为该结点的类标记，返回 $T$；否则，对 $A_g$ 的每一个可能值 $a_i$，按照 $A_g=a_i$ 将 $D$ 分割为若干非空子集 $D_i$，对每个子集 $D_i$，将其实例数中最大的类作为标记，构建子结点，由结点及其子结点构成树 $T$，返回 $T$； 对第 $i$ 个子结点，以 $D_i$ 为训练集，以 $A- { A_g }$ 为特征集，递归地调用前3步，得到子树 $T_i$，返回 $T_i$。  以下是部分关键代码，参考《机器学习实战》第三章。这里忽略了上述算法的“信息增益阈值 $\varepsilon$ 这一条件。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://utopizza.github.io/posts/machinelearning/2017-11-15-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-id3%E7%AE%97%E6%B3%95%E4%B8%8Ec4.5%E7%AE%97%E6%B3%95/" />
+<meta property="article:published_time" content="2017-11-15T16:34:00+00:00" />
+<meta property="article:modified_time" content="2017-11-15T16:34:00+00:00" />
+
+
+    
+      <base href="https://utopizza.github.io/posts/machinelearning/2017-11-15-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-id3%E7%AE%97%E6%B3%95%E4%B8%8Ec4.5%E7%AE%97%E6%B3%95/">
+    
+    <title>
+  ID3算法与C4.5算法 · Utopizza
+</title>
+
+    
+      <link rel="canonical" href="https://utopizza.github.io/posts/machinelearning/2017-11-15-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-id3%E7%AE%97%E6%B3%95%E4%B8%8Ec4.5%E7%AE%97%E6%B3%95/">
+    
+
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700%7CMerriweather:300,700%7CSource+Code+Pro:400,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.13.0/css/all.css" integrity="sha384-Bfad6CLCknfcloXFOyFnlgtENryhrpZCe29RTifKEixXQZ38WheV+i/6YWSzkz3V" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" integrity="sha256-l85OmPOjvil/SOvVt3HnSSjzF1TUMyT9eV0c2BzEGzU=" crossorigin="anonymous" />
+
+    
+      
+      
+      <link rel="stylesheet" href="https://utopizza.github.io/css/coder.min.a4f332213a21ce8eb521670c614470c58923aaaf385e2a73982c31dd7642decb.css" integrity="sha256-pPMyITohzo61IWcMYURwxYkjqq84XipzmCwx3XZC3ss=" crossorigin="anonymous" media="screen" />
+    
+
+    
+
+    
+      
+        
+        
+        <link rel="stylesheet" href="https://utopizza.github.io/css/coder-dark.min.e78e80fc3a585a4d1c8fc7f58623b6ff852411e38431a9cd1792877ecaa160f6.css" integrity="sha256-546A/DpYWk0cj8f1hiO2/4UkEeOEManNF5KHfsqhYPY=" crossorigin="anonymous" media="screen" />
+      
+    
+
+    
+
+    
+
+    <link rel="icon" type="image/png" href="https://utopizza.github.io/images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="https://utopizza.github.io/images/favicon-16x16.png" sizes="16x16">
+
+    <meta name="generator" content="Hugo 0.69.2" />
+  </head>
+
+  
+  
+    
+  
+  <body class="colorscheme-auto">
+    <main class="wrapper">
+      <nav class="navigation">
+  <section class="container">
+    <a class="navigation-title" href="https://utopizza.github.io/">
+      Utopizza
+    </a>
+    
+    <input type="checkbox" id="menu-toggle" />
+    <label class="menu-button float-right" for="menu-toggle"><i class="fas fa-bars"></i></label>
+    <ul class="navigation-list">
+      
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/about/">About</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/posts/">Blog</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/projects/">Projects</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/contact/">Contact me</a>
+          </li>
+        
+      
+      
+    </ul>
+    
+  </section>
+</nav>
+
+
+      <div class="content">
+        
+  <section class="container post">
+    <article>
+      <header>
+        <div class="post-title">
+          <h1 class="title">ID3算法与C4.5算法</h1>
+        </div>
+        <div class="post-meta">
+          <div class="date">
+            <span class="posted-on">
+              <i class="fas fa-calendar"></i>
+              <time datetime='2017-11-15T16:34:00Z'>
+                November 15, 2017
+              </time>
+            </span>
+            <span class="reading-time">
+              <i class="fas fa-clock"></i>
+              1-minute read
+            </span>
+          </div>
+          <div class="categories">
+  <i class="fas fa-folder"></i>
+    <a href="https://utopizza.github.io/categories/machinelearning/">MachineLearning</a></div>
+
+          
+        </div>
+      </header>
+
+      <div>
+        
+        <p>一、ID3算法</p>
+<p>ID3算法的核心是在决策树各个结点上应用“信息增益”准则选择特征，递归地构建决策树。具体方法：从根结点开始，对结点计算所有可能的特征的信息增益，选择信息增益最大的特征作为结点的特征，由该特征的不同取值建立子结点；再对子结点递归地调用以上方法，构建决策树，直到所有特征的信息增益均很小或没有特征可以选择为止。</p>
+<p>输入：训练数据集 $D$，特征集 $A$，阈值 $\varepsilon$
+输出：决策树 $T$</p>
+<ol>
+<li>若 $D$ 中所有实例属于同一类 $C_k$，则 $T$ 为单结点树，并将 $C_k$ 作为该结点的类标记，返回 $T$；</li>
+<li>若 $A=\emptyset$ ，则 $T$ 为单结点树，将 $D$ 中实例数最大的类 $C_k$ 作为该结点的类标记，返回 $T$；</li>
+<li>遍历 $A$ 中每一个特征，<a href="https://yushengwxxx.github.io/2017/11/11/2017-11-11-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E4%BF%A1%E6%81%AF%E5%A2%9E%E7%9B%8A/">计算信息增益</a> $g(D,A)=H(D)-\sum_{i=1}^{n}\frac{|D_i|}{|D|}H(D_i)$，选择信息增益最大特征 $A_g$。如果 $A_g$ 的信息增益小于阈值 $\varepsilon$，则置 $T$ 为单结点树，并将 $D$ 中实例数最大的类 $C_k$ 作为该结点的类标记，返回 $T$；否则，对 $A_g$ 的每一个可能值 $a_i$，按照 $A_g=a_i$ 将 $D$ 分割为若干非空子集 $D_i$，对每个子集 $D_i$，将其实例数中最大的类作为标记，构建子结点，由结点及其子结点构成树 $T$，返回 $T$；</li>
+<li>对第 $i$ 个子结点，以 $D_i$ 为训练集，以 $A- { A_g }$ 为特征集，递归地调用前3步，得到子树 $T_i$，返回 $T_i$。</li>
+</ol>
+<p>以下是部分关键代码，参考《机器学习实战》第三章。这里忽略了上述算法的“信息增益阈值 $\varepsilon$ 这一条件。</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">def createTree(dataSet, labels):
+    
+    # 1、若所有实例属于同一类，返回该类
+    classList = [example[-1] for example in dataSet]
+    if classList.count(classList[0]) == len(classList):
+        return classList[0]
+    
+    # 2、若特征值集合为空集，则返回样本类别中最多的那个类别
+    if len(dataSet[0]) == 1:
+        return majorityCnt(classList)
+        
+    # 3、遍历特征值集合中的每一个特征，找出信息增益最大的特征
+    bestFeat = chooseBestFeatureToSplit(dataSet)
+    bestFeatLabel = labels[bestFeat]
+    
+    # 4、以该特征的label建立结点，并从特征集合中删去该特征
+    myTree = {bestFeatLabel: {}}
+    del (labels[bestFeat])
+    
+    # 5、收集该特征的所有值，去掉重复值
+    featValues = [example[bestFeat] for example in dataSet]
+    uniqueVals = set(featValues)
+    
+    # 6、对每一种取值，递归调用本函数进行决策树的构建
+    for value in uniqueVals:
+        subLabels = labels[:]
+        myTree[bestFeatLabel][value] = createTree(splitDataSet(dataSet, bestFeat, value), subLabels)
+    
+    return myTree
+</code></pre></div><p>二、C4.5算法</p>
+<p>C4.5算法与ID3算法基本相同，唯一不同的地方只是在生成决策树的过程中，使用“信息增益比”而不是直接使用“信息增益”来选择特征。</p>
+
+      </div>
+
+
+      <footer>
+        
+
+
+        
+        
+        
+      </footer>
+    </article>
+
+    
+  </section>
+
+      </div>
+
+      <script type="text/javascript"
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+    </main>
+
+    
+
+    
+
+    <script>
+(function(f, a, t, h, o, m){
+	a[h]=a[h]||function(){
+		(a[h].q=a[h].q||[]).push(arguments)
+	};
+	o=f.createElement('script'),
+	m=f.getElementsByTagName('script')[0];
+	o.async=1; o.src=t; o.id='fathom-script';
+	m.parentNode.insertBefore(o,m)
+})(document, window, '//analytics.example.com/tracker.js', 'fathom');
+fathom('set', 'siteId', 'ABCDE');
+fathom('trackPageview');
+</script>
+
+
+  </body>
+
+</html>

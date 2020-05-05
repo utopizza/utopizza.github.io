@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Language" content="en">
+
+    <meta name="author" content="Yusheng Wang">
+    <meta name="description" content="5月小结。月初购入了几本黑皮书，正式开始复习计算机基础知识：
+ 《计算机网络：自顶向下方法（6th）》：看完了应用层、运输层、网络层、网络安全，有时间再补充无线网络、链路层、物理层 《数据库系统概念（6th）》：看完了基本SQL语法、基本理论（范式）、索引，还需要看查询优化、事务、并发控制（锁） 《现代操作系统（4th）》：看完了进程线程、内存管理、文件管理，还需要看设备管理，特别是I/O 《Java编程思想（4th）》：重点看了多态、泛型、反射、容器、并发，还需要看I/O 《算法导论（3th）》：当作标准风格代码来偶尔复习，重点是栈、队列、排序、查找、堆、树、图  本月对以上几本书的部分重要章节快速温习了一遍，另外粗略过了一遍：
+《深入理解Java虚拟机（2th）》：重点看了GC、类加载、编译优化、内存模型、并发控制，需要补充字节码和类文件结构 《Java并发编程》：重点看了一些常用关键字和API，需要深入理解具体实现细节 《Effective Java（2th）》：粗略看了一遍，看得懂的不多  本月其他时间主要在leetcode练习基本编程功，5月8号重新注册了一个leetcode账号，从第一题开始重新练习，到月底一共做了约120道题，保证平均每天8道题左右的练习量。果然像网上说的那样，第二次做的时候，对一些见过的题目，或者大部分类似的题型，都能很快地有思路，但是目前还有很多细节不能优雅地处理好，另外太过依赖test case来调bug。往后需要争取直接一次性写出bug free的代码。目前能这样做到的比例很低，需要加强。
+接下来的6月份计划：
+ 开始看面经，总结常见面试问题 有针对性地回头复习5月份看的内容，加强记忆，处理掉之前理解模糊的知识点 继续加强编程的练习，基础功不用解释 跟着极客时间的老师的课程内容，梳理并构建一个比较完整的JAVA知识体系 有时间再补充一个面试用的小项目、hadoop和spark等大数据相关书籍、redis非关系型数据库、大型分布式系统的架构？&hellip;&hellip;  ">
+    <meta name="keywords" content="blog,developer,personal">
+
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="阶段总结(5)"/>
+<meta name="twitter:description" content="5月小结。月初购入了几本黑皮书，正式开始复习计算机基础知识：
+ 《计算机网络：自顶向下方法（6th）》：看完了应用层、运输层、网络层、网络安全，有时间再补充无线网络、链路层、物理层 《数据库系统概念（6th）》：看完了基本SQL语法、基本理论（范式）、索引，还需要看查询优化、事务、并发控制（锁） 《现代操作系统（4th）》：看完了进程线程、内存管理、文件管理，还需要看设备管理，特别是I/O 《Java编程思想（4th）》：重点看了多态、泛型、反射、容器、并发，还需要看I/O 《算法导论（3th）》：当作标准风格代码来偶尔复习，重点是栈、队列、排序、查找、堆、树、图  本月对以上几本书的部分重要章节快速温习了一遍，另外粗略过了一遍：
+《深入理解Java虚拟机（2th）》：重点看了GC、类加载、编译优化、内存模型、并发控制，需要补充字节码和类文件结构 《Java并发编程》：重点看了一些常用关键字和API，需要深入理解具体实现细节 《Effective Java（2th）》：粗略看了一遍，看得懂的不多  本月其他时间主要在leetcode练习基本编程功，5月8号重新注册了一个leetcode账号，从第一题开始重新练习，到月底一共做了约120道题，保证平均每天8道题左右的练习量。果然像网上说的那样，第二次做的时候，对一些见过的题目，或者大部分类似的题型，都能很快地有思路，但是目前还有很多细节不能优雅地处理好，另外太过依赖test case来调bug。往后需要争取直接一次性写出bug free的代码。目前能这样做到的比例很低，需要加强。
+接下来的6月份计划：
+ 开始看面经，总结常见面试问题 有针对性地回头复习5月份看的内容，加强记忆，处理掉之前理解模糊的知识点 继续加强编程的练习，基础功不用解释 跟着极客时间的老师的课程内容，梳理并构建一个比较完整的JAVA知识体系 有时间再补充一个面试用的小项目、hadoop和spark等大数据相关书籍、redis非关系型数据库、大型分布式系统的架构？&hellip;&hellip;  "/>
+
+    <meta property="og:title" content="阶段总结(5)" />
+<meta property="og:description" content="5月小结。月初购入了几本黑皮书，正式开始复习计算机基础知识：
+ 《计算机网络：自顶向下方法（6th）》：看完了应用层、运输层、网络层、网络安全，有时间再补充无线网络、链路层、物理层 《数据库系统概念（6th）》：看完了基本SQL语法、基本理论（范式）、索引，还需要看查询优化、事务、并发控制（锁） 《现代操作系统（4th）》：看完了进程线程、内存管理、文件管理，还需要看设备管理，特别是I/O 《Java编程思想（4th）》：重点看了多态、泛型、反射、容器、并发，还需要看I/O 《算法导论（3th）》：当作标准风格代码来偶尔复习，重点是栈、队列、排序、查找、堆、树、图  本月对以上几本书的部分重要章节快速温习了一遍，另外粗略过了一遍：
+《深入理解Java虚拟机（2th）》：重点看了GC、类加载、编译优化、内存模型、并发控制，需要补充字节码和类文件结构 《Java并发编程》：重点看了一些常用关键字和API，需要深入理解具体实现细节 《Effective Java（2th）》：粗略看了一遍，看得懂的不多  本月其他时间主要在leetcode练习基本编程功，5月8号重新注册了一个leetcode账号，从第一题开始重新练习，到月底一共做了约120道题，保证平均每天8道题左右的练习量。果然像网上说的那样，第二次做的时候，对一些见过的题目，或者大部分类似的题型，都能很快地有思路，但是目前还有很多细节不能优雅地处理好，另外太过依赖test case来调bug。往后需要争取直接一次性写出bug free的代码。目前能这样做到的比例很低，需要加强。
+接下来的6月份计划：
+ 开始看面经，总结常见面试问题 有针对性地回头复习5月份看的内容，加强记忆，处理掉之前理解模糊的知识点 继续加强编程的练习，基础功不用解释 跟着极客时间的老师的课程内容，梳理并构建一个比较完整的JAVA知识体系 有时间再补充一个面试用的小项目、hadoop和spark等大数据相关书籍、redis非关系型数据库、大型分布式系统的架构？&hellip;&hellip;  " />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://utopizza.github.io/posts/summary/2018-05-30-%E6%80%BB%E7%BB%93-%E9%98%B6%E6%AE%B5%E6%80%BB%E7%BB%935/" />
+<meta property="article:published_time" content="2018-05-30T18:03:00+00:00" />
+<meta property="article:modified_time" content="2018-05-30T18:03:00+00:00" />
+
+
+    
+      <base href="https://utopizza.github.io/posts/summary/2018-05-30-%E6%80%BB%E7%BB%93-%E9%98%B6%E6%AE%B5%E6%80%BB%E7%BB%935/">
+    
+    <title>
+  阶段总结(5) · Utopizza
+</title>
+
+    
+      <link rel="canonical" href="https://utopizza.github.io/posts/summary/2018-05-30-%E6%80%BB%E7%BB%93-%E9%98%B6%E6%AE%B5%E6%80%BB%E7%BB%935/">
+    
+
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700%7CMerriweather:300,700%7CSource+Code+Pro:400,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.13.0/css/all.css" integrity="sha384-Bfad6CLCknfcloXFOyFnlgtENryhrpZCe29RTifKEixXQZ38WheV+i/6YWSzkz3V" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" integrity="sha256-l85OmPOjvil/SOvVt3HnSSjzF1TUMyT9eV0c2BzEGzU=" crossorigin="anonymous" />
+
+    
+      
+      
+      <link rel="stylesheet" href="https://utopizza.github.io/css/coder.min.a4f332213a21ce8eb521670c614470c58923aaaf385e2a73982c31dd7642decb.css" integrity="sha256-pPMyITohzo61IWcMYURwxYkjqq84XipzmCwx3XZC3ss=" crossorigin="anonymous" media="screen" />
+    
+
+    
+
+    
+      
+        
+        
+        <link rel="stylesheet" href="https://utopizza.github.io/css/coder-dark.min.e78e80fc3a585a4d1c8fc7f58623b6ff852411e38431a9cd1792877ecaa160f6.css" integrity="sha256-546A/DpYWk0cj8f1hiO2/4UkEeOEManNF5KHfsqhYPY=" crossorigin="anonymous" media="screen" />
+      
+    
+
+    
+
+    
+
+    <link rel="icon" type="image/png" href="https://utopizza.github.io/images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="https://utopizza.github.io/images/favicon-16x16.png" sizes="16x16">
+
+    <meta name="generator" content="Hugo 0.69.2" />
+  </head>
+
+  
+  
+    
+  
+  <body class="colorscheme-auto">
+    <main class="wrapper">
+      <nav class="navigation">
+  <section class="container">
+    <a class="navigation-title" href="https://utopizza.github.io/">
+      Utopizza
+    </a>
+    
+    <input type="checkbox" id="menu-toggle" />
+    <label class="menu-button float-right" for="menu-toggle"><i class="fas fa-bars"></i></label>
+    <ul class="navigation-list">
+      
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/about/">About</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/posts/">Blog</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/projects/">Projects</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/contact/">Contact me</a>
+          </li>
+        
+      
+      
+    </ul>
+    
+  </section>
+</nav>
+
+
+      <div class="content">
+        
+  <section class="container post">
+    <article>
+      <header>
+        <div class="post-title">
+          <h1 class="title">阶段总结(5)</h1>
+        </div>
+        <div class="post-meta">
+          <div class="date">
+            <span class="posted-on">
+              <i class="fas fa-calendar"></i>
+              <time datetime='2018-05-30T18:03:00Z'>
+                May 30, 2018
+              </time>
+            </span>
+            <span class="reading-time">
+              <i class="fas fa-clock"></i>
+              1-minute read
+            </span>
+          </div>
+          <div class="categories">
+  <i class="fas fa-folder"></i>
+    <a href="https://utopizza.github.io/categories/summary/">Summary</a></div>
+
+          
+        </div>
+      </header>
+
+      <div>
+        
+        <p>5月小结。月初购入了几本黑皮书，正式开始复习计算机基础知识：</p>
+<ol>
+<li>《计算机网络：自顶向下方法（6th）》：看完了应用层、运输层、网络层、网络安全，有时间再补充无线网络、链路层、物理层</li>
+<li>《数据库系统概念（6th）》：看完了基本SQL语法、基本理论（范式）、索引，还需要看查询优化、事务、并发控制（锁）</li>
+<li>《现代操作系统（4th）》：看完了进程线程、内存管理、文件管理，还需要看设备管理，特别是I/O</li>
+<li>《Java编程思想（4th）》：重点看了多态、泛型、反射、容器、并发，还需要看I/O</li>
+<li>《算法导论（3th）》：当作标准风格代码来偶尔复习，重点是栈、队列、排序、查找、堆、树、图</li>
+</ol>
+<p>本月对以上几本书的部分重要章节快速温习了一遍，另外粗略过了一遍：</p>
+<ol start="6">
+<li>《深入理解Java虚拟机（2th）》：重点看了GC、类加载、编译优化、内存模型、并发控制，需要补充字节码和类文件结构</li>
+<li>《Java并发编程》：重点看了一些常用关键字和API，需要深入理解具体实现细节</li>
+<li>《Effective Java（2th）》：粗略看了一遍，看得懂的不多</li>
+</ol>
+<p>本月其他时间主要在leetcode练习基本编程功，5月8号重新注册了一个leetcode账号，从第一题开始重新练习，到月底一共做了约120道题，保证平均每天8道题左右的练习量。果然像网上说的那样，第二次做的时候，对一些见过的题目，或者大部分类似的题型，都能很快地有思路，但是目前还有很多细节不能优雅地处理好，另外太过依赖test case来调bug。往后需要争取直接一次性写出bug free的代码。目前能这样做到的比例很低，需要加强。</p>
+<p>接下来的6月份计划：</p>
+<ol>
+<li>开始看面经，总结常见面试问题</li>
+<li>有针对性地回头复习5月份看的内容，加强记忆，处理掉之前理解模糊的知识点</li>
+<li>继续加强编程的练习，基础功不用解释</li>
+<li>跟着极客时间的老师的课程内容，梳理并构建一个比较完整的JAVA知识体系</li>
+<li>有时间再补充一个面试用的小项目、hadoop和spark等大数据相关书籍、redis非关系型数据库、大型分布式系统的架构？&hellip;&hellip;</li>
+</ol>
+
+      </div>
+
+
+      <footer>
+        
+
+
+        
+        
+        
+      </footer>
+    </article>
+
+    
+  </section>
+
+      </div>
+
+      <script type="text/javascript"
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+    </main>
+
+    
+
+    
+
+    <script>
+(function(f, a, t, h, o, m){
+	a[h]=a[h]||function(){
+		(a[h].q=a[h].q||[]).push(arguments)
+	};
+	o=f.createElement('script'),
+	m=f.getElementsByTagName('script')[0];
+	o.async=1; o.src=t; o.id='fathom-script';
+	m.parentNode.insertBefore(o,m)
+})(document, window, '//analytics.example.com/tracker.js', 'fathom');
+fathom('set', 'siteId', 'ABCDE');
+fathom('trackPageview');
+</script>
+
+
+  </body>
+
+</html>

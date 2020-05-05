@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Language" content="en">
+
+    <meta name="author" content="Yusheng Wang">
+    <meta name="description" content="一、问题
+给定一个包含 $n$ 个不同关键字的已经排序的序列 $K=&lt; k_1,k_2, \cdots , k_n&gt;$ $(k_1 &lt; k_2 &lt; \cdots &lt; k_n)$，我们希望用这些关键字构造一颗二叉搜索树。
+对每个关键字 $k_i$，都有一个概率 $p_i$ 表示其搜索频率。有些要搜索的值可能不在 $K$ 中，因此我们还有 $n&#43;1$ 个“伪关键字”：$&lt; d_0,d_1,d_2,\cdots,d_n &gt;$ 表示不在 $K$ 中的值。其中，$d_0$ 表示所有小于 $k_1$ 的值，$d_n$ 表示所有大于 $k_n$ 的值，对 $i=1,2,\cdots,n-1$，伪关键字 $d_i$ 表示所有在 $k_i$ 和 $k_{i&#43;1}$ 之间的值。对每个伪关键字 $d_i$，也都有一个概率 $q_i$ 表示对应的搜索频率。
+由这 $n$ 个关键字和 $n&#43;1$ 个 伪关键字构成的二叉搜索树，每个关键字 $k_i$ $(1 \leq i \leq n)$ 是一个内部结点，而每个伪关键字 $d_i$ $(0 \leq i \leq n)$ 是一个叶结点。
+由于每次搜索要么成功（找到某个关键字 $k_i$）要么失败（找到某个伪关键字 $d_i$），因此这棵树所有结点的概率之和为1：
+$$\sum_{i=1}^{n}p_i &#43; \sum_{i=0}^{n}q_i = 1$$">
+    <meta name="keywords" content="blog,developer,personal">
+
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="最优二叉搜索树"/>
+<meta name="twitter:description" content="一、问题
+给定一个包含 $n$ 个不同关键字的已经排序的序列 $K=&lt; k_1,k_2, \cdots , k_n&gt;$ $(k_1 &lt; k_2 &lt; \cdots &lt; k_n)$，我们希望用这些关键字构造一颗二叉搜索树。
+对每个关键字 $k_i$，都有一个概率 $p_i$ 表示其搜索频率。有些要搜索的值可能不在 $K$ 中，因此我们还有 $n&#43;1$ 个“伪关键字”：$&lt; d_0,d_1,d_2,\cdots,d_n &gt;$ 表示不在 $K$ 中的值。其中，$d_0$ 表示所有小于 $k_1$ 的值，$d_n$ 表示所有大于 $k_n$ 的值，对 $i=1,2,\cdots,n-1$，伪关键字 $d_i$ 表示所有在 $k_i$ 和 $k_{i&#43;1}$ 之间的值。对每个伪关键字 $d_i$，也都有一个概率 $q_i$ 表示对应的搜索频率。
+由这 $n$ 个关键字和 $n&#43;1$ 个 伪关键字构成的二叉搜索树，每个关键字 $k_i$ $(1 \leq i \leq n)$ 是一个内部结点，而每个伪关键字 $d_i$ $(0 \leq i \leq n)$ 是一个叶结点。
+由于每次搜索要么成功（找到某个关键字 $k_i$）要么失败（找到某个伪关键字 $d_i$），因此这棵树所有结点的概率之和为1：
+$$\sum_{i=1}^{n}p_i &#43; \sum_{i=0}^{n}q_i = 1$$"/>
+
+    <meta property="og:title" content="最优二叉搜索树" />
+<meta property="og:description" content="一、问题
+给定一个包含 $n$ 个不同关键字的已经排序的序列 $K=&lt; k_1,k_2, \cdots , k_n&gt;$ $(k_1 &lt; k_2 &lt; \cdots &lt; k_n)$，我们希望用这些关键字构造一颗二叉搜索树。
+对每个关键字 $k_i$，都有一个概率 $p_i$ 表示其搜索频率。有些要搜索的值可能不在 $K$ 中，因此我们还有 $n&#43;1$ 个“伪关键字”：$&lt; d_0,d_1,d_2,\cdots,d_n &gt;$ 表示不在 $K$ 中的值。其中，$d_0$ 表示所有小于 $k_1$ 的值，$d_n$ 表示所有大于 $k_n$ 的值，对 $i=1,2,\cdots,n-1$，伪关键字 $d_i$ 表示所有在 $k_i$ 和 $k_{i&#43;1}$ 之间的值。对每个伪关键字 $d_i$，也都有一个概率 $q_i$ 表示对应的搜索频率。
+由这 $n$ 个关键字和 $n&#43;1$ 个 伪关键字构成的二叉搜索树，每个关键字 $k_i$ $(1 \leq i \leq n)$ 是一个内部结点，而每个伪关键字 $d_i$ $(0 \leq i \leq n)$ 是一个叶结点。
+由于每次搜索要么成功（找到某个关键字 $k_i$）要么失败（找到某个伪关键字 $d_i$），因此这棵树所有结点的概率之和为1：
+$$\sum_{i=1}^{n}p_i &#43; \sum_{i=0}^{n}q_i = 1$$" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://utopizza.github.io/posts/algorithm/2017-09-20-%E7%AE%97%E6%B3%95-%E6%9C%80%E4%BC%98%E4%BA%8C%E5%8F%89%E6%90%9C%E7%B4%A2%E6%A0%91/" />
+<meta property="article:published_time" content="2017-09-20T11:52:00+00:00" />
+<meta property="article:modified_time" content="2017-09-20T11:52:00+00:00" />
+
+
+    
+      <base href="https://utopizza.github.io/posts/algorithm/2017-09-20-%E7%AE%97%E6%B3%95-%E6%9C%80%E4%BC%98%E4%BA%8C%E5%8F%89%E6%90%9C%E7%B4%A2%E6%A0%91/">
+    
+    <title>
+  最优二叉搜索树 · Utopizza
+</title>
+
+    
+      <link rel="canonical" href="https://utopizza.github.io/posts/algorithm/2017-09-20-%E7%AE%97%E6%B3%95-%E6%9C%80%E4%BC%98%E4%BA%8C%E5%8F%89%E6%90%9C%E7%B4%A2%E6%A0%91/">
+    
+
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700%7CMerriweather:300,700%7CSource+Code+Pro:400,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.13.0/css/all.css" integrity="sha384-Bfad6CLCknfcloXFOyFnlgtENryhrpZCe29RTifKEixXQZ38WheV+i/6YWSzkz3V" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" integrity="sha256-l85OmPOjvil/SOvVt3HnSSjzF1TUMyT9eV0c2BzEGzU=" crossorigin="anonymous" />
+
+    
+      
+      
+      <link rel="stylesheet" href="https://utopizza.github.io/css/coder.min.a4f332213a21ce8eb521670c614470c58923aaaf385e2a73982c31dd7642decb.css" integrity="sha256-pPMyITohzo61IWcMYURwxYkjqq84XipzmCwx3XZC3ss=" crossorigin="anonymous" media="screen" />
+    
+
+    
+
+    
+      
+        
+        
+        <link rel="stylesheet" href="https://utopizza.github.io/css/coder-dark.min.e78e80fc3a585a4d1c8fc7f58623b6ff852411e38431a9cd1792877ecaa160f6.css" integrity="sha256-546A/DpYWk0cj8f1hiO2/4UkEeOEManNF5KHfsqhYPY=" crossorigin="anonymous" media="screen" />
+      
+    
+
+    
+
+    
+
+    <link rel="icon" type="image/png" href="https://utopizza.github.io/images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="https://utopizza.github.io/images/favicon-16x16.png" sizes="16x16">
+
+    <meta name="generator" content="Hugo 0.69.2" />
+  </head>
+
+  
+  
+    
+  
+  <body class="colorscheme-auto">
+    <main class="wrapper">
+      <nav class="navigation">
+  <section class="container">
+    <a class="navigation-title" href="https://utopizza.github.io/">
+      Utopizza
+    </a>
+    
+    <input type="checkbox" id="menu-toggle" />
+    <label class="menu-button float-right" for="menu-toggle"><i class="fas fa-bars"></i></label>
+    <ul class="navigation-list">
+      
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/about/">About</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/posts/">Blog</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/projects/">Projects</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/contact/">Contact me</a>
+          </li>
+        
+      
+      
+    </ul>
+    
+  </section>
+</nav>
+
+
+      <div class="content">
+        
+  <section class="container post">
+    <article>
+      <header>
+        <div class="post-title">
+          <h1 class="title">最优二叉搜索树</h1>
+        </div>
+        <div class="post-meta">
+          <div class="date">
+            <span class="posted-on">
+              <i class="fas fa-calendar"></i>
+              <time datetime='2017-09-20T11:52:00Z'>
+                September 20, 2017
+              </time>
+            </span>
+            <span class="reading-time">
+              <i class="fas fa-clock"></i>
+              3-minute read
+            </span>
+          </div>
+          <div class="categories">
+  <i class="fas fa-folder"></i>
+    <a href="https://utopizza.github.io/categories/algorithm/">Algorithm</a></div>
+
+          
+        </div>
+      </header>
+
+      <div>
+        
+        <p>一、问题</p>
+<p>给定一个包含 $n$ 个不同关键字的已经排序的序列 $K=&lt; k_1,k_2, \cdots , k_n&gt;$ $(k_1 &lt; k_2 &lt; \cdots &lt; k_n)$，我们希望用这些关键字构造一颗二叉搜索树。</p>
+<p>对每个关键字 $k_i$，都有一个概率 $p_i$ 表示其搜索频率。有些要搜索的值可能不在 $K$ 中，因此我们还有 $n+1$ 个“伪关键字”：$&lt; d_0,d_1,d_2,\cdots,d_n &gt;$ 表示不在 $K$ 中的值。其中，$d_0$ 表示所有小于 $k_1$ 的值，$d_n$ 表示所有大于 $k_n$ 的值，对 $i=1,2,\cdots,n-1$，伪关键字 $d_i$ 表示所有在 $k_i$ 和 $k_{i+1}$ 之间的值。对每个伪关键字 $d_i$，也都有一个概率 $q_i$ 表示对应的搜索频率。</p>
+<p>由这 $n$ 个关键字和 $n+1$ 个 伪关键字构成的二叉搜索树，每个关键字 $k_i$ $(1 \leq i \leq n)$ 是一个内部结点，而每个伪关键字 $d_i$ $(0 \leq i \leq n)$ 是一个叶结点。</p>
+<p>由于每次搜索要么成功（找到某个关键字 $k_i$）要么失败（找到某个伪关键字 $d_i$），因此这棵树所有结点的概率之和为1：</p>
+<p>$$\sum_{i=1}^{n}p_i + \sum_{i=0}^{n}q_i = 1$$</p>
+<p>因为我们知道了每个关键字和伪关键字的搜索概率，所以我们可以求出在这给定的二叉搜索树 $T$ 中进行一次搜索的期望代价 $E(T)$ 。假定一次搜索的代价等于访问的结点数，即搜索到的结点在 $T$ 中的深度再加 1（深度不算根结点，要从根节点算起就要加 1） ，那么在 $T$ 中进行一次搜索的期望代价为如下公式所示，其中 $D_{T}(k_l)$ 表示结点 $k_l$ 在树 $T$ 中的深度：</p>
+<p>$$E(T)=
+\sum_{l=1}^{n} (D_{T}(k_l)+1) \cdot p_l +
+\sum_{l=0}^{n} (D_{T}(d_l)+1) \cdot q_l
+$$</p>
+<p>现假设有一个 $n=5$ 的关键字序列，及如下的搜索概率：</p>
+<table>
+<thead>
+<tr>
+<th align="center">i</th>
+<th align="center">0</th>
+<th align="center">1</th>
+<th align="center">2</th>
+<th align="center">3</th>
+<th align="center">4</th>
+<th align="center">5</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center">pi</td>
+<td align="center"></td>
+<td align="center">0.15</td>
+<td align="center">0.10</td>
+<td align="center">0.05</td>
+<td align="center">0.10</td>
+<td align="center">0.20</td>
+</tr>
+<tr>
+<td align="center">qi</td>
+<td align="center">0.05</td>
+<td align="center">0.10</td>
+<td align="center">0.05</td>
+<td align="center">0.05</td>
+<td align="center">0.05</td>
+<td align="center">0.10</td>
+</tr>
+</tbody>
+</table>
+<p>问如何构造一棵搜索期望代价 $E(T)$ 最小的二叉搜索树（即最优二叉搜索树）？</p>
+<p>二、划分子问题，导出递推式</p>
+<p>考虑一棵二叉搜索树的任意子树 $T$，它包含了关键字 $&lt; k_i,\cdots,k_j &gt;$（$1 \leq i \leq j \leq n$），其叶结点是伪关键字 $&lt; d_{i-1},\cdots,d_n &gt;$。由上一节的公式可以直接计算它的搜索期望 $E(T)$。现在我们来考察其子问题，并尝试推导该二叉搜索树的搜索期望和其子问题的搜索期望的递推关系式。</p>
+<p>如何根据关键字序列 $&lt; k_i,\cdots,k_j &gt;$ 构造一棵搜索二叉树？考虑到该序列是已经排好序的，而二叉搜索树遵循：<code>左子树 &lt; 根结点 &lt; 右子树</code> 的规则，因此用这些关键字构造二叉搜索树时，它们在树中的左右相对顺序与原序列一致。那么现在我们只需要确定用哪个结点来作为该树的根结点，把序列划分成左右两部分，左边作为左子树，右边作为右子树。假设选择第 $r$ $(i \leq r \leq j)$ 个关键字 $k_r$ 作为根结点，则左子树为 $&lt; k_i,\cdots,k_{r-1} &gt;$，右子树为 $&lt; k_{r+1},\cdots,k_j &gt;$ 。递归地对左子树和右子树进行这样的操作直到不可再分为止，即可构造出二叉搜索树。</p>
+<p>这里还有一个要注意的细节——“空子树”。假定对于 $&lt; k_i,\cdots,k_j &gt;$ 的子问题，我们选定了序列第一个关键字 $k_i$ 作为根结点，即 $r=i$。那么根据上面的推导，它的左子树为 $&lt; k_i,\cdots,k_{i-1} &gt;$，我们将这样的序列解释：为不包含任何关键字的序列。但实际上由定义可知，它的作子树仍包含伪关键字 $d_{i-1}$（$d_{i-1} &lt; k_i $），其对应的搜索概率为 $q_{i-1}$。对称地，如果选择序列最后一个关键字作为根结点，那么它的右子树不包含任何关键字，但包含伪关键字 $d_j$，对应搜索概率为 $q_j$。</p>
+<p>这样，构造一棵子树的两个递归的子问题是：构造其左子树和右子树。设子树 $T$ 的左子树为 $T_{L}$，右子树为 $T_{R}$。现在我们来推导 $E(T)$ 和 $E(T_{L})$、$E(T_{R})$ 的关系。</p>
+<p>注意到，当 $T_{L}$ 和 $T_{R}$ 合并成一棵树 $T$ 的时候，结点的深度加1，即：</p>
+<p>$$D_{T}(k_l)=D_{T_{L}}(k_l)+1$$</p>
+<p>对前面的公式，我们把作为根结点的关键字 $k_r$ $(D_{T}(k_r)=0)$ 提出来，并把分割后的左右两部分写成子树的形式：</p>
+<p>$$
+\begin{aligned}
+E(T)
+&amp;=
+\sum_{l=i}^{j} (D_{T}(k_l)+1) \cdot p_l +
+\sum_{l=i-1}^{j} (D_{T}(d_l)+1) \cdot q_l \<br>
+&amp; =
+\sum_{l=i}^{r-1} (D_{T}(k_l)+1) \cdot p_l +
+\sum_{l=i-1}^{r-1} (D_{T}(d_l)+1) \cdot q_l</p>
+<ul>
+<li>(D_{T}(k_r)+1) \cdot p_r +
+\sum_{l=r+1}^{j} (D_{T}(k_l)+1) \cdot p_l +
+\sum_{l=r+1-1}^{j} (D_{T}(d_l)+1) \cdot q_l \<br>
+&amp; =
+\sum_{l=i}^{r-1} (D_{T_{L}}(k_l)+1+1) \cdot p_l +
+\sum_{l=i-1}^{r-1} (D_{T_{L}}(d_l)+1+1) \cdot q_l</li>
+<li>p_r +
+\sum_{l=r+1}^{j} (D_{T_{R}}(k_l)+1)+1) \cdot p_l +
+\sum_{l=r+1-1}^{j} (D_{T_{R}}(d_l)+1)+1) \cdot q_l \<br>
+&amp; =
+E(T_{L}) + (\sum_{l=i}^{r-1} p_l + \sum_{l=i-1}^{r-1} q_l)</li>
+<li>p_r +
+E(T_{R}) + (\sum_{l=r+1}^{j} p_l + \sum_{l=r+1-1}^{j} q_l)
+\end{aligned}
+$$</li>
+</ul>
+<p>为简便表达，对于包含关键字序列 $&lt; k_i,\cdots,k_j &gt;$ 的子树，我们记所有结点的概率和为：</p>
+<p>$$w(i,j)=\sum_{l=i}^{j} p_l + \sum_{l=i-1}^{j} q_l$$</p>
+<p>则上面推导结果进一步表示为：</p>
+<p>$$
+\begin{aligned}
+E(T)
+&amp; = E(T_{left}) + w(i,r-1) + p_r + E(T_{right}) + w(r+1,j) \<br>
+&amp; = E(T_{left}) + E(T_{right}) + w(i,r-1) + p_r + w(r+1,j) \<br>
+&amp; = E(T_{left}) + E(T_{right}) + w(i,j)
+\end{aligned}
+$$</p>
+<p>其中 $T_{L}$ 对应关键字序列 $&lt; k_i,\cdots,k_{r-1} &gt;$， $T_{R}$ 对应关键字序列 $&lt; k_{r+1},\cdots,k_j &gt;$。现在我们分别用 $e[i,r-1]$ 和 $e[r+1,j]$ 表示它们对应的期望代价。</p>
+<p>类似于钢条切割和矩阵连乘，序列 $&lt; k_i,\cdots,k_j &gt;$ 有 $r=j-i+1$ 个关键字可以作为根结点 $k_r$ $(i \leq r \leq j)$ 把序列划分成左子树和右子树。我们遍历这段序列中每一个可能的关键字来尝试构造二叉搜索树，然后取期望代价最小的那个方案作为最优解（同钢条切割和矩阵连乘，可以用“剪切-粘贴”反证法证明：如果 $E(T)$ 如果是最优解，那么 $E(T_{L})$ 和 $E(T_{R})$ 一定分别是左子树和右子树的最优解）并存储起来。因此我们可以得到最终递推公式：</p>
+<p>$$
+e[i,j] =
+\begin{cases}
+q_{i-1}，&amp; \text{if $j=i-1$} \<br>
+min_{i \leq r \leq j} { e[i,r-1]+e[r+1,j]+w(i,j) } &amp; \text{if $i \leq j$}
+\end{cases}
+$$</p>
+<p>四、实现</p>
+<p>为降低算法复杂度，我们使用自底向上带备忘的动态规划法而不是递归求解。</p>
+<p>我们使用一个二维数组 $e[1&hellip;n+1][0&hellip;n]$ 来保存 $e[i,j]$ 的值。第一维下标上界为 $n+1$ 而不是 $n$，原因在于对于只包含伪关键字 $d_n$ 的子树，我们需要计算并保存 $e[n+1,n]$。第二维下标下界为 $0$，是因为对于只包含伪关键字 $d_0$ 的子树，我们需要计算并保存 $e[1,0]$。我们实际上只使用满足 $j \geq i-1$ 的表项 $e[i][j]$。</p>
+<p>对于 $w(i,j)$，为了避免在每次计算 $e[i,j]$ 时都要重新计算 $w(i,j)$，我们使用一个二维数组 $w[1&hellip;n+1][0&hellip;n]$ 来保存它。当子树为空即只包含伪关键字的情况（$j=i-1$），有 $w[i][i-1]=q_{i-1}$；对其他一般情况（$j \geq i$），有 $w[i][j]=w[i][j-1]+p_j+q_j$。</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">public static double OptimalBST(double[] p, double[] q, int n) {
+    
+    double[][] e = new double[n + 2][n + 1];
+    double[][] w = new double[n + 2][n + 1];
+    
+    for (int i = 1; i &lt;= n + 1; i++) {
+        e[i][i - 1] = q[i - 1];
+        w[i][i - 1] = q[i - 1];
+    }
+    
+    for (int length = 1; length &lt;= n; length++) {
+        for (int i = 1; i &lt;= n - length + 1; i++) {
+            int j = i + length - 1;
+            e[i][j] = Double.MAX_VALUE;
+            w[i][j] = w[i][j - 1] + p[j] + q[j];
+            for (int r = i; r &lt;= j; r++) {
+                double temp = e[i][r - 1] + e[r + 1][j] + w[i][j];
+                if (temp &lt; e[i][j])
+                    e[i][j] = temp;
+            }
+        }
+    }
+    
+    return e[1][n];
+}
+
+public static void main(String[] args) {
+    double[] p = {0, 0.15, 0.10, 0.05, 0.10, 0.20};
+    double[] q = {0.05, 0.10, 0.05, 0.05, 0.05, 0.10};
+    System.out.println(OptimalBST(p, q, 5));
+}
+</code></pre></div><p>因为算法包含三个 $for$ 循环，每重循环的下标最多取 $n$ 个值，所以算法的时间复杂度是 $O(n^3)$。</p>
+
+      </div>
+
+
+      <footer>
+        
+
+
+        
+        
+        
+      </footer>
+    </article>
+
+    
+  </section>
+
+      </div>
+
+      <script type="text/javascript"
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+    </main>
+
+    
+
+    
+
+    <script>
+(function(f, a, t, h, o, m){
+	a[h]=a[h]||function(){
+		(a[h].q=a[h].q||[]).push(arguments)
+	};
+	o=f.createElement('script'),
+	m=f.getElementsByTagName('script')[0];
+	o.async=1; o.src=t; o.id='fathom-script';
+	m.parentNode.insertBefore(o,m)
+})(document, window, '//analytics.example.com/tracker.js', 'fathom');
+fathom('set', 'siteId', 'ABCDE');
+fathom('trackPageview');
+</script>
+
+
+  </body>
+
+</html>

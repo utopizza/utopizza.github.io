@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Language" content="en">
+
+    <meta name="author" content="Yusheng Wang">
+    <meta name="description" content="一、问题
+给定一个整型数组，求其最大的子数组和。例如，给定数组：[-2,1,-3,4,-1,2,1,-5,4]，和最大的子数组为：[4,-1,2,1]，和为6。
+二、递推式
+设给定的数组为 $A$，用 $dp[i]$ 表示以 $A[i]$ 结尾的最大子数组之和。那么 $dp[i-1]$ 和 $dp[i]$ 有怎样的关系？由于给定的数组为整型，有正数也有负数，因此我们可以从子数组和的正负来考虑。显然，要使 $dp[i]$ 是最大的和，那么 以 $A[i-1]$ 结尾的子数组最大和 $dp[i-1]$ 如果是负数，则以 $A[i]$ 结尾的子数组的最大和 $dp[i]$ 应该去掉前面部分的负数，只取 $A[i]$ 作为最大和，因为如果加上前面部分的和只会比 $A[i]$ 更小；如果是正数，那么应该取 $A[i]$ 加上前面部分的 $dp[i-1]$ 作为最大和。形式化描述为：
+$$ dp[i]=A[i]&#43;(dp[i-1]&gt;0?dp[i-1]:0) $$
+最终的最大子数组和就是数组 $dp[n]$ 的最大值。为了避免重复扫描该数组我们可以在计算该数组的时候维护一个当前最大值 $max$。
+三、代码实现
+public static int maxSubArray(int[] A) { int n = A.length; int[] dp = new int[n];//dp[i] means the maximum subarray ending with A[i]; dp[0] = A[0]; int max = dp[0]; for(int i = 1; i &lt; n; i&#43;&#43;){ dp[i] = A[i] &#43; (dp[i - 1] &gt; 0 ?">
+    <meta name="keywords" content="blog,developer,personal">
+
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="最大子数组和"/>
+<meta name="twitter:description" content="一、问题
+给定一个整型数组，求其最大的子数组和。例如，给定数组：[-2,1,-3,4,-1,2,1,-5,4]，和最大的子数组为：[4,-1,2,1]，和为6。
+二、递推式
+设给定的数组为 $A$，用 $dp[i]$ 表示以 $A[i]$ 结尾的最大子数组之和。那么 $dp[i-1]$ 和 $dp[i]$ 有怎样的关系？由于给定的数组为整型，有正数也有负数，因此我们可以从子数组和的正负来考虑。显然，要使 $dp[i]$ 是最大的和，那么 以 $A[i-1]$ 结尾的子数组最大和 $dp[i-1]$ 如果是负数，则以 $A[i]$ 结尾的子数组的最大和 $dp[i]$ 应该去掉前面部分的负数，只取 $A[i]$ 作为最大和，因为如果加上前面部分的和只会比 $A[i]$ 更小；如果是正数，那么应该取 $A[i]$ 加上前面部分的 $dp[i-1]$ 作为最大和。形式化描述为：
+$$ dp[i]=A[i]&#43;(dp[i-1]&gt;0?dp[i-1]:0) $$
+最终的最大子数组和就是数组 $dp[n]$ 的最大值。为了避免重复扫描该数组我们可以在计算该数组的时候维护一个当前最大值 $max$。
+三、代码实现
+public static int maxSubArray(int[] A) { int n = A.length; int[] dp = new int[n];//dp[i] means the maximum subarray ending with A[i]; dp[0] = A[0]; int max = dp[0]; for(int i = 1; i &lt; n; i&#43;&#43;){ dp[i] = A[i] &#43; (dp[i - 1] &gt; 0 ?"/>
+
+    <meta property="og:title" content="最大子数组和" />
+<meta property="og:description" content="一、问题
+给定一个整型数组，求其最大的子数组和。例如，给定数组：[-2,1,-3,4,-1,2,1,-5,4]，和最大的子数组为：[4,-1,2,1]，和为6。
+二、递推式
+设给定的数组为 $A$，用 $dp[i]$ 表示以 $A[i]$ 结尾的最大子数组之和。那么 $dp[i-1]$ 和 $dp[i]$ 有怎样的关系？由于给定的数组为整型，有正数也有负数，因此我们可以从子数组和的正负来考虑。显然，要使 $dp[i]$ 是最大的和，那么 以 $A[i-1]$ 结尾的子数组最大和 $dp[i-1]$ 如果是负数，则以 $A[i]$ 结尾的子数组的最大和 $dp[i]$ 应该去掉前面部分的负数，只取 $A[i]$ 作为最大和，因为如果加上前面部分的和只会比 $A[i]$ 更小；如果是正数，那么应该取 $A[i]$ 加上前面部分的 $dp[i-1]$ 作为最大和。形式化描述为：
+$$ dp[i]=A[i]&#43;(dp[i-1]&gt;0?dp[i-1]:0) $$
+最终的最大子数组和就是数组 $dp[n]$ 的最大值。为了避免重复扫描该数组我们可以在计算该数组的时候维护一个当前最大值 $max$。
+三、代码实现
+public static int maxSubArray(int[] A) { int n = A.length; int[] dp = new int[n];//dp[i] means the maximum subarray ending with A[i]; dp[0] = A[0]; int max = dp[0]; for(int i = 1; i &lt; n; i&#43;&#43;){ dp[i] = A[i] &#43; (dp[i - 1] &gt; 0 ?" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://utopizza.github.io/posts/algorithm/2017-10-18-%E7%AE%97%E6%B3%95-%E6%9C%80%E5%A4%A7%E5%AD%90%E6%95%B0%E7%BB%84%E5%92%8C/" />
+<meta property="article:published_time" content="2017-10-18T00:37:00+00:00" />
+<meta property="article:modified_time" content="2017-10-18T00:37:00+00:00" />
+
+
+    
+      <base href="https://utopizza.github.io/posts/algorithm/2017-10-18-%E7%AE%97%E6%B3%95-%E6%9C%80%E5%A4%A7%E5%AD%90%E6%95%B0%E7%BB%84%E5%92%8C/">
+    
+    <title>
+  最大子数组和 · Utopizza
+</title>
+
+    
+      <link rel="canonical" href="https://utopizza.github.io/posts/algorithm/2017-10-18-%E7%AE%97%E6%B3%95-%E6%9C%80%E5%A4%A7%E5%AD%90%E6%95%B0%E7%BB%84%E5%92%8C/">
+    
+
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700%7CMerriweather:300,700%7CSource+Code+Pro:400,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.13.0/css/all.css" integrity="sha384-Bfad6CLCknfcloXFOyFnlgtENryhrpZCe29RTifKEixXQZ38WheV+i/6YWSzkz3V" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" integrity="sha256-l85OmPOjvil/SOvVt3HnSSjzF1TUMyT9eV0c2BzEGzU=" crossorigin="anonymous" />
+
+    
+      
+      
+      <link rel="stylesheet" href="https://utopizza.github.io/css/coder.min.a4f332213a21ce8eb521670c614470c58923aaaf385e2a73982c31dd7642decb.css" integrity="sha256-pPMyITohzo61IWcMYURwxYkjqq84XipzmCwx3XZC3ss=" crossorigin="anonymous" media="screen" />
+    
+
+    
+
+    
+      
+        
+        
+        <link rel="stylesheet" href="https://utopizza.github.io/css/coder-dark.min.e78e80fc3a585a4d1c8fc7f58623b6ff852411e38431a9cd1792877ecaa160f6.css" integrity="sha256-546A/DpYWk0cj8f1hiO2/4UkEeOEManNF5KHfsqhYPY=" crossorigin="anonymous" media="screen" />
+      
+    
+
+    
+
+    
+
+    <link rel="icon" type="image/png" href="https://utopizza.github.io/images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="https://utopizza.github.io/images/favicon-16x16.png" sizes="16x16">
+
+    <meta name="generator" content="Hugo 0.69.2" />
+  </head>
+
+  
+  
+    
+  
+  <body class="colorscheme-auto">
+    <main class="wrapper">
+      <nav class="navigation">
+  <section class="container">
+    <a class="navigation-title" href="https://utopizza.github.io/">
+      Utopizza
+    </a>
+    
+    <input type="checkbox" id="menu-toggle" />
+    <label class="menu-button float-right" for="menu-toggle"><i class="fas fa-bars"></i></label>
+    <ul class="navigation-list">
+      
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/about/">About</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/posts/">Blog</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/projects/">Projects</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/contact/">Contact me</a>
+          </li>
+        
+      
+      
+    </ul>
+    
+  </section>
+</nav>
+
+
+      <div class="content">
+        
+  <section class="container post">
+    <article>
+      <header>
+        <div class="post-title">
+          <h1 class="title">最大子数组和</h1>
+        </div>
+        <div class="post-meta">
+          <div class="date">
+            <span class="posted-on">
+              <i class="fas fa-calendar"></i>
+              <time datetime='2017-10-18T00:37:00Z'>
+                October 18, 2017
+              </time>
+            </span>
+            <span class="reading-time">
+              <i class="fas fa-clock"></i>
+              1-minute read
+            </span>
+          </div>
+          <div class="categories">
+  <i class="fas fa-folder"></i>
+    <a href="https://utopizza.github.io/categories/algorithm/">Algorithm</a></div>
+
+          
+        </div>
+      </header>
+
+      <div>
+        
+        <p>一、问题</p>
+<p>给定一个整型数组，求其最大的子数组和。例如，给定数组：[-2,1,-3,4,-1,2,1,-5,4]，和最大的子数组为：[4,-1,2,1]，和为6。</p>
+<p>二、递推式</p>
+<p>设给定的数组为 $A$，用 $dp[i]$ 表示以 $A[i]$ 结尾的最大子数组之和。那么 $dp[i-1]$ 和 $dp[i]$ 有怎样的关系？由于给定的数组为整型，有正数也有负数，因此我们可以从子数组和的正负来考虑。显然，要使 $dp[i]$ 是最大的和，那么 以 $A[i-1]$ 结尾的子数组最大和 $dp[i-1]$ 如果是负数，则以 $A[i]$ 结尾的子数组的最大和 $dp[i]$ 应该去掉前面部分的负数，只取 $A[i]$  作为最大和，因为如果加上前面部分的和只会比 $A[i]$  更小；如果是正数，那么应该取 $A[i]$ 加上前面部分的 $dp[i-1]$ 作为最大和。形式化描述为：</p>
+<p>$$
+dp[i]=A[i]+(dp[i-1]&gt;0?dp[i-1]:0)
+$$</p>
+<p>最终的最大子数组和就是数组 $dp[n]$ 的最大值。为了避免重复扫描该数组我们可以在计算该数组的时候维护一个当前最大值 $max$。</p>
+<p>三、代码实现</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">public static int maxSubArray(int[] A) {
+    int n = A.length;
+    int[] dp = new int[n];//dp[i] means the maximum subarray ending with A[i];
+    dp[0] = A[0];
+    int max = dp[0];
+    
+    for(int i = 1; i &lt; n; i++){
+        dp[i] = A[i] + (dp[i - 1] &gt; 0 ? dp[i - 1] : 0);
+        max = Math.max(max, dp[i]);
+    }
+    
+    return max;
+}
+
+public static void main(String[] args) {
+    int[] A = {-2,1,-3,4,-1,2,1,-5,4};
+    System.out.println(maxSubArray(A));
+}
+</code></pre></div><p>时间和空间复杂度都为 $O(n)$。</p>
+
+      </div>
+
+
+      <footer>
+        
+
+
+        
+        
+        
+      </footer>
+    </article>
+
+    
+  </section>
+
+      </div>
+
+      <script type="text/javascript"
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+    </main>
+
+    
+
+    
+
+    <script>
+(function(f, a, t, h, o, m){
+	a[h]=a[h]||function(){
+		(a[h].q=a[h].q||[]).push(arguments)
+	};
+	o=f.createElement('script'),
+	m=f.getElementsByTagName('script')[0];
+	o.async=1; o.src=t; o.id='fathom-script';
+	m.parentNode.insertBefore(o,m)
+})(document, window, '//analytics.example.com/tracker.js', 'fathom');
+fathom('set', 'siteId', 'ABCDE');
+fathom('trackPageview');
+</script>
+
+
+  </body>
+
+</html>

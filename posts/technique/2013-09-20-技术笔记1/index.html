@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Language" content="en">
+
+    <meta name="author" content="Yusheng Wang">
+    <meta name="description" content="1、 camelCase规则:第一个单词以小写开头，其他每个单词开头大写，其余字母小写，如: firstName(建议使用)
+2、 PascalCase规则: 每个单词除了第一个字母大写，其余小写，如: FirstName
+3、 C#的布尔类型只包含true和false，不能用1和0表示，即布尔值和整数值之间不能相互转换
+bool c=a&gt;b; //若a大于b，则d为true，否则为false 4、 注意&amp;&amp;和&amp;的区别（同||和|）：&amp;&amp;如果第一个操作数可判断为false，则不会继续以后的操作数而直接得出语句的值为false；||如果第一个操作数可判断为true，则不会继续以后的操作数而直接得出语句的值为true
+5、 取a和b中的最大者
+double max=(a&gt;b)?a:b; 6、 整型和字符串转换
+// 整型转字符串 int i=10; String s=i.ToString(); // 字符串转整型 String s=“100”; int i=Int32.Parse(s); 7、 字符串转换类：Convert。需注意的是，字符串是不能改变的，如果要改变字符串的值，系统会创建一个新的字符串，而不会改变原来的字符串
+8、 注意switch语句的开关性，如果某个case语句符合条件，系统会进入switch语句并一直执行到最后，除非遇到break语句才会跳出
+9、 数组声明和初始化
+int[] a=new int[10]; int[] b=new int[3]{2,4,6}; 10、 foreach循环：对数组进行只读访问而不能做任何修改，而且不会造成数组下标越界
+int[] b=new int[3]{2,4,6}; foreach(int m in b){ Console.WriteLine(m)；// 输出数组b的每个元素 } 11、 一个函数可以有多条返回语句return，但有返回值类型的函数必须每种情况都有对应的返回值（特别注意含if语句的函数）
+12、 函数中实参向形参的数据传递是按值传递的话，形参的数值只是从实参复制过来的一个数值，因此在函数中对形参的任何操作对实参无任何影响；如果是按应用传递的话，形参就是实参的另一个名字，两者是同一个数据，因此在函数中对形参的任何操作都是对实参的间接操作。另外，可以用ref关键字指定参数为引用参数，使按值传递变为按引用传递
+void fun(ref int a){...}; ...; int b=10; fun(b); // 这时，指定了a是b的引用，在fun内对a的操作会影响b 13、 params：可以用该关键字来化简数组参数的传递，如：">
+    <meta name="keywords" content="blog,developer,personal">
+
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="技术笔记(1)-C#语法小结"/>
+<meta name="twitter:description" content="1、 camelCase规则:第一个单词以小写开头，其他每个单词开头大写，其余字母小写，如: firstName(建议使用)
+2、 PascalCase规则: 每个单词除了第一个字母大写，其余小写，如: FirstName
+3、 C#的布尔类型只包含true和false，不能用1和0表示，即布尔值和整数值之间不能相互转换
+bool c=a&gt;b; //若a大于b，则d为true，否则为false 4、 注意&amp;&amp;和&amp;的区别（同||和|）：&amp;&amp;如果第一个操作数可判断为false，则不会继续以后的操作数而直接得出语句的值为false；||如果第一个操作数可判断为true，则不会继续以后的操作数而直接得出语句的值为true
+5、 取a和b中的最大者
+double max=(a&gt;b)?a:b; 6、 整型和字符串转换
+// 整型转字符串 int i=10; String s=i.ToString(); // 字符串转整型 String s=“100”; int i=Int32.Parse(s); 7、 字符串转换类：Convert。需注意的是，字符串是不能改变的，如果要改变字符串的值，系统会创建一个新的字符串，而不会改变原来的字符串
+8、 注意switch语句的开关性，如果某个case语句符合条件，系统会进入switch语句并一直执行到最后，除非遇到break语句才会跳出
+9、 数组声明和初始化
+int[] a=new int[10]; int[] b=new int[3]{2,4,6}; 10、 foreach循环：对数组进行只读访问而不能做任何修改，而且不会造成数组下标越界
+int[] b=new int[3]{2,4,6}; foreach(int m in b){ Console.WriteLine(m)；// 输出数组b的每个元素 } 11、 一个函数可以有多条返回语句return，但有返回值类型的函数必须每种情况都有对应的返回值（特别注意含if语句的函数）
+12、 函数中实参向形参的数据传递是按值传递的话，形参的数值只是从实参复制过来的一个数值，因此在函数中对形参的任何操作对实参无任何影响；如果是按应用传递的话，形参就是实参的另一个名字，两者是同一个数据，因此在函数中对形参的任何操作都是对实参的间接操作。另外，可以用ref关键字指定参数为引用参数，使按值传递变为按引用传递
+void fun(ref int a){...}; ...; int b=10; fun(b); // 这时，指定了a是b的引用，在fun内对a的操作会影响b 13、 params：可以用该关键字来化简数组参数的传递，如："/>
+
+    <meta property="og:title" content="技术笔记(1)-C#语法小结" />
+<meta property="og:description" content="1、 camelCase规则:第一个单词以小写开头，其他每个单词开头大写，其余字母小写，如: firstName(建议使用)
+2、 PascalCase规则: 每个单词除了第一个字母大写，其余小写，如: FirstName
+3、 C#的布尔类型只包含true和false，不能用1和0表示，即布尔值和整数值之间不能相互转换
+bool c=a&gt;b; //若a大于b，则d为true，否则为false 4、 注意&amp;&amp;和&amp;的区别（同||和|）：&amp;&amp;如果第一个操作数可判断为false，则不会继续以后的操作数而直接得出语句的值为false；||如果第一个操作数可判断为true，则不会继续以后的操作数而直接得出语句的值为true
+5、 取a和b中的最大者
+double max=(a&gt;b)?a:b; 6、 整型和字符串转换
+// 整型转字符串 int i=10; String s=i.ToString(); // 字符串转整型 String s=“100”; int i=Int32.Parse(s); 7、 字符串转换类：Convert。需注意的是，字符串是不能改变的，如果要改变字符串的值，系统会创建一个新的字符串，而不会改变原来的字符串
+8、 注意switch语句的开关性，如果某个case语句符合条件，系统会进入switch语句并一直执行到最后，除非遇到break语句才会跳出
+9、 数组声明和初始化
+int[] a=new int[10]; int[] b=new int[3]{2,4,6}; 10、 foreach循环：对数组进行只读访问而不能做任何修改，而且不会造成数组下标越界
+int[] b=new int[3]{2,4,6}; foreach(int m in b){ Console.WriteLine(m)；// 输出数组b的每个元素 } 11、 一个函数可以有多条返回语句return，但有返回值类型的函数必须每种情况都有对应的返回值（特别注意含if语句的函数）
+12、 函数中实参向形参的数据传递是按值传递的话，形参的数值只是从实参复制过来的一个数值，因此在函数中对形参的任何操作对实参无任何影响；如果是按应用传递的话，形参就是实参的另一个名字，两者是同一个数据，因此在函数中对形参的任何操作都是对实参的间接操作。另外，可以用ref关键字指定参数为引用参数，使按值传递变为按引用传递
+void fun(ref int a){...}; ...; int b=10; fun(b); // 这时，指定了a是b的引用，在fun内对a的操作会影响b 13、 params：可以用该关键字来化简数组参数的传递，如：" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://utopizza.github.io/posts/technique/2013-09-20-%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B01/" />
+<meta property="article:published_time" content="2013-09-20T13:23:00+00:00" />
+<meta property="article:modified_time" content="2013-09-20T13:23:00+00:00" />
+
+
+    
+      <base href="https://utopizza.github.io/posts/technique/2013-09-20-%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B01/">
+    
+    <title>
+  技术笔记(1)-C#语法小结 · Utopizza
+</title>
+
+    
+      <link rel="canonical" href="https://utopizza.github.io/posts/technique/2013-09-20-%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B01/">
+    
+
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700%7CMerriweather:300,700%7CSource+Code+Pro:400,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.13.0/css/all.css" integrity="sha384-Bfad6CLCknfcloXFOyFnlgtENryhrpZCe29RTifKEixXQZ38WheV+i/6YWSzkz3V" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" integrity="sha256-l85OmPOjvil/SOvVt3HnSSjzF1TUMyT9eV0c2BzEGzU=" crossorigin="anonymous" />
+
+    
+      
+      
+      <link rel="stylesheet" href="https://utopizza.github.io/css/coder.min.a4f332213a21ce8eb521670c614470c58923aaaf385e2a73982c31dd7642decb.css" integrity="sha256-pPMyITohzo61IWcMYURwxYkjqq84XipzmCwx3XZC3ss=" crossorigin="anonymous" media="screen" />
+    
+
+    
+
+    
+      
+        
+        
+        <link rel="stylesheet" href="https://utopizza.github.io/css/coder-dark.min.e78e80fc3a585a4d1c8fc7f58623b6ff852411e38431a9cd1792877ecaa160f6.css" integrity="sha256-546A/DpYWk0cj8f1hiO2/4UkEeOEManNF5KHfsqhYPY=" crossorigin="anonymous" media="screen" />
+      
+    
+
+    
+
+    
+
+    <link rel="icon" type="image/png" href="https://utopizza.github.io/images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="https://utopizza.github.io/images/favicon-16x16.png" sizes="16x16">
+
+    <meta name="generator" content="Hugo 0.69.2" />
+  </head>
+
+  
+  
+    
+  
+  <body class="colorscheme-auto">
+    <main class="wrapper">
+      <nav class="navigation">
+  <section class="container">
+    <a class="navigation-title" href="https://utopizza.github.io/">
+      Utopizza
+    </a>
+    
+    <input type="checkbox" id="menu-toggle" />
+    <label class="menu-button float-right" for="menu-toggle"><i class="fas fa-bars"></i></label>
+    <ul class="navigation-list">
+      
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/about/">About</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/posts/">Blog</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/projects/">Projects</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/contact/">Contact me</a>
+          </li>
+        
+      
+      
+    </ul>
+    
+  </section>
+</nav>
+
+
+      <div class="content">
+        
+  <section class="container post">
+    <article>
+      <header>
+        <div class="post-title">
+          <h1 class="title">技术笔记(1)-C#语法小结</h1>
+        </div>
+        <div class="post-meta">
+          <div class="date">
+            <span class="posted-on">
+              <i class="fas fa-calendar"></i>
+              <time datetime='2013-09-20T13:23:00Z'>
+                September 20, 2013
+              </time>
+            </span>
+            <span class="reading-time">
+              <i class="fas fa-clock"></i>
+              1-minute read
+            </span>
+          </div>
+          <div class="categories">
+  <i class="fas fa-folder"></i>
+    <a href="https://utopizza.github.io/categories/technology/">Technology</a></div>
+
+          
+        </div>
+      </header>
+
+      <div>
+        
+        <p>1、 camelCase规则:第一个单词以小写开头，其他每个单词开头大写，其余字母小写，如: firstName(建议使用)</p>
+<p>2、 PascalCase规则: 每个单词除了第一个字母大写，其余小写，如: FirstName</p>
+<p>3、 C#的布尔类型只包含true和false，不能用1和0表示，即布尔值和整数值之间不能相互转换</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">bool c=a&gt;b; //若a大于b，则d为true，否则为false
+</code></pre></div><p>4、 注意&amp;&amp;和&amp;的区别（同||和|）：&amp;&amp;如果第一个操作数可判断为false，则不会继续以后的操作数而直接得出语句的值为false；||如果第一个操作数可判断为true，则不会继续以后的操作数而直接得出语句的值为true</p>
+<p>5、 取a和b中的最大者</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">double max=(a&gt;b)?a:b;
+</code></pre></div><p>6、 整型和字符串转换</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">// 整型转字符串
+int i=10;
+String s=i.ToString();
+
+// 字符串转整型
+String s=“100”;
+int i=Int32.Parse(s); 
+</code></pre></div><p>7、 字符串转换类：Convert。需注意的是，字符串是不能改变的，如果要改变字符串的值，系统会创建一个新的字符串，而不会改变原来的字符串</p>
+<p>8、 注意switch语句的开关性，如果某个case语句符合条件，系统会进入switch语句并一直执行到最后，除非遇到break语句才会跳出</p>
+<p>9、 数组声明和初始化</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">int[] a=new int[10];
+int[] b=new int[3]{2,4,6};
+</code></pre></div><p>10、 foreach循环：对数组进行只读访问而不能做任何修改，而且不会造成数组下标越界</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">int[] b=new int[3]{2,4,6};
+foreach(int m in b){ 
+    Console.WriteLine(m)；// 输出数组b的每个元素
+}
+</code></pre></div><p>11、 一个函数可以有多条返回语句return，但有返回值类型的函数必须每种情况都有对应的返回值（特别注意含if语句的函数）</p>
+<p>12、 函数中实参向形参的数据传递是按值传递的话，形参的数值只是从实参复制过来的一个数值，因此在函数中对形参的任何操作对实参无任何影响；如果是按应用传递的话，形参就是实参的另一个名字，两者是同一个数据，因此在函数中对形参的任何操作都是对实参的间接操作。另外，可以用ref关键字指定参数为引用参数，使按值传递变为按引用传递</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">void fun(ref int a){...};
+...;
+int b=10;
+fun(b); // 这时，指定了a是b的引用，在fun内对a的操作会影响b
+</code></pre></div><p>13、 params：可以用该关键字来化简数组参数的传递，如：</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">void fun(params int[] a){...};
+...;
+fun(1,2,3,4,5);
+</code></pre></div><p>14、 如果要修改全局变量的值，就要使用static，因为const禁止修改变量的值。如果局部变量和全局变量同名，全局变量就会被屏蔽</p>
+<p>15、 C#不允许派生类的可访问性比基类（父类）更高，即内部类可以继承于一个公共类，但公共类不可以继承于一个内部类</p>
+<p>16、 如果在定义类的时候没有指定基类，编译器就会默认该类派生于Object类，于是就可以使用Object类的方法，如：GetType()[返回从System.Type派生的类的一个实例]；ToString()[获取对象的字符串]</p>
+<p>17、 构造函数执行顺序：为了实例化派生的类，必须先实例化它的基类。而要实例化这个基类，又必须实例化这个基类的基类，这样一直实例化到根类System.Object为止。结果是，无论使用什么构造函数实例化一个类，总是要先调用System.Object.Object()；如果对一个类使用非默认的构造函数，默认的情况是在其基类上使用匹配于这个构造函数签名的构造函数，如果找不到这样的构造函数，就使用基类的默认构造函数。（调用base关键字可以指定.NET实例化过程中使用基类中指定签名的构造函数；调用this关键字可以使当前类在调用this指定的构造函数前，先调用与this的参数匹配的非默认构造函数）</p>
+<p>18、 定义变量时，如果使用了static关键字，则表明该变量是类的静态成员而不是对象实例的成员；定义方法时，如果使用了static关键字，该方法就只能通过类来访问，不能通过对象实例来访问（virtual方法可以重写；abstract方法必须重写；override方法重写了一个基类方法；extern方法定义字其他地方）</p>
+<p>19、 定义属性：get创建只读属性，set创建只写属性</p>
+<p>20、 执行接口的类必须实现接口中的所有的成员；可以使用virtual和abstract来执行接口的成员，但不能使用static和const</p>
+<p>20、 高级转换：
+(1). 封箱和拆箱；
+(2). is运算符：检查两个类型是否兼容，是则为true；
+(3). as运算符：把一种类型转换为指定的引用类型</p>
+<p>22、 深度复制：GetCopy()，Clone()</p>
+<p>23、 定义委托：delegate-返回类型-委托标识符（参数表）</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">public delegate void EvenNumberHandler(int Number){...};
+</code></pre></div><p>24、 定义事件：event-委托标识符-事件标识符</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">public event EvenNumberHandler OnEvenNumber;
+</code></pre></div><p>25、 安装事件：用new创建一个委托实例并安装到激发事件的类中</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">public void MyEvenNumberHandler(string URL){...}; 
+EvenNumberHandler HandlerInstance=new EvenNumberHandler(MyEvenNumberHandler);
+</code></pre></div><p>26、 创建了委托实例后，用+=运算符（相当于注册监听器的“.”运算符）将其添加到事件变量中</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">OnEvenNumber += HandlerInstance; // 删除委托实例用 -=
+</code></pre></div><p>27、 激发事件：将事件参数传递到委托方法中即可</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">EvenNumberHandler(10);
+</code></pre></div>
+      </div>
+
+
+      <footer>
+        
+
+
+        
+        
+        
+      </footer>
+    </article>
+
+    
+  </section>
+
+      </div>
+
+      <script type="text/javascript"
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+    </main>
+
+    
+
+    
+
+    <script>
+(function(f, a, t, h, o, m){
+	a[h]=a[h]||function(){
+		(a[h].q=a[h].q||[]).push(arguments)
+	};
+	o=f.createElement('script'),
+	m=f.getElementsByTagName('script')[0];
+	o.async=1; o.src=t; o.id='fathom-script';
+	m.parentNode.insertBefore(o,m)
+})(document, window, '//analytics.example.com/tracker.js', 'fathom');
+fathom('set', 'siteId', 'ABCDE');
+fathom('trackPageview');
+</script>
+
+
+  </body>
+
+</html>

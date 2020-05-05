@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Language" content="en">
+
+    <meta name="author" content="Yusheng Wang">
+    <meta name="description" content="我们知道，线性空间中，在给定基的情况下，对任意一个向量 $\vec{v}$ 施予一个线性变换 $T$ 时，就让该向量的坐标向量左乘某个矩阵 $A$ 即可。例如，设在线性空间 $V_n(F)$ 中，取一组基为 ${\vec{\alpha_1},\vec{\alpha_2},\cdots,\vec{\alpha_n}}$，向量 $\vec{w}$ 在该基下的坐标为 $\vec{Y}$，向量 $\vec{v}$ 在该基下的坐标为 $\vec{X}$，即：
+$$\vec{w}=(\vec{\alpha_1},\vec{\alpha_2},\cdots,\vec{\alpha_n}) \vec{Y}$$
+$$\vec{v}=(\vec{\alpha_1},\vec{\alpha_2},\cdots,\vec{\alpha_n}) \vec{X}$$
+如果向量 $\vec{w}$ 是由向量 $\vec{v}$ 经过线性变换 $T$ 得到的，即
+$$\vec{w}=T(\vec{v})$$
+那么它们的坐标关系为：
+$$\vec{Y}=A \vec{X}$$
+并且，线性空间中任一个线性变换 $T$ 可以由某个矩阵 $A$ 唯一对应：
+$$T \iff A$$
+为什么？这个矩阵 $A$ 如何得到？接下来复习一下 $A$ 的推导。需要的预备知识：
+ 线性空间定义 线性空间的基与坐标 线性变换定义   记 $T$ 为线性空间 $V_n(F)$ 上的线性变换。记 ${\vec{\alpha_1},\vec{\alpha_2},\cdots,\vec{\alpha_n}}$ 为 $V_n(F)$ 的一组基，则对任意向量 $\forall \pmb\beta \in V_n(F)$，由基的定义可得
+$$\vec{v}=(\vec{\alpha_1},\vec{\alpha_2},\cdots,\vec{\alpha_n}) \vec{X}=(\vec{\alpha_1},\vec{\alpha_2},\cdots,\vec{\alpha_n}) \begin{pmatrix} x_1 \ x_2 \ \vdots \ x_n \end{pmatrix} =x_1\vec{\alpha_1}&#43;x_2\vec{\alpha_2}&#43;\cdots&#43;x_n\vec{\alpha_n}$$">
+    <meta name="keywords" content="blog,developer,personal">
+
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="线性变换的矩阵"/>
+<meta name="twitter:description" content="我们知道，线性空间中，在给定基的情况下，对任意一个向量 $\vec{v}$ 施予一个线性变换 $T$ 时，就让该向量的坐标向量左乘某个矩阵 $A$ 即可。例如，设在线性空间 $V_n(F)$ 中，取一组基为 ${\vec{\alpha_1},\vec{\alpha_2},\cdots,\vec{\alpha_n}}$，向量 $\vec{w}$ 在该基下的坐标为 $\vec{Y}$，向量 $\vec{v}$ 在该基下的坐标为 $\vec{X}$，即：
+$$\vec{w}=(\vec{\alpha_1},\vec{\alpha_2},\cdots,\vec{\alpha_n}) \vec{Y}$$
+$$\vec{v}=(\vec{\alpha_1},\vec{\alpha_2},\cdots,\vec{\alpha_n}) \vec{X}$$
+如果向量 $\vec{w}$ 是由向量 $\vec{v}$ 经过线性变换 $T$ 得到的，即
+$$\vec{w}=T(\vec{v})$$
+那么它们的坐标关系为：
+$$\vec{Y}=A \vec{X}$$
+并且，线性空间中任一个线性变换 $T$ 可以由某个矩阵 $A$ 唯一对应：
+$$T \iff A$$
+为什么？这个矩阵 $A$ 如何得到？接下来复习一下 $A$ 的推导。需要的预备知识：
+ 线性空间定义 线性空间的基与坐标 线性变换定义   记 $T$ 为线性空间 $V_n(F)$ 上的线性变换。记 ${\vec{\alpha_1},\vec{\alpha_2},\cdots,\vec{\alpha_n}}$ 为 $V_n(F)$ 的一组基，则对任意向量 $\forall \pmb\beta \in V_n(F)$，由基的定义可得
+$$\vec{v}=(\vec{\alpha_1},\vec{\alpha_2},\cdots,\vec{\alpha_n}) \vec{X}=(\vec{\alpha_1},\vec{\alpha_2},\cdots,\vec{\alpha_n}) \begin{pmatrix} x_1 \ x_2 \ \vdots \ x_n \end{pmatrix} =x_1\vec{\alpha_1}&#43;x_2\vec{\alpha_2}&#43;\cdots&#43;x_n\vec{\alpha_n}$$"/>
+
+    <meta property="og:title" content="线性变换的矩阵" />
+<meta property="og:description" content="我们知道，线性空间中，在给定基的情况下，对任意一个向量 $\vec{v}$ 施予一个线性变换 $T$ 时，就让该向量的坐标向量左乘某个矩阵 $A$ 即可。例如，设在线性空间 $V_n(F)$ 中，取一组基为 ${\vec{\alpha_1},\vec{\alpha_2},\cdots,\vec{\alpha_n}}$，向量 $\vec{w}$ 在该基下的坐标为 $\vec{Y}$，向量 $\vec{v}$ 在该基下的坐标为 $\vec{X}$，即：
+$$\vec{w}=(\vec{\alpha_1},\vec{\alpha_2},\cdots,\vec{\alpha_n}) \vec{Y}$$
+$$\vec{v}=(\vec{\alpha_1},\vec{\alpha_2},\cdots,\vec{\alpha_n}) \vec{X}$$
+如果向量 $\vec{w}$ 是由向量 $\vec{v}$ 经过线性变换 $T$ 得到的，即
+$$\vec{w}=T(\vec{v})$$
+那么它们的坐标关系为：
+$$\vec{Y}=A \vec{X}$$
+并且，线性空间中任一个线性变换 $T$ 可以由某个矩阵 $A$ 唯一对应：
+$$T \iff A$$
+为什么？这个矩阵 $A$ 如何得到？接下来复习一下 $A$ 的推导。需要的预备知识：
+ 线性空间定义 线性空间的基与坐标 线性变换定义   记 $T$ 为线性空间 $V_n(F)$ 上的线性变换。记 ${\vec{\alpha_1},\vec{\alpha_2},\cdots,\vec{\alpha_n}}$ 为 $V_n(F)$ 的一组基，则对任意向量 $\forall \pmb\beta \in V_n(F)$，由基的定义可得
+$$\vec{v}=(\vec{\alpha_1},\vec{\alpha_2},\cdots,\vec{\alpha_n}) \vec{X}=(\vec{\alpha_1},\vec{\alpha_2},\cdots,\vec{\alpha_n}) \begin{pmatrix} x_1 \ x_2 \ \vdots \ x_n \end{pmatrix} =x_1\vec{\alpha_1}&#43;x_2\vec{\alpha_2}&#43;\cdots&#43;x_n\vec{\alpha_n}$$" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://utopizza.github.io/posts/math/2019-01-12-%E6%95%B0%E5%AD%A6-%E7%BA%BF%E6%80%A7%E5%8F%98%E6%8D%A2%E7%9A%84%E7%9F%A9%E9%98%B5/" />
+<meta property="article:published_time" content="2019-01-12T00:00:00+00:00" />
+<meta property="article:modified_time" content="2019-01-12T00:00:00+00:00" />
+
+
+    
+      <base href="https://utopizza.github.io/posts/math/2019-01-12-%E6%95%B0%E5%AD%A6-%E7%BA%BF%E6%80%A7%E5%8F%98%E6%8D%A2%E7%9A%84%E7%9F%A9%E9%98%B5/">
+    
+    <title>
+  线性变换的矩阵 · Utopizza
+</title>
+
+    
+      <link rel="canonical" href="https://utopizza.github.io/posts/math/2019-01-12-%E6%95%B0%E5%AD%A6-%E7%BA%BF%E6%80%A7%E5%8F%98%E6%8D%A2%E7%9A%84%E7%9F%A9%E9%98%B5/">
+    
+
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700%7CMerriweather:300,700%7CSource+Code+Pro:400,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.13.0/css/all.css" integrity="sha384-Bfad6CLCknfcloXFOyFnlgtENryhrpZCe29RTifKEixXQZ38WheV+i/6YWSzkz3V" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" integrity="sha256-l85OmPOjvil/SOvVt3HnSSjzF1TUMyT9eV0c2BzEGzU=" crossorigin="anonymous" />
+
+    
+      
+      
+      <link rel="stylesheet" href="https://utopizza.github.io/css/coder.min.a4f332213a21ce8eb521670c614470c58923aaaf385e2a73982c31dd7642decb.css" integrity="sha256-pPMyITohzo61IWcMYURwxYkjqq84XipzmCwx3XZC3ss=" crossorigin="anonymous" media="screen" />
+    
+
+    
+
+    
+      
+        
+        
+        <link rel="stylesheet" href="https://utopizza.github.io/css/coder-dark.min.e78e80fc3a585a4d1c8fc7f58623b6ff852411e38431a9cd1792877ecaa160f6.css" integrity="sha256-546A/DpYWk0cj8f1hiO2/4UkEeOEManNF5KHfsqhYPY=" crossorigin="anonymous" media="screen" />
+      
+    
+
+    
+
+    
+
+    <link rel="icon" type="image/png" href="https://utopizza.github.io/images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="https://utopizza.github.io/images/favicon-16x16.png" sizes="16x16">
+
+    <meta name="generator" content="Hugo 0.69.2" />
+  </head>
+
+  
+  
+    
+  
+  <body class="colorscheme-auto">
+    <main class="wrapper">
+      <nav class="navigation">
+  <section class="container">
+    <a class="navigation-title" href="https://utopizza.github.io/">
+      Utopizza
+    </a>
+    
+    <input type="checkbox" id="menu-toggle" />
+    <label class="menu-button float-right" for="menu-toggle"><i class="fas fa-bars"></i></label>
+    <ul class="navigation-list">
+      
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/about/">About</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/posts/">Blog</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/projects/">Projects</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/contact/">Contact me</a>
+          </li>
+        
+      
+      
+    </ul>
+    
+  </section>
+</nav>
+
+
+      <div class="content">
+        
+  <section class="container post">
+    <article>
+      <header>
+        <div class="post-title">
+          <h1 class="title">线性变换的矩阵</h1>
+        </div>
+        <div class="post-meta">
+          <div class="date">
+            <span class="posted-on">
+              <i class="fas fa-calendar"></i>
+              <time datetime='2019-01-12T00:00:00Z'>
+                January 12, 2019
+              </time>
+            </span>
+            <span class="reading-time">
+              <i class="fas fa-clock"></i>
+              2-minute read
+            </span>
+          </div>
+          <div class="categories">
+  <i class="fas fa-folder"></i>
+    <a href="https://utopizza.github.io/categories/math/">Math</a></div>
+
+          
+        </div>
+      </header>
+
+      <div>
+        
+        <p>我们知道，线性空间中，在给定基的情况下，对任意一个向量 $\vec{v}$ 施予一个线性变换 $T$ 时，就让该向量的坐标向量左乘某个矩阵 $A$ 即可。例如，设在线性空间 $V_n(F)$ 中，取一组基为 ${\vec{\alpha_1},\vec{\alpha_2},\cdots,\vec{\alpha_n}}$，向量 $\vec{w}$ 在该基下的坐标为 $\vec{Y}$，向量 $\vec{v}$ 在该基下的坐标为 $\vec{X}$，即：</p>
+<p>$$\vec{w}=(\vec{\alpha_1},\vec{\alpha_2},\cdots,\vec{\alpha_n}) \vec{Y}$$</p>
+<p>$$\vec{v}=(\vec{\alpha_1},\vec{\alpha_2},\cdots,\vec{\alpha_n}) \vec{X}$$</p>
+<p>如果向量 $\vec{w}$ 是由向量 $\vec{v}$ 经过线性变换 $T$ 得到的，即</p>
+<p>$$\vec{w}=T(\vec{v})$$</p>
+<p>那么它们的坐标关系为：</p>
+<p>$$\vec{Y}=A \vec{X}$$</p>
+<p>并且，线性空间中任一个线性变换 $T$ 可以由某个矩阵 $A$ 唯一对应：</p>
+<p>$$T \iff A$$</p>
+<p>为什么？这个矩阵 $A$ 如何得到？接下来复习一下 $A$ 的推导。需要的预备知识：</p>
+<ul>
+<li>线性空间定义</li>
+<li>线性空间的基与坐标</li>
+<li>线性变换定义</li>
+</ul>
+<hr>
+<p>记 $T$ 为线性空间 $V_n(F)$ 上的线性变换。记 ${\vec{\alpha_1},\vec{\alpha_2},\cdots,\vec{\alpha_n}}$ 为 $V_n(F)$ 的一组基，则对任意向量 $\forall \pmb\beta \in V_n(F)$，由基的定义可得</p>
+<p>$$\vec{v}=(\vec{\alpha_1},\vec{\alpha_2},\cdots,\vec{\alpha_n}) \vec{X}=(\vec{\alpha_1},\vec{\alpha_2},\cdots,\vec{\alpha_n}) \begin{pmatrix} x_1 \ x_2 \ \vdots \ x_n \end{pmatrix} =x_1\vec{\alpha_1}+x_2\vec{\alpha_2}+\cdots+x_n\vec{\alpha_n}$$</p>
+<p>对 $\vec{v}$ 施予线性变换 $T$：</p>
+<p>$$
+\begin{aligned}
+T(\vec{v})
+&amp;=T(x_1\vec{\alpha_1}+x_2\vec{\alpha_2}+\cdots+x_n\vec{\alpha_n}) \<br>
+&amp;=T(x_1\vec{\alpha_1})+T(x_2\vec{\alpha_2})+\cdots+T(x_n\vec{\alpha_n}) \<br>
+&amp;=x_1T(\vec{\alpha_1})+x_2T(\vec{\alpha_2})+\cdots+x_nT(\vec{\alpha_n}) \<br>
+&amp;=(T(\vec{\alpha_1}),T(\vec{\alpha_2}),\cdots,T(\vec{\alpha_n})) \begin{pmatrix} x_1 \ x_2 \ \vdots \ x_n \end{pmatrix}
+\end{aligned}
+$$</p>
+<p>到这里可以清楚看到，对向量 $\vec{v}$ 施予线性变换 $T$，可以转化为对基 ${ \vec{\alpha_1},\vec{\alpha_2},\cdots,\vec{\alpha_n} }$ 施予线性变换，并且在基变换后，向量 $\vec{v}$ 的坐标保持不变！因此，对空间中任意向量的线性变换，就转化到了该空间下一组基到另一组“基”的线性变换（注意，由于实际上线性变换只能保持线性相关，不能保持线性无关，因此无法保证对基进行线性变换后的向量组 ${ T(\vec{\alpha_1}),T(\vec{\alpha_2}),\cdots,T(\vec{\alpha_n}) }$ 是否仍能作为一组基。准确来讲，$T(\vec{\alpha_{i}})$ 只能是原基的“像”。但为了便于陈述和理解，暂且称这组“像”为“新基”）。</p>
+<p>那么接下来的问题是，对基 ${ \vec{\alpha_1},\vec{\alpha_2},\cdots,\vec{\alpha_n} }$ 施予线性变换 $T$ 后，“新基” ${ T(\vec{\alpha_1}),T(\vec{\alpha_2}),\cdots,T(\vec{\alpha_n}) }$ 与原基的关系是怎么样的？</p>
+<hr>
+<p>我们知道，对一个向量施予线性变换后仍是一个向量，因此“新基”中的每个元素也仍是一个向量。既然是向量，就一定可以用基和坐标来表示。那么我们就尝试用原基来表示“新基”中的每一个向量吧（因为我们希望知道“新基”与原基的关系），假设向量 $T(\vec{\alpha_1}),T(\vec{\alpha_2}),\cdots,T(\vec{\alpha_n})$ 在原基 $(\vec{\alpha_1},\vec{\alpha_2},\cdots,\vec{\alpha_n})$ 下的表达分别为：</p>
+<p>$$T(\vec{\alpha_1})=(\vec{\alpha_1},\vec{\alpha_2},\cdots,\vec{\alpha_n}) \begin{pmatrix} x_{11} \ x_{21} \ \vdots \ x_{n1} \end{pmatrix}$$</p>
+<p>$$T(\vec{\alpha_2})=(\vec{\alpha_1},\vec{\alpha_2},\cdots,\vec{\alpha_n}) \begin{pmatrix} x_{12} \ x_{22} \ \vdots \ x_{n2} \end{pmatrix}$$</p>
+<p>$$\cdots$$</p>
+<p>$$T(\vec{\alpha_n})=(\vec{\alpha_1},\vec{\alpha_2},\cdots,\vec{\alpha_n}) \begin{pmatrix} x_{1n} \ x_{2n} \ \vdots \ x_{nn} \end{pmatrix}$$</p>
+<p>把以上式子写到一起：</p>
+<p>$$(T(\vec{\alpha_1}),T(\vec{\alpha_2}),\cdots,T(\vec{\alpha_n}))=(\vec{\alpha_1},\vec{\alpha_2},\cdots,\vec{\alpha_n})
+\begin{pmatrix}
+x_{11} &amp; x_{12} &amp; \cdots &amp; x_{1n} \<br>
+x_{21} &amp; x_{22} &amp; \cdots&amp; x_{2n} \<br>
+\vdots &amp; \vdots &amp; \ddots &amp; \vdots \<br>
+x_{n1} &amp; x_{n2} &amp; \cdots &amp; x_{nn} \<br>
+\end{pmatrix}
+$$</p>
+<p>为简便表达，用 $A$ 来表达矩阵 $[x_{ij}]$，因此</p>
+<p>$$(T(\vec{\alpha_1}),T(\vec{\alpha_2}),\cdots,T(\vec{\alpha_n}))=(\vec{\alpha_1},\vec{\alpha_2},\cdots,\vec{\alpha_n}) A$$</p>
+<p>这就是线性变换后 “新基” ${ T(\vec{\alpha_1}),T(\vec{\alpha_2}),\cdots,T(\vec{\alpha_n}) }$ 与原基 ${ \vec{\alpha_1},\vec{\alpha_2},\cdots,\vec{\alpha_n} }$ 的关系表达式。我们称矩阵 $A$ 为变换矩阵。</p>
+<p>从上述过程可以知道，变换矩阵 $A$ 的第 $i$ 列就是原基中第 $i$ 个向量 $\vec{\alpha_i}$ 的像 $T(\vec{\alpha_i})$ 在原基下的坐标表示，坐标的唯一性决定了 $A$ 的唯一性。也就是说，只要选定了一组基，线性变换 $T$ 对这组基的作用（“新基”的坐标），在这组基下是唯一的。因此，在选定了一组基的情况下，线性变换 $T$ 与矩阵 $A$ 是一一对应的，即：</p>
+<p>$$T \iff A $$</p>
+<hr>
+<p>回到本文开头：</p>
+<p>$$\vec{w}=(\vec{\alpha_1},\vec{\alpha_2},\cdots,\vec{\alpha_n}) \vec{Y}$$</p>
+<p>$$\vec{v}=(\vec{\alpha_1},\vec{\alpha_2},\cdots,\vec{\alpha_n}) \vec{X}$$</p>
+<p>如果向量 $\vec{w}$ 是由向量 $\vec{v}$ 经过线性变换 $T$ 得到的，即有</p>
+<p>$$\vec{w}=T(\vec{v})=(\vec{\alpha_1},\vec{\alpha_2},\cdots,\vec{\alpha_n}) A \vec{X}$$</p>
+<p>通过对比，显然有：</p>
+<p>$$\vec{Y}=A \vec{X}$$</p>
+<p>特别地，当基 $(\vec{\alpha_1},\vec{\alpha_2},\cdots,\vec{\alpha_n})$ 为 $R^n$ 中的自然基，即 $\vec{\alpha_1}= \begin{pmatrix} 1 \ 0 \ \vdots \ 0 \end{pmatrix}$，$\vec{\alpha_2}= \begin{pmatrix} 0 \ 1 \ \vdots \ 0 \end{pmatrix}$，$\cdots$，$\vec{\alpha_n}=\begin{pmatrix} 0 \ 0 \ \vdots \ 1 \end{pmatrix}$ 时，有</p>
+<p>$$\vec{w}=\vec{Y}$$</p>
+<p>$$\vec{v}=\vec{X}$$</p>
+<p>此时有</p>
+<p>$$\vec{w}=T(\vec{v})=A \vec{v}$$</p>
+
+      </div>
+
+
+      <footer>
+        
+
+
+        
+        
+        
+      </footer>
+    </article>
+
+    
+  </section>
+
+      </div>
+
+      <script type="text/javascript"
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+    </main>
+
+    
+
+    
+
+    <script>
+(function(f, a, t, h, o, m){
+	a[h]=a[h]||function(){
+		(a[h].q=a[h].q||[]).push(arguments)
+	};
+	o=f.createElement('script'),
+	m=f.getElementsByTagName('script')[0];
+	o.async=1; o.src=t; o.id='fathom-script';
+	m.parentNode.insertBefore(o,m)
+})(document, window, '//analytics.example.com/tracker.js', 'fathom');
+fathom('set', 'siteId', 'ABCDE');
+fathom('trackPageview');
+</script>
+
+
+  </body>
+
+</html>

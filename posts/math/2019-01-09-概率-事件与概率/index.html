@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Language" content="en">
+
+    <meta name="author" content="Yusheng Wang">
+    <meta name="description" content="一、概率
+1、概率的公理化定义（柯氏理论体系）：事件有概率，其大小随事件而异。也即，概率是事件的函数：事件 $A$ 的概率记为 $P(A)$。
+2、古典概率：设一个试验有 $N$ 个等可能的结果，而事件 $E$ 恰包含其中的 $M$ 个结果，则事件 $E$ 的概率，记为 $P(E)$，定义为
+$$P(E)=\frac{M}{N}$$
+3、古典概率计算归结为计算两个数 $M$ 和 $N$。这种计算大多涉及排列组合。排列组合公式： (1) $n$ 个相异物件取 $r(1\leq r \leq n)$ 个的不同排列总数为
+$$A_{n}^{r}=n(n-1)(n-2) \cdots (n-r&#43;1)=\frac{n!}{(n-r)!}$$
+(2) $n$ 个相异物件取 $r(1\leq r \leq n)$ 个的不同组合总数为
+$$C_{n}^{r}=\frac{A_{n}^{r}}{r!}=\frac{n!}{r!(n-r)!}$$
+(3) 组合系数 $C_{n}^{r}$ 又常称为二项式系数，因为它出现在二项式展开的公式中：
+$$(a&#43;b)^n=\sum_{i=0}^{n}C_{n}^{i}a^{i}b^{n-i}$$
+(4) $n$ 个相异物分成 $k$ 堆，各堆物件数分别为 $r_1,\cdots,r_k$，分法种数为：
+$$\frac{n!}{r_1! \cdots r_k!}$$
+二、事件的运算、条件概率与独立性
+1、事件的蕴含、包含以及相等：在同一试验下的两个事件 $A$ 和 $B$，如果： (1) 当 $A$ 发生时 $B$ 必发生，则称 $A$ 蕴含 $B$，或者 $B$ 包含 A，记为 $A \subset B$ (2) 若 $A$、$B$ 相互蕴含，即 $A \subset B$ 且 $B \subset A$，则称 $A$、$B$ 两事件相等，记为 $A=B$">
+    <meta name="keywords" content="blog,developer,personal">
+
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="事件与概率"/>
+<meta name="twitter:description" content="一、概率
+1、概率的公理化定义（柯氏理论体系）：事件有概率，其大小随事件而异。也即，概率是事件的函数：事件 $A$ 的概率记为 $P(A)$。
+2、古典概率：设一个试验有 $N$ 个等可能的结果，而事件 $E$ 恰包含其中的 $M$ 个结果，则事件 $E$ 的概率，记为 $P(E)$，定义为
+$$P(E)=\frac{M}{N}$$
+3、古典概率计算归结为计算两个数 $M$ 和 $N$。这种计算大多涉及排列组合。排列组合公式： (1) $n$ 个相异物件取 $r(1\leq r \leq n)$ 个的不同排列总数为
+$$A_{n}^{r}=n(n-1)(n-2) \cdots (n-r&#43;1)=\frac{n!}{(n-r)!}$$
+(2) $n$ 个相异物件取 $r(1\leq r \leq n)$ 个的不同组合总数为
+$$C_{n}^{r}=\frac{A_{n}^{r}}{r!}=\frac{n!}{r!(n-r)!}$$
+(3) 组合系数 $C_{n}^{r}$ 又常称为二项式系数，因为它出现在二项式展开的公式中：
+$$(a&#43;b)^n=\sum_{i=0}^{n}C_{n}^{i}a^{i}b^{n-i}$$
+(4) $n$ 个相异物分成 $k$ 堆，各堆物件数分别为 $r_1,\cdots,r_k$，分法种数为：
+$$\frac{n!}{r_1! \cdots r_k!}$$
+二、事件的运算、条件概率与独立性
+1、事件的蕴含、包含以及相等：在同一试验下的两个事件 $A$ 和 $B$，如果： (1) 当 $A$ 发生时 $B$ 必发生，则称 $A$ 蕴含 $B$，或者 $B$ 包含 A，记为 $A \subset B$ (2) 若 $A$、$B$ 相互蕴含，即 $A \subset B$ 且 $B \subset A$，则称 $A$、$B$ 两事件相等，记为 $A=B$"/>
+
+    <meta property="og:title" content="事件与概率" />
+<meta property="og:description" content="一、概率
+1、概率的公理化定义（柯氏理论体系）：事件有概率，其大小随事件而异。也即，概率是事件的函数：事件 $A$ 的概率记为 $P(A)$。
+2、古典概率：设一个试验有 $N$ 个等可能的结果，而事件 $E$ 恰包含其中的 $M$ 个结果，则事件 $E$ 的概率，记为 $P(E)$，定义为
+$$P(E)=\frac{M}{N}$$
+3、古典概率计算归结为计算两个数 $M$ 和 $N$。这种计算大多涉及排列组合。排列组合公式： (1) $n$ 个相异物件取 $r(1\leq r \leq n)$ 个的不同排列总数为
+$$A_{n}^{r}=n(n-1)(n-2) \cdots (n-r&#43;1)=\frac{n!}{(n-r)!}$$
+(2) $n$ 个相异物件取 $r(1\leq r \leq n)$ 个的不同组合总数为
+$$C_{n}^{r}=\frac{A_{n}^{r}}{r!}=\frac{n!}{r!(n-r)!}$$
+(3) 组合系数 $C_{n}^{r}$ 又常称为二项式系数，因为它出现在二项式展开的公式中：
+$$(a&#43;b)^n=\sum_{i=0}^{n}C_{n}^{i}a^{i}b^{n-i}$$
+(4) $n$ 个相异物分成 $k$ 堆，各堆物件数分别为 $r_1,\cdots,r_k$，分法种数为：
+$$\frac{n!}{r_1! \cdots r_k!}$$
+二、事件的运算、条件概率与独立性
+1、事件的蕴含、包含以及相等：在同一试验下的两个事件 $A$ 和 $B$，如果： (1) 当 $A$ 发生时 $B$ 必发生，则称 $A$ 蕴含 $B$，或者 $B$ 包含 A，记为 $A \subset B$ (2) 若 $A$、$B$ 相互蕴含，即 $A \subset B$ 且 $B \subset A$，则称 $A$、$B$ 两事件相等，记为 $A=B$" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://utopizza.github.io/posts/math/2019-01-09-%E6%A6%82%E7%8E%87-%E4%BA%8B%E4%BB%B6%E4%B8%8E%E6%A6%82%E7%8E%87/" />
+<meta property="article:published_time" content="2019-01-09T00:00:00+00:00" />
+<meta property="article:modified_time" content="2019-01-09T00:00:00+00:00" />
+
+
+    
+      <base href="https://utopizza.github.io/posts/math/2019-01-09-%E6%A6%82%E7%8E%87-%E4%BA%8B%E4%BB%B6%E4%B8%8E%E6%A6%82%E7%8E%87/">
+    
+    <title>
+  事件与概率 · Utopizza
+</title>
+
+    
+      <link rel="canonical" href="https://utopizza.github.io/posts/math/2019-01-09-%E6%A6%82%E7%8E%87-%E4%BA%8B%E4%BB%B6%E4%B8%8E%E6%A6%82%E7%8E%87/">
+    
+
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700%7CMerriweather:300,700%7CSource+Code+Pro:400,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.13.0/css/all.css" integrity="sha384-Bfad6CLCknfcloXFOyFnlgtENryhrpZCe29RTifKEixXQZ38WheV+i/6YWSzkz3V" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" integrity="sha256-l85OmPOjvil/SOvVt3HnSSjzF1TUMyT9eV0c2BzEGzU=" crossorigin="anonymous" />
+
+    
+      
+      
+      <link rel="stylesheet" href="https://utopizza.github.io/css/coder.min.a4f332213a21ce8eb521670c614470c58923aaaf385e2a73982c31dd7642decb.css" integrity="sha256-pPMyITohzo61IWcMYURwxYkjqq84XipzmCwx3XZC3ss=" crossorigin="anonymous" media="screen" />
+    
+
+    
+
+    
+      
+        
+        
+        <link rel="stylesheet" href="https://utopizza.github.io/css/coder-dark.min.e78e80fc3a585a4d1c8fc7f58623b6ff852411e38431a9cd1792877ecaa160f6.css" integrity="sha256-546A/DpYWk0cj8f1hiO2/4UkEeOEManNF5KHfsqhYPY=" crossorigin="anonymous" media="screen" />
+      
+    
+
+    
+
+    
+
+    <link rel="icon" type="image/png" href="https://utopizza.github.io/images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="https://utopizza.github.io/images/favicon-16x16.png" sizes="16x16">
+
+    <meta name="generator" content="Hugo 0.69.2" />
+  </head>
+
+  
+  
+    
+  
+  <body class="colorscheme-auto">
+    <main class="wrapper">
+      <nav class="navigation">
+  <section class="container">
+    <a class="navigation-title" href="https://utopizza.github.io/">
+      Utopizza
+    </a>
+    
+    <input type="checkbox" id="menu-toggle" />
+    <label class="menu-button float-right" for="menu-toggle"><i class="fas fa-bars"></i></label>
+    <ul class="navigation-list">
+      
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/about/">About</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/posts/">Blog</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/projects/">Projects</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/contact/">Contact me</a>
+          </li>
+        
+      
+      
+    </ul>
+    
+  </section>
+</nav>
+
+
+      <div class="content">
+        
+  <section class="container post">
+    <article>
+      <header>
+        <div class="post-title">
+          <h1 class="title">事件与概率</h1>
+        </div>
+        <div class="post-meta">
+          <div class="date">
+            <span class="posted-on">
+              <i class="fas fa-calendar"></i>
+              <time datetime='2019-01-09T00:00:00Z'>
+                January 9, 2019
+              </time>
+            </span>
+            <span class="reading-time">
+              <i class="fas fa-clock"></i>
+              2-minute read
+            </span>
+          </div>
+          <div class="categories">
+  <i class="fas fa-folder"></i>
+    <a href="https://utopizza.github.io/categories/math/">Math</a></div>
+
+          
+        </div>
+      </header>
+
+      <div>
+        
+        <p>一、概率</p>
+<p>1、概率的公理化定义（柯氏理论体系）：事件有概率，其大小随事件而异。也即，概率是事件的函数：事件 $A$ 的概率记为 $P(A)$。</p>
+<p>2、古典概率：设一个试验有 $N$ 个等可能的结果，而事件 $E$ 恰包含其中的 $M$ 个结果，则事件 $E$ 的概率，记为 $P(E)$，定义为</p>
+<p>$$P(E)=\frac{M}{N}$$</p>
+<p>3、古典概率计算归结为计算两个数 $M$ 和 $N$。这种计算大多涉及排列组合。排列组合公式：
+(1) $n$ 个相异物件取 $r(1\leq r \leq n)$ 个的不同排列总数为</p>
+<p>$$A_{n}^{r}=n(n-1)(n-2) \cdots (n-r+1)=\frac{n!}{(n-r)!}$$</p>
+<p>(2) $n$ 个相异物件取 $r(1\leq r \leq n)$ 个的不同组合总数为</p>
+<p>$$C_{n}^{r}=\frac{A_{n}^{r}}{r!}=\frac{n!}{r!(n-r)!}$$</p>
+<p>(3) 组合系数 $C_{n}^{r}$ 又常称为二项式系数，因为它出现在二项式展开的公式中：</p>
+<p>$$(a+b)^n=\sum_{i=0}^{n}C_{n}^{i}a^{i}b^{n-i}$$</p>
+<p>(4) $n$ 个相异物分成 $k$ 堆，各堆物件数分别为 $r_1,\cdots,r_k$，分法种数为：</p>
+<p>$$\frac{n!}{r_1! \cdots r_k!}$$</p>
+<p>二、事件的运算、条件概率与独立性</p>
+<p>1、事件的蕴含、包含以及相等：在同一试验下的两个事件 $A$ 和 $B$，如果：
+(1) 当 $A$ 发生时 $B$ 必发生，则称 $A$ 蕴含 $B$，或者 $B$ 包含 A，记为 $A \subset B$
+(2) 若 $A$、$B$ 相互蕴含，即 $A \subset B$ 且 $B \subset A$，则称 $A$、$B$ 两事件相等，记为 $A=B$</p>
+<p>2、事件的互斥和对立
+(1) 若两事件 $A$、$B$ 不能在同一次试验中都发生（但可以都不发生），则称它们是互斥的
+(2) 若 $A$、$B$ 互斥，并且当其中一个不发生时，另一个必定发生，那么称它们是对立的。记 $A$ 的对立事件为 $\bar A$</p>
+<p>3、事件的和：设有两个事件 $A$、$B$，定义一个新事件 $C$ 为 $C$={ $A$ 发生或 $B$ 发生}={ $A$、$B$ 至少发生一个}，则称事件 $C$ 为 事件 $A$、$B$ 的和，记为 $C=A+B$</p>
+<p>4、事件的积：设有两个事件 $A$、$B$，定义一个新事件 $C$ 为 $C$={ $A$、$B$ 都发生}，则称事件 $C$ 为 事件 $A$、$B$ 的积，记为 $C=AB$</p>
+<p>5、事件的差：设有两个事件 $A$、$B$，定义一个新事件 $C$ 为 $C$={ $A$ 发生、$B$ 不发生}，则称事件 $C$ 为 事件 $A$、$B$ 的差，记为 $C=A-B$</p>
+<p>6、条件概率：设有两个事件 $A$、$B$，其中 $P(B) \neq 0$。则 “在给定 $B$ 发生的条件下 $A$ 的条件概率”，记为 $P(A \mid B)$，定义为 $P(A \mid B)=\frac{P(AB)}{P(B)}$</p>
+<p>7、事件的独立性：设有两个事件 $A$、$B$，若 $P(A)=P(A \mid B)$，则说明 $B$ 的发生与否对 $A$ 发生的可能性毫无影响。这时在概率上称 $A$、$B$ 独立。此时根据条件概率公式可推得 $P(AB)=P(A)P(B)$</p>
+<p>三、概率定理</p>
+<p>1、$0 \leq P(A) \leq 1$。其中当 $$ 等于 $0$ 时 $A$ 是不可能事件，等于 $1$ 时是必然事件</p>
+<p>2、加法定理：若干个互斥事件之和的概率，等于各事件的概率之和：</p>
+<p>$$P(A_1+A_2+\cdots)=P(A_1)+P(A_2)+\cdots$$</p>
+<p>3、乘法定理：若干个独立事件之积的概率，等于各事件概率的乘积：</p>
+<p>$$P(A_1 \cdots A_n)=P(A_1) \cdots P(A_n)$$</p>
+<p>四、全概率公式与贝叶斯公式</p>
+<p>1、全概率公式：设 $B_1,B_2,\cdots$ 为有限或无限个事件，它们两两互斥且在每次试验中至少发生一个。即</p>
+<p>$$B_{i}B_{j} (i \neq j) = \emptyset \text{(不可能事件)}$$</p>
+<p>$$B_1+B_2+\cdots=\Omega \text{(必然事件)}$$</p>
+<p>有时，把具有这些性质的一组事件称为一个“完备事件群”。现考虑任一事件 $A$，因为 $\Omega$ 为必然事件，有 $A=A\Omega=AB_1+AB_2+\cdots$。因 $B_1$、$B_2$、$\cdots$ 两两互斥，所以 $AB_1$、$AB_2$、$\cdots$ 也两两互斥。故依加法定理有</p>
+<p>$$P(A)=P(AB_1)+P(AB_2)+\cdots$$</p>
+<p>再由条件概率的定义，有 $P(AB_i)=P(A \mid B_i)P(B_i)$，代入上式得</p>
+<p>$$\begin{align}
+P(A) &amp;=P(A \mid B_1)P(B_1)+P(A \mid B_2)P(B_2)+\cdots \<br>
+&amp;=\sum_{i} P(A \mid B_i)P(B_i)
+\end{align}$$</p>
+<p>可理解为事件 $A$ 的概率是从各个 $B_i$ 中 “收集” 回来的。也可以理解为 $B_i$ 是导致 $A$ 发生的一种可能 “途径”，或者 称为“原因”。</p>
+<p>2、贝叶斯公式：在全概率公式的基础上，可以推导出：</p>
+<p>$$P(B_i \mid A)=\frac{P(AB_i)}{P(A)}=\frac{P(A\mid B_i)P(B_i)}{\sum_{j} P(B_j)P(A\mid B_j)}$$</p>
+<p>其实就是对分子使用条件概率公式，对分母使用全概率公式。但是它所包含的哲理意义却不普通，引用陈希儒教授的《概率论与数理统计》一书中的解释：</p>
+<blockquote>
+<p>如果我们把事件 $A$ 看做“结果”，把诸事件 $B_1$、$B_2$、$\cdots$  看做导致这个结果的“原因”，则可以形象地把全概率公式看作“由原因推导结果”；而贝叶斯公式则恰好相反，其作用在于“由结果推原因”：现在有一个“结果” $A$ 已经发生了，在众多可能的“原因”中，到底是哪一个导致了这个“结果”？</p>
+</blockquote>
+
+      </div>
+
+
+      <footer>
+        
+
+
+        
+        
+        
+      </footer>
+    </article>
+
+    
+  </section>
+
+      </div>
+
+      <script type="text/javascript"
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+    </main>
+
+    
+
+    
+
+    <script>
+(function(f, a, t, h, o, m){
+	a[h]=a[h]||function(){
+		(a[h].q=a[h].q||[]).push(arguments)
+	};
+	o=f.createElement('script'),
+	m=f.getElementsByTagName('script')[0];
+	o.async=1; o.src=t; o.id='fathom-script';
+	m.parentNode.insertBefore(o,m)
+})(document, window, '//analytics.example.com/tracker.js', 'fathom');
+fathom('set', 'siteId', 'ABCDE');
+fathom('trackPageview');
+</script>
+
+
+  </body>
+
+</html>

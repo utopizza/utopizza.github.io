@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Language" content="en">
+
+    <meta name="author" content="Yusheng Wang">
+    <meta name="description" content="一、简介
+参赛作品是“基于物联网的车辆事故智能报警系统”，它对车辆运行情况进行实时监控。一旦发生车辆事故导致安全气囊打开时，系统便会检测到这一状态，并立即获取事故的定位信息、人员信息并进行自动报警。当交警服务中心接收到报警电话和相关信息后，就会立即通知离事故发生地最近的医院前往救援。
+系统工作流程：
+1、 当车载客户端监测到安全气囊打开后，它先从 OBD 系统中读取出车辆故障码等车辆信息，记录到单片机内存中，然后启动蓝牙模块，把车辆信息发送到手机客户端；
+2、当手机客户端收到车辆故障码后， (1)、启动第一重自动报警：从手机内存卡读出驾车人员信息，启动 GPS 对车辆进行定位读出车辆经纬度，然后把车辆信息、人员信息、定位信息一并通过 GPRS 发送到交警信息中心服务器； (2)、启动第二重自动报警：调用手机的拨号功能，自动拨打 110 报警电话； (3)、当手机报警功能被触发后， 手机开始倒计时 15 秒。用户可以在 15 秒内点击取消按钮中断报警， 否则在计时结束后执行报警任务。
+3、当交警信息中心服务器收到手机发送过来的报警信息后，会马上把报警信息显示在屏幕上，并响起警铃，通知交警人员，前往事故现在进行处理。
+二、实现
+我负责开发的部分是 Server 端的“交警信息中心”网站，和 Client 端的“EmergencyCall”安卓 App。
+1、Server 端
+基于 .NET 的 WebService 框架，采用 Model -&gt; DAL -&gt; BLL 三层架构。Server 端的主要功能是：提供 WebService 方法给安卓 客户端调用，接收其发送过来的数据，经过处理后插入数据库，最后显示到网页上。
+Server 端主要的两个文件是：网站主页 TICSystemDefault.aspx 和 WebService 接口 TICSystemWebService.asmx。网站主页每3秒自动刷新一次，把所有数据即时地显示到网页上。WebService 接口负责和安卓端数据交互。其他文件分别实现解析Json字符串并转化成Model、操作数据库、绑定数据到网页等等。
+其中提供给安卓端调用的 WebService 方法：
+// webservice方法 [WebMethod] public int AddAccidentInfo(string JasonAccidentInfo) { AccidentInfoModel AccidentInfo = ModelJsonChange&lt;AccidentInfoModel&gt;.">
+    <meta name="keywords" content="blog,developer,personal">
+
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="全国高校物联网应用创新大赛"/>
+<meta name="twitter:description" content="一、简介
+参赛作品是“基于物联网的车辆事故智能报警系统”，它对车辆运行情况进行实时监控。一旦发生车辆事故导致安全气囊打开时，系统便会检测到这一状态，并立即获取事故的定位信息、人员信息并进行自动报警。当交警服务中心接收到报警电话和相关信息后，就会立即通知离事故发生地最近的医院前往救援。
+系统工作流程：
+1、 当车载客户端监测到安全气囊打开后，它先从 OBD 系统中读取出车辆故障码等车辆信息，记录到单片机内存中，然后启动蓝牙模块，把车辆信息发送到手机客户端；
+2、当手机客户端收到车辆故障码后， (1)、启动第一重自动报警：从手机内存卡读出驾车人员信息，启动 GPS 对车辆进行定位读出车辆经纬度，然后把车辆信息、人员信息、定位信息一并通过 GPRS 发送到交警信息中心服务器； (2)、启动第二重自动报警：调用手机的拨号功能，自动拨打 110 报警电话； (3)、当手机报警功能被触发后， 手机开始倒计时 15 秒。用户可以在 15 秒内点击取消按钮中断报警， 否则在计时结束后执行报警任务。
+3、当交警信息中心服务器收到手机发送过来的报警信息后，会马上把报警信息显示在屏幕上，并响起警铃，通知交警人员，前往事故现在进行处理。
+二、实现
+我负责开发的部分是 Server 端的“交警信息中心”网站，和 Client 端的“EmergencyCall”安卓 App。
+1、Server 端
+基于 .NET 的 WebService 框架，采用 Model -&gt; DAL -&gt; BLL 三层架构。Server 端的主要功能是：提供 WebService 方法给安卓 客户端调用，接收其发送过来的数据，经过处理后插入数据库，最后显示到网页上。
+Server 端主要的两个文件是：网站主页 TICSystemDefault.aspx 和 WebService 接口 TICSystemWebService.asmx。网站主页每3秒自动刷新一次，把所有数据即时地显示到网页上。WebService 接口负责和安卓端数据交互。其他文件分别实现解析Json字符串并转化成Model、操作数据库、绑定数据到网页等等。
+其中提供给安卓端调用的 WebService 方法：
+// webservice方法 [WebMethod] public int AddAccidentInfo(string JasonAccidentInfo) { AccidentInfoModel AccidentInfo = ModelJsonChange&lt;AccidentInfoModel&gt;."/>
+
+    <meta property="og:title" content="全国高校物联网应用创新大赛" />
+<meta property="og:description" content="一、简介
+参赛作品是“基于物联网的车辆事故智能报警系统”，它对车辆运行情况进行实时监控。一旦发生车辆事故导致安全气囊打开时，系统便会检测到这一状态，并立即获取事故的定位信息、人员信息并进行自动报警。当交警服务中心接收到报警电话和相关信息后，就会立即通知离事故发生地最近的医院前往救援。
+系统工作流程：
+1、 当车载客户端监测到安全气囊打开后，它先从 OBD 系统中读取出车辆故障码等车辆信息，记录到单片机内存中，然后启动蓝牙模块，把车辆信息发送到手机客户端；
+2、当手机客户端收到车辆故障码后， (1)、启动第一重自动报警：从手机内存卡读出驾车人员信息，启动 GPS 对车辆进行定位读出车辆经纬度，然后把车辆信息、人员信息、定位信息一并通过 GPRS 发送到交警信息中心服务器； (2)、启动第二重自动报警：调用手机的拨号功能，自动拨打 110 报警电话； (3)、当手机报警功能被触发后， 手机开始倒计时 15 秒。用户可以在 15 秒内点击取消按钮中断报警， 否则在计时结束后执行报警任务。
+3、当交警信息中心服务器收到手机发送过来的报警信息后，会马上把报警信息显示在屏幕上，并响起警铃，通知交警人员，前往事故现在进行处理。
+二、实现
+我负责开发的部分是 Server 端的“交警信息中心”网站，和 Client 端的“EmergencyCall”安卓 App。
+1、Server 端
+基于 .NET 的 WebService 框架，采用 Model -&gt; DAL -&gt; BLL 三层架构。Server 端的主要功能是：提供 WebService 方法给安卓 客户端调用，接收其发送过来的数据，经过处理后插入数据库，最后显示到网页上。
+Server 端主要的两个文件是：网站主页 TICSystemDefault.aspx 和 WebService 接口 TICSystemWebService.asmx。网站主页每3秒自动刷新一次，把所有数据即时地显示到网页上。WebService 接口负责和安卓端数据交互。其他文件分别实现解析Json字符串并转化成Model、操作数据库、绑定数据到网页等等。
+其中提供给安卓端调用的 WebService 方法：
+// webservice方法 [WebMethod] public int AddAccidentInfo(string JasonAccidentInfo) { AccidentInfoModel AccidentInfo = ModelJsonChange&lt;AccidentInfoModel&gt;." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://utopizza.github.io/posts/projects/2015-01-20-%E9%A1%B9%E7%9B%AE-%E5%85%A8%E5%9B%BD%E9%AB%98%E6%A0%A1%E7%89%A9%E8%81%94%E7%BD%91%E5%BA%94%E7%94%A8%E5%88%9B%E6%96%B0%E5%A4%A7%E8%B5%9B/" />
+<meta property="article:published_time" content="2015-01-20T22:14:40+00:00" />
+<meta property="article:modified_time" content="2015-01-20T22:14:40+00:00" />
+
+
+    
+      <base href="https://utopizza.github.io/posts/projects/2015-01-20-%E9%A1%B9%E7%9B%AE-%E5%85%A8%E5%9B%BD%E9%AB%98%E6%A0%A1%E7%89%A9%E8%81%94%E7%BD%91%E5%BA%94%E7%94%A8%E5%88%9B%E6%96%B0%E5%A4%A7%E8%B5%9B/">
+    
+    <title>
+  全国高校物联网应用创新大赛 · Utopizza
+</title>
+
+    
+      <link rel="canonical" href="https://utopizza.github.io/posts/projects/2015-01-20-%E9%A1%B9%E7%9B%AE-%E5%85%A8%E5%9B%BD%E9%AB%98%E6%A0%A1%E7%89%A9%E8%81%94%E7%BD%91%E5%BA%94%E7%94%A8%E5%88%9B%E6%96%B0%E5%A4%A7%E8%B5%9B/">
+    
+
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700%7CMerriweather:300,700%7CSource+Code+Pro:400,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.13.0/css/all.css" integrity="sha384-Bfad6CLCknfcloXFOyFnlgtENryhrpZCe29RTifKEixXQZ38WheV+i/6YWSzkz3V" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" integrity="sha256-l85OmPOjvil/SOvVt3HnSSjzF1TUMyT9eV0c2BzEGzU=" crossorigin="anonymous" />
+
+    
+      
+      
+      <link rel="stylesheet" href="https://utopizza.github.io/css/coder.min.a4f332213a21ce8eb521670c614470c58923aaaf385e2a73982c31dd7642decb.css" integrity="sha256-pPMyITohzo61IWcMYURwxYkjqq84XipzmCwx3XZC3ss=" crossorigin="anonymous" media="screen" />
+    
+
+    
+
+    
+      
+        
+        
+        <link rel="stylesheet" href="https://utopizza.github.io/css/coder-dark.min.e78e80fc3a585a4d1c8fc7f58623b6ff852411e38431a9cd1792877ecaa160f6.css" integrity="sha256-546A/DpYWk0cj8f1hiO2/4UkEeOEManNF5KHfsqhYPY=" crossorigin="anonymous" media="screen" />
+      
+    
+
+    
+
+    
+
+    <link rel="icon" type="image/png" href="https://utopizza.github.io/images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="https://utopizza.github.io/images/favicon-16x16.png" sizes="16x16">
+
+    <meta name="generator" content="Hugo 0.69.2" />
+  </head>
+
+  
+  
+    
+  
+  <body class="colorscheme-auto">
+    <main class="wrapper">
+      <nav class="navigation">
+  <section class="container">
+    <a class="navigation-title" href="https://utopizza.github.io/">
+      Utopizza
+    </a>
+    
+    <input type="checkbox" id="menu-toggle" />
+    <label class="menu-button float-right" for="menu-toggle"><i class="fas fa-bars"></i></label>
+    <ul class="navigation-list">
+      
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/about/">About</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/posts/">Blog</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/projects/">Projects</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/contact/">Contact me</a>
+          </li>
+        
+      
+      
+    </ul>
+    
+  </section>
+</nav>
+
+
+      <div class="content">
+        
+  <section class="container post">
+    <article>
+      <header>
+        <div class="post-title">
+          <h1 class="title">全国高校物联网应用创新大赛</h1>
+        </div>
+        <div class="post-meta">
+          <div class="date">
+            <span class="posted-on">
+              <i class="fas fa-calendar"></i>
+              <time datetime='2015-01-20T22:14:40Z'>
+                January 20, 2015
+              </time>
+            </span>
+            <span class="reading-time">
+              <i class="fas fa-clock"></i>
+              4-minute read
+            </span>
+          </div>
+          <div class="categories">
+  <i class="fas fa-folder"></i>
+    <a href="https://utopizza.github.io/categories/projects/">Projects</a></div>
+
+          
+        </div>
+      </header>
+
+      <div>
+        
+        <p>一、简介</p>
+<p>参赛作品是“基于物联网的车辆事故智能报警系统”，它对车辆运行情况进行实时监控。一旦发生车辆事故导致安全气囊打开时，系统便会检测到这一状态，并立即获取事故的定位信息、人员信息并进行自动报警。当交警服务中心接收到报警电话和相关信息后，就会立即通知离事故发生地最近的医院前往救援。</p>
+<p><img src="https://utopizza.github.io/2015-01-20-%E9%A1%B9%E7%9B%AE-%E5%85%A8%E5%9B%BD%E9%AB%98%E6%A0%A1%E7%89%A9%E8%81%94%E7%BD%91%E5%BA%94%E7%94%A8%E5%88%9B%E6%96%B0%E5%A4%A7%E8%B5%9B/%E7%B3%BB%E7%BB%9F%E6%B5%81%E7%A8%8B%E5%9B%BE.png" alt=""></p>
+<p><img src="https://utopizza.github.io/2015-01-20-%E9%A1%B9%E7%9B%AE-%E5%85%A8%E5%9B%BD%E9%AB%98%E6%A0%A1%E7%89%A9%E8%81%94%E7%BD%91%E5%BA%94%E7%94%A8%E5%88%9B%E6%96%B0%E5%A4%A7%E8%B5%9B/%E7%B3%BB%E7%BB%9F%E6%B5%81%E7%A8%8B%E5%9B%BE2.png" alt=""></p>
+<p>系统工作流程：</p>
+<p>1、 当车载客户端监测到安全气囊打开后，它先从 OBD 系统中读取出车辆故障码等车辆信息，记录到单片机内存中，然后启动蓝牙模块，把车辆信息发送到手机客户端；</p>
+<p>2、当手机客户端收到车辆故障码后，
+(1)、启动第一重自动报警：从手机内存卡读出驾车人员信息，启动 GPS 对车辆进行定位读出车辆经纬度，然后把车辆信息、人员信息、定位信息一并通过 GPRS 发送到交警信息中心服务器；
+(2)、启动第二重自动报警：调用手机的拨号功能，自动拨打 110 报警电话；
+(3)、当手机报警功能被触发后， 手机开始倒计时 15 秒。用户可以在 15 秒内点击取消按钮中断报警， 否则在计时结束后执行报警任务。</p>
+<p>3、当交警信息中心服务器收到手机发送过来的报警信息后，会马上把报警信息显示在屏幕上，并响起警铃，通知交警人员，前往事故现在进行处理。</p>
+<p>二、实现</p>
+<p>我负责开发的部分是 Server 端的“交警信息中心”网站，和 Client 端的“EmergencyCall”安卓 App。</p>
+<p>1、Server 端</p>
+<p>基于 .NET 的 WebService 框架，采用 Model -&gt; DAL -&gt; BLL 三层架构。Server 端的主要功能是：提供 WebService 方法给安卓 客户端调用，接收其发送过来的数据，经过处理后插入数据库，最后显示到网页上。</p>
+<p>Server 端主要的两个文件是：网站主页 TICSystemDefault.aspx 和 WebService 接口 TICSystemWebService.asmx。网站主页每3秒自动刷新一次，把所有数据即时地显示到网页上。WebService 接口负责和安卓端数据交互。其他文件分别实现解析Json字符串并转化成Model、操作数据库、绑定数据到网页等等。</p>
+<p><img src="https://utopizza.github.io/2015-01-20-%E9%A1%B9%E7%9B%AE-%E5%85%A8%E5%9B%BD%E9%AB%98%E6%A0%A1%E7%89%A9%E8%81%94%E7%BD%91%E5%BA%94%E7%94%A8%E5%88%9B%E6%96%B0%E5%A4%A7%E8%B5%9B/Server%E7%AB%AF.png" alt=""></p>
+<p>其中提供给安卓端调用的 WebService 方法：</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">// webservice方法
+[WebMethod]
+public int AddAccidentInfo(string JasonAccidentInfo)
+{
+    AccidentInfoModel AccidentInfo = ModelJsonChange&lt;AccidentInfoModel&gt;.JsonToModel(JasonAccidentInfo);
+    return accidentDal.AddAccidentInfo(AccidentInfo);
+}
+
+//Helper类，实现Json和Model的互转
+public class ModelJsonChange&lt;T&gt;
+{
+    //Model转换为Json
+    public static string ModelToJson(T model)
+    {
+        JavaScriptSerializer js = new JavaScriptSerializer();
+        return js.Serialize(model);
+    }
+
+    //Json转换为Model
+    public static T JsonToModel(string json)
+    {
+        JavaScriptSerializer js = new JavaScriptSerializer();
+        return js.Deserialize&lt;T&gt;(json);
+    }
+}
+</code></pre></div><p>2、Client 端</p>
+<p>Client 端的安卓 App 名为“EmergencyCall”。</p>
+<p><img src="https://utopizza.github.io/2015-01-20-%E9%A1%B9%E7%9B%AE-%E5%85%A8%E5%9B%BD%E9%AB%98%E6%A0%A1%E7%89%A9%E8%81%94%E7%BD%91%E5%BA%94%E7%94%A8%E5%88%9B%E6%96%B0%E5%A4%A7%E8%B5%9B/MainActivity.png" alt=""></p>
+<p>其中分为五大功能模块：</p>
+<p>(1). SaveActivity：保存、修改用户的个人信息。我使用了SharedPreferences来保存这些数据。SharedPreferences是Android平台上一个轻量级的存储类，用来保存应用的一些常用配置。</p>
+<p><img src="https://utopizza.github.io/2015-01-20-%E9%A1%B9%E7%9B%AE-%E5%85%A8%E5%9B%BD%E9%AB%98%E6%A0%A1%E7%89%A9%E8%81%94%E7%BD%91%E5%BA%94%E7%94%A8%E5%88%9B%E6%96%B0%E5%A4%A7%E8%B5%9B/SaveActivity.png" alt=""></p>
+<p>关键代码（为节省篇幅，以下均省略 OnCreate、setContentView、addActivity、findViewById 等基本的常用代码，只显示实现某功能的关键代码）：</p>
+<p>{% codeblock lang:java %}
+// 声明
+private EditText EditText_userName;// 姓名
+private EditText EditText_userPhone;// 电话
+private EditText EditText_userCar;// 车牌
+private SharedPreferences sharedPrefrences;
+private Editor editor;
+private static final String FILENAME = &ldquo;filename&rdquo;;// 要存储的文件名</p>
+<p>// 进入页面时，将已经保存在文件中的内容取出，显示到三个文本框中
+sharedPrefrences = this.getSharedPreferences(FILENAME, MODE_PRIVATE);
+EditText_userName.setText(sharedPrefrences.getString(&ldquo;userName&rdquo;, &ldquo;&quot;));
+EditText_userPhone.setText(sharedPrefrences.getString(&ldquo;userPhone&rdquo;, &ldquo;&quot;));
+EditText_userCar.setText(sharedPrefrences.getString(&ldquo;userCar&rdquo;, &ldquo;&quot;));</p>
+<p>// 保存按钮
+savebutton.setOnClickListener(new View.OnClickListener() {
+@Override
+public void onClick(View v) {
+editor = getSharedPreferences(FILENAME, MODE_PRIVATE).edit();
+editor.putString(&ldquo;userName&rdquo;, EditText_userName.getText().toString());
+editor.putString(&ldquo;userPhone&rdquo;, EditText_userPhone.getText().toString());
+editor.putString(&ldquo;userCar&rdquo;, EditText_userCar.getText().toString());
+editor.commit();
+Intent intent = new Intent();
+intent.setClass(SaveActivity.this, MainActivity.class);
+startActivity(intent);
+}
+});
+{% endcodeblock %}</p>
+<p>(2). BlueToothActivity：蓝牙连接，使手机通过蓝牙与车上的硬件模块通讯。</p>
+<p><img src="https://utopizza.github.io/2015-01-20-%E9%A1%B9%E7%9B%AE-%E5%85%A8%E5%9B%BD%E9%AB%98%E6%A0%A1%E7%89%A9%E8%81%94%E7%BD%91%E5%BA%94%E7%94%A8%E5%88%9B%E6%96%B0%E5%A4%A7%E8%B5%9B/BlueToothActivity.png" alt=""></p>
+<p>关键代码：</p>
+<p>{% codeblock lang:java %}
+// 通过蓝牙连接硬件
+BluetoothAdapter btAdapt = BluetoothAdapter.getDefaultAdapter();
+BluetoothDevice btDev = btAdapt.getRemoteDevice(address);// &ldquo;00:11:00:18:05:45&rdquo;
+Method m = btDev.getClass().getMethod(&ldquo;createRfcommSocket&rdquo;, new Class[] { int.class });
+BluetoothSocket btSocket = (BluetoothSocket) m.invoke(btDev, Integer.valueOf(1));
+try {
+btSocket.connect();
+Log.e(TAG, &quot; BT connection established, data transfer link open.&quot;);
+Toast.makeText(testBlueTooth.this, &ldquo;连接成功&rdquo;, Toast.LENGTH_SHORT).show();</p>
+<pre><code>// 进入护航界面
+Intent intent = new Intent();
+intent.setClass(testBlueTooth.this, DisplayActivity.class);
+startActivity(intent);
+</code></pre>
+<p>} catch (IOException e) {
+Log.e(TAG, &quot; Connection failed.&quot;, e);
+setTitle(&ldquo;连接失败..&quot;);
+}
+{% endcodeblock %}</p>
+<p>(3). DisplayActivity：连接成功后，手机将一直监控车载硬件模块的状态，接收硬件模块发送过来的状态码。</p>
+<p><img src="https://utopizza.github.io/2015-01-20-%E9%A1%B9%E7%9B%AE-%E5%85%A8%E5%9B%BD%E9%AB%98%E6%A0%A1%E7%89%A9%E8%81%94%E7%BD%91%E5%BA%94%E7%94%A8%E5%88%9B%E6%96%B0%E5%A4%A7%E8%B5%9B/DisplayActivity.png" alt=""></p>
+<p>关键代码：</p>
+<p>{% codeblock lang:java %}
+// 监听车载硬件模块发送过来的消息
+ConnectedThread manageThread = new ConnectedThread();
+Handler mHandler = new MyHandler();
+manageThread.Start();
+public ConnectedThread() {
+isRecording = false;
+this.wait = 50;
+thread = new Thread(new ReadRunnable());
+}
+private class ReadRunnable implements Runnable {
+public void run() {
+while (isRecording) {</p>
+<pre><code>        //从蓝牙端口获取接收到的消息
+        try {
+            inStream = testBlueTooth.btSocket.getInputStream();
+        } catch (IOException e) {}
+
+        // 处理获取的消息，设置长度为20
+        int length = 20;
+        byte[] temp = new byte[length];
+        if (inStream != null) {
+            try {
+                int len = inStream.read(temp, 0, length - 1);
+                Log.e(&quot;available&quot;, String.valueOf(len));
+                if (len &gt; 0) {
+                    byte[] btBuf = new byte[len];
+                    System.arraycopy(temp, 0, btBuf, 0, btBuf.length);
+                    String readStr1 = new String(btBuf, encodeType);
+                    // 如果收到非空数据，说明事故发生，发送“01”给mHandler
+                    mHandler.obtainMessage(01, len, -1, readStr1).sendToTarget();
+                }
+                Thread.sleep(wait);
+            } catch (Exception e) {
+                // 否则发送“00”，表示没有事故发生(这样好像逻辑有点问题)
+                mHandler.sendEmptyMessage(00);
+            }
+        }
+
+    }
+}
+</code></pre>
+<p>}</p>
+<p>// 接收到状态码后的后续处理
+private class MyHandler extends Handler {
+@Override
+public void dispatchMessage(Message msg) {
+String info = (String) msg.obj;
+if (StopFlag) {
+if (info.equals(&ldquo;01&rdquo;)) {</p>
+<pre><code>            StopFlag=false;
+			
+            // 报警
+            Intent intent = new Intent();
+            intent.setClass(DisplayActivity.this, PostActivity.class);
+            startActivity(intent);
+            // finish();
+        }
+    }
+}
+</code></pre>
+<p>}
+{% endcodeblock %}</p>
+<p>(4). PostActivity：进入事故报警流程，获取用户的个人信息、地理位置信息和当前时间，然后通过 GPRS 发送到交警信息中心网站。发送的数据格式是 Json。</p>
+<p><img src="https://utopizza.github.io/2015-01-20-%E9%A1%B9%E7%9B%AE-%E5%85%A8%E5%9B%BD%E9%AB%98%E6%A0%A1%E7%89%A9%E8%81%94%E7%BD%91%E5%BA%94%E7%94%A8%E5%88%9B%E6%96%B0%E5%A4%A7%E8%B5%9B/PostActivity.png" alt=""></p>
+<p>具体工作流程：启动线程 time_runnable 计时 -&gt; 计时结束，发送报警信息给 time_handler -&gt; time_handler 转发报警信息给 http_handler -&gt; http_handler 启动线程 http_runnable 执行 http 报警。HttpPost 用到了外部包 ksoap2 。</p>
+<p>{% codeblock lang:java %}
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.ksoap2.SoapEnvelope;
+import org.ksoap2.serialization.SoapObject;
+import org.ksoap2.serialization.SoapSerializationEnvelope;
+import org.ksoap2.transport.HttpTransportSE;</p>
+<p>// 获取当前时间
+public String GetNowDateTime() {
+SimpleDateFormat sDateFormat = new SimpleDateFormat(&ldquo;yyyy-MM-dd HH:mm:ss&rdquo;);
+String date = sDateFormat.format(new java.util.Date());
+return date;
+}</p>
+<p>// 获取地理位置
+public String GetLocation() {</p>
+<pre><code>LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+Criteria criteria = new Criteria();
+criteria.setAccuracy(Criteria.ACCURACY_COARSE);
+criteria.setAltitudeRequired(false);
+criteria.setBearingRequired(false);
+criteria.setCostAllowed(true);
+criteria.setPowerRequirement(Criteria.POWER_HIGH);
+criteria.setSpeedRequired(false);
+
+String currentProvider = locationManager.getBestProvider(criteria, true);
+Location currentLocation = locationManager.getLastKnownLocation(currentProvider);
+if (currentLocation == null) {
+    locationManager.requestLocationUpdates(currentProvider, 0, 0, locationListener);
+}
+while (true) {
+    currentLocation = locationManager.getLastKnownLocation(currentProvider);
+    if (currentLocation != null) {
+        Log.d(&quot;Location&quot;, &quot;Latitude: &quot; + currentLocation.getLatitude());
+        Log.d(&quot;Location&quot;, &quot;Longitude: &quot; + currentLocation.getLongitude());
+        break;
+    } else {
+        Log.d(&quot;Location&quot;, &quot;Latitude: &quot; + 0);
+        Log.d(&quot;Location&quot;, &quot;Longitude: &quot; + 0);
+    }
+    try {
+        Thread.sleep(1000);
+    } catch (InterruptedException e) {
+        Log.e(&quot;Location&quot;, e.getMessage());
+    }
+}
+
+String userLocation = &quot;经度&quot; + currentLocation.getLongitude() + &quot;；纬度&quot; + currentLocation.getLatitude();
+return userLocation;
+</code></pre>
+<p>}
+{% endcodeblock %}</p>
+<p>{% codeblock lang:java %}
+// time_runnable线程：计时15秒，5秒后给time_handler发送信息
+Runnable time_runnable = new Runnable() {
+@Override
+public void run() {
+try {
+Thread.sleep(15000);
+} catch (InterruptedException e) {
+e.printStackTrace();
+}
+Message message = new Message();
+time_handler.sendMessage(message);
+}
+};</p>
+<p>// http_runnable线程：发送Http报警
+Runnable http_runnable = new Runnable() {
+@Override
+public void run() {
+String AccidentTime = GetNowDateTime();
+String AccidentPlace = GetLocation();
+String PersonName = sharedPrefrences.getString(&ldquo;userName&rdquo;, &ldquo;&quot;);
+String PersonPhone = sharedPrefrences.getString(&ldquo;userPhone&rdquo;, &ldquo;&quot;);
+String CarNumber = sharedPrefrences.getString(&ldquo;userCar&rdquo;, &ldquo;&quot;);
+//发送
+HttpPost(AccidentTime, AccidentPlace, PersonName, PersonPhone, CarNumber);
+}
+};</p>
+<p>// 启动time_runnable（在OnCreate中）
+new Thread(time_runnable).start();</p>
+<p>// 计时结束，给http_handler转发报警信息
+time_handler = new Handler() {
+@Override
+public void handleMessage(Message msg) {
+if (IsPost) {</p>
+<pre><code>        IsPost = false;
+        time_runnable = null;
+		
+        // 转发报警信息给http_handler
+        Message message = new Message();
+        http_handler.sendMessage(message);
+
+        // 跳转到拨号报警页面
+        Intent intent = new Intent();
+        intent.setClass(PostActivity.this, PhoneActivity.class);
+        startActivity(intent);
+        //finish();
+    }
+}
+</code></pre>
+<p>};</p>
+<p>// 启动线程http_runnable，执行http报警
+Handler http_handler = new Handler() {
+@Override
+public void handleMessage(Message msg) {
+super.handleMessage(msg);
+new Thread(http_runnable).start();
+}
+};
+{% endcodeblock %}</p>
+<p>(5). PhoneActivity：同样倒计时15秒，计时结束后自动拨号报警。</p>
+<p><img src="https://utopizza.github.io/2015-01-20-%E9%A1%B9%E7%9B%AE-%E5%85%A8%E5%9B%BD%E9%AB%98%E6%A0%A1%E7%89%A9%E8%81%94%E7%BD%91%E5%BA%94%E7%94%A8%E5%88%9B%E6%96%B0%E5%A4%A7%E8%B5%9B/PhoneActivity.png" alt=""></p>
+<p>关键代码：</p>
+<p>{% codeblock lang:java %}
+// 启动子线程开始计时
+new Thread(time_runnable).start();</p>
+<p>// 计时结束，进行拨号报警
+time_handler = new Handler() {
+@Override
+public void handleMessage(Message msg) {
+if (IsPhone) {</p>
+<pre><code>        IsPhone = false;
+        time_runnable = null;
+		
+        // 拨打报警电话
+        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse(&quot;tel:110&quot;));
+        PhoneActivity.this.startActivity(intent);
+		
+        MyApplication.getInstance().exit();
+        //finish();
+    }
+}
+</code></pre>
+<p>};
+{% endcodeblock %}</p>
+<p>3、车载硬件模块</p>
+<p>这部分是做硬件的同学实现的，安装在车辆的OBD接口上面，不断地给车辆发送查询命令，查询安全气囊的状态码，如果发现安全气囊打开了，那么断定发生了严重事故，立刻通过蓝牙模块发送报警信息给用户的手机，以启动后续的自动报警流程。由于实验条件和时间的限制，目前只实现了简单版。</p>
+<p><img src="https://utopizza.github.io/2015-01-20-%E9%A1%B9%E7%9B%AE-%E5%85%A8%E5%9B%BD%E9%AB%98%E6%A0%A1%E7%89%A9%E8%81%94%E7%BD%91%E5%BA%94%E7%94%A8%E5%88%9B%E6%96%B0%E5%A4%A7%E8%B5%9B/%E8%BD%A6%E8%BD%BD%E7%A1%AC%E4%BB%B6%E6%A8%A1%E5%9D%97.jpg" alt=""></p>
+
+      </div>
+
+
+      <footer>
+        
+
+
+        
+        
+        
+      </footer>
+    </article>
+
+    
+  </section>
+
+      </div>
+
+      <script type="text/javascript"
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+    </main>
+
+    
+
+    
+
+    <script>
+(function(f, a, t, h, o, m){
+	a[h]=a[h]||function(){
+		(a[h].q=a[h].q||[]).push(arguments)
+	};
+	o=f.createElement('script'),
+	m=f.getElementsByTagName('script')[0];
+	o.async=1; o.src=t; o.id='fathom-script';
+	m.parentNode.insertBefore(o,m)
+})(document, window, '//analytics.example.com/tracker.js', 'fathom');
+fathom('set', 'siteId', 'ABCDE');
+fathom('trackPageview');
+</script>
+
+
+  </body>
+
+</html>

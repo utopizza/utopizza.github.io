@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Language" content="en">
+
+    <meta name="author" content="Yusheng Wang">
+    <meta name="description" content="九、安装Spark-1.6.1-bin-hadoop2.6
+1、下载：Download Apache Spark
+2、将安装包移动到到路径：/usr/local/，并解压
+[root@master ~]# cd /usr/local/ [root@master ~]# tar -xzvf spark-1.6.1-bin-hadoop2.6.tar.gz 3、配置环境变量
+[root@master ~]# vim /etc/profile export SPARK_HOME=/usr/local/spark-1.6.1-bin-hadoop2.6 export PATH=${SPARK_HOME}/bin: ${SPARK_HOME}/sbin 现在可以将所有的PATH整合到一起：
+export JAVA_HOME=&#34;/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.101.x86_64&#34; export JRE_HOME=${JAVA_HOME}/jre export CLASS_PATH=.:${JAVA_HOME}/lib: ${JRE_HOME}/lib export SCALA_HOME=/usr/lib/scala-2.10.4 export HADOOP_HOME=/usr/local/hadoop-2.7.2 export SPARK_HOME=/usr/local/spark-1.6.1-bin-hadoop2.6 export PATH=$PATH:${JAVA_HOME}/bin:${SCALA_HOME}/bin:${HADOOP_HOME}/bin:${HADOOP_HOME}/sbin:${SPARK_HOME}/bin: ${SPARK_HOME}/sbin 配置完成后
+[root@master ~]# source /etc/profile 同步到worker1和worker2
+[root@master ~]# scp /etc/profile root@worker1:/etc/profile [root@master ~]# ssh root@worker1 [root@worker1 ~]# source /etc/profile [root@worker1 ~]# exit [root@master ~]# scp /etc/profile root@worker2:/etc/profile [root@master ~]# ssh root@worker1 [root@worker2 ~]# source /etc/profile [root@worker2 ~]# exit 4、配置Spark文件">
+    <meta name="keywords" content="blog,developer,personal">
+
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Spark完全分布式搭建与使用(3)"/>
+<meta name="twitter:description" content="九、安装Spark-1.6.1-bin-hadoop2.6
+1、下载：Download Apache Spark
+2、将安装包移动到到路径：/usr/local/，并解压
+[root@master ~]# cd /usr/local/ [root@master ~]# tar -xzvf spark-1.6.1-bin-hadoop2.6.tar.gz 3、配置环境变量
+[root@master ~]# vim /etc/profile export SPARK_HOME=/usr/local/spark-1.6.1-bin-hadoop2.6 export PATH=${SPARK_HOME}/bin: ${SPARK_HOME}/sbin 现在可以将所有的PATH整合到一起：
+export JAVA_HOME=&#34;/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.101.x86_64&#34; export JRE_HOME=${JAVA_HOME}/jre export CLASS_PATH=.:${JAVA_HOME}/lib: ${JRE_HOME}/lib export SCALA_HOME=/usr/lib/scala-2.10.4 export HADOOP_HOME=/usr/local/hadoop-2.7.2 export SPARK_HOME=/usr/local/spark-1.6.1-bin-hadoop2.6 export PATH=$PATH:${JAVA_HOME}/bin:${SCALA_HOME}/bin:${HADOOP_HOME}/bin:${HADOOP_HOME}/sbin:${SPARK_HOME}/bin: ${SPARK_HOME}/sbin 配置完成后
+[root@master ~]# source /etc/profile 同步到worker1和worker2
+[root@master ~]# scp /etc/profile root@worker1:/etc/profile [root@master ~]# ssh root@worker1 [root@worker1 ~]# source /etc/profile [root@worker1 ~]# exit [root@master ~]# scp /etc/profile root@worker2:/etc/profile [root@master ~]# ssh root@worker1 [root@worker2 ~]# source /etc/profile [root@worker2 ~]# exit 4、配置Spark文件"/>
+
+    <meta property="og:title" content="Spark完全分布式搭建与使用(3)" />
+<meta property="og:description" content="九、安装Spark-1.6.1-bin-hadoop2.6
+1、下载：Download Apache Spark
+2、将安装包移动到到路径：/usr/local/，并解压
+[root@master ~]# cd /usr/local/ [root@master ~]# tar -xzvf spark-1.6.1-bin-hadoop2.6.tar.gz 3、配置环境变量
+[root@master ~]# vim /etc/profile export SPARK_HOME=/usr/local/spark-1.6.1-bin-hadoop2.6 export PATH=${SPARK_HOME}/bin: ${SPARK_HOME}/sbin 现在可以将所有的PATH整合到一起：
+export JAVA_HOME=&#34;/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.101.x86_64&#34; export JRE_HOME=${JAVA_HOME}/jre export CLASS_PATH=.:${JAVA_HOME}/lib: ${JRE_HOME}/lib export SCALA_HOME=/usr/lib/scala-2.10.4 export HADOOP_HOME=/usr/local/hadoop-2.7.2 export SPARK_HOME=/usr/local/spark-1.6.1-bin-hadoop2.6 export PATH=$PATH:${JAVA_HOME}/bin:${SCALA_HOME}/bin:${HADOOP_HOME}/bin:${HADOOP_HOME}/sbin:${SPARK_HOME}/bin: ${SPARK_HOME}/sbin 配置完成后
+[root@master ~]# source /etc/profile 同步到worker1和worker2
+[root@master ~]# scp /etc/profile root@worker1:/etc/profile [root@master ~]# ssh root@worker1 [root@worker1 ~]# source /etc/profile [root@worker1 ~]# exit [root@master ~]# scp /etc/profile root@worker2:/etc/profile [root@master ~]# ssh root@worker1 [root@worker2 ~]# source /etc/profile [root@worker2 ~]# exit 4、配置Spark文件" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://utopizza.github.io/posts/spark/2016-06-22-spark-spark%E5%AE%8C%E5%85%A8%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%AD%E5%BB%BA%E4%B8%8E%E4%BD%BF%E7%94%A8-3/" />
+<meta property="article:published_time" content="2016-06-22T15:19:00+00:00" />
+<meta property="article:modified_time" content="2016-06-22T15:19:00+00:00" />
+
+
+    
+      <base href="https://utopizza.github.io/posts/spark/2016-06-22-spark-spark%E5%AE%8C%E5%85%A8%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%AD%E5%BB%BA%E4%B8%8E%E4%BD%BF%E7%94%A8-3/">
+    
+    <title>
+  Spark完全分布式搭建与使用(3) · Utopizza
+</title>
+
+    
+      <link rel="canonical" href="https://utopizza.github.io/posts/spark/2016-06-22-spark-spark%E5%AE%8C%E5%85%A8%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%AD%E5%BB%BA%E4%B8%8E%E4%BD%BF%E7%94%A8-3/">
+    
+
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700%7CMerriweather:300,700%7CSource+Code+Pro:400,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.13.0/css/all.css" integrity="sha384-Bfad6CLCknfcloXFOyFnlgtENryhrpZCe29RTifKEixXQZ38WheV+i/6YWSzkz3V" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" integrity="sha256-l85OmPOjvil/SOvVt3HnSSjzF1TUMyT9eV0c2BzEGzU=" crossorigin="anonymous" />
+
+    
+      
+      
+      <link rel="stylesheet" href="https://utopizza.github.io/css/coder.min.a4f332213a21ce8eb521670c614470c58923aaaf385e2a73982c31dd7642decb.css" integrity="sha256-pPMyITohzo61IWcMYURwxYkjqq84XipzmCwx3XZC3ss=" crossorigin="anonymous" media="screen" />
+    
+
+    
+
+    
+      
+        
+        
+        <link rel="stylesheet" href="https://utopizza.github.io/css/coder-dark.min.e78e80fc3a585a4d1c8fc7f58623b6ff852411e38431a9cd1792877ecaa160f6.css" integrity="sha256-546A/DpYWk0cj8f1hiO2/4UkEeOEManNF5KHfsqhYPY=" crossorigin="anonymous" media="screen" />
+      
+    
+
+    
+
+    
+
+    <link rel="icon" type="image/png" href="https://utopizza.github.io/images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="https://utopizza.github.io/images/favicon-16x16.png" sizes="16x16">
+
+    <meta name="generator" content="Hugo 0.69.2" />
+  </head>
+
+  
+  
+    
+  
+  <body class="colorscheme-auto">
+    <main class="wrapper">
+      <nav class="navigation">
+  <section class="container">
+    <a class="navigation-title" href="https://utopizza.github.io/">
+      Utopizza
+    </a>
+    
+    <input type="checkbox" id="menu-toggle" />
+    <label class="menu-button float-right" for="menu-toggle"><i class="fas fa-bars"></i></label>
+    <ul class="navigation-list">
+      
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/about/">About</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/posts/">Blog</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/projects/">Projects</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/contact/">Contact me</a>
+          </li>
+        
+      
+      
+    </ul>
+    
+  </section>
+</nav>
+
+
+      <div class="content">
+        
+  <section class="container post">
+    <article>
+      <header>
+        <div class="post-title">
+          <h1 class="title">Spark完全分布式搭建与使用(3)</h1>
+        </div>
+        <div class="post-meta">
+          <div class="date">
+            <span class="posted-on">
+              <i class="fas fa-calendar"></i>
+              <time datetime='2016-06-22T15:19:00Z'>
+                June 22, 2016
+              </time>
+            </span>
+            <span class="reading-time">
+              <i class="fas fa-clock"></i>
+              1-minute read
+            </span>
+          </div>
+          <div class="categories">
+  <i class="fas fa-folder"></i>
+    <a href="https://utopizza.github.io/categories/spark/">Spark</a></div>
+
+          
+        </div>
+      </header>
+
+      <div>
+        
+        <p>九、安装Spark-1.6.1-bin-hadoop2.6</p>
+<p>1、下载：<a href="http://spark.apache.org/downloads.html">Download Apache Spark</a></p>
+<p><img src="https://utopizza.github.io/2016-06-22-Spark-Spark%E5%AE%8C%E5%85%A8%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%AD%E5%BB%BA%E4%B8%8E%E4%BD%BF%E7%94%A8-3/download.jpg" alt=""></p>
+<p>2、将安装包移动到到路径：<code>/usr/local/</code>，并解压</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">[root@master ~]# cd  /usr/local/
+[root@master ~]# tar  -xzvf  spark-1.6.1-bin-hadoop2.6.tar.gz
+</code></pre></div><p>3、配置环境变量</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">[root@master ~]# vim  /etc/profile
+
+export  SPARK_HOME=/usr/local/spark-1.6.1-bin-hadoop2.6
+export  PATH=${SPARK_HOME}/bin: ${SPARK_HOME}/sbin
+</code></pre></div><p>现在可以将所有的PATH整合到一起：</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">export  JAVA_HOME=&#34;/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.101.x86_64&#34;
+export  JRE_HOME=${JAVA_HOME}/jre
+export  CLASS_PATH=.:${JAVA_HOME}/lib: ${JRE_HOME}/lib
+export  SCALA_HOME=/usr/lib/scala-2.10.4
+export  HADOOP_HOME=/usr/local/hadoop-2.7.2
+export  SPARK_HOME=/usr/local/spark-1.6.1-bin-hadoop2.6
+export  PATH=$PATH:${JAVA_HOME}/bin:${SCALA_HOME}/bin:${HADOOP_HOME}/bin:${HADOOP_HOME}/sbin:${SPARK_HOME}/bin: ${SPARK_HOME}/sbin
+</code></pre></div><p><img src="https://utopizza.github.io/2016-06-22-Spark-Spark%E5%AE%8C%E5%85%A8%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%AD%E5%BB%BA%E4%B8%8E%E4%BD%BF%E7%94%A8-3/path.jpg" alt=""></p>
+<p>配置完成后</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">[root@master ~]# source  /etc/profile
+</code></pre></div><p>同步到worker1和worker2</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">[root@master ~]# scp  /etc/profile  root@worker1:/etc/profile
+[root@master ~]# ssh  root@worker1
+[root@worker1 ~]# source  /etc/profile
+[root@worker1 ~]# exit
+
+[root@master ~]# scp  /etc/profile  root@worker2:/etc/profile
+[root@master ~]# ssh  root@worker1
+[root@worker2 ~]# source  /etc/profile
+[root@worker2 ~]# exit
+</code></pre></div><p>4、配置Spark文件</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">[root@master ~]# cd  /usr/local/spark-1.6.1-bin-hadoop2.6/conf
+</code></pre></div><p>step 1：spark-env.sh</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">[root@master ~]# cp  spark-env.sh.template  spark-env.sh
+[root@master ~]# vim  spark-env.sh
+
+export  JAVA_HOME=/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.101.x86_64
+export  SCALA_HOME=/usr/lib/scala-2.10.4 
+export  SPARK_HOME=/usr/local/spark-1.6.1-bin-hadoop2.6
+export  SPARK_MASTER_IP=master
+export  SPARK_MASTER_PORT=8070
+export  SPARK_MASTER_WEBUI_PORT=8091
+export  SPARK_WORKER_INSTANCES=2
+export  SPARK_WORKER_MEMORY=1g
+export  HADOOP_CONF_DIR=/usr/local/hadoop-2.7.2/etc/hadoop
+</code></pre></div><p>step2：slaves.template</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">[root@master ~]# cp  slaves.template  slaves
+[root@master ~]# vim  slaves
+
+// 加入
+worker1
+worker2
+</code></pre></div><p>step 3：复制spark到worker1和worker2</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">[root@master ~]# scp  –r  /usr/local/spark-1.6.1-bin-hadoop2.6  root@worker1:/usr/local/spark-1.6.1-bin-hadoop2.6
+[root@master ~]# scp  –r  /usr/local/spark-1.6.1-bin-hadoop2.6  root@worker2:/usr/local/spark-1.6.1-bin-hadoop2.6
+</code></pre></div><p>5、启动Spark集群</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">[root@master ~]# /usr/local/spark-1.6.1-bin-hadoop2.6/sbin/start-all.sh
+</code></pre></div><p>用命令 <code>jps</code> 查看，如果有master和worker进程说明启动成功。可以通过 <code>http://master:8091</code> 查看集群情况和运行的applications。也可以在 <code>http://master:4040</code> 查看application运行的job的具体信息</p>
+<p>6、用例测试，略。</p>
+<p>7、本文参考：</p>
+<ul>
+<li>
+<p><a href="https://my.oschina.net/132722/blog/196027?fromerr=UObz2ulL">Spark安装启动 and 在程序中调用spark服务</a></p>
+</li>
+<li>
+<p><a href="http://www.open-open.com/lib/view/open1427935743396.html">Spark 伪分布式 &amp; 全分布式 安装指南</a></p>
+</li>
+<li>
+<p><a href="http://www.thebigdata.cn/Hadoop/28957.html">Spark1.6.0 on Hadoop-2.6.3 安装配置</a></p>
+</li>
+<li>
+<p><a href="http://www.dataguru.cn/thread-530953-1-1.html">Spark1.4.1完全分布集群hadoop2.6.0上部署</a></p>
+</li>
+</ul>
+
+      </div>
+
+
+      <footer>
+        
+
+
+        
+        
+        
+      </footer>
+    </article>
+
+    
+  </section>
+
+      </div>
+
+      <script type="text/javascript"
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+    </main>
+
+    
+
+    
+
+    <script>
+(function(f, a, t, h, o, m){
+	a[h]=a[h]||function(){
+		(a[h].q=a[h].q||[]).push(arguments)
+	};
+	o=f.createElement('script'),
+	m=f.getElementsByTagName('script')[0];
+	o.async=1; o.src=t; o.id='fathom-script';
+	m.parentNode.insertBefore(o,m)
+})(document, window, '//analytics.example.com/tracker.js', 'fathom');
+fathom('set', 'siteId', 'ABCDE');
+fathom('trackPageview');
+</script>
+
+
+  </body>
+
+</html>

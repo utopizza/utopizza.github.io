@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Language" content="en">
+
+    <meta name="author" content="Yusheng Wang">
+    <meta name="description" content="一、问题
+leetcode第190题，逆序所输入的整数的32位bit，构成一个新的整数并输出：190. Reverse Bits
+二、解决
+思路不难，对输入的整数$n$，不断右移（带符号）并取其最低位（与上1），加到返回的整数上；返回的整数每次接收$n$的1位后，左移1位腾出最低位给下一次接收。如此循环32次即可。
+public class Solution { public int reverseBits(int n) { int result=0; for(int i=0;i&lt;32;i&#43;&#43;){ result=result&lt;&lt;1; result=result&#43;(n&amp;1); n=n&gt;&gt;&gt;1; } return result; } } 我一开始没有注意四则运算符和位运算符的优先级，默认了位运算是高于加减乘除的，所以上面第6行处我一开始写成：
+result = result &#43; n&amp;1; 然后一直AC失败。我反复检查了我的思路也找不到出错的原因。无奈之下查看了discuss，发现我的思路和高票答案是一模一样的。不过别人的写法是：
+result &#43;= n&amp;1; 此时我才醒悟难道是运算符优先级的问题？我立马尝试加上括号，发现AC成功。后来查了资料才知道加减运算符的优先级是比按位与运算符的优先级高的：
+int a = 2; int b = 0; int c = a &#43; b &amp; 1; int d = a &#43; (b &amp; 1); System.out.print(&#34;c=&#34; &#43; c &#43; &#34; , &#34; &#43; &#34;d=&#34; &#43; d); 输出结果为：c=0，d=2">
+    <meta name="keywords" content="blog,developer,personal">
+
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="java位运算符优先级"/>
+<meta name="twitter:description" content="一、问题
+leetcode第190题，逆序所输入的整数的32位bit，构成一个新的整数并输出：190. Reverse Bits
+二、解决
+思路不难，对输入的整数$n$，不断右移（带符号）并取其最低位（与上1），加到返回的整数上；返回的整数每次接收$n$的1位后，左移1位腾出最低位给下一次接收。如此循环32次即可。
+public class Solution { public int reverseBits(int n) { int result=0; for(int i=0;i&lt;32;i&#43;&#43;){ result=result&lt;&lt;1; result=result&#43;(n&amp;1); n=n&gt;&gt;&gt;1; } return result; } } 我一开始没有注意四则运算符和位运算符的优先级，默认了位运算是高于加减乘除的，所以上面第6行处我一开始写成：
+result = result &#43; n&amp;1; 然后一直AC失败。我反复检查了我的思路也找不到出错的原因。无奈之下查看了discuss，发现我的思路和高票答案是一模一样的。不过别人的写法是：
+result &#43;= n&amp;1; 此时我才醒悟难道是运算符优先级的问题？我立马尝试加上括号，发现AC成功。后来查了资料才知道加减运算符的优先级是比按位与运算符的优先级高的：
+int a = 2; int b = 0; int c = a &#43; b &amp; 1; int d = a &#43; (b &amp; 1); System.out.print(&#34;c=&#34; &#43; c &#43; &#34; , &#34; &#43; &#34;d=&#34; &#43; d); 输出结果为：c=0，d=2"/>
+
+    <meta property="og:title" content="java位运算符优先级" />
+<meta property="og:description" content="一、问题
+leetcode第190题，逆序所输入的整数的32位bit，构成一个新的整数并输出：190. Reverse Bits
+二、解决
+思路不难，对输入的整数$n$，不断右移（带符号）并取其最低位（与上1），加到返回的整数上；返回的整数每次接收$n$的1位后，左移1位腾出最低位给下一次接收。如此循环32次即可。
+public class Solution { public int reverseBits(int n) { int result=0; for(int i=0;i&lt;32;i&#43;&#43;){ result=result&lt;&lt;1; result=result&#43;(n&amp;1); n=n&gt;&gt;&gt;1; } return result; } } 我一开始没有注意四则运算符和位运算符的优先级，默认了位运算是高于加减乘除的，所以上面第6行处我一开始写成：
+result = result &#43; n&amp;1; 然后一直AC失败。我反复检查了我的思路也找不到出错的原因。无奈之下查看了discuss，发现我的思路和高票答案是一模一样的。不过别人的写法是：
+result &#43;= n&amp;1; 此时我才醒悟难道是运算符优先级的问题？我立马尝试加上括号，发现AC成功。后来查了资料才知道加减运算符的优先级是比按位与运算符的优先级高的：
+int a = 2; int b = 0; int c = a &#43; b &amp; 1; int d = a &#43; (b &amp; 1); System.out.print(&#34;c=&#34; &#43; c &#43; &#34; , &#34; &#43; &#34;d=&#34; &#43; d); 输出结果为：c=0，d=2" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://utopizza.github.io/posts/algorithm/2017-10-26-%E7%AE%97%E6%B3%95-java%E4%BD%8D%E8%BF%90%E7%AE%97%E7%AC%A6%E4%BC%98%E5%85%88%E7%BA%A7%E9%97%AE%E9%A2%98/" />
+<meta property="article:published_time" content="2017-10-26T14:31:00+00:00" />
+<meta property="article:modified_time" content="2017-10-26T14:31:00+00:00" />
+
+
+    
+      <base href="https://utopizza.github.io/posts/algorithm/2017-10-26-%E7%AE%97%E6%B3%95-java%E4%BD%8D%E8%BF%90%E7%AE%97%E7%AC%A6%E4%BC%98%E5%85%88%E7%BA%A7%E9%97%AE%E9%A2%98/">
+    
+    <title>
+  java位运算符优先级 · Utopizza
+</title>
+
+    
+      <link rel="canonical" href="https://utopizza.github.io/posts/algorithm/2017-10-26-%E7%AE%97%E6%B3%95-java%E4%BD%8D%E8%BF%90%E7%AE%97%E7%AC%A6%E4%BC%98%E5%85%88%E7%BA%A7%E9%97%AE%E9%A2%98/">
+    
+
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700%7CMerriweather:300,700%7CSource+Code+Pro:400,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.13.0/css/all.css" integrity="sha384-Bfad6CLCknfcloXFOyFnlgtENryhrpZCe29RTifKEixXQZ38WheV+i/6YWSzkz3V" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" integrity="sha256-l85OmPOjvil/SOvVt3HnSSjzF1TUMyT9eV0c2BzEGzU=" crossorigin="anonymous" />
+
+    
+      
+      
+      <link rel="stylesheet" href="https://utopizza.github.io/css/coder.min.a4f332213a21ce8eb521670c614470c58923aaaf385e2a73982c31dd7642decb.css" integrity="sha256-pPMyITohzo61IWcMYURwxYkjqq84XipzmCwx3XZC3ss=" crossorigin="anonymous" media="screen" />
+    
+
+    
+
+    
+      
+        
+        
+        <link rel="stylesheet" href="https://utopizza.github.io/css/coder-dark.min.e78e80fc3a585a4d1c8fc7f58623b6ff852411e38431a9cd1792877ecaa160f6.css" integrity="sha256-546A/DpYWk0cj8f1hiO2/4UkEeOEManNF5KHfsqhYPY=" crossorigin="anonymous" media="screen" />
+      
+    
+
+    
+
+    
+
+    <link rel="icon" type="image/png" href="https://utopizza.github.io/images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="https://utopizza.github.io/images/favicon-16x16.png" sizes="16x16">
+
+    <meta name="generator" content="Hugo 0.69.2" />
+  </head>
+
+  
+  
+    
+  
+  <body class="colorscheme-auto">
+    <main class="wrapper">
+      <nav class="navigation">
+  <section class="container">
+    <a class="navigation-title" href="https://utopizza.github.io/">
+      Utopizza
+    </a>
+    
+    <input type="checkbox" id="menu-toggle" />
+    <label class="menu-button float-right" for="menu-toggle"><i class="fas fa-bars"></i></label>
+    <ul class="navigation-list">
+      
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/about/">About</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/posts/">Blog</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/projects/">Projects</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/contact/">Contact me</a>
+          </li>
+        
+      
+      
+    </ul>
+    
+  </section>
+</nav>
+
+
+      <div class="content">
+        
+  <section class="container post">
+    <article>
+      <header>
+        <div class="post-title">
+          <h1 class="title">java位运算符优先级</h1>
+        </div>
+        <div class="post-meta">
+          <div class="date">
+            <span class="posted-on">
+              <i class="fas fa-calendar"></i>
+              <time datetime='2017-10-26T14:31:00Z'>
+                October 26, 2017
+              </time>
+            </span>
+            <span class="reading-time">
+              <i class="fas fa-clock"></i>
+              1-minute read
+            </span>
+          </div>
+          <div class="categories">
+  <i class="fas fa-folder"></i>
+    <a href="https://utopizza.github.io/categories/algorithm/">Algorithm</a></div>
+
+          
+        </div>
+      </header>
+
+      <div>
+        
+        <p>一、问题</p>
+<p>leetcode第190题，逆序所输入的整数的32位bit，构成一个新的整数并输出：<a href="https://leetcode.com/problems/reverse-bits/description/">190. Reverse Bits</a></p>
+<p>二、解决</p>
+<p>思路不难，对输入的整数$n$，不断右移（带符号）并取其最低位（与上1），加到返回的整数上；返回的整数每次接收$n$的1位后，左移1位腾出最低位给下一次接收。如此循环32次即可。</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">public class Solution {
+    public int reverseBits(int n) {
+        int result=0;
+        for(int i=0;i&lt;32;i++){
+            result=result&lt;&lt;1;
+            result=result+(n&amp;1);
+            n=n&gt;&gt;&gt;1;
+        }
+        return result;
+    }
+}
+</code></pre></div><p>我一开始没有注意四则运算符和位运算符的优先级，默认了位运算是高于加减乘除的，所以上面第6行处我一开始写成：</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">result = result + n&amp;1;
+</code></pre></div><p>然后一直AC失败。我反复检查了我的思路也找不到出错的原因。无奈之下查看了discuss，发现我的思路和高票答案是一模一样的。不过别人的写法是：</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">result += n&amp;1;
+</code></pre></div><p>此时我才醒悟难道是运算符优先级的问题？我立马尝试加上括号，发现AC成功。后来查了资料才知道加减运算符的优先级是比按位与运算符的优先级高的：</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">int a = 2;
+int b = 0;
+int c = a + b &amp; 1;
+int d = a + (b &amp; 1);
+System.out.print(&#34;c=&#34; + c + &#34; , &#34; + &#34;d=&#34; + d);
+</code></pre></div><p>输出结果为：c=0，d=2</p>
+<p>这件事充分说明了学习基础不扎实，需要深刻反省引以为戒，因此写到博客里记录一下。</p>
+
+      </div>
+
+
+      <footer>
+        
+
+
+        
+        
+        
+      </footer>
+    </article>
+
+    
+  </section>
+
+      </div>
+
+      <script type="text/javascript"
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+    </main>
+
+    
+
+    
+
+    <script>
+(function(f, a, t, h, o, m){
+	a[h]=a[h]||function(){
+		(a[h].q=a[h].q||[]).push(arguments)
+	};
+	o=f.createElement('script'),
+	m=f.getElementsByTagName('script')[0];
+	o.async=1; o.src=t; o.id='fathom-script';
+	m.parentNode.insertBefore(o,m)
+})(document, window, '//analytics.example.com/tracker.js', 'fathom');
+fathom('set', 'siteId', 'ABCDE');
+fathom('trackPageview');
+</script>
+
+
+  </body>
+
+</html>

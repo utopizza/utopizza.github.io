@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Language" content="en">
+
+    <meta name="author" content="Yusheng Wang">
+    <meta name="description" content="一、6种基本位操作
+   符号 描述 运算规则     &amp; And（按位与） 对应位上同时为 1 时，结果才为 1，否则为 0   $\mid$ Or（按位或） 对应位上同时为 0 时，结果才为 0，否则为 1   ~ Not（取反） 1 变 0，0 变 1   ^ Xor（异或） 对应位上相同时输出 0，相异时输出 1   &laquo; Left Shift（左移） 各二进位全部左移若干位，高位丢弃，低位补 0   &gt;&gt; Right Shift（右移） 各二进位全部右移若干位，低位丢弃，高位分情况    注：
+ 计算机内部使用补码作为机器数，正数的补码等于原码，负数的补码等于原码的符号位外取反加一，切记。另外注意机器字长，如果题目没有明确说明，一般默认是32位或64位 这6种操作符中，只有~取反是单目操作符，其它5种都是双目操作符 位操作只能用于整型数据 位操作运算优先级比较低（比加减乘除低），因此一般需要使用括号来保证正确的运算顺序，否则容易出错 右移运算（&gt;&gt;）时，对无符号数，高位补0。对有符号数，各编译器处理方法不一样，有的补符号位（算术右移），有的补0（逻辑右移） Java中的右移（&gt;&gt;）执行的是算术右移，高位补符号位；Java中的无符号（逻辑）右移有单独的运算符号：&gt;&raquo; 另外位操作还有一些复合操作符，如 &amp;=、|=、^=、&laquo;=、&gt;&gt;= 等  二、常用技巧">
+    <meta name="keywords" content="blog,developer,personal">
+
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="位运算技巧"/>
+<meta name="twitter:description" content="一、6种基本位操作
+   符号 描述 运算规则     &amp; And（按位与） 对应位上同时为 1 时，结果才为 1，否则为 0   $\mid$ Or（按位或） 对应位上同时为 0 时，结果才为 0，否则为 1   ~ Not（取反） 1 变 0，0 变 1   ^ Xor（异或） 对应位上相同时输出 0，相异时输出 1   &laquo; Left Shift（左移） 各二进位全部左移若干位，高位丢弃，低位补 0   &gt;&gt; Right Shift（右移） 各二进位全部右移若干位，低位丢弃，高位分情况    注：
+ 计算机内部使用补码作为机器数，正数的补码等于原码，负数的补码等于原码的符号位外取反加一，切记。另外注意机器字长，如果题目没有明确说明，一般默认是32位或64位 这6种操作符中，只有~取反是单目操作符，其它5种都是双目操作符 位操作只能用于整型数据 位操作运算优先级比较低（比加减乘除低），因此一般需要使用括号来保证正确的运算顺序，否则容易出错 右移运算（&gt;&gt;）时，对无符号数，高位补0。对有符号数，各编译器处理方法不一样，有的补符号位（算术右移），有的补0（逻辑右移） Java中的右移（&gt;&gt;）执行的是算术右移，高位补符号位；Java中的无符号（逻辑）右移有单独的运算符号：&gt;&raquo; 另外位操作还有一些复合操作符，如 &amp;=、|=、^=、&laquo;=、&gt;&gt;= 等  二、常用技巧"/>
+
+    <meta property="og:title" content="位运算技巧" />
+<meta property="og:description" content="一、6种基本位操作
+   符号 描述 运算规则     &amp; And（按位与） 对应位上同时为 1 时，结果才为 1，否则为 0   $\mid$ Or（按位或） 对应位上同时为 0 时，结果才为 0，否则为 1   ~ Not（取反） 1 变 0，0 变 1   ^ Xor（异或） 对应位上相同时输出 0，相异时输出 1   &laquo; Left Shift（左移） 各二进位全部左移若干位，高位丢弃，低位补 0   &gt;&gt; Right Shift（右移） 各二进位全部右移若干位，低位丢弃，高位分情况    注：
+ 计算机内部使用补码作为机器数，正数的补码等于原码，负数的补码等于原码的符号位外取反加一，切记。另外注意机器字长，如果题目没有明确说明，一般默认是32位或64位 这6种操作符中，只有~取反是单目操作符，其它5种都是双目操作符 位操作只能用于整型数据 位操作运算优先级比较低（比加减乘除低），因此一般需要使用括号来保证正确的运算顺序，否则容易出错 右移运算（&gt;&gt;）时，对无符号数，高位补0。对有符号数，各编译器处理方法不一样，有的补符号位（算术右移），有的补0（逻辑右移） Java中的右移（&gt;&gt;）执行的是算术右移，高位补符号位；Java中的无符号（逻辑）右移有单独的运算符号：&gt;&raquo; 另外位操作还有一些复合操作符，如 &amp;=、|=、^=、&laquo;=、&gt;&gt;= 等  二、常用技巧" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://utopizza.github.io/posts/algorithm/2018-01-06-%E7%AE%97%E6%B3%95-%E4%BD%8D%E8%BF%90%E7%AE%97%E6%8A%80%E5%B7%A7/" />
+<meta property="article:published_time" content="2018-01-06T20:20:00+00:00" />
+<meta property="article:modified_time" content="2018-01-06T20:20:00+00:00" />
+
+
+    
+      <base href="https://utopizza.github.io/posts/algorithm/2018-01-06-%E7%AE%97%E6%B3%95-%E4%BD%8D%E8%BF%90%E7%AE%97%E6%8A%80%E5%B7%A7/">
+    
+    <title>
+  位运算技巧 · Utopizza
+</title>
+
+    
+      <link rel="canonical" href="https://utopizza.github.io/posts/algorithm/2018-01-06-%E7%AE%97%E6%B3%95-%E4%BD%8D%E8%BF%90%E7%AE%97%E6%8A%80%E5%B7%A7/">
+    
+
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700%7CMerriweather:300,700%7CSource+Code+Pro:400,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.13.0/css/all.css" integrity="sha384-Bfad6CLCknfcloXFOyFnlgtENryhrpZCe29RTifKEixXQZ38WheV+i/6YWSzkz3V" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" integrity="sha256-l85OmPOjvil/SOvVt3HnSSjzF1TUMyT9eV0c2BzEGzU=" crossorigin="anonymous" />
+
+    
+      
+      
+      <link rel="stylesheet" href="https://utopizza.github.io/css/coder.min.a4f332213a21ce8eb521670c614470c58923aaaf385e2a73982c31dd7642decb.css" integrity="sha256-pPMyITohzo61IWcMYURwxYkjqq84XipzmCwx3XZC3ss=" crossorigin="anonymous" media="screen" />
+    
+
+    
+
+    
+      
+        
+        
+        <link rel="stylesheet" href="https://utopizza.github.io/css/coder-dark.min.e78e80fc3a585a4d1c8fc7f58623b6ff852411e38431a9cd1792877ecaa160f6.css" integrity="sha256-546A/DpYWk0cj8f1hiO2/4UkEeOEManNF5KHfsqhYPY=" crossorigin="anonymous" media="screen" />
+      
+    
+
+    
+
+    
+
+    <link rel="icon" type="image/png" href="https://utopizza.github.io/images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="https://utopizza.github.io/images/favicon-16x16.png" sizes="16x16">
+
+    <meta name="generator" content="Hugo 0.69.2" />
+  </head>
+
+  
+  
+    
+  
+  <body class="colorscheme-auto">
+    <main class="wrapper">
+      <nav class="navigation">
+  <section class="container">
+    <a class="navigation-title" href="https://utopizza.github.io/">
+      Utopizza
+    </a>
+    
+    <input type="checkbox" id="menu-toggle" />
+    <label class="menu-button float-right" for="menu-toggle"><i class="fas fa-bars"></i></label>
+    <ul class="navigation-list">
+      
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/about/">About</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/posts/">Blog</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/projects/">Projects</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/contact/">Contact me</a>
+          </li>
+        
+      
+      
+    </ul>
+    
+  </section>
+</nav>
+
+
+      <div class="content">
+        
+  <section class="container post">
+    <article>
+      <header>
+        <div class="post-title">
+          <h1 class="title">位运算技巧</h1>
+        </div>
+        <div class="post-meta">
+          <div class="date">
+            <span class="posted-on">
+              <i class="fas fa-calendar"></i>
+              <time datetime='2018-01-06T20:20:00Z'>
+                January 6, 2018
+              </time>
+            </span>
+            <span class="reading-time">
+              <i class="fas fa-clock"></i>
+              2-minute read
+            </span>
+          </div>
+          <div class="categories">
+  <i class="fas fa-folder"></i>
+    <a href="https://utopizza.github.io/categories/algorithm/">Algorithm</a></div>
+
+          
+        </div>
+      </header>
+
+      <div>
+        
+        <p>一、6种基本位操作</p>
+<table>
+<thead>
+<tr>
+<th align="center">符号</th>
+<th align="center">描述</th>
+<th align="center">运算规则</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center">&amp;</td>
+<td align="center">And（按位与）</td>
+<td align="center">对应位上同时为 1 时，结果才为 1，否则为 0</td>
+</tr>
+<tr>
+<td align="center">$\mid$</td>
+<td align="center">Or（按位或）</td>
+<td align="center">对应位上同时为 0 时，结果才为 0，否则为 1</td>
+</tr>
+<tr>
+<td align="center">~</td>
+<td align="center">Not（取反）</td>
+<td align="center">1 变 0，0 变 1</td>
+</tr>
+<tr>
+<td align="center">^</td>
+<td align="center">Xor（异或）</td>
+<td align="center">对应位上相同时输出 0，相异时输出 1</td>
+</tr>
+<tr>
+<td align="center">&laquo;</td>
+<td align="center">Left Shift（左移）</td>
+<td align="center">各二进位全部左移若干位，高位丢弃，低位补 0</td>
+</tr>
+<tr>
+<td align="center">&gt;&gt;</td>
+<td align="center">Right Shift（右移）</td>
+<td align="center">各二进位全部右移若干位，低位丢弃，高位分情况</td>
+</tr>
+</tbody>
+</table>
+<p>注：</p>
+<ol>
+<li>计算机内部使用补码作为机器数，正数的补码等于原码，负数的补码等于原码的符号位外取反加一，切记。另外注意机器字长，如果题目没有明确说明，一般默认是32位或64位</li>
+<li>这6种操作符中，只有~取反是单目操作符，其它5种都是双目操作符</li>
+<li>位操作只能用于整型数据</li>
+<li>位操作运算优先级比较低（比加减乘除低），因此一般需要使用括号来保证正确的运算顺序，否则容易出错</li>
+<li>右移运算（&gt;&gt;）时，对无符号数，高位补0。对有符号数，各编译器处理方法不一样，有的补符号位（算术右移），有的补0（逻辑右移）</li>
+<li>Java中的右移（&gt;&gt;）执行的是算术右移，高位补符号位；Java中的无符号（逻辑）右移有单独的运算符号：&gt;&raquo;</li>
+<li>另外位操作还有一些复合操作符，如 &amp;=、|=、^=、&laquo;=、&gt;&gt;= 等</li>
+</ol>
+<p>二、常用技巧</p>
+<p>1、计算给定的整数对应的二进制数中 1 的个数。</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">public int countOnes(int n) {
+    int count=0;
+    while(n!=0) {
+        n = n&amp;(n-1);
+        count++;
+    }
+    return count;
+}
+</code></pre></div><p>2、判断一个整数是否是 4 的 n 次方。思路很清晰，4 的 n 次方即为 2 的 2n 次方，因此其二进制形式必定是由一个 1 和偶数个 0 组成。</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">public boolean isPowerOfFour(int num) {
+    int count0=0;
+    int count1=0;
+    while(num&gt;0){
+        if((num&amp;1)==1){
+            count1++;
+        }else{
+            count0++;
+        }
+        num&gt;&gt;=1;
+    }
+    return count1==1 &amp;&amp; (count0%2==0);
+}
+</code></pre></div><p>3、仅用位运算求两个整数的和。</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">public int getSum(int a, int b) {
+    //return b==0? a:getSum(a^b, (a&amp;b)&lt;&lt;1);
+    while(b!=0){
+        int temp=a^b;
+        b=(a&amp;b)&lt;&lt;1;
+        a=temp;
+    }
+    return a;
+}
+</code></pre></div><p>4、找出缺失的数。给定一个整型数组，每个数字都出现了两次，现在缺失了一个数字，即有一个数字只出现一次，找出这个数字。思路：利用异或运算的两个特性， 自己与自己异或结果为0，异或满足交换律</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">public int missingNumber(int[] nums) {
+    int ret = 0;
+    for (int i = 0; i &lt; nums.length; ++i) {
+        ret ^= nums[i];
+    }
+    return ret;
+}
+</code></pre></div><p>5、找出缺失的数。给定一个整型数组，长度为 $n$，取值范围为 $[0,&hellip;,n]$。找出缺失的那一个数。例如给定 $[0,1,3]$，返回 2。思路同上，把数组的 n 个数和完整的序列 $[0,&hellip;,n]$ 异或起来，最后结果就是只出现一次的也即在数组中缺失的那个数。</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">public static int missingNumber(int[] nums) {
+    int ret = 0;
+    for (int i = 0; i &lt; nums.length; ++i) {
+        ret ^= i;
+        ret ^= nums[i];
+    }
+    return ret ^ nums.length;
+}
+</code></pre></div><p>6、判断奇偶。只要根据最未位是 0 还是 1 来决定，为 0 就是偶数，为 1 就是奇数。因此可以用 if((a &amp; 1) == 0) 代替 if(a % 2 == 0) 来判断 a 是不是偶数。</p>
+<p>7、不使用第三方变量交换两个数。利用一个数异或上自己等于 0 （消去这个数）的性质。</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">public void swap(int a, int b)  
+{  
+    if (a != b)  
+    {  
+        a ^= b;  
+        b ^= a;  
+        a ^= b;  
+    }  
+}
+</code></pre></div><p>8、变换符号，即最高位 1 变 0，0 变 1。把该数取反加 1 即可。</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">public int signReversal(int a)  
+{  
+    return ~a + 1;  
+}  
+</code></pre></div><p>9、取绝对值。由上述可知对于负数可以通过对其取反加一来得到正数。因此现在只要判断输入的数是正数还是负数，如果是正数就直接输出，是负数就取反加一。对输入的数算术右移31位，由于高位补的是符号位，因此右移后如果原来是正数那么结果就是 0（0x 0000 0000），如果是负数那么右移的结果是 -1（0x FFFF FFFF）。</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">public int abs(int a)  
+{  
+    int i = a &gt;&gt; 31;  
+    return i == 0 ? a : (~a + 1);  
+} 
+</code></pre></div><p>如果进一步考虑，注意到任何数与 0 异或等于自己，与 -1 异或等于取反，而代码中的 i 要么是 0，要么是 -1，因此 a 与 i 异或再减去 i 和原代码等价，并且这样省去了判断。</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">public int abs(int a)  
+{  
+    int i = a &gt;&gt; 31;  
+    return (a ^ i) - i;  
+} 
+</code></pre></div><p>10、逆序一个二进制数。这里只关注正整数的有效位，例如，正整数 11 的二进制是 1011，逆序后得到 1101，输出 13。思路是对输入的数不断地取最低位并右移，取到的位赋到输出结果的最低位并不断左移。当输入的数减小到 0 时，算法完成。</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">public int reverseBit(int n) {
+    int mask = 1, res = 0;
+    while (n != 0) {
+        res &lt;&lt;= 1;
+        res |= (n &amp; mask);
+        n &gt;&gt;= 1;
+    }
+    return res;
+}
+</code></pre></div><p>11、逆序一个 32 位无符号整数的二进制。我们知道机器码是最高位是用于表示符号位的，但是 Java 中没有无符号整数的数据类型，怎办呢？</p>
+<p>三、参考资料</p>
+<ol>
+<li><a href="http://blog.csdn.net/morewindows/article/details/7354571">位操作基础篇之位操作全面总结</a></li>
+<li><a href="https://leetcode.com/problems/sum-of-two-integers/discuss/84278/">leetcode-A summary: how to use bit manipulation to solve problems easily and efficiently</a></li>
+<li><a href="https://stackoverflow.com/questions/3165776/reverse-bits-in-number">Stack Overflow-Reverse bits in number</a></li>
+<li><a href="https://stackoverflow.com/questions/3324707/how-can-i-invert-bits-of-an-unsigned-byte-in-java">Stack Overflow-How can I invert bits of an unsigned byte in Java?</a></li>
+</ol>
+
+      </div>
+
+
+      <footer>
+        
+
+
+        
+        
+        
+      </footer>
+    </article>
+
+    
+  </section>
+
+      </div>
+
+      <script type="text/javascript"
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+    </main>
+
+    
+
+    
+
+    <script>
+(function(f, a, t, h, o, m){
+	a[h]=a[h]||function(){
+		(a[h].q=a[h].q||[]).push(arguments)
+	};
+	o=f.createElement('script'),
+	m=f.getElementsByTagName('script')[0];
+	o.async=1; o.src=t; o.id='fathom-script';
+	m.parentNode.insertBefore(o,m)
+})(document, window, '//analytics.example.com/tracker.js', 'fathom');
+fathom('set', 'siteId', 'ABCDE');
+fathom('trackPageview');
+</script>
+
+
+  </body>
+
+</html>

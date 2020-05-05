@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Language" content="en">
+
+    <meta name="author" content="Yusheng Wang">
+    <meta name="description" content="一、问题
+假设有几种硬币，如1、3、5、10，并且数量无限。请找出能够组成某个数目的找零所使用最少的硬币数
+形式化定义：设需要找零的总额为 $V$ ，一共有 $n$ 种硬币可以选择，其中第 $i$ 种硬币面值为 $c_i$，对应的使用数量为 $y_i$。则问题表述为：
+$$min \quad \sum_{i=1}^{n}y_i , \quad y_i \in N \text{（自然数集）} $$
+$$s.t. \quad \sum_{i=1}^{n} c_i \cdot y_i = V$$
+二、划分子问题，导出递推式
+今天查了一些资料，对动态规划有了新的理解。
+有博主说：
+ 动态规划的本质是对问题状态的定义，和对状态转移方程的定义。动态规划是通过拆分问题，定义问题状态和状态之间的关系，使得问题能够以递推（或者说分治）的方式去解决。如何拆分问题，才是动态规划的核心，而拆分问题，靠的就是状态的定义和状态转移方程的定义。
+ 也有博主说：
+ 计算机的本质是一个状态机，内存里存储的所有数据构成了当前的状态，CPU只能利用当前的状态计算出下一个状态（不要纠结硬盘之类的外部存储，就算考虑他们也只是扩大了状态的存储容量而已，并不能改变下一个状态只能从当前状态计算出来这一条铁律）当你企图使用计算机解决一个问题是，其实就是在思考如何将这个问题表达成状态（用哪些变量存储哪些数据）以及如何在状态中转移（怎样根据一些变量计算出另一些变量）。所以所谓的空间复杂度就是为了支持你的计算所必需存储的状态最多有多少，所谓时间复杂度就是从初始状态到达最终状态中间需要多少步！
+ 回到我们的问题，要定义这个问题的状态和状态转移方程，首先需要分析这个问题的解的构建过程。那么找零的过程是怎么样的？很简单，每次可以拿起 $n$ 种硬币中，面值小于找零总额的任意一个。然后把找零总额减去拿起的硬币的面值，进入下一次选择。不断如此重复，直至拿起的硬币的总值等于找零的总额。（到这里，子问题的定义就显而易见了，这个问题的子问题就是每一次进行的硬币的选择，本次的选择只与之前的选择有关，因为每一次选择后剩余的找零总额会相应减小）
+但是这样并不能保证硬币数是最小的。为了找到最优解，我们需要假设某个子问题已经得到了最优解，然后推出与它的子问题的最优解的关系，也就是最优解的递推关系式。设 $dp(i)$ 表示组合总价值为 $i$ 的零钱所需要的最小硬币数。因此每次可以选择 $n$ 种硬币中的一种，设本次选择的硬币为第 $j$ $(1 \leq j \leq n)$ 种，对应的面值为 $c[j]$，则在拿起该硬币之前的子问题即为：组合面值为 $dp(i-c[j])$ 的总额需要的最小硬币数。同样可以用“剪贴粘贴”的反正法证明其最优解为 $dp(i-c[j])-1$。形式化描述为：
+$$ dp(i)= \begin{cases} 0, &amp; \text{if $i=0 $} \
+min_{1 \leq j \leq n}(dp(i-c[j])&#43;1), &amp; \text{if $i &gt;0 , , , c[j] \leq i$} \">
+    <meta name="keywords" content="blog,developer,personal">
+
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="硬币找零"/>
+<meta name="twitter:description" content="一、问题
+假设有几种硬币，如1、3、5、10，并且数量无限。请找出能够组成某个数目的找零所使用最少的硬币数
+形式化定义：设需要找零的总额为 $V$ ，一共有 $n$ 种硬币可以选择，其中第 $i$ 种硬币面值为 $c_i$，对应的使用数量为 $y_i$。则问题表述为：
+$$min \quad \sum_{i=1}^{n}y_i , \quad y_i \in N \text{（自然数集）} $$
+$$s.t. \quad \sum_{i=1}^{n} c_i \cdot y_i = V$$
+二、划分子问题，导出递推式
+今天查了一些资料，对动态规划有了新的理解。
+有博主说：
+ 动态规划的本质是对问题状态的定义，和对状态转移方程的定义。动态规划是通过拆分问题，定义问题状态和状态之间的关系，使得问题能够以递推（或者说分治）的方式去解决。如何拆分问题，才是动态规划的核心，而拆分问题，靠的就是状态的定义和状态转移方程的定义。
+ 也有博主说：
+ 计算机的本质是一个状态机，内存里存储的所有数据构成了当前的状态，CPU只能利用当前的状态计算出下一个状态（不要纠结硬盘之类的外部存储，就算考虑他们也只是扩大了状态的存储容量而已，并不能改变下一个状态只能从当前状态计算出来这一条铁律）当你企图使用计算机解决一个问题是，其实就是在思考如何将这个问题表达成状态（用哪些变量存储哪些数据）以及如何在状态中转移（怎样根据一些变量计算出另一些变量）。所以所谓的空间复杂度就是为了支持你的计算所必需存储的状态最多有多少，所谓时间复杂度就是从初始状态到达最终状态中间需要多少步！
+ 回到我们的问题，要定义这个问题的状态和状态转移方程，首先需要分析这个问题的解的构建过程。那么找零的过程是怎么样的？很简单，每次可以拿起 $n$ 种硬币中，面值小于找零总额的任意一个。然后把找零总额减去拿起的硬币的面值，进入下一次选择。不断如此重复，直至拿起的硬币的总值等于找零的总额。（到这里，子问题的定义就显而易见了，这个问题的子问题就是每一次进行的硬币的选择，本次的选择只与之前的选择有关，因为每一次选择后剩余的找零总额会相应减小）
+但是这样并不能保证硬币数是最小的。为了找到最优解，我们需要假设某个子问题已经得到了最优解，然后推出与它的子问题的最优解的关系，也就是最优解的递推关系式。设 $dp(i)$ 表示组合总价值为 $i$ 的零钱所需要的最小硬币数。因此每次可以选择 $n$ 种硬币中的一种，设本次选择的硬币为第 $j$ $(1 \leq j \leq n)$ 种，对应的面值为 $c[j]$，则在拿起该硬币之前的子问题即为：组合面值为 $dp(i-c[j])$ 的总额需要的最小硬币数。同样可以用“剪贴粘贴”的反正法证明其最优解为 $dp(i-c[j])-1$。形式化描述为：
+$$ dp(i)= \begin{cases} 0, &amp; \text{if $i=0 $} \
+min_{1 \leq j \leq n}(dp(i-c[j])&#43;1), &amp; \text{if $i &gt;0 , , , c[j] \leq i$} \"/>
+
+    <meta property="og:title" content="硬币找零" />
+<meta property="og:description" content="一、问题
+假设有几种硬币，如1、3、5、10，并且数量无限。请找出能够组成某个数目的找零所使用最少的硬币数
+形式化定义：设需要找零的总额为 $V$ ，一共有 $n$ 种硬币可以选择，其中第 $i$ 种硬币面值为 $c_i$，对应的使用数量为 $y_i$。则问题表述为：
+$$min \quad \sum_{i=1}^{n}y_i , \quad y_i \in N \text{（自然数集）} $$
+$$s.t. \quad \sum_{i=1}^{n} c_i \cdot y_i = V$$
+二、划分子问题，导出递推式
+今天查了一些资料，对动态规划有了新的理解。
+有博主说：
+ 动态规划的本质是对问题状态的定义，和对状态转移方程的定义。动态规划是通过拆分问题，定义问题状态和状态之间的关系，使得问题能够以递推（或者说分治）的方式去解决。如何拆分问题，才是动态规划的核心，而拆分问题，靠的就是状态的定义和状态转移方程的定义。
+ 也有博主说：
+ 计算机的本质是一个状态机，内存里存储的所有数据构成了当前的状态，CPU只能利用当前的状态计算出下一个状态（不要纠结硬盘之类的外部存储，就算考虑他们也只是扩大了状态的存储容量而已，并不能改变下一个状态只能从当前状态计算出来这一条铁律）当你企图使用计算机解决一个问题是，其实就是在思考如何将这个问题表达成状态（用哪些变量存储哪些数据）以及如何在状态中转移（怎样根据一些变量计算出另一些变量）。所以所谓的空间复杂度就是为了支持你的计算所必需存储的状态最多有多少，所谓时间复杂度就是从初始状态到达最终状态中间需要多少步！
+ 回到我们的问题，要定义这个问题的状态和状态转移方程，首先需要分析这个问题的解的构建过程。那么找零的过程是怎么样的？很简单，每次可以拿起 $n$ 种硬币中，面值小于找零总额的任意一个。然后把找零总额减去拿起的硬币的面值，进入下一次选择。不断如此重复，直至拿起的硬币的总值等于找零的总额。（到这里，子问题的定义就显而易见了，这个问题的子问题就是每一次进行的硬币的选择，本次的选择只与之前的选择有关，因为每一次选择后剩余的找零总额会相应减小）
+但是这样并不能保证硬币数是最小的。为了找到最优解，我们需要假设某个子问题已经得到了最优解，然后推出与它的子问题的最优解的关系，也就是最优解的递推关系式。设 $dp(i)$ 表示组合总价值为 $i$ 的零钱所需要的最小硬币数。因此每次可以选择 $n$ 种硬币中的一种，设本次选择的硬币为第 $j$ $(1 \leq j \leq n)$ 种，对应的面值为 $c[j]$，则在拿起该硬币之前的子问题即为：组合面值为 $dp(i-c[j])$ 的总额需要的最小硬币数。同样可以用“剪贴粘贴”的反正法证明其最优解为 $dp(i-c[j])-1$。形式化描述为：
+$$ dp(i)= \begin{cases} 0, &amp; \text{if $i=0 $} \
+min_{1 \leq j \leq n}(dp(i-c[j])&#43;1), &amp; \text{if $i &gt;0 , , , c[j] \leq i$} \" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://utopizza.github.io/posts/algorithm/2017-09-24-%E7%AE%97%E6%B3%95-%E7%A1%AC%E5%B8%81%E6%89%BE%E9%9B%B6/" />
+<meta property="article:published_time" content="2017-09-24T23:20:00+00:00" />
+<meta property="article:modified_time" content="2017-09-24T23:20:00+00:00" />
+
+
+    
+      <base href="https://utopizza.github.io/posts/algorithm/2017-09-24-%E7%AE%97%E6%B3%95-%E7%A1%AC%E5%B8%81%E6%89%BE%E9%9B%B6/">
+    
+    <title>
+  硬币找零 · Utopizza
+</title>
+
+    
+      <link rel="canonical" href="https://utopizza.github.io/posts/algorithm/2017-09-24-%E7%AE%97%E6%B3%95-%E7%A1%AC%E5%B8%81%E6%89%BE%E9%9B%B6/">
+    
+
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700%7CMerriweather:300,700%7CSource+Code+Pro:400,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.13.0/css/all.css" integrity="sha384-Bfad6CLCknfcloXFOyFnlgtENryhrpZCe29RTifKEixXQZ38WheV+i/6YWSzkz3V" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" integrity="sha256-l85OmPOjvil/SOvVt3HnSSjzF1TUMyT9eV0c2BzEGzU=" crossorigin="anonymous" />
+
+    
+      
+      
+      <link rel="stylesheet" href="https://utopizza.github.io/css/coder.min.a4f332213a21ce8eb521670c614470c58923aaaf385e2a73982c31dd7642decb.css" integrity="sha256-pPMyITohzo61IWcMYURwxYkjqq84XipzmCwx3XZC3ss=" crossorigin="anonymous" media="screen" />
+    
+
+    
+
+    
+      
+        
+        
+        <link rel="stylesheet" href="https://utopizza.github.io/css/coder-dark.min.e78e80fc3a585a4d1c8fc7f58623b6ff852411e38431a9cd1792877ecaa160f6.css" integrity="sha256-546A/DpYWk0cj8f1hiO2/4UkEeOEManNF5KHfsqhYPY=" crossorigin="anonymous" media="screen" />
+      
+    
+
+    
+
+    
+
+    <link rel="icon" type="image/png" href="https://utopizza.github.io/images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="https://utopizza.github.io/images/favicon-16x16.png" sizes="16x16">
+
+    <meta name="generator" content="Hugo 0.69.2" />
+  </head>
+
+  
+  
+    
+  
+  <body class="colorscheme-auto">
+    <main class="wrapper">
+      <nav class="navigation">
+  <section class="container">
+    <a class="navigation-title" href="https://utopizza.github.io/">
+      Utopizza
+    </a>
+    
+    <input type="checkbox" id="menu-toggle" />
+    <label class="menu-button float-right" for="menu-toggle"><i class="fas fa-bars"></i></label>
+    <ul class="navigation-list">
+      
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/about/">About</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/posts/">Blog</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/projects/">Projects</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/contact/">Contact me</a>
+          </li>
+        
+      
+      
+    </ul>
+    
+  </section>
+</nav>
+
+
+      <div class="content">
+        
+  <section class="container post">
+    <article>
+      <header>
+        <div class="post-title">
+          <h1 class="title">硬币找零</h1>
+        </div>
+        <div class="post-meta">
+          <div class="date">
+            <span class="posted-on">
+              <i class="fas fa-calendar"></i>
+              <time datetime='2017-09-24T23:20:00Z'>
+                September 24, 2017
+              </time>
+            </span>
+            <span class="reading-time">
+              <i class="fas fa-clock"></i>
+              1-minute read
+            </span>
+          </div>
+          <div class="categories">
+  <i class="fas fa-folder"></i>
+    <a href="https://utopizza.github.io/categories/algorithm/">Algorithm</a></div>
+
+          
+        </div>
+      </header>
+
+      <div>
+        
+        <p>一、问题</p>
+<p>假设有几种硬币，如1、3、5、10，并且数量无限。请找出能够组成某个数目的找零所使用最少的硬币数</p>
+<p>形式化定义：设需要找零的总额为 $V$ ，一共有 $n$ 种硬币可以选择，其中第 $i$ 种硬币面值为 $c_i$，对应的使用数量为 $y_i$。则问题表述为：</p>
+<p>$$min \quad \sum_{i=1}^{n}y_i , \quad y_i \in N \text{（自然数集）} $$</p>
+<p>$$s.t. \quad \sum_{i=1}^{n} c_i \cdot y_i = V$$</p>
+<p>二、划分子问题，导出递推式</p>
+<p>今天查了一些资料，对动态规划有了新的理解。</p>
+<p><a href="https://www.zhihu.com/question/23995189/answer/35324479">有博主说</a>：</p>
+<blockquote>
+<p>动态规划的本质是对问题状态的定义，和对状态转移方程的定义。动态规划是通过拆分问题，定义问题状态和状态之间的关系，使得问题能够以递推（或者说分治）的方式去解决。如何拆分问题，才是动态规划的核心，而拆分问题，靠的就是状态的定义和状态转移方程的定义。</p>
+</blockquote>
+<p><a href="https://www.zhihu.com/question/23995189/answer/35429905">也有博主说</a>：</p>
+<blockquote>
+<p>计算机的本质是一个状态机，内存里存储的所有数据构成了当前的状态，CPU只能利用当前的状态计算出下一个状态（不要纠结硬盘之类的外部存储，就算考虑他们也只是扩大了状态的存储容量而已，并不能改变下一个状态只能从当前状态计算出来这一条铁律）当你企图使用计算机解决一个问题是，其实就是在思考如何将这个问题表达成状态（用哪些变量存储哪些数据）以及如何在状态中转移（怎样根据一些变量计算出另一些变量）。所以所谓的空间复杂度就是为了支持你的计算所必需存储的状态最多有多少，所谓时间复杂度就是从初始状态到达最终状态中间需要多少步！</p>
+</blockquote>
+<p>回到我们的问题，要定义这个问题的状态和状态转移方程，首先需要分析这个问题的解的构建过程。那么找零的过程是怎么样的？很简单，每次可以拿起 $n$ 种硬币中，面值小于找零总额的任意一个。然后把找零总额减去拿起的硬币的面值，进入下一次选择。不断如此重复，直至拿起的硬币的总值等于找零的总额。（到这里，子问题的定义就显而易见了，这个问题的子问题就是每一次进行的硬币的选择，本次的选择只与之前的选择有关，因为每一次选择后剩余的找零总额会相应减小）</p>
+<p>但是这样并不能保证硬币数是最小的。为了找到最优解，我们需要假设某个子问题已经得到了最优解，然后推出与它的子问题的最优解的关系，也就是最优解的递推关系式。设 $dp(i)$ 表示组合总价值为 $i$ 的零钱所需要的最小硬币数。因此每次可以选择 $n$ 种硬币中的一种，设本次选择的硬币为第 $j$ $(1 \leq j \leq n)$ 种，对应的面值为 $c[j]$，则在拿起该硬币之前的子问题即为：组合面值为 $dp(i-c[j])$ 的总额需要的最小硬币数。同样可以用“剪贴粘贴”的反正法证明其最优解为 $dp(i-c[j])-1$。形式化描述为：</p>
+<p>$$
+dp(i)=
+\begin{cases}
+0, &amp; \text{if $i=0 $} \<br>
+min_{1 \leq j \leq n}(dp(i-c[j])+1), &amp; \text{if $i &gt;0 , , , c[j] \leq i$} \<br>
+\end{cases}
+$$</p>
+<p>三、算法实现</p>
+<div class="highlight"><pre style="color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">public static int coin(int[] c, int v) {
+    int[] dp = new int[v + 1];
+    for (int i = 0; i &lt;= v; i++) {
+        if (i == 0) dp[i] = 0;
+        else {
+            dp[i] = Integer.MAX_VALUE;
+            for (int j = 1; c[j] &lt;= i &amp;&amp; j &lt; c.length; j++) {
+                int temp = dp[i - c[j]] + 1;
+                if (temp &lt; dp[i]) dp[i] = temp;
+            }
+        }
+    }
+    return dp[v];
+}
+
+public static void main(String[] args) {
+    //从下标1开始表示第1种硬币
+    int[] c = {0, 1, 3, 5, 10};
+    System.out.println(coin(c, 3));
+}
+</code></pre></div><p>外层的 $for$ 循环取值范围为 $0$ 到 $V$，内层的 $for$ 循环的取值范围为 $0$ 到 $n$，因此时间复杂度为 $O(V \cdot n)$    。空间复杂度为 $O(V)$。</p>
+
+      </div>
+
+
+      <footer>
+        
+
+
+        
+        
+        
+      </footer>
+    </article>
+
+    
+  </section>
+
+      </div>
+
+      <script type="text/javascript"
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+    </main>
+
+    
+
+    
+
+    <script>
+(function(f, a, t, h, o, m){
+	a[h]=a[h]||function(){
+		(a[h].q=a[h].q||[]).push(arguments)
+	};
+	o=f.createElement('script'),
+	m=f.getElementsByTagName('script')[0];
+	o.async=1; o.src=t; o.id='fathom-script';
+	m.parentNode.insertBefore(o,m)
+})(document, window, '//analytics.example.com/tracker.js', 'fathom');
+fathom('set', 'siteId', 'ABCDE');
+fathom('trackPageview');
+</script>
+
+
+  </body>
+
+</html>

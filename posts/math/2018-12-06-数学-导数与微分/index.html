@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Language" content="en">
+
+    <meta name="author" content="Yusheng Wang">
+    <meta name="description" content="一、导数定义
+1、函数在一点处的导数：设函数 $y=f(x)$ 在点 $x_0$ 的某个邻域内有定义，当自变量 $x$ 在 $x_0$ 处取得增量 $\Delta x$（点 $x_0 &#43; \Delta x$ 仍在该邻域内）时，相应地，因变量取得增量 $\Delta y=f(x_0&#43;\Delta x)-f(x_0)$。如果 $\Delta y$ 与 $\Delta x$ 之比当 $\Delta x \to 0$ 时的极限存在，那么称函数 $y=f(x)$ 在点 $x_0$ 处可导，并称这个极限为函数 $y=f(x)$ 在点 $x_0$ 处的导数，记为 $f&rsquo;(x_0)$，即
+$$f&rsquo;(x_0)=\lim_{\Delta x \to 0} \frac{\Delta y}{\Delta x}=\lim_{\Delta x \to 0} \frac{f(x_0&#43;\Delta x)-f(x_0)}{\Delta x}$$
+2、导函数：如果函数 $y=f(x)$ 在开区间的每点处都可导，那么就称函数 $f(x)$ 在开区间 $I$ 内可导。这时，对于任一 $x \in I$ 都对应着 $f(x)$ 的一个确定的导数值，这样就构成了一个新的函数，这个函数叫做函数 $y=f(x)$ 的导函数，记作 $y&#39;$, 或 $f&rsquo;(x)$。导函数 $f&rsquo;(x)$ 简称导数，$f&rsquo;(x_0)$ 是 $f(x)$ 在 $x_0$ 处的导数，或导数 $f&rsquo;(x)$ 在 $x_0$ 处的值，即 $f&rsquo;(x_0)=f&rsquo;(x)|_{x=x_0}$">
+    <meta name="keywords" content="blog,developer,personal">
+
+    <meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="导数与微分"/>
+<meta name="twitter:description" content="一、导数定义
+1、函数在一点处的导数：设函数 $y=f(x)$ 在点 $x_0$ 的某个邻域内有定义，当自变量 $x$ 在 $x_0$ 处取得增量 $\Delta x$（点 $x_0 &#43; \Delta x$ 仍在该邻域内）时，相应地，因变量取得增量 $\Delta y=f(x_0&#43;\Delta x)-f(x_0)$。如果 $\Delta y$ 与 $\Delta x$ 之比当 $\Delta x \to 0$ 时的极限存在，那么称函数 $y=f(x)$ 在点 $x_0$ 处可导，并称这个极限为函数 $y=f(x)$ 在点 $x_0$ 处的导数，记为 $f&rsquo;(x_0)$，即
+$$f&rsquo;(x_0)=\lim_{\Delta x \to 0} \frac{\Delta y}{\Delta x}=\lim_{\Delta x \to 0} \frac{f(x_0&#43;\Delta x)-f(x_0)}{\Delta x}$$
+2、导函数：如果函数 $y=f(x)$ 在开区间的每点处都可导，那么就称函数 $f(x)$ 在开区间 $I$ 内可导。这时，对于任一 $x \in I$ 都对应着 $f(x)$ 的一个确定的导数值，这样就构成了一个新的函数，这个函数叫做函数 $y=f(x)$ 的导函数，记作 $y&#39;$, 或 $f&rsquo;(x)$。导函数 $f&rsquo;(x)$ 简称导数，$f&rsquo;(x_0)$ 是 $f(x)$ 在 $x_0$ 处的导数，或导数 $f&rsquo;(x)$ 在 $x_0$ 处的值，即 $f&rsquo;(x_0)=f&rsquo;(x)|_{x=x_0}$"/>
+
+    <meta property="og:title" content="导数与微分" />
+<meta property="og:description" content="一、导数定义
+1、函数在一点处的导数：设函数 $y=f(x)$ 在点 $x_0$ 的某个邻域内有定义，当自变量 $x$ 在 $x_0$ 处取得增量 $\Delta x$（点 $x_0 &#43; \Delta x$ 仍在该邻域内）时，相应地，因变量取得增量 $\Delta y=f(x_0&#43;\Delta x)-f(x_0)$。如果 $\Delta y$ 与 $\Delta x$ 之比当 $\Delta x \to 0$ 时的极限存在，那么称函数 $y=f(x)$ 在点 $x_0$ 处可导，并称这个极限为函数 $y=f(x)$ 在点 $x_0$ 处的导数，记为 $f&rsquo;(x_0)$，即
+$$f&rsquo;(x_0)=\lim_{\Delta x \to 0} \frac{\Delta y}{\Delta x}=\lim_{\Delta x \to 0} \frac{f(x_0&#43;\Delta x)-f(x_0)}{\Delta x}$$
+2、导函数：如果函数 $y=f(x)$ 在开区间的每点处都可导，那么就称函数 $f(x)$ 在开区间 $I$ 内可导。这时，对于任一 $x \in I$ 都对应着 $f(x)$ 的一个确定的导数值，这样就构成了一个新的函数，这个函数叫做函数 $y=f(x)$ 的导函数，记作 $y&#39;$, 或 $f&rsquo;(x)$。导函数 $f&rsquo;(x)$ 简称导数，$f&rsquo;(x_0)$ 是 $f(x)$ 在 $x_0$ 处的导数，或导数 $f&rsquo;(x)$ 在 $x_0$ 处的值，即 $f&rsquo;(x_0)=f&rsquo;(x)|_{x=x_0}$" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://utopizza.github.io/posts/math/2018-12-06-%E6%95%B0%E5%AD%A6-%E5%AF%BC%E6%95%B0%E4%B8%8E%E5%BE%AE%E5%88%86/" />
+<meta property="article:published_time" content="2018-12-06T00:00:00+00:00" />
+<meta property="article:modified_time" content="2018-12-06T00:00:00+00:00" />
+
+
+    
+      <base href="https://utopizza.github.io/posts/math/2018-12-06-%E6%95%B0%E5%AD%A6-%E5%AF%BC%E6%95%B0%E4%B8%8E%E5%BE%AE%E5%88%86/">
+    
+    <title>
+  导数与微分 · Utopizza
+</title>
+
+    
+      <link rel="canonical" href="https://utopizza.github.io/posts/math/2018-12-06-%E6%95%B0%E5%AD%A6-%E5%AF%BC%E6%95%B0%E4%B8%8E%E5%BE%AE%E5%88%86/">
+    
+
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700%7CMerriweather:300,700%7CSource+Code+Pro:400,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.13.0/css/all.css" integrity="sha384-Bfad6CLCknfcloXFOyFnlgtENryhrpZCe29RTifKEixXQZ38WheV+i/6YWSzkz3V" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" integrity="sha256-l85OmPOjvil/SOvVt3HnSSjzF1TUMyT9eV0c2BzEGzU=" crossorigin="anonymous" />
+
+    
+      
+      
+      <link rel="stylesheet" href="https://utopizza.github.io/css/coder.min.a4f332213a21ce8eb521670c614470c58923aaaf385e2a73982c31dd7642decb.css" integrity="sha256-pPMyITohzo61IWcMYURwxYkjqq84XipzmCwx3XZC3ss=" crossorigin="anonymous" media="screen" />
+    
+
+    
+
+    
+      
+        
+        
+        <link rel="stylesheet" href="https://utopizza.github.io/css/coder-dark.min.e78e80fc3a585a4d1c8fc7f58623b6ff852411e38431a9cd1792877ecaa160f6.css" integrity="sha256-546A/DpYWk0cj8f1hiO2/4UkEeOEManNF5KHfsqhYPY=" crossorigin="anonymous" media="screen" />
+      
+    
+
+    
+
+    
+
+    <link rel="icon" type="image/png" href="https://utopizza.github.io/images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="https://utopizza.github.io/images/favicon-16x16.png" sizes="16x16">
+
+    <meta name="generator" content="Hugo 0.69.2" />
+  </head>
+
+  
+  
+    
+  
+  <body class="colorscheme-auto">
+    <main class="wrapper">
+      <nav class="navigation">
+  <section class="container">
+    <a class="navigation-title" href="https://utopizza.github.io/">
+      Utopizza
+    </a>
+    
+    <input type="checkbox" id="menu-toggle" />
+    <label class="menu-button float-right" for="menu-toggle"><i class="fas fa-bars"></i></label>
+    <ul class="navigation-list">
+      
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/about/">About</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/posts/">Blog</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/projects/">Projects</a>
+          </li>
+        
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://utopizza.github.io/contact/">Contact me</a>
+          </li>
+        
+      
+      
+    </ul>
+    
+  </section>
+</nav>
+
+
+      <div class="content">
+        
+  <section class="container post">
+    <article>
+      <header>
+        <div class="post-title">
+          <h1 class="title">导数与微分</h1>
+        </div>
+        <div class="post-meta">
+          <div class="date">
+            <span class="posted-on">
+              <i class="fas fa-calendar"></i>
+              <time datetime='2018-12-06T00:00:00Z'>
+                December 6, 2018
+              </time>
+            </span>
+            <span class="reading-time">
+              <i class="fas fa-clock"></i>
+              2-minute read
+            </span>
+          </div>
+          <div class="categories">
+  <i class="fas fa-folder"></i>
+    <a href="https://utopizza.github.io/categories/math/">Math</a></div>
+
+          
+        </div>
+      </header>
+
+      <div>
+        
+        <p>一、导数定义</p>
+<p>1、函数在一点处的导数：设函数 $y=f(x)$ 在点 $x_0$ 的某个邻域内有定义，当自变量 $x$ 在 $x_0$ 处取得增量 $\Delta x$（点 $x_0 + \Delta x$ 仍在该邻域内）时，相应地，因变量取得增量 $\Delta y=f(x_0+\Delta x)-f(x_0)$。如果 $\Delta y$ 与 $\Delta x$ 之比当 $\Delta x \to 0$ 时的极限存在，那么称函数 $y=f(x)$ 在点 $x_0$ 处可导，并称这个极限为函数 $y=f(x)$ 在点 $x_0$ 处的导数，记为 $f&rsquo;(x_0)$，即</p>
+<p>$$f&rsquo;(x_0)=\lim_{\Delta x \to 0} \frac{\Delta y}{\Delta x}=\lim_{\Delta x \to 0} \frac{f(x_0+\Delta x)-f(x_0)}{\Delta x}$$</p>
+<p>2、导函数：如果函数 $y=f(x)$ 在开区间的每点处都可导，那么就称函数 $f(x)$ 在开区间 $I$ 内可导。这时，对于任一 $x \in I$ 都对应着 $f(x)$ 的一个确定的导数值，这样就构成了一个新的函数，这个函数叫做函数 $y=f(x)$ 的导函数，记作 $y'$, 或 $f&rsquo;(x)$。导函数 $f&rsquo;(x)$ 简称导数，$f&rsquo;(x_0)$ 是 $f(x)$ 在 $x_0$ 处的导数，或导数 $f&rsquo;(x)$ 在 $x_0$ 处的值，即 $f&rsquo;(x_0)=f&rsquo;(x)|_{x=x_0}$</p>
+<p>二、函数的求导法则</p>
+<p>1、定理：如果函数 $u=u(x)$ 和 $v=v(x)$ 都在点 x 具有导数，那么它们的和、差、积、商（除分母为零的点外）都在 x 点具有导数，且</p>
+<ul>
+<li>$[u \pm v]&rsquo; = u&rsquo; \pm v'$</li>
+<li>$[uv]&rsquo; = u&rsquo;v+uv'$</li>
+<li>$[\frac{u}{v}]&lsquo;=\frac{u&rsquo;v-uv&rsquo;}{v^2}$ ($v(x)\neq 0$)</li>
+</ul>
+<p>2、定理：如果函数 $x=f(y)$ 在区间 $I_y$ 内单调、可导且 $f&rsquo;(y)\neq 0$，那么它的反函数 $y=f^{-1}$ 在区间 $I_{x}={ x|x=f(y),y\in I_y }$ 内也可导，且其导数等于直接函数的导数的倒数，即</p>
+<p>$$[f^{-1}(x)]&lsquo;=\frac{1}{f&rsquo;(y)}$$</p>
+<p>3、定理：如果 $u=g(x)$ 在点 $x$ 可导，而 $y=f(u)$ 在点 $u=g(x)$ 可导，那么复合函数 $y=f[g(x)]$ 在点 $x$ 可导，且其导数为</p>
+<p>$$y'=f&rsquo;(u)\cdot g&rsquo;(x)$$</p>
+<p>4、基本初等函数求导公式</p>
+<ul>
+<li>$(C)&lsquo;=0$</li>
+<li>$(x^{\mu})&lsquo;=\mu x^{\mu -1}$</li>
+<li>$(a^x)&lsquo;=a^x \ln a$ ($a&gt;0, a \neq 1$)</li>
+<li>$(e^x)&lsquo;=e^x$</li>
+<li>$(\log_a x)&lsquo;=\frac{1}{x \ln a}$ ($a&gt;0, a \neq 1$)</li>
+<li>$(\ln x)&lsquo;=\frac{1}{x}$</li>
+<li>$(\sin x)&lsquo;=\cos x$</li>
+<li>$(\cos x)&lsquo;=- \sin x$</li>
+<li>$(\tan x)&lsquo;=\sec^{2} x$</li>
+<li>$(\cot x)&lsquo;=- \csc^{2} x$</li>
+<li>$(\sec x)&lsquo;=\sec x \cdot \tan x$</li>
+<li>$(\csc x)&lsquo;=- \csc x \cdot \cot x$</li>
+</ul>
+<p>三、高阶导数</p>
+<p>四、隐函数的导数、由参数方程所确定的函数的导数、相关变化率</p>
+<p>五、函数的微分</p>
+<p>1、定义：设函数 $y=f(x)$ 在某区间内有定义，$x_0$ 及 $x_0+\Delta x$ 在这区间内，如果函数的增量 $\Delta y=f(x_0+\Delta x)-f(x_0)$ 可表示为 $\Delta y=C \cdot \Delta x+ o(\Delta x)$，其中 $C$ 是不依赖于 $\Delta x$ 的常数，那么称函数 $y=f(x)$ 在点 $x_0$ 处是可微的，而 $C \cdot \Delta x$ 叫做函数的微分，记作 $dy$，即</p>
+<p>$$dy=C \cdot \Delta x$$</p>
+<p>2、可微的条件：函数 $f(x)$ 在点 $x_0$ 处可微的充分必要条件是函数 $f(x)$ 在点 $x_0$ 处可导，并且其导数 $f&rsquo;(x_0)=C$。因为由导数的定义 （$\frac{\Delta y}{\Delta x}$ 在 $x_0$ 处的极限存在，记为 $f&rsquo;(x_0)$），以及极限与无穷小的关系（在自变量的同一变化过程 $x \to x_0$ 中，函数 $g(x)$ 具有极限 $A$ 的充分必要条件是 $g(x)=A+\alpha$，其中 $\alpha$ 是无穷小），可得 $\frac{\Delta y}{\Delta x}=f&rsquo;(x_0)+\alpha$，因此</p>
+<p>$$\Delta y=f&rsquo;(x_0) \cdot \Delta x+\alpha \cdot \Delta x=dy+o(\Delta x)$$</p>
+<p>3、自变量的微分：通常把自变量 $x$ 的增量 $\Delta x$ 称为自变量的微分，记作 $dx$，即</p>
+<p>$$dx=\Delta x$$</p>
+<p>于是，函数 $y=f(x)$ 的微分 $dy=f&rsquo;(x) \cdot \Delta x$ 又可以记作 $dy=f&rsquo;(x) \cdot dx$。从而有 $\frac{dy}{dx}=f&rsquo;(x)$，也就是说，函数的微分 $dy$ 与自变量的微分 $dx$ 之商，等于该函数的导数。因此，导数也可叫做“微商”。</p>
+<p>$$\frac{dy}{dx}=\lim_{\Delta x \to 0}\frac{\Delta y}{\Delta x}$$</p>
+<p>那么在 $x_0$ 处的导数定义为</p>
+<p>$$f&rsquo;(x_0) = \frac{dy}{dx} |_{x=x_0}=\lim_{\Delta x \to 0} \frac{\Delta y}{\Delta x} |_{x=x_0} =\lim_{\Delta x \to 0} \frac{f(x_0+\Delta x)-f(x_0)}{\Delta x}$$</p>
+<p>4、微分的几何意义：对于可微函数 $y=f(x)$ 而言，当 $\Delta y$ 是曲线 $y=f(x)$ 上的点的纵坐标的增量时，$dy$ 就是曲线的切线上的点的纵坐标的相应增量。当 $|\Delta x|$ 很小时，$|\Delta y-dy|$ 比 $|\Delta x|$ 小得多。因此在某点的邻近，我们可以用切线段来近似代替曲线段。（在局部范围内用线性函数近似代替非线性函数，在几何上就是局部用切线段近似代替曲线段，这在数学上称为非线性函数的局部线性化，这是微分学的基本思想方法之一）</p>
+<p>5、微分的运算法则：从函数的微分的表达式 $dy=f&rsquo;(x)dx$ 可以看出，要计算函数的微分，只要计算函数的导数，再乘以自变量的微分即可。</p>
+
+      </div>
+
+
+      <footer>
+        
+
+
+        
+        
+        
+      </footer>
+    </article>
+
+    
+  </section>
+
+      </div>
+
+      <script type="text/javascript"
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+    </main>
+
+    
+
+    
+
+    <script>
+(function(f, a, t, h, o, m){
+	a[h]=a[h]||function(){
+		(a[h].q=a[h].q||[]).push(arguments)
+	};
+	o=f.createElement('script'),
+	m=f.getElementsByTagName('script')[0];
+	o.async=1; o.src=t; o.id='fathom-script';
+	m.parentNode.insertBefore(o,m)
+})(document, window, '//analytics.example.com/tracker.js', 'fathom');
+fathom('set', 'siteId', 'ABCDE');
+fathom('trackPageview');
+</script>
+
+
+  </body>
+
+</html>
