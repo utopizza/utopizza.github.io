@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>PageRank在Spark的分布式实现 - Utopizza</title>
+        <meta name="Description" content="About LoveIt Theme"><meta property="og:title" content="PageRank在Spark的分布式实现" />
+<meta property="og:description" content="最近在研究 MapReduce 和 Spark 的相关资料，顺便补个关于如何在虚拟机中搭建的 Spark 上分布式运行 PageRank 算法的博客。犹记得这个小任务是研一开学时，导师布置的第一个小任务，而现在马上就要硕士毕业答辩了，不禁思绪万千。
+一、PageRank 算法
+PageRank 算法是谷歌的起家算法，凭借该算法谷歌击败了当时所有的其他门户网站以及搜索引擎。该算法的目的是对数以亿计的网页进行排序，重要的网页将被排在前列，作为搜索结果返回给用户。想起了昆丁的电影《低俗小说》中的对白：“如果你要把一具尸体藏起来，你知道世界上哪里最安全吗？那就是谷歌搜索结果的第二页”。言外之意，谷歌搜索的前几条解决方案总能满足用户，用户永远不需要翻到第二页寻找答案。由此可见谷歌的搜索算法及 PageRank 网页排序算法之强大。
+PageRank 算法的详细介绍见 维基百科。总而言之，该算法的主要思路是：如果一个网页被很多重要的网页指向，那么它也是一个重要的网页。具体地，互联网中的每个网页被抽象成一个节点；如果网页 A 包含网页 B 的链接，那么有一条有向边从节点 A 指向节点 B。如此，互联网中的网页及其链接被抽象成一个由节点及有向边组成的巨大拓扑图。
+拓扑图建立好后，初始化系统，令每个节点的重要性分数均为1。然后开始迭代系统，在每一轮迭代中，对于每个节点，做如下两件事：
+ 如果出边是加权的，将该节点的分数按权重比例进行拆解并传送到对应的节点；如果出边不加权，那么将该节点的分数平均拆解并传送 搜集从其他节点传送过来的分数并求和，替换该节点原来的分数  该过程从数学上来说就是一个 马尔可夫过程，可以从数学上证明其收敛性。也就是说，该系统经过若干次迭代，必定可以演化到一个平衡态。在这个状态下，每个节点的每一次分数收入约等于其分数支出。此时，每个节点上的分数就是稳定的分数，PageRank 算法按照该分数从大到小对网页进行排序并（分页地）返回给用户。
+二、PageRank 算法的 Spark 分布式实现
+输入数据是一个文件，如下所示。第一行只有一个数字，表明了该数据集一共有 114529 个网页节点。从第二行开始，每一行表示一个节点的出边以及对应的权重，以 [key-value] 形式表示 ：[指向的节点id:权重]。在使用该数据集时，需要把第一行的数字删去，刚好剩下一共 114529 行，每一行的行号表示其节点id。例如，删掉第一行后，第 2 行为空行，说明节点 2 出度为 0，不指向任何其他节点；第 3 行的数据表示节点 3 指向了节点 8107、节点 22950 和 节点 108053，边的权重分别为 3320、4 和 1。
+要分布式实现 PageRank，就需要按 MapReduce 编程范式来编写代码。MapReduce 接受的输入是 key-value 对，在 Map 过程中映射成新的 key-value 对，在 Reduce 过程中对相同 key 的 values 进行聚合，输入最终结果。为方便起见，使用函数式编程语言 Scala 编写。伪码如下：" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://utopizza.github.io/2019-05-19-%E7%AE%97%E6%B3%95-pagerank%E5%9C%A8spark%E7%9A%84%E5%88%86%E5%B8%83%E5%BC%8F%E5%AE%9E%E7%8E%B0/" />
+<meta property="og:image" content="https://utopizza.github.io/logo.png"/>
+<meta property="article:published_time" content="2019-05-19T00:00:00+00:00" />
+<meta property="article:modified_time" content="2019-05-19T00:00:00+00:00" />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://utopizza.github.io/logo.png"/>
+
+<meta name="twitter:title" content="PageRank在Spark的分布式实现"/>
+<meta name="twitter:description" content="最近在研究 MapReduce 和 Spark 的相关资料，顺便补个关于如何在虚拟机中搭建的 Spark 上分布式运行 PageRank 算法的博客。犹记得这个小任务是研一开学时，导师布置的第一个小任务，而现在马上就要硕士毕业答辩了，不禁思绪万千。
+一、PageRank 算法
+PageRank 算法是谷歌的起家算法，凭借该算法谷歌击败了当时所有的其他门户网站以及搜索引擎。该算法的目的是对数以亿计的网页进行排序，重要的网页将被排在前列，作为搜索结果返回给用户。想起了昆丁的电影《低俗小说》中的对白：“如果你要把一具尸体藏起来，你知道世界上哪里最安全吗？那就是谷歌搜索结果的第二页”。言外之意，谷歌搜索的前几条解决方案总能满足用户，用户永远不需要翻到第二页寻找答案。由此可见谷歌的搜索算法及 PageRank 网页排序算法之强大。
+PageRank 算法的详细介绍见 维基百科。总而言之，该算法的主要思路是：如果一个网页被很多重要的网页指向，那么它也是一个重要的网页。具体地，互联网中的每个网页被抽象成一个节点；如果网页 A 包含网页 B 的链接，那么有一条有向边从节点 A 指向节点 B。如此，互联网中的网页及其链接被抽象成一个由节点及有向边组成的巨大拓扑图。
+拓扑图建立好后，初始化系统，令每个节点的重要性分数均为1。然后开始迭代系统，在每一轮迭代中，对于每个节点，做如下两件事：
+ 如果出边是加权的，将该节点的分数按权重比例进行拆解并传送到对应的节点；如果出边不加权，那么将该节点的分数平均拆解并传送 搜集从其他节点传送过来的分数并求和，替换该节点原来的分数  该过程从数学上来说就是一个 马尔可夫过程，可以从数学上证明其收敛性。也就是说，该系统经过若干次迭代，必定可以演化到一个平衡态。在这个状态下，每个节点的每一次分数收入约等于其分数支出。此时，每个节点上的分数就是稳定的分数，PageRank 算法按照该分数从大到小对网页进行排序并（分页地）返回给用户。
+二、PageRank 算法的 Spark 分布式实现
+输入数据是一个文件，如下所示。第一行只有一个数字，表明了该数据集一共有 114529 个网页节点。从第二行开始，每一行表示一个节点的出边以及对应的权重，以 [key-value] 形式表示 ：[指向的节点id:权重]。在使用该数据集时，需要把第一行的数字删去，刚好剩下一共 114529 行，每一行的行号表示其节点id。例如，删掉第一行后，第 2 行为空行，说明节点 2 出度为 0，不指向任何其他节点；第 3 行的数据表示节点 3 指向了节点 8107、节点 22950 和 节点 108053，边的权重分别为 3320、4 和 1。
+要分布式实现 PageRank，就需要按 MapReduce 编程范式来编写代码。MapReduce 接受的输入是 key-value 对，在 Map 过程中映射成新的 key-value 对，在 Reduce 过程中对相同 key 的 values 进行聚合，输入最终结果。为方便起见，使用函数式编程语言 Scala 编写。伪码如下："/>
+<meta name="application-name" content="Utopizza">
+<meta name="apple-mobile-web-app-title" content="Utopizza"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://utopizza.github.io/2019-05-19-%E7%AE%97%E6%B3%95-pagerank%E5%9C%A8spark%E7%9A%84%E5%88%86%E5%B8%83%E5%BC%8F%E5%AE%9E%E7%8E%B0/" /><link rel="prev" href="https://utopizza.github.io/2019-05-09-%E8%AE%BA%E6%96%87-spark/" /><link rel="next" href="https://utopizza.github.io/2019-09-16-%E6%80%BB%E7%BB%93-%E9%98%B6%E6%AE%B5%E6%80%BB%E7%BB%938/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "PageRank在Spark的分布式实现",
+        "inLanguage": "en",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https:\/\/utopizza.github.io\/2019-05-19-%E7%AE%97%E6%B3%95-pagerank%E5%9C%A8spark%E7%9A%84%E5%88%86%E5%B8%83%E5%BC%8F%E5%AE%9E%E7%8E%B0\/"
+        },"image": {
+                "@type": "ImageObject",
+                "url": "https:\/\/utopizza.github.io\/cover.png",
+                "width":  800 ,
+                "height":  600 
+            },"genre": "posts","wordcount":  116 ,
+        "url": "https:\/\/utopizza.github.io\/2019-05-19-%E7%AE%97%E6%B3%95-pagerank%E5%9C%A8spark%E7%9A%84%E5%88%86%E5%B8%83%E5%BC%8F%E5%AE%9E%E7%8E%B0\/","datePublished": "2019-05-19T00:00:00+00:00","dateModified": "2019-05-19T00:00:00+00:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+                "@type": "Organization",
+                "name": "",
+                "logo": {
+                "@type": "ImageObject",
+                "url": "https:\/\/utopizza.github.io\/logo.png",
+                "width":  127 ,
+                "height":  40 
+                }
+            },"author": {
+                "@type": "Person",
+                "name": "yusheng"
+            },"description": ""
+    }
+    </script></head>
+    <body><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="Utopizza"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>Utopizza</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> Posts </a><a class="menu-item" href="/categories/"> Categories </a><a class="menu-item" href="https://github.com/utopizza" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i>  </a><span class="menu-item delimiter"></span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="Utopizza"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>Utopizza</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><a class="menu-item" href="/posts/" title="">Posts</a><a class="menu-item" href="/categories/" title="">Categories</a><a class="menu-item" href="https://github.com/utopizza" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i></a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">PageRank在Spark的分布式实现</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;
+                    <span class="post-category">included in<a href="/categories/algorithm/">
+                                <i class="far fa-folder fa-fw"></i>Algorithm
+                            </a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i><time datetime=2019-05-19>2019-05-19</time>&nbsp;
+                <i class="fas fa-pencil-alt fa-fw"></i>about 116 words&nbsp;
+                <i class="far fa-clock fa-fw"></i>1 min&nbsp;</div>
+        </div><div class="details toc" id="toc-static">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents"></nav></div>
+            </div><div class="content" id="content"><p>最近在研究 MapReduce 和 Spark 的相关资料，顺便补个关于如何在虚拟机中搭建的 Spark 上分布式运行 PageRank 算法的博客。犹记得这个小任务是研一开学时，导师布置的第一个小任务，而现在马上就要硕士毕业答辩了，不禁思绪万千。</p>
+<p>一、PageRank 算法</p>
+<p>PageRank 算法是谷歌的起家算法，凭借该算法谷歌击败了当时所有的其他门户网站以及搜索引擎。该算法的目的是对数以亿计的网页进行排序，重要的网页将被排在前列，作为搜索结果返回给用户。想起了昆丁的电影《低俗小说》中的对白：“如果你要把一具尸体藏起来，你知道世界上哪里最安全吗？那就是谷歌搜索结果的第二页”。言外之意，谷歌搜索的前几条解决方案总能满足用户，用户永远不需要翻到第二页寻找答案。由此可见谷歌的搜索算法及 PageRank 网页排序算法之强大。</p>
+<p>PageRank 算法的详细介绍见 <a href="https://en.wikipedia.org/wiki/PageRank" target="_blank" rel="noopener noreffer">维基百科</a>。总而言之，该算法的主要思路是：如果一个网页被很多重要的网页指向，那么它也是一个重要的网页。具体地，互联网中的每个网页被抽象成一个节点；如果网页 A 包含网页 B 的链接，那么有一条有向边从节点 A 指向节点 B。如此，互联网中的网页及其链接被抽象成一个由节点及有向边组成的巨大拓扑图。</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="/2019-05-19-%e7%ae%97%e6%b3%95-PageRank%e5%9c%a8Spark%e7%9a%84%e5%88%86%e5%b8%83%e5%bc%8f%e5%ae%9e%e7%8e%b0/graph.jpg"
+        data-srcset="/2019-05-19-%e7%ae%97%e6%b3%95-PageRank%e5%9c%a8Spark%e7%9a%84%e5%88%86%e5%b8%83%e5%bc%8f%e5%ae%9e%e7%8e%b0/graph.jpg, /2019-05-19-%e7%ae%97%e6%b3%95-PageRank%e5%9c%a8Spark%e7%9a%84%e5%88%86%e5%b8%83%e5%bc%8f%e5%ae%9e%e7%8e%b0/graph.jpg 1.5x, /2019-05-19-%e7%ae%97%e6%b3%95-PageRank%e5%9c%a8Spark%e7%9a%84%e5%88%86%e5%b8%83%e5%bc%8f%e5%ae%9e%e7%8e%b0/graph.jpg 2x"
+        data-sizes="auto"
+        alt="/2019-05-19-算法-PageRank在Spark的分布式实现/graph.jpg"
+        title="/2019-05-19-算法-PageRank在Spark的分布式实现/graph.jpg" /></p>
+<p>拓扑图建立好后，初始化系统，令每个节点的重要性分数均为1。然后开始迭代系统，在每一轮迭代中，对于每个节点，做如下两件事：</p>
+<ul>
+<li>如果出边是加权的，将该节点的分数按权重比例进行拆解并传送到对应的节点；如果出边不加权，那么将该节点的分数平均拆解并传送</li>
+<li>搜集从其他节点传送过来的分数并求和，替换该节点原来的分数</li>
+</ul>
+<p>该过程从数学上来说就是一个 <a href="https://en.wikipedia.org/wiki/Markov_chain" target="_blank" rel="noopener noreffer">马尔可夫过程</a>，可以从数学上证明其收敛性。也就是说，该系统经过若干次迭代，必定可以演化到一个平衡态。在这个状态下，每个节点的每一次分数收入约等于其分数支出。此时，每个节点上的分数就是稳定的分数，PageRank 算法按照该分数从大到小对网页进行排序并（分页地）返回给用户。</p>
+<p>二、PageRank 算法的 Spark 分布式实现</p>
+<p>输入数据是一个文件，如下所示。第一行只有一个数字，表明了该数据集一共有 114529 个网页节点。从第二行开始，每一行表示一个节点的出边以及对应的权重，以 [key-value] 形式表示 ：[指向的节点id:权重]。在使用该数据集时，需要把第一行的数字删去，刚好剩下一共 114529 行，每一行的行号表示其节点id。例如，删掉第一行后，第 2 行为空行，说明节点 2 出度为 0，不指向任何其他节点；第 3 行的数据表示节点 3 指向了节点 8107、节点 22950 和 节点 108053，边的权重分别为 3320、4 和 1。</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="/2019-05-19-%e7%ae%97%e6%b3%95-PageRank%e5%9c%a8Spark%e7%9a%84%e5%88%86%e5%b8%83%e5%bc%8f%e5%ae%9e%e7%8e%b0/data.png"
+        data-srcset="/2019-05-19-%e7%ae%97%e6%b3%95-PageRank%e5%9c%a8Spark%e7%9a%84%e5%88%86%e5%b8%83%e5%bc%8f%e5%ae%9e%e7%8e%b0/data.png, /2019-05-19-%e7%ae%97%e6%b3%95-PageRank%e5%9c%a8Spark%e7%9a%84%e5%88%86%e5%b8%83%e5%bc%8f%e5%ae%9e%e7%8e%b0/data.png 1.5x, /2019-05-19-%e7%ae%97%e6%b3%95-PageRank%e5%9c%a8Spark%e7%9a%84%e5%88%86%e5%b8%83%e5%bc%8f%e5%ae%9e%e7%8e%b0/data.png 2x"
+        data-sizes="auto"
+        alt="/2019-05-19-算法-PageRank在Spark的分布式实现/data.png"
+        title="/2019-05-19-算法-PageRank在Spark的分布式实现/data.png" /></p>
+<p>要分布式实现 PageRank，就需要按 MapReduce 编程范式来编写代码。MapReduce 接受的输入是 key-value 对，在 Map 过程中映射成新的 key-value 对，在 Reduce 过程中对相同 key 的 values 进行聚合，输入最终结果。为方便起见，使用函数式编程语言 Scala 编写。伪码如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">输入数据(每行) noteId:[outlinkId1:weight1, outlinkedId2:weight2, ...]
+预处理(每行) noteId:[outlinkId1, outlinkedId2, ...]
+统计出度 [noteId1:outlinkCount1, noteId2:outlinkCount2, ...]
+for 0 -&gt; 迭代次数：
+    拆分分数 [noteId1:contribution=score1/outlinkCount1, ...]
+    收集分数 [noteId1:sum(inlinkIds:contributions), ...]
+    归一化
+打印显示每个节点的最终分数
+</code></pre></td></tr></table>
+</div>
+</div><p>具体实验代码及效果如下所示。</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="/2019-05-19-%e7%ae%97%e6%b3%95-PageRank%e5%9c%a8Spark%e7%9a%84%e5%88%86%e5%b8%83%e5%bc%8f%e5%ae%9e%e7%8e%b0/1.png"
+        data-srcset="/2019-05-19-%e7%ae%97%e6%b3%95-PageRank%e5%9c%a8Spark%e7%9a%84%e5%88%86%e5%b8%83%e5%bc%8f%e5%ae%9e%e7%8e%b0/1.png, /2019-05-19-%e7%ae%97%e6%b3%95-PageRank%e5%9c%a8Spark%e7%9a%84%e5%88%86%e5%b8%83%e5%bc%8f%e5%ae%9e%e7%8e%b0/1.png 1.5x, /2019-05-19-%e7%ae%97%e6%b3%95-PageRank%e5%9c%a8Spark%e7%9a%84%e5%88%86%e5%b8%83%e5%bc%8f%e5%ae%9e%e7%8e%b0/1.png 2x"
+        data-sizes="auto"
+        alt="/2019-05-19-算法-PageRank在Spark的分布式实现/1.png"
+        title="/2019-05-19-算法-PageRank在Spark的分布式实现/1.png" /></p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="/2019-05-19-%e7%ae%97%e6%b3%95-PageRank%e5%9c%a8Spark%e7%9a%84%e5%88%86%e5%b8%83%e5%bc%8f%e5%ae%9e%e7%8e%b0/2.png"
+        data-srcset="/2019-05-19-%e7%ae%97%e6%b3%95-PageRank%e5%9c%a8Spark%e7%9a%84%e5%88%86%e5%b8%83%e5%bc%8f%e5%ae%9e%e7%8e%b0/2.png, /2019-05-19-%e7%ae%97%e6%b3%95-PageRank%e5%9c%a8Spark%e7%9a%84%e5%88%86%e5%b8%83%e5%bc%8f%e5%ae%9e%e7%8e%b0/2.png 1.5x, /2019-05-19-%e7%ae%97%e6%b3%95-PageRank%e5%9c%a8Spark%e7%9a%84%e5%88%86%e5%b8%83%e5%bc%8f%e5%ae%9e%e7%8e%b0/2.png 2x"
+        data-sizes="auto"
+        alt="/2019-05-19-算法-PageRank在Spark的分布式实现/2.png"
+        title="/2019-05-19-算法-PageRank在Spark的分布式实现/2.png" /></p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="/2019-05-19-%e7%ae%97%e6%b3%95-PageRank%e5%9c%a8Spark%e7%9a%84%e5%88%86%e5%b8%83%e5%bc%8f%e5%ae%9e%e7%8e%b0/3.png"
+        data-srcset="/2019-05-19-%e7%ae%97%e6%b3%95-PageRank%e5%9c%a8Spark%e7%9a%84%e5%88%86%e5%b8%83%e5%bc%8f%e5%ae%9e%e7%8e%b0/3.png, /2019-05-19-%e7%ae%97%e6%b3%95-PageRank%e5%9c%a8Spark%e7%9a%84%e5%88%86%e5%b8%83%e5%bc%8f%e5%ae%9e%e7%8e%b0/3.png 1.5x, /2019-05-19-%e7%ae%97%e6%b3%95-PageRank%e5%9c%a8Spark%e7%9a%84%e5%88%86%e5%b8%83%e5%bc%8f%e5%ae%9e%e7%8e%b0/3.png 2x"
+        data-sizes="auto"
+        alt="/2019-05-19-算法-PageRank在Spark的分布式实现/3.png"
+        title="/2019-05-19-算法-PageRank在Spark的分布式实现/3.png" /></p>
+<p>按分数排序，并结合另一个数据集里面的 url 名称进行显示，得到结果如下所示。可以由域名看到排在前列的都是一些英国政府的权威网页（这个数据集是英国的网页数据集），因此该算法的排序效果是很好的。学术上更加具体的排序效果评价指标是 <a href="https://en.wikipedia.org/wiki/Discounted_cumulative_gain" target="_blank" rel="noopener noreffer">nDCG</a>，这里不再展开说明了。</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="/2019-05-19-%e7%ae%97%e6%b3%95-PageRank%e5%9c%a8Spark%e7%9a%84%e5%88%86%e5%b8%83%e5%bc%8f%e5%ae%9e%e7%8e%b0/result.png"
+        data-srcset="/2019-05-19-%e7%ae%97%e6%b3%95-PageRank%e5%9c%a8Spark%e7%9a%84%e5%88%86%e5%b8%83%e5%bc%8f%e5%ae%9e%e7%8e%b0/result.png, /2019-05-19-%e7%ae%97%e6%b3%95-PageRank%e5%9c%a8Spark%e7%9a%84%e5%88%86%e5%b8%83%e5%bc%8f%e5%ae%9e%e7%8e%b0/result.png 1.5x, /2019-05-19-%e7%ae%97%e6%b3%95-PageRank%e5%9c%a8Spark%e7%9a%84%e5%88%86%e5%b8%83%e5%bc%8f%e5%ae%9e%e7%8e%b0/result.png 2x"
+        data-sizes="auto"
+        alt="/2019-05-19-算法-PageRank在Spark的分布式实现/result.png"
+        title="/2019-05-19-算法-PageRank在Spark的分布式实现/result.png" /></p>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>The article was updated on 2019-05-19</span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span>
+                            <a class="link-to-markdown" href="/2019-05-19-%E7%AE%97%E6%B3%95-pagerank%E5%9C%A8spark%E7%9A%84%E5%88%86%E5%B8%83%E5%BC%8F%E5%AE%9E%E7%8E%B0/index.md" target="_blank">Read Markdown</a>
+                        </span></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="https://utopizza.github.io/2019-05-19-%E7%AE%97%E6%B3%95-pagerank%E5%9C%A8spark%E7%9A%84%E5%88%86%E5%B8%83%E5%BC%8F%E5%AE%9E%E7%8E%B0/" data-title="PageRank在Spark的分布式实现"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://utopizza.github.io/2019-05-19-%E7%AE%97%E6%B3%95-pagerank%E5%9C%A8spark%E7%9A%84%E5%88%86%E5%B8%83%E5%BC%8F%E5%AE%9E%E7%8E%B0/"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="Share on WhatsApp" data-sharer="whatsapp" data-url="https://utopizza.github.io/2019-05-19-%E7%AE%97%E6%B3%95-pagerank%E5%9C%A8spark%E7%9A%84%E5%88%86%E5%B8%83%E5%BC%8F%E5%AE%9E%E7%8E%B0/" data-title="PageRank在Spark的分布式实现" data-web><i class="fab fa-whatsapp fa-fw"></i></a><a href="javascript:void(0);" title="Share on Line" data-sharer="line" data-url="https://utopizza.github.io/2019-05-19-%E7%AE%97%E6%B3%95-pagerank%E5%9C%A8spark%E7%9A%84%E5%88%86%E5%B8%83%E5%BC%8F%E5%AE%9E%E7%8E%B0/" data-title="PageRank在Spark的分布式实现"><i class="fab fa-line fa-fw"></i></a><a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="https://utopizza.github.io/2019-05-19-%E7%AE%97%E6%B3%95-pagerank%E5%9C%A8spark%E7%9A%84%E5%88%86%E5%B8%83%E5%BC%8F%E5%AE%9E%E7%8E%B0/" data-title="PageRank在Spark的分布式实现"><i class="fab fa-weibo fa-fw"></i></a><a href="javascript:void(0);" title="Share on Myspace" data-sharer="myspace" data-url="https://utopizza.github.io/2019-05-19-%E7%AE%97%E6%B3%95-pagerank%E5%9C%A8spark%E7%9A%84%E5%88%86%E5%B8%83%E5%BC%8F%E5%AE%9E%E7%8E%B0/" data-title="PageRank在Spark的分布式实现" data-description=""><i data-svg-src="/lib/simple-icons/icons/myspace.min.svg"></i></a><a href="javascript:void(0);" title="Share on Blogger" data-sharer="blogger" data-url="https://utopizza.github.io/2019-05-19-%E7%AE%97%E6%B3%95-pagerank%E5%9C%A8spark%E7%9A%84%E5%88%86%E5%B8%83%E5%BC%8F%E5%AE%9E%E7%8E%B0/" data-title="PageRank在Spark的分布式实现" data-description=""><i class="fab fa-blogger fa-fw"></i></a><a href="javascript:void(0);" title="Share on Evernote" data-sharer="evernote" data-url="https://utopizza.github.io/2019-05-19-%E7%AE%97%E6%B3%95-pagerank%E5%9C%A8spark%E7%9A%84%E5%88%86%E5%B8%83%E5%BC%8F%E5%AE%9E%E7%8E%B0/" data-title="PageRank在Spark的分布式实现"><i class="fab fa-evernote fa-fw"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/2019-05-09-%E8%AE%BA%E6%96%87-spark/" class="prev" rel="prev" title="Spark"><i class="fas fa-angle-left fa-fw"></i>Spark</a>
+            <a href="/2019-09-16-%E6%80%BB%E7%BB%93-%E9%98%B6%E6%AE%B5%E6%80%BB%E7%BB%938/" class="next" rel="next" title="阶段总结(8)">阶段总结(8)<i class="fas fa-angle-right fa-fw"></i></a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.69.2">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.6"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2020</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">yusheng</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><link rel="stylesheet" href="/lib/katex/katex.min.css"><link rel="stylesheet" href="/lib/katex/copy-tex.min.css"><script type="text/javascript">
+    window.config = {"code":{"copyTitle":"Copy to clipboard","maxShownLines":100},"comment":{},"headerMode":{"desktop":"fixed","mobile":"auto"},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false}};
+</script><script type="text/javascript" src="https://polyfill.io/v3/polyfill.min.js?features=html5shiv%2CElement.prototype.closest%2CrequestAnimationFrame%2CCustomEvent%2CPromise%2CObject.entries%2CObject.assign%2CObject.values%2Cfetch%2CElement.prototype.after%2CArray.prototype.fill%2CIntersectionObserver%2CArray.from%2CArray.prototype.find%2CMath.sign"></script><script type="text/javascript" src="/lib/smooth-scroll/smooth-scroll.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/object-fit-images/ofi.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="/lib/sharer/sharer.min.js"></script><script type="text/javascript" src="/lib/katex/katex.min.js"></script><script type="text/javascript" src="/lib/katex/auto-render.min.js"></script><script type="text/javascript" src="/lib/katex/copy-tex.min.js"></script><script type="text/javascript" src="/lib/katex/mhchem.min.js"></script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>

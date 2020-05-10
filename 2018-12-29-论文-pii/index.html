@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>PII - Utopizza</title>
+        <meta name="Description" content="About LoveIt Theme"><meta property="og:title" content="PII" />
+<meta property="og:description" content="一、背景及问题
+最近一些广告平台（Data Broker）例如 Facebook、Google 等推出了新的广告投放策略：广告投放商（Advertiser）可以在平台中上传目标用户的个人身份信息（Personally Identifying Information，PII）如用户的姓名、邮箱地址、电话号码、住址、生日等，以在该平台中直接定位目标用户并针对性地投放广告。与传统的数据经销商直接把数据访问权限卖给给广告投放商的方式不同，这些数据平台只允许广告投放商上传目标用户的 PII，然后平台在内部匹配这些用户，返回一个匹配成功并进行舍入（Rounding）后的广告投放目标用户（Audience）总数给广告投放商。
+然而这样的策略会威胁到用户的隐私安全。虽然广告投放商不能直接访问用户的数据，但是依然可以利用这个策略的漏洞来推测用户的其他隐私信息，例如恶意的广告投放商可以利用它们手中的一些用户邮箱地址，通过平台以及某些手段来推出这些用户的姓名、电话号码、住址等等其他隐私信息。
+这个策略的漏洞就是上述平台返回的匹配成功的用户总数。虽然 Facebook 等平台对该数进行了舍入（Rounding），返回的用户总数是模糊的，但是只要攻击者通过不断提交差别很小的请求，依然可以把取整策略的阈值测试出来，然后就可以反推出在阈值边界上的目标用户（Threshold audiences）的信息。例如当攻击者在第二次提交请求时，只比第一次请求多添加一个用户，而返回的成功匹配用户数从原来的 80 变成了 90，那么很显然这个用户就是在阈值边界上并且符合攻击者的匹配目标的用户。整篇文章所提的攻击都是通过此漏洞来进行的，论文原话：“We use threshold audiences throughout the paper to enable our attacks”
+二、解决方案
+具体地说，文章介绍的的攻击手段主要有以下三种：
+1、逆匿名网页浏览用户（De-anonymizing web visitors）：广告投放商可以在一些外部网页上安装一个 Facebook 的 JavaScript 插件，Facebook 可以通过该插件追踪浏览过此网页的用户，然后将这些用户记录下来，作为广告目标用户集合（注意，这些用户对广告投放商来说是透明的，只有 Facebook 知道这些用户）。现在，攻击者（恶意的广告投放商）可以利用上述的漏洞来反推出某个用户 $V$ 是否访问了这个网页。攻击方法是： (1) 先确定 $V$ 是否是 Facebook 平台中的用户：提交一系列不含攻击目标 $V$ 的请求 ${ L_1,L_2,\cdots,L_n }$，每次请求只比上一次请求多一个用户，Facebook 返回的匹配用户总数分别为 ${A_1,A_2,\cdots,A_n }$。先测试出一个舍入阈值下界，例如，假设 $A_1$、$A_2$ 是 810，而 $A_3$ 是 820，那么 $A_2=810$ 是一个舍入下界。然后我们再在 $L_2$ 这个集合中加入攻击目标 $V$ 即 ${L_2 \bigcup V }$ 并提交给 Facebook，如果返回的是 810，那么 $V$ 不是 Facebook 平台中的用户，如果返回的是 820，那么说明 $V$ 是 Facebook 中的一个用户。 (2) 接下来，确定 $V$ 是否在 Facebook 追踪的网页浏览者名单中：同样地，提交一系列包含 $V$ 的请求，每个请求只比前一个请求多一个用户，然后测试出舍入上界，例如 ${L_1 \bigcup V}$、${L_2 \bigcup V}$ 是 930，而 ${L_3 \bigcup V}$ 是 940，那么 $A_3 = 940$ 就是攻击者要找的上界。此时，再提交不含 $V$ 的 ${L_4}$，看返回的结果是否下降到 930，如果下降了，说明 $V$ 就在浏览者名单中，即可以确定攻击目标 $V$ 浏览过了攻击者的网页。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://utopizza.github.io/2018-12-29-%E8%AE%BA%E6%96%87-pii/" />
+<meta property="og:image" content="https://utopizza.github.io/logo.png"/>
+<meta property="article:published_time" content="2018-12-29T00:00:00+00:00" />
+<meta property="article:modified_time" content="2018-12-29T00:00:00+00:00" />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://utopizza.github.io/logo.png"/>
+
+<meta name="twitter:title" content="PII"/>
+<meta name="twitter:description" content="一、背景及问题
+最近一些广告平台（Data Broker）例如 Facebook、Google 等推出了新的广告投放策略：广告投放商（Advertiser）可以在平台中上传目标用户的个人身份信息（Personally Identifying Information，PII）如用户的姓名、邮箱地址、电话号码、住址、生日等，以在该平台中直接定位目标用户并针对性地投放广告。与传统的数据经销商直接把数据访问权限卖给给广告投放商的方式不同，这些数据平台只允许广告投放商上传目标用户的 PII，然后平台在内部匹配这些用户，返回一个匹配成功并进行舍入（Rounding）后的广告投放目标用户（Audience）总数给广告投放商。
+然而这样的策略会威胁到用户的隐私安全。虽然广告投放商不能直接访问用户的数据，但是依然可以利用这个策略的漏洞来推测用户的其他隐私信息，例如恶意的广告投放商可以利用它们手中的一些用户邮箱地址，通过平台以及某些手段来推出这些用户的姓名、电话号码、住址等等其他隐私信息。
+这个策略的漏洞就是上述平台返回的匹配成功的用户总数。虽然 Facebook 等平台对该数进行了舍入（Rounding），返回的用户总数是模糊的，但是只要攻击者通过不断提交差别很小的请求，依然可以把取整策略的阈值测试出来，然后就可以反推出在阈值边界上的目标用户（Threshold audiences）的信息。例如当攻击者在第二次提交请求时，只比第一次请求多添加一个用户，而返回的成功匹配用户数从原来的 80 变成了 90，那么很显然这个用户就是在阈值边界上并且符合攻击者的匹配目标的用户。整篇文章所提的攻击都是通过此漏洞来进行的，论文原话：“We use threshold audiences throughout the paper to enable our attacks”
+二、解决方案
+具体地说，文章介绍的的攻击手段主要有以下三种：
+1、逆匿名网页浏览用户（De-anonymizing web visitors）：广告投放商可以在一些外部网页上安装一个 Facebook 的 JavaScript 插件，Facebook 可以通过该插件追踪浏览过此网页的用户，然后将这些用户记录下来，作为广告目标用户集合（注意，这些用户对广告投放商来说是透明的，只有 Facebook 知道这些用户）。现在，攻击者（恶意的广告投放商）可以利用上述的漏洞来反推出某个用户 $V$ 是否访问了这个网页。攻击方法是： (1) 先确定 $V$ 是否是 Facebook 平台中的用户：提交一系列不含攻击目标 $V$ 的请求 ${ L_1,L_2,\cdots,L_n }$，每次请求只比上一次请求多一个用户，Facebook 返回的匹配用户总数分别为 ${A_1,A_2,\cdots,A_n }$。先测试出一个舍入阈值下界，例如，假设 $A_1$、$A_2$ 是 810，而 $A_3$ 是 820，那么 $A_2=810$ 是一个舍入下界。然后我们再在 $L_2$ 这个集合中加入攻击目标 $V$ 即 ${L_2 \bigcup V }$ 并提交给 Facebook，如果返回的是 810，那么 $V$ 不是 Facebook 平台中的用户，如果返回的是 820，那么说明 $V$ 是 Facebook 中的一个用户。 (2) 接下来，确定 $V$ 是否在 Facebook 追踪的网页浏览者名单中：同样地，提交一系列包含 $V$ 的请求，每个请求只比前一个请求多一个用户，然后测试出舍入上界，例如 ${L_1 \bigcup V}$、${L_2 \bigcup V}$ 是 930，而 ${L_3 \bigcup V}$ 是 940，那么 $A_3 = 940$ 就是攻击者要找的上界。此时，再提交不含 $V$ 的 ${L_4}$，看返回的结果是否下降到 930，如果下降了，说明 $V$ 就在浏览者名单中，即可以确定攻击目标 $V$ 浏览过了攻击者的网页。"/>
+<meta name="application-name" content="Utopizza">
+<meta name="apple-mobile-web-app-title" content="Utopizza"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://utopizza.github.io/2018-12-29-%E8%AE%BA%E6%96%87-pii/" /><link rel="prev" href="https://utopizza.github.io/2018-12-22-%E8%AE%BA%E6%96%87-svim/" /><link rel="next" href="https://utopizza.github.io/2019-01-05-%E8%AE%BA%E6%96%87-priortracker/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "PII",
+        "inLanguage": "en",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https:\/\/utopizza.github.io\/2018-12-29-%E8%AE%BA%E6%96%87-pii\/"
+        },"image": {
+                "@type": "ImageObject",
+                "url": "https:\/\/utopizza.github.io\/cover.png",
+                "width":  800 ,
+                "height":  600 
+            },"genre": "posts","wordcount":  241 ,
+        "url": "https:\/\/utopizza.github.io\/2018-12-29-%E8%AE%BA%E6%96%87-pii\/","datePublished": "2018-12-29T00:00:00+00:00","dateModified": "2018-12-29T00:00:00+00:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+                "@type": "Organization",
+                "name": "",
+                "logo": {
+                "@type": "ImageObject",
+                "url": "https:\/\/utopizza.github.io\/logo.png",
+                "width":  127 ,
+                "height":  40 
+                }
+            },"author": {
+                "@type": "Person",
+                "name": "yusheng"
+            },"description": ""
+    }
+    </script></head>
+    <body><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="Utopizza"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>Utopizza</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> Posts </a><a class="menu-item" href="/categories/"> Categories </a><a class="menu-item" href="https://github.com/utopizza" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i>  </a><span class="menu-item delimiter"></span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="Utopizza"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>Utopizza</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><a class="menu-item" href="/posts/" title="">Posts</a><a class="menu-item" href="/categories/" title="">Categories</a><a class="menu-item" href="https://github.com/utopizza" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i></a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">PII</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;
+                    <span class="post-category">included in<a href="/categories/thesis/">
+                                <i class="far fa-folder fa-fw"></i>Thesis
+                            </a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i><time datetime=2018-12-29>2018-12-29</time>&nbsp;
+                <i class="fas fa-pencil-alt fa-fw"></i>about 241 words&nbsp;
+                <i class="far fa-clock fa-fw"></i>2 min&nbsp;</div>
+        </div><div class="details toc" id="toc-static">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents"></nav></div>
+            </div><div class="content" id="content"><p>一、背景及问题</p>
+<p>最近一些广告平台（Data Broker）例如 Facebook、Google 等推出了新的广告投放策略：广告投放商（Advertiser）可以在平台中上传目标用户的个人身份信息（Personally Identifying Information，PII）如用户的姓名、邮箱地址、电话号码、住址、生日等，以在该平台中直接定位目标用户并针对性地投放广告。与传统的数据经销商直接把数据访问权限卖给给广告投放商的方式不同，这些数据平台只允许广告投放商上传目标用户的 PII，然后平台在内部匹配这些用户，返回一个匹配成功并进行舍入（Rounding）后的广告投放目标用户（Audience）总数给广告投放商。</p>
+<p>然而这样的策略会威胁到用户的隐私安全。虽然广告投放商不能直接访问用户的数据，但是依然可以利用这个策略的漏洞来推测用户的其他隐私信息，例如恶意的广告投放商可以利用它们手中的一些用户邮箱地址，通过平台以及某些手段来推出这些用户的姓名、电话号码、住址等等其他隐私信息。</p>
+<p>这个策略的漏洞就是上述平台返回的匹配成功的用户总数。虽然 Facebook 等平台对该数进行了舍入（Rounding），返回的用户总数是模糊的，但是只要攻击者通过不断提交差别很小的请求，依然可以把取整策略的阈值测试出来，然后就可以反推出在阈值边界上的目标用户（Threshold audiences）的信息。例如当攻击者在第二次提交请求时，只比第一次请求多添加一个用户，而返回的成功匹配用户数从原来的 80 变成了 90，那么很显然这个用户就是在阈值边界上并且符合攻击者的匹配目标的用户。整篇文章所提的攻击都是通过此漏洞来进行的，论文原话：“We use threshold audiences throughout the paper to enable our attacks”</p>
+<p>二、解决方案</p>
+<p>具体地说，文章介绍的的攻击手段主要有以下三种：</p>
+<p>1、逆匿名网页浏览用户（De-anonymizing web visitors）：广告投放商可以在一些外部网页上安装一个 Facebook 的 JavaScript 插件，Facebook 可以通过该插件追踪浏览过此网页的用户，然后将这些用户记录下来，作为广告目标用户集合（注意，这些用户对广告投放商来说是透明的，只有 Facebook 知道这些用户）。现在，攻击者（恶意的广告投放商）可以利用上述的漏洞来反推出某个用户 $V$ 是否访问了这个网页。攻击方法是：
+(1) 先确定 $V$ 是否是 Facebook 平台中的用户：提交一系列不含攻击目标 $V$ 的请求 ${ L_1,L_2,\cdots,L_n }$，每次请求只比上一次请求多一个用户，Facebook 返回的匹配用户总数分别为 ${A_1,A_2,\cdots,A_n }$。先测试出一个舍入阈值下界，例如，假设 $A_1$、$A_2$ 是 810，而 $A_3$ 是 820，那么 $A_2=810$ 是一个舍入下界。然后我们再在 $L_2$ 这个集合中加入攻击目标 $V$ 即 ${L_2 \bigcup V }$ 并提交给 Facebook，如果返回的是 810，那么 $V$ 不是 Facebook 平台中的用户，如果返回的是 820，那么说明 $V$ 是 Facebook 中的一个用户。
+(2) 接下来，确定 $V$ 是否在 Facebook 追踪的网页浏览者名单中：同样地，提交一系列包含 $V$ 的请求，每个请求只比前一个请求多一个用户，然后测试出舍入上界，例如 ${L_1 \bigcup V}$、${L_2 \bigcup V}$ 是 930，而 ${L_3 \bigcup V}$ 是 940，那么 $A_3 = 940$ 就是攻击者要找的上界。此时，再提交不含 $V$ 的 ${L_4}$，看返回的结果是否下降到 930，如果下降了，说明 $V$ 就在浏览者名单中，即可以确定攻击目标 $V$ 浏览过了攻击者的网页。</p>
+<p>2、推断用户的身份信息（Inferring a victim’s PII）：Facebook 对多次提交的请求集合，只会返回它们命中的用户的并集的总数，即不会对同一个用户多次计数。利用这一点，以及上述的舍入规则，攻击者只要拥有某个用户 $V$ 的其中某一项 PII 例如电子邮箱地址（或者其他任意一项），就可以推断出该用户的其他 PII 如电话号码。假设攻击者现在有某个 PII 集合 $L$，上传到 Facebook 后生成一个广告目标用户集合 $A$（注意，这个集合是维护在 Facebook平台内部的，对攻击者透明的），得到返回的一个舍入处理后的用户总数。假设攻击者现在要攻击的某个用户是 $V$（攻击者已知 $V$ 的邮箱地址），攻击方法是：
+(1) 先确定攻击目标 $V$ 是否在 $A$ 中：最简单的办法就是再上传一个只包含 $V$ 的集合，然后向 Facebook 查询这个集合与 $A$ 的交集，如果返回的交集结果不为 0，那么就可以直接确定 $V$ 在 $A$ 中了。然而 Facebook 不允许这样做，它要求查询交集的集合必须大于 1000，并且对交集结果的 $5%$ 进行舍入。因此攻击者需要稍微复杂一些的操作。取两个额外集合 ，分别为含 1949 条记录的集合 $R$、含 50 条记录的集合 $J$，要求是 $R、J、L$ 三个集合两两不相交。现在取 $C_1=R \bigcup L$，$C_2=R \bigcup J \bigcup V$，提交这个两个并集，然后向 Facebook 查询交集大小。显然，如果 $V$ 在 $A$ 中，那么结果将是 $|R|$（1949 舍入后是 1900）；否则结果是 $|R|+1$（1950 舍入后是 2000）。
+(2) 推断用户的电话号码：将整个电话号码的空间划分成若干个子集，例如，如果电话号码有 11 位，那么将得到 11×10 个子集，第一个子集表示电话号码第一位是 0 的所有电话号码，第二个子集表示电话号码第一位是 1 的子集，由于每一位有 0 ~ 9 共 10 种数字，因此一共 11×10 个子集。每个子集由于只固定一位数字，其余 10 位的每一位都有 10 种可能，因此每个子集的大小是 10^10。只要对这 11×10 个大小为 10^10 的电话号码集合，不断利用步骤 (1) 的方法，判断 $V$ 是否在该电话号码集合 $L$ 生成的 $A$ 中，就可以逐位推断出 $V$ 的 11 位电话号码</p>
+<p>3、逆匿名全体用户（De-anonymizing users en masse）：意思和前面两点差不多，通过结合前两种攻击方法，可以获取所有访问过攻击者页面的用户的 PII，如电话号码等。限于篇幅不展开了。</p>
+<p>针对以上三种攻击，文章提出了一些修补漏洞的技术方案，并提交给了 Facebook，得到了 Facebook 的采纳。由于修复方案比较多而且较多数学理论，就不展开了。由于文章提出的解决方案过于复杂，最后 Facebook 也只是采取了最简单暴力的修复方式——直接取消返回任何统计数字给广告投放商，关闭交集查询功能&hellip;&hellip;</p>
+<p>三、总结</p>
+<p>文章针对 Facebook 的提供给广告投放商的应用接口，发现了基于这些接口实现的用户隐私攻击，并给出了详细复杂的解决方案。最后得到了 Facebook 的采纳。</p>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>The article was updated on 2018-12-29</span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span>
+                            <a class="link-to-markdown" href="/2018-12-29-%E8%AE%BA%E6%96%87-pii/index.md" target="_blank">Read Markdown</a>
+                        </span></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="https://utopizza.github.io/2018-12-29-%E8%AE%BA%E6%96%87-pii/" data-title="PII"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://utopizza.github.io/2018-12-29-%E8%AE%BA%E6%96%87-pii/"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="Share on WhatsApp" data-sharer="whatsapp" data-url="https://utopizza.github.io/2018-12-29-%E8%AE%BA%E6%96%87-pii/" data-title="PII" data-web><i class="fab fa-whatsapp fa-fw"></i></a><a href="javascript:void(0);" title="Share on Line" data-sharer="line" data-url="https://utopizza.github.io/2018-12-29-%E8%AE%BA%E6%96%87-pii/" data-title="PII"><i class="fab fa-line fa-fw"></i></a><a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="https://utopizza.github.io/2018-12-29-%E8%AE%BA%E6%96%87-pii/" data-title="PII"><i class="fab fa-weibo fa-fw"></i></a><a href="javascript:void(0);" title="Share on Myspace" data-sharer="myspace" data-url="https://utopizza.github.io/2018-12-29-%E8%AE%BA%E6%96%87-pii/" data-title="PII" data-description=""><i data-svg-src="/lib/simple-icons/icons/myspace.min.svg"></i></a><a href="javascript:void(0);" title="Share on Blogger" data-sharer="blogger" data-url="https://utopizza.github.io/2018-12-29-%E8%AE%BA%E6%96%87-pii/" data-title="PII" data-description=""><i class="fab fa-blogger fa-fw"></i></a><a href="javascript:void(0);" title="Share on Evernote" data-sharer="evernote" data-url="https://utopizza.github.io/2018-12-29-%E8%AE%BA%E6%96%87-pii/" data-title="PII"><i class="fab fa-evernote fa-fw"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/2018-12-22-%E8%AE%BA%E6%96%87-svim/" class="prev" rel="prev" title="SVIM"><i class="fas fa-angle-left fa-fw"></i>SVIM</a>
+            <a href="/2019-01-05-%E8%AE%BA%E6%96%87-priortracker/" class="next" rel="next" title="PriorTracker">PriorTracker<i class="fas fa-angle-right fa-fw"></i></a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.69.2">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.6"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2020</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">yusheng</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><link rel="stylesheet" href="/lib/katex/katex.min.css"><link rel="stylesheet" href="/lib/katex/copy-tex.min.css"><script type="text/javascript">
+    window.config = {"code":{"copyTitle":"Copy to clipboard","maxShownLines":100},"comment":{},"headerMode":{"desktop":"fixed","mobile":"auto"},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false}};
+</script><script type="text/javascript" src="https://polyfill.io/v3/polyfill.min.js?features=html5shiv%2CElement.prototype.closest%2CrequestAnimationFrame%2CCustomEvent%2CPromise%2CObject.entries%2CObject.assign%2CObject.values%2Cfetch%2CElement.prototype.after%2CArray.prototype.fill%2CIntersectionObserver%2CArray.from%2CArray.prototype.find%2CMath.sign"></script><script type="text/javascript" src="/lib/smooth-scroll/smooth-scroll.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/object-fit-images/ofi.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="/lib/sharer/sharer.min.js"></script><script type="text/javascript" src="/lib/katex/katex.min.js"></script><script type="text/javascript" src="/lib/katex/auto-render.min.js"></script><script type="text/javascript" src="/lib/katex/copy-tex.min.js"></script><script type="text/javascript" src="/lib/katex/mhchem.min.js"></script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>

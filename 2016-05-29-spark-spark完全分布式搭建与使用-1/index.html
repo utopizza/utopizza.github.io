@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>Spark完全分布式搭建与使用(1) - Utopizza</title>
+        <meta name="Description" content="About LoveIt Theme"><meta property="og:title" content="Spark完全分布式搭建与使用(1)" />
+<meta property="og:description" content="一、实验环境
+  宿主机：winserver 2012 服务器一台
+  目标：在三台虚拟机上搭建Spark完全分布式集群，一台master，两台slaves
+  二、安装虚拟机oracle virtualbox
+下载地址：Download VirtualBox
+三、安装 CentOS-6.7-x86_64.iso 镜像文件
+1、下载地址：CentOS Mirror
+2、导入到virtualbox中进行安装。（因为三台虚拟机将要进行差不多的软件安装，所以先在一台虚拟机上部署好了master，再将这个虚拟机完全复制两份作为slaves，然后再稍微修改配置文件，这样比较省事）
+3、配置：名称为CentOS6_Master，CPU为2个，内存为2G，硬盘等其他参数默认安装。在配置CPU的时候可能无法使用，因为win8 之后的微软操作系统默认安装了Hyper-V虚拟机独占了虚拟资源，可以在：控制面板-&gt;程序和功能-&gt;启用或关闭Windows功能-&gt;启动“删除角色和功能”向导中进行禁用，问题解决。
+4、安装好后从“存储”中删除CentOS镜像文件盘片，否则每次启动虚拟机都是进行镜像安装而不是进入虚拟机。另外，安装好后如果宿主机可以上网，那么虚拟机也是可以立即上网的。
+四、安装 java-1.7.0
+1、下载安装并验证，参考：在CentOS上安装Java环境
+2、设置JAVA_HOME环境变量（使用 ls –lrt /etc/alternatives/java 来定位jdk的安装路径，参考：Linux如何查看JDK的安装路径）
+1 2 3 4 5 6 7 8 9 10 11 12  // 使用vim编辑器进入配置文件 [root@master ~]# vim /etc/profile // 修改配置文件 export JAVA_HOME=&#34;/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.101.x86_64&#34; （加入） export JRE_HOME=${JAVA_HOME}/jre export CLASS_PATH=.:${JAVA_HOME}/lib: ${JRE_HOME}/lib // 保存并退出编辑器 // 在terminal中输入命令使其生效 [root@master ~]# source /etc/profile   （注意：我这里安装的是openjdk，与常见的sun jdk存放的位置目录不同，参见：CentOS中JAVA_HOME的环境变量设置）" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://utopizza.github.io/2016-05-29-spark-spark%E5%AE%8C%E5%85%A8%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%AD%E5%BB%BA%E4%B8%8E%E4%BD%BF%E7%94%A8-1/" />
+<meta property="og:image" content="https://utopizza.github.io/logo.png"/>
+<meta property="article:published_time" content="2016-05-29T13:44:00+00:00" />
+<meta property="article:modified_time" content="2016-05-29T13:44:00+00:00" />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://utopizza.github.io/logo.png"/>
+
+<meta name="twitter:title" content="Spark完全分布式搭建与使用(1)"/>
+<meta name="twitter:description" content="一、实验环境
+  宿主机：winserver 2012 服务器一台
+  目标：在三台虚拟机上搭建Spark完全分布式集群，一台master，两台slaves
+  二、安装虚拟机oracle virtualbox
+下载地址：Download VirtualBox
+三、安装 CentOS-6.7-x86_64.iso 镜像文件
+1、下载地址：CentOS Mirror
+2、导入到virtualbox中进行安装。（因为三台虚拟机将要进行差不多的软件安装，所以先在一台虚拟机上部署好了master，再将这个虚拟机完全复制两份作为slaves，然后再稍微修改配置文件，这样比较省事）
+3、配置：名称为CentOS6_Master，CPU为2个，内存为2G，硬盘等其他参数默认安装。在配置CPU的时候可能无法使用，因为win8 之后的微软操作系统默认安装了Hyper-V虚拟机独占了虚拟资源，可以在：控制面板-&gt;程序和功能-&gt;启用或关闭Windows功能-&gt;启动“删除角色和功能”向导中进行禁用，问题解决。
+4、安装好后从“存储”中删除CentOS镜像文件盘片，否则每次启动虚拟机都是进行镜像安装而不是进入虚拟机。另外，安装好后如果宿主机可以上网，那么虚拟机也是可以立即上网的。
+四、安装 java-1.7.0
+1、下载安装并验证，参考：在CentOS上安装Java环境
+2、设置JAVA_HOME环境变量（使用 ls –lrt /etc/alternatives/java 来定位jdk的安装路径，参考：Linux如何查看JDK的安装路径）
+1 2 3 4 5 6 7 8 9 10 11 12  // 使用vim编辑器进入配置文件 [root@master ~]# vim /etc/profile // 修改配置文件 export JAVA_HOME=&#34;/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.101.x86_64&#34; （加入） export JRE_HOME=${JAVA_HOME}/jre export CLASS_PATH=.:${JAVA_HOME}/lib: ${JRE_HOME}/lib // 保存并退出编辑器 // 在terminal中输入命令使其生效 [root@master ~]# source /etc/profile   （注意：我这里安装的是openjdk，与常见的sun jdk存放的位置目录不同，参见：CentOS中JAVA_HOME的环境变量设置）"/>
+<meta name="application-name" content="Utopizza">
+<meta name="apple-mobile-web-app-title" content="Utopizza"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://utopizza.github.io/2016-05-29-spark-spark%E5%AE%8C%E5%85%A8%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%AD%E5%BB%BA%E4%B8%8E%E4%BD%BF%E7%94%A8-1/" /><link rel="prev" href="https://utopizza.github.io/2015-10-14-%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B010/" /><link rel="next" href="https://utopizza.github.io/2016-06-10-spark-spark%E5%AE%8C%E5%85%A8%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%AD%E5%BB%BA%E4%B8%8E%E4%BD%BF%E7%94%A8-2/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "Spark完全分布式搭建与使用(1)",
+        "inLanguage": "en",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https:\/\/utopizza.github.io\/2016-05-29-spark-spark%E5%AE%8C%E5%85%A8%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%AD%E5%BB%BA%E4%B8%8E%E4%BD%BF%E7%94%A8-1\/"
+        },"image": {
+                "@type": "ImageObject",
+                "url": "https:\/\/utopizza.github.io\/cover.png",
+                "width":  800 ,
+                "height":  600 
+            },"genre": "posts","wordcount":  308 ,
+        "url": "https:\/\/utopizza.github.io\/2016-05-29-spark-spark%E5%AE%8C%E5%85%A8%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%AD%E5%BB%BA%E4%B8%8E%E4%BD%BF%E7%94%A8-1\/","datePublished": "2016-05-29T13:44:00+00:00","dateModified": "2016-05-29T13:44:00+00:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+                "@type": "Organization",
+                "name": "",
+                "logo": {
+                "@type": "ImageObject",
+                "url": "https:\/\/utopizza.github.io\/logo.png",
+                "width":  127 ,
+                "height":  40 
+                }
+            },"author": {
+                "@type": "Person",
+                "name": "yusheng"
+            },"description": ""
+    }
+    </script></head>
+    <body><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="Utopizza"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>Utopizza</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> Posts </a><a class="menu-item" href="/categories/"> Categories </a><a class="menu-item" href="https://github.com/utopizza" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i>  </a><span class="menu-item delimiter"></span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="Utopizza"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>Utopizza</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><a class="menu-item" href="/posts/" title="">Posts</a><a class="menu-item" href="/categories/" title="">Categories</a><a class="menu-item" href="https://github.com/utopizza" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i></a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">Spark完全分布式搭建与使用(1)</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;
+                    <span class="post-category">included in<a href="/categories/spark/">
+                                <i class="far fa-folder fa-fw"></i>Spark
+                            </a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i><time datetime=2016-05-29>2016-05-29</time>&nbsp;
+                <i class="fas fa-pencil-alt fa-fw"></i>about 308 words&nbsp;
+                <i class="far fa-clock fa-fw"></i>2 min&nbsp;</div>
+        </div><div class="details toc" id="toc-static">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents"></nav></div>
+            </div><div class="content" id="content"><p>一、实验环境</p>
+<ul>
+<li>
+<p>宿主机：winserver 2012 服务器一台</p>
+</li>
+<li>
+<p>目标：在三台虚拟机上搭建Spark完全分布式集群，一台master，两台slaves</p>
+</li>
+</ul>
+<p>二、安装虚拟机oracle virtualbox</p>
+<p>下载地址：<a href="https://www.virtualbox.org/wiki/Downloads" target="_blank" rel="noopener noreffer">Download VirtualBox</a></p>
+<p>三、安装 CentOS-6.7-x86_64.iso 镜像文件</p>
+<p>1、下载地址：<a href="http://isoredirect.centos.org/centos/6/isos/x86_64/" target="_blank" rel="noopener noreffer">CentOS Mirror</a></p>
+<p>2、导入到virtualbox中进行安装。（因为三台虚拟机将要进行差不多的软件安装，所以先在一台虚拟机上部署好了master，再将这个虚拟机完全复制两份作为slaves，然后再稍微修改配置文件，这样比较省事）</p>
+<p>3、配置：名称为CentOS6_Master，CPU为2个，内存为2G，硬盘等其他参数默认安装。在配置CPU的时候可能无法使用，因为win8 之后的微软操作系统默认安装了Hyper-V虚拟机独占了虚拟资源，可以在：控制面板-&gt;程序和功能-&gt;启用或关闭Windows功能-&gt;启动“删除角色和功能”向导中进行禁用，问题解决。</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="/2016-05-29-Spark-Spark%e5%ae%8c%e5%85%a8%e5%88%86%e5%b8%83%e5%bc%8f%e6%90%ad%e5%bb%ba%e4%b8%8e%e4%bd%bf%e7%94%a8-1/Hyper-V-1.jpg"
+        data-srcset="/2016-05-29-Spark-Spark%e5%ae%8c%e5%85%a8%e5%88%86%e5%b8%83%e5%bc%8f%e6%90%ad%e5%bb%ba%e4%b8%8e%e4%bd%bf%e7%94%a8-1/Hyper-V-1.jpg, /2016-05-29-Spark-Spark%e5%ae%8c%e5%85%a8%e5%88%86%e5%b8%83%e5%bc%8f%e6%90%ad%e5%bb%ba%e4%b8%8e%e4%bd%bf%e7%94%a8-1/Hyper-V-1.jpg 1.5x, /2016-05-29-Spark-Spark%e5%ae%8c%e5%85%a8%e5%88%86%e5%b8%83%e5%bc%8f%e6%90%ad%e5%bb%ba%e4%b8%8e%e4%bd%bf%e7%94%a8-1/Hyper-V-1.jpg 2x"
+        data-sizes="auto"
+        alt="/2016-05-29-Spark-Spark完全分布式搭建与使用-1/Hyper-V-1.jpg"
+        title="/2016-05-29-Spark-Spark完全分布式搭建与使用-1/Hyper-V-1.jpg" /></p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="/2016-05-29-Spark-Spark%e5%ae%8c%e5%85%a8%e5%88%86%e5%b8%83%e5%bc%8f%e6%90%ad%e5%bb%ba%e4%b8%8e%e4%bd%bf%e7%94%a8-1/Hyper-V-2.jpg"
+        data-srcset="/2016-05-29-Spark-Spark%e5%ae%8c%e5%85%a8%e5%88%86%e5%b8%83%e5%bc%8f%e6%90%ad%e5%bb%ba%e4%b8%8e%e4%bd%bf%e7%94%a8-1/Hyper-V-2.jpg, /2016-05-29-Spark-Spark%e5%ae%8c%e5%85%a8%e5%88%86%e5%b8%83%e5%bc%8f%e6%90%ad%e5%bb%ba%e4%b8%8e%e4%bd%bf%e7%94%a8-1/Hyper-V-2.jpg 1.5x, /2016-05-29-Spark-Spark%e5%ae%8c%e5%85%a8%e5%88%86%e5%b8%83%e5%bc%8f%e6%90%ad%e5%bb%ba%e4%b8%8e%e4%bd%bf%e7%94%a8-1/Hyper-V-2.jpg 2x"
+        data-sizes="auto"
+        alt="/2016-05-29-Spark-Spark完全分布式搭建与使用-1/Hyper-V-2.jpg"
+        title="/2016-05-29-Spark-Spark完全分布式搭建与使用-1/Hyper-V-2.jpg" /></p>
+<p>4、安装好后从“存储”中删除CentOS镜像文件盘片，否则每次启动虚拟机都是进行镜像安装而不是进入虚拟机。另外，安装好后如果宿主机可以上网，那么虚拟机也是可以立即上网的。</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="/2016-05-29-Spark-Spark%e5%ae%8c%e5%85%a8%e5%88%86%e5%b8%83%e5%bc%8f%e6%90%ad%e5%bb%ba%e4%b8%8e%e4%bd%bf%e7%94%a8-1/deleteDisk.jpg"
+        data-srcset="/2016-05-29-Spark-Spark%e5%ae%8c%e5%85%a8%e5%88%86%e5%b8%83%e5%bc%8f%e6%90%ad%e5%bb%ba%e4%b8%8e%e4%bd%bf%e7%94%a8-1/deleteDisk.jpg, /2016-05-29-Spark-Spark%e5%ae%8c%e5%85%a8%e5%88%86%e5%b8%83%e5%bc%8f%e6%90%ad%e5%bb%ba%e4%b8%8e%e4%bd%bf%e7%94%a8-1/deleteDisk.jpg 1.5x, /2016-05-29-Spark-Spark%e5%ae%8c%e5%85%a8%e5%88%86%e5%b8%83%e5%bc%8f%e6%90%ad%e5%bb%ba%e4%b8%8e%e4%bd%bf%e7%94%a8-1/deleteDisk.jpg 2x"
+        data-sizes="auto"
+        alt="/2016-05-29-Spark-Spark完全分布式搭建与使用-1/deleteDisk.jpg"
+        title="/2016-05-29-Spark-Spark完全分布式搭建与使用-1/deleteDisk.jpg" /></p>
+<p>四、安装 java-1.7.0</p>
+<p>1、下载安装并验证，参考：<a href="http://jingyan.baidu.com/article/4853e1e51d0c101909f72607.html" target="_blank" rel="noopener noreffer">在CentOS上安装Java环境</a></p>
+<p>2、设置JAVA_HOME环境变量（使用 <code>ls  –lrt  /etc/alternatives/java</code> 来定位jdk的安装路径，参考：<a href="http://www.cnblogs.com/kerrycode/archive/2015/08/27/4762921.html" target="_blank" rel="noopener noreffer">Linux如何查看JDK的安装路径</a>）</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">// 使用vim编辑器进入配置文件
+[root@master ~]# vim  /etc/profile
+
+// 修改配置文件
+export  JAVA_HOME=&#34;/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.101.x86_64&#34; （加入）
+export  JRE_HOME=${JAVA_HOME}/jre
+export  CLASS_PATH=.:${JAVA_HOME}/lib: ${JRE_HOME}/lib
+
+// 保存并退出编辑器
+
+// 在terminal中输入命令使其生效
+[root@master ~]# source  /etc/profile
+</code></pre></td></tr></table>
+</div>
+</div><p>（注意：我这里安装的是openjdk，与常见的sun jdk存放的位置目录不同，参见：<a href="http://blog.csdn.net/wind520/article/details/9308809" target="_blank" rel="noopener noreffer">CentOS中JAVA_HOME的环境变量设置</a>）</p>
+<p>3、测试是否安装成功</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">[root@master ~]# java -version
+</code></pre></td></tr></table>
+</div>
+</div><p>五、安装 scala-2.10.4</p>
+<p>1、因为spark是1.6.1版本，对应scala要用2.10.x版本，否则无法兼容</p>
+<p>下载地址：<a href="http://www.scala-lang.org/download/2.10.4.html" target="_blank" rel="noopener noreffer">SCALA 2.10.4</a></p>
+<p>2、解压到系统目录 /usr/lib/ 下</p>
+<p>3、配置环境变量</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">[root@master ~]# vim  /etc/profile
+
+export  SCALA_HOME=/usr/lib/scala-2.10.4
+export  PATH=$PATH:${SCALA_HOME}/bin
+
+[root@master ~]# source  /etc/profile
+</code></pre></td></tr></table>
+</div>
+</div><p>4、测试</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">[root@master ~]# scala  –version
+</code></pre></td></tr></table>
+</div>
+</div><p>六、安装 SSH</p>
+<p>1、查看SSH是否已安装</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">[root@master ~]# rpm –qa | grep ssh
+</code></pre></td></tr></table>
+</div>
+</div><p>2、安装</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">[root@master ~]# yum  install  openssh-server
+</code></pre></td></tr></table>
+</div>
+</div><p>3、启动/关闭/重启</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">[root@master ~]# service  sshd  start/stop/restart
+</code></pre></td></tr></table>
+</div>
+</div><p>4、验证：查看22端口</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">[root@master ~]# netstat  –antp | grep sshd
+</code></pre></td></tr></table>
+</div>
+</div><p>5、设置开机自启/关闭</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">[root@master ~]# chkconfig  sshd  on/off
+</code></pre></td></tr></table>
+</div>
+</div><p>七、复制虚拟机并构建局域网</p>
+<p>1、virtualbox虚拟机的网络设置形式有四种（详情参考：<a href="https://www.douban.com/group/topic/15558388/" target="_blank" rel="noopener noreffer">VirtualBox虚拟机网络设置（四种方式）</a>）：</p>
+<ul>
+<li>NAT网络地址转换模式：安装后的默认模式，虚拟机可以访问主机，主机不能访问虚拟机，虚拟机之间不能相互访问。即虚拟机不真实存在于网络中，网络服务由主机单向提供。</li>
+<li>Bridged Adapter网桥模式：虚拟机能被分配到一个网络独立的IP，直接连接入网络中，真是存在于网络。因此虚拟机与主机、虚拟机与虚拟机之间都是可以相互访问的。</li>
+<li>Internal内部网络模式：虚拟机与外部网络完全断开，只实现虚拟机之间的内部网络模式。虚拟无法访问主机，也不能通过主机连接外部网络。</li>
+<li>Host-only Adapter完全主机模式：最复杂，虚拟出一张网卡供虚拟机使用，灵活性最高。</li>
+</ul>
+<p>2、复制虚拟机，选择完全复制即可，修改名字为 CentOS6_Worker1 、 CentOS6_Worker2</p>
+<p>3、配置局域网，使三台虚拟机能相互ping通，并且能SSH免密码登录（因为本来想设置最好的Bridged Adapter网桥模式，但是尝试了几次都失败了，最后采用比较简单的Internal内部网络模式。如果你也选择该模式，请提前下载好Hadoop和Spark的安装包，因为部署好内部网络后将与外部网络断开无法上网下载）：</p>
+<p>(1)、先在宿主机（winServer）的cmd中启动vituralbox的dhcp服务，设置一个vituralbox内部网络（参考：<a href="http://blog.csdn.net/fyifei0558/article/details/45506271" target="_blank" rel="noopener noreffer">Virtualbox下使用internal networking做一个小局域网</a>）：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">&gt;C:\Program Files\Oracle\VirtualBox&gt;VBoxManage.exe dhcpserver add
+--netname  intnet 
+--ip  192.168.1.1 
+--netmask  255.255.255.0 
+--lowerip  192.168.1.1 
+--upperip  192.168.1.100 
+--enable
+</code></pre></td></tr></table>
+</div>
+</div><p>(2)、修改虚拟机-&gt;设置-&gt;网络</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="/2016-05-29-Spark-Spark%e5%ae%8c%e5%85%a8%e5%88%86%e5%b8%83%e5%bc%8f%e6%90%ad%e5%bb%ba%e4%b8%8e%e4%bd%bf%e7%94%a8-1/intnet.jpg"
+        data-srcset="/2016-05-29-Spark-Spark%e5%ae%8c%e5%85%a8%e5%88%86%e5%b8%83%e5%bc%8f%e6%90%ad%e5%bb%ba%e4%b8%8e%e4%bd%bf%e7%94%a8-1/intnet.jpg, /2016-05-29-Spark-Spark%e5%ae%8c%e5%85%a8%e5%88%86%e5%b8%83%e5%bc%8f%e6%90%ad%e5%bb%ba%e4%b8%8e%e4%bd%bf%e7%94%a8-1/intnet.jpg 1.5x, /2016-05-29-Spark-Spark%e5%ae%8c%e5%85%a8%e5%88%86%e5%b8%83%e5%bc%8f%e6%90%ad%e5%bb%ba%e4%b8%8e%e4%bd%bf%e7%94%a8-1/intnet.jpg 2x"
+        data-sizes="auto"
+        alt="/2016-05-29-Spark-Spark完全分布式搭建与使用-1/intnet.jpg"
+        title="/2016-05-29-Spark-Spark完全分布式搭建与使用-1/intnet.jpg" /></p>
+<p>(3)、启动三台虚拟机，分别添加新的网络连接配置“eth0”。其中，掩码都是255.255.255.0，网关都是192.168.1.1，各自IP如下：</p>
+<ul>
+<li>Master：192.168.1.2</li>
+<li>Worker1：192.168.1.3</li>
+<li>Worker2：192.168.1.4</li>
+</ul>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="/2016-05-29-Spark-Spark%e5%ae%8c%e5%85%a8%e5%88%86%e5%b8%83%e5%bc%8f%e6%90%ad%e5%bb%ba%e4%b8%8e%e4%bd%bf%e7%94%a8-1/IP-1.jpg"
+        data-srcset="/2016-05-29-Spark-Spark%e5%ae%8c%e5%85%a8%e5%88%86%e5%b8%83%e5%bc%8f%e6%90%ad%e5%bb%ba%e4%b8%8e%e4%bd%bf%e7%94%a8-1/IP-1.jpg, /2016-05-29-Spark-Spark%e5%ae%8c%e5%85%a8%e5%88%86%e5%b8%83%e5%bc%8f%e6%90%ad%e5%bb%ba%e4%b8%8e%e4%bd%bf%e7%94%a8-1/IP-1.jpg 1.5x, /2016-05-29-Spark-Spark%e5%ae%8c%e5%85%a8%e5%88%86%e5%b8%83%e5%bc%8f%e6%90%ad%e5%bb%ba%e4%b8%8e%e4%bd%bf%e7%94%a8-1/IP-1.jpg 2x"
+        data-sizes="auto"
+        alt="/2016-05-29-Spark-Spark完全分布式搭建与使用-1/IP-1.jpg"
+        title="/2016-05-29-Spark-Spark完全分布式搭建与使用-1/IP-1.jpg" /></p>
+<p>设置完后，重启eth0端口</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">[root@master ~]# ifdown  eth0
+[root@master ~]# ifup  eth0
+</code></pre></td></tr></table>
+</div>
+</div><p>查看网络设置</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">[root@master ~]# ifconfig
+</code></pre></td></tr></table>
+</div>
+</div><p>如果下图所示就说明设置好了。（安装的无桌面版本CentOS的高手请忽略）</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="/2016-05-29-Spark-Spark%e5%ae%8c%e5%85%a8%e5%88%86%e5%b8%83%e5%bc%8f%e6%90%ad%e5%bb%ba%e4%b8%8e%e4%bd%bf%e7%94%a8-1/IP-2.jpg"
+        data-srcset="/2016-05-29-Spark-Spark%e5%ae%8c%e5%85%a8%e5%88%86%e5%b8%83%e5%bc%8f%e6%90%ad%e5%bb%ba%e4%b8%8e%e4%bd%bf%e7%94%a8-1/IP-2.jpg, /2016-05-29-Spark-Spark%e5%ae%8c%e5%85%a8%e5%88%86%e5%b8%83%e5%bc%8f%e6%90%ad%e5%bb%ba%e4%b8%8e%e4%bd%bf%e7%94%a8-1/IP-2.jpg 1.5x, /2016-05-29-Spark-Spark%e5%ae%8c%e5%85%a8%e5%88%86%e5%b8%83%e5%bc%8f%e6%90%ad%e5%bb%ba%e4%b8%8e%e4%bd%bf%e7%94%a8-1/IP-2.jpg 2x"
+        data-sizes="auto"
+        alt="/2016-05-29-Spark-Spark完全分布式搭建与使用-1/IP-2.jpg"
+        title="/2016-05-29-Spark-Spark完全分布式搭建与使用-1/IP-2.jpg" /></p>
+<p>(4)、关闭三台虚拟机的防火墙，然后用ping分别进行测试（参考：<a href="http://blog.163.com/cdma2368@126/blog/static/301742762014113103036962/" target="_blank" rel="noopener noreffer">centOS 6.5关闭防火墙步骤</a>）</p>
+<p>(5)、设置每台虚拟机的网络主机名，这步只是为了方便配置，不用每次都写一堆那么长的IP地址。要先获得root权限才能进行如下操作（下面以master为例）：</p>
+<p>step 1：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">[root@master ~]# vim  /etc/hosts
+
+// 进入该配置文件后，清掉原来的默认设置，然后加入：
+127.0.0.1       localhost
+192.168.1.2     Master
+192.168.1.3     Worker1
+192.168.1.4     Worker2
+</code></pre></td></tr></table>
+</div>
+</div><p>注意：这个配置文件很关键，<strong>一定要把原来默认的地址全部去掉，否则之后安装hadoop的网页UI会无法正常工作</strong>。参见：<a href="http://blog.csdn.net/shenlan211314/article/details/7414728" target="_blank" rel="noopener noreffer">Hadoop在master查看live nodes为0解决方案</a></p>
+<p>step 2：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">[root@master ~]# vim  /etc/sysconfig/network
+//将里面的HOSTNAME改为master
+</code></pre></td></tr></table>
+</div>
+</div><p>step 3：再使用hostname命令指定一次</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">[root@master ~]# hostname  master
+</code></pre></td></tr></table>
+</div>
+</div><p>step 4：
+重新登录/重启一次，这时如果配置成功，就会看见命令提示字符串变成&rdquo;[root@master ~]#&rdquo;</p>
+<p>(6)、以上，三台机器都设置好各自网络主机名后，再用ping测试</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="/2016-05-29-Spark-Spark%e5%ae%8c%e5%85%a8%e5%88%86%e5%b8%83%e5%bc%8f%e6%90%ad%e5%bb%ba%e4%b8%8e%e4%bd%bf%e7%94%a8-1/IP-3.jpg"
+        data-srcset="/2016-05-29-Spark-Spark%e5%ae%8c%e5%85%a8%e5%88%86%e5%b8%83%e5%bc%8f%e6%90%ad%e5%bb%ba%e4%b8%8e%e4%bd%bf%e7%94%a8-1/IP-3.jpg, /2016-05-29-Spark-Spark%e5%ae%8c%e5%85%a8%e5%88%86%e5%b8%83%e5%bc%8f%e6%90%ad%e5%bb%ba%e4%b8%8e%e4%bd%bf%e7%94%a8-1/IP-3.jpg 1.5x, /2016-05-29-Spark-Spark%e5%ae%8c%e5%85%a8%e5%88%86%e5%b8%83%e5%bc%8f%e6%90%ad%e5%bb%ba%e4%b8%8e%e4%bd%bf%e7%94%a8-1/IP-3.jpg 2x"
+        data-sizes="auto"
+        alt="/2016-05-29-Spark-Spark完全分布式搭建与使用-1/IP-3.jpg"
+        title="/2016-05-29-Spark-Spark完全分布式搭建与使用-1/IP-3.jpg" /></p>
+<p>(7)、设置master到两个worker虚拟机SSH免密码登录</p>
+<p>step 1：在master上面进入root的.ssh目录</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">[root@master ~]# cd  ~/.ssh
+//如果没有该目录，就用mkdir  ~/.ssh建立并进入
+</code></pre></td></tr></table>
+</div>
+</div><p>step 2：使用 <code>ssh-keygen  –t  rsa</code> 来生成公钥和私钥，连续回车，不设置密码</p>
+<p>step 3：把公钥文件复制到要其他机器的root用户目录下的.ssh目录（如果不是root用户，需要在前面加/home/）</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">[root@master ~]# scp  ~/.ssh/id_rsa.pub  root@master:/root/.ssh/authorized_keys
+[root@master ~]# scp  ~/.ssh/id_rsa.pub  root@worker1:/root/.ssh/authorized_keys
+[root@master ~]# scp  ~/.ssh/id_rsa.pub  root@worker2:/root/.ssh/authorized_keys
+</code></pre></td></tr></table>
+</div>
+</div><p>step 4：检测master是否可以不需要密码登录到worker1和worker2</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">[root@master ~]# ssh  master
+[root@master ~]# ssh  root@worker1
+[root@master ~]# ssh  root@worker2
+</code></pre></td></tr></table>
+</div>
+</div><p>至此，所有准备步骤基本完成，下一步可以开始正式安装hadoop、spark</p>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>The article was updated on 2016-05-29</span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span>
+                            <a class="link-to-markdown" href="/2016-05-29-spark-spark%E5%AE%8C%E5%85%A8%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%AD%E5%BB%BA%E4%B8%8E%E4%BD%BF%E7%94%A8-1/index.md" target="_blank">Read Markdown</a>
+                        </span></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="https://utopizza.github.io/2016-05-29-spark-spark%E5%AE%8C%E5%85%A8%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%AD%E5%BB%BA%E4%B8%8E%E4%BD%BF%E7%94%A8-1/" data-title="Spark完全分布式搭建与使用(1)"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://utopizza.github.io/2016-05-29-spark-spark%E5%AE%8C%E5%85%A8%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%AD%E5%BB%BA%E4%B8%8E%E4%BD%BF%E7%94%A8-1/"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="Share on WhatsApp" data-sharer="whatsapp" data-url="https://utopizza.github.io/2016-05-29-spark-spark%E5%AE%8C%E5%85%A8%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%AD%E5%BB%BA%E4%B8%8E%E4%BD%BF%E7%94%A8-1/" data-title="Spark完全分布式搭建与使用(1)" data-web><i class="fab fa-whatsapp fa-fw"></i></a><a href="javascript:void(0);" title="Share on Line" data-sharer="line" data-url="https://utopizza.github.io/2016-05-29-spark-spark%E5%AE%8C%E5%85%A8%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%AD%E5%BB%BA%E4%B8%8E%E4%BD%BF%E7%94%A8-1/" data-title="Spark完全分布式搭建与使用(1)"><i class="fab fa-line fa-fw"></i></a><a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="https://utopizza.github.io/2016-05-29-spark-spark%E5%AE%8C%E5%85%A8%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%AD%E5%BB%BA%E4%B8%8E%E4%BD%BF%E7%94%A8-1/" data-title="Spark完全分布式搭建与使用(1)"><i class="fab fa-weibo fa-fw"></i></a><a href="javascript:void(0);" title="Share on Myspace" data-sharer="myspace" data-url="https://utopizza.github.io/2016-05-29-spark-spark%E5%AE%8C%E5%85%A8%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%AD%E5%BB%BA%E4%B8%8E%E4%BD%BF%E7%94%A8-1/" data-title="Spark完全分布式搭建与使用(1)" data-description=""><i data-svg-src="/lib/simple-icons/icons/myspace.min.svg"></i></a><a href="javascript:void(0);" title="Share on Blogger" data-sharer="blogger" data-url="https://utopizza.github.io/2016-05-29-spark-spark%E5%AE%8C%E5%85%A8%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%AD%E5%BB%BA%E4%B8%8E%E4%BD%BF%E7%94%A8-1/" data-title="Spark完全分布式搭建与使用(1)" data-description=""><i class="fab fa-blogger fa-fw"></i></a><a href="javascript:void(0);" title="Share on Evernote" data-sharer="evernote" data-url="https://utopizza.github.io/2016-05-29-spark-spark%E5%AE%8C%E5%85%A8%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%AD%E5%BB%BA%E4%B8%8E%E4%BD%BF%E7%94%A8-1/" data-title="Spark完全分布式搭建与使用(1)"><i class="fab fa-evernote fa-fw"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/2015-10-14-%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B010/" class="prev" rel="prev" title="技术笔记(10)-CentOS7部署"><i class="fas fa-angle-left fa-fw"></i>技术笔记(10)-CentOS7部署</a>
+            <a href="/2016-06-10-spark-spark%E5%AE%8C%E5%85%A8%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%AD%E5%BB%BA%E4%B8%8E%E4%BD%BF%E7%94%A8-2/" class="next" rel="next" title="Spark完全分布式搭建与使用(2)">Spark完全分布式搭建与使用(2)<i class="fas fa-angle-right fa-fw"></i></a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.69.2">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.6"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2020</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">yusheng</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><link rel="stylesheet" href="/lib/katex/katex.min.css"><link rel="stylesheet" href="/lib/katex/copy-tex.min.css"><script type="text/javascript">
+    window.config = {"code":{"copyTitle":"Copy to clipboard","maxShownLines":100},"comment":{},"headerMode":{"desktop":"fixed","mobile":"auto"},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false}};
+</script><script type="text/javascript" src="https://polyfill.io/v3/polyfill.min.js?features=html5shiv%2CElement.prototype.closest%2CrequestAnimationFrame%2CCustomEvent%2CPromise%2CObject.entries%2CObject.assign%2CObject.values%2Cfetch%2CElement.prototype.after%2CArray.prototype.fill%2CIntersectionObserver%2CArray.from%2CArray.prototype.find%2CMath.sign"></script><script type="text/javascript" src="/lib/smooth-scroll/smooth-scroll.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/object-fit-images/ofi.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="/lib/sharer/sharer.min.js"></script><script type="text/javascript" src="/lib/katex/katex.min.js"></script><script type="text/javascript" src="/lib/katex/auto-render.min.js"></script><script type="text/javascript" src="/lib/katex/copy-tex.min.js"></script><script type="text/javascript" src="/lib/katex/mhchem.min.js"></script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>

@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>Spark - Utopizza</title>
+        <meta name="Description" content="About LoveIt Theme"><meta property="og:title" content="Spark" />
+<meta property="og:description" content="一、背景及问题
+在谷歌提出了 MapReduce 编程模型之后，UC Berkeley 在此基础上提出了一个更加高效的模型，称为 Spark。其核心思想是将 MapReduce 的中间结果缓存到内存中，使得 Workers 可以快速读取数据而无需启动延迟极大的磁盘读取操作。这种编程模型针对一些迭代次数高、需要反复使用或者修改数据的计算任务尤其有效。根据论文的实验，Spark 在一些高迭代次数的算法实验中处理速度是 MapReduce 的 10 倍以上。
+然而因为没有了将中间结果写磁盘的操作来保证容灾和恢复，因此 Spark 设计了一套别的方案来达到该目的，那就是 RDD &#43; Lineage。RDD(Resilient Distribute Datasets)称为弹性数据集，它是一种对被操作数据的抽象，而 Lineage 称为“血统”，顾名思义它记录了每一个 RDD 演变过程中的上下文信息。当故障出现时，可以根据丢失的 RDD 的 Lineage 来追寻它的祖先 RDD ，然后重新执行演化即可恢复出丢失的 RDD。
+二、Spark 编程模型
+使用 Spark 的用户通过编写一个称为 Driver Program 的程序来实现自己的计算任务。Spark 为用户的并行化编程提供了三个组件：resilient distribution dataset、 parallel operations、 parallel operations。
+(1) Resilient Distribution Datasets(RDDs)：一个 RDD 是一个可恢复的只读对象集合，它无须存储在磁盘中。每次对一个 RDD 的操作都会被记录下来，从而每个 RDD 可以沿着它的演化过程一直追寻它的祖先 RDD，甚至可以追寻到最开始的第一次从磁盘读取初始数据。因此这个机制保证了任何一个 RDD 都可以被恢复。具体在 Spark 系统中，RDD 由 Scala 对象来表达。论文中规定了 RDD 仅可以从四种方式构造：" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://utopizza.github.io/2019-05-09-%E8%AE%BA%E6%96%87-spark/" />
+<meta property="og:image" content="https://utopizza.github.io/logo.png"/>
+<meta property="article:published_time" content="2019-05-09T00:00:00+00:00" />
+<meta property="article:modified_time" content="2019-05-09T00:00:00+00:00" />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://utopizza.github.io/logo.png"/>
+
+<meta name="twitter:title" content="Spark"/>
+<meta name="twitter:description" content="一、背景及问题
+在谷歌提出了 MapReduce 编程模型之后，UC Berkeley 在此基础上提出了一个更加高效的模型，称为 Spark。其核心思想是将 MapReduce 的中间结果缓存到内存中，使得 Workers 可以快速读取数据而无需启动延迟极大的磁盘读取操作。这种编程模型针对一些迭代次数高、需要反复使用或者修改数据的计算任务尤其有效。根据论文的实验，Spark 在一些高迭代次数的算法实验中处理速度是 MapReduce 的 10 倍以上。
+然而因为没有了将中间结果写磁盘的操作来保证容灾和恢复，因此 Spark 设计了一套别的方案来达到该目的，那就是 RDD &#43; Lineage。RDD(Resilient Distribute Datasets)称为弹性数据集，它是一种对被操作数据的抽象，而 Lineage 称为“血统”，顾名思义它记录了每一个 RDD 演变过程中的上下文信息。当故障出现时，可以根据丢失的 RDD 的 Lineage 来追寻它的祖先 RDD ，然后重新执行演化即可恢复出丢失的 RDD。
+二、Spark 编程模型
+使用 Spark 的用户通过编写一个称为 Driver Program 的程序来实现自己的计算任务。Spark 为用户的并行化编程提供了三个组件：resilient distribution dataset、 parallel operations、 parallel operations。
+(1) Resilient Distribution Datasets(RDDs)：一个 RDD 是一个可恢复的只读对象集合，它无须存储在磁盘中。每次对一个 RDD 的操作都会被记录下来，从而每个 RDD 可以沿着它的演化过程一直追寻它的祖先 RDD，甚至可以追寻到最开始的第一次从磁盘读取初始数据。因此这个机制保证了任何一个 RDD 都可以被恢复。具体在 Spark 系统中，RDD 由 Scala 对象来表达。论文中规定了 RDD 仅可以从四种方式构造："/>
+<meta name="application-name" content="Utopizza">
+<meta name="apple-mobile-web-app-title" content="Utopizza"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://utopizza.github.io/2019-05-09-%E8%AE%BA%E6%96%87-spark/" /><link rel="prev" href="https://utopizza.github.io/2019-05-08-%E8%AE%BA%E6%96%87-mapreduce/" /><link rel="next" href="https://utopizza.github.io/2019-05-19-%E7%AE%97%E6%B3%95-pagerank%E5%9C%A8spark%E7%9A%84%E5%88%86%E5%B8%83%E5%BC%8F%E5%AE%9E%E7%8E%B0/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "Spark",
+        "inLanguage": "en",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https:\/\/utopizza.github.io\/2019-05-09-%E8%AE%BA%E6%96%87-spark\/"
+        },"image": {
+                "@type": "ImageObject",
+                "url": "https:\/\/utopizza.github.io\/cover.png",
+                "width":  800 ,
+                "height":  600 
+            },"genre": "posts","wordcount":  288 ,
+        "url": "https:\/\/utopizza.github.io\/2019-05-09-%E8%AE%BA%E6%96%87-spark\/","datePublished": "2019-05-09T00:00:00+00:00","dateModified": "2019-05-09T00:00:00+00:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+                "@type": "Organization",
+                "name": "",
+                "logo": {
+                "@type": "ImageObject",
+                "url": "https:\/\/utopizza.github.io\/logo.png",
+                "width":  127 ,
+                "height":  40 
+                }
+            },"author": {
+                "@type": "Person",
+                "name": "yusheng"
+            },"description": ""
+    }
+    </script></head>
+    <body><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="Utopizza"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>Utopizza</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> Posts </a><a class="menu-item" href="/categories/"> Categories </a><a class="menu-item" href="https://github.com/utopizza" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i>  </a><span class="menu-item delimiter"></span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="Utopizza"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>Utopizza</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><a class="menu-item" href="/posts/" title="">Posts</a><a class="menu-item" href="/categories/" title="">Categories</a><a class="menu-item" href="https://github.com/utopizza" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i></a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">Spark</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;
+                    <span class="post-category">included in<a href="/categories/thesis/">
+                                <i class="far fa-folder fa-fw"></i>Thesis
+                            </a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i><time datetime=2019-05-09>2019-05-09</time>&nbsp;
+                <i class="fas fa-pencil-alt fa-fw"></i>about 288 words&nbsp;
+                <i class="far fa-clock fa-fw"></i>2 min&nbsp;</div>
+        </div><div class="details toc" id="toc-static">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents"></nav></div>
+            </div><div class="content" id="content"><p>一、背景及问题</p>
+<p>在谷歌提出了 MapReduce 编程模型之后，UC Berkeley 在此基础上提出了一个更加高效的模型，称为 Spark。其核心思想是将 MapReduce 的中间结果缓存到内存中，使得 Workers 可以快速读取数据而无需启动延迟极大的磁盘读取操作。这种编程模型针对一些迭代次数高、需要反复使用或者修改数据的计算任务尤其有效。根据论文的实验，Spark 在一些高迭代次数的算法实验中处理速度是 MapReduce 的 10 倍以上。</p>
+<p>然而因为没有了将中间结果写磁盘的操作来保证容灾和恢复，因此 Spark 设计了一套别的方案来达到该目的，那就是 RDD + Lineage。RDD(Resilient Distribute Datasets)称为弹性数据集，它是一种对被操作数据的抽象，而 Lineage 称为“血统”，顾名思义它记录了每一个 RDD 演变过程中的上下文信息。当故障出现时，可以根据丢失的 RDD 的 Lineage 来追寻它的祖先 RDD ，然后重新执行演化即可恢复出丢失的 RDD。</p>
+<p>二、Spark 编程模型</p>
+<p>使用 Spark 的用户通过编写一个称为 Driver Program 的程序来实现自己的计算任务。Spark 为用户的并行化编程提供了三个组件：resilient distribution dataset、 parallel operations、 parallel operations。</p>
+<p>(1) Resilient Distribution Datasets(RDDs)：一个 RDD 是一个可恢复的只读对象集合，它无须存储在磁盘中。每次对一个 RDD 的操作都会被记录下来，从而每个 RDD 可以沿着它的演化过程一直追寻它的祖先 RDD，甚至可以追寻到最开始的第一次从磁盘读取初始数据。因此这个机制保证了任何一个 RDD 都可以被恢复。具体在 Spark 系统中，RDD 由 Scala 对象来表达。论文中规定了 RDD 仅可以从四种方式构造：</p>
+<ul>
+<li>从文件系统中构造，例如从 HDFS 中读取数据</li>
+<li>并行化处理 Scala 对象，例如将 Scala 的数组分片</li>
+<li>从另一个 RDD 转化</li>
+<li>改变一个 RDD 的持久化状态</li>
+</ul>
+<p>(2) Parallel Operations：Spark 支持的并行化操作，大体上类似于 MapReduce 的 Map 和 Reduce。有以下三类：</p>
+<ul>
+<li>reduce</li>
+<li>collect</li>
+<li>foreach</li>
+</ul>
+<p>(3) Shared Variables：Spark 支持的共享变量，在机器集群中可以传递并共享这些变量。有两类共享变量：</p>
+<ul>
+<li>Broadcast variables：被定义为这种变量的数据会被复制到每一个 Worker，并且只复制一次。一般用于一些只读的并且需要被每个 Worker 使用的数据，例如 lookup table 等。</li>
+<li>Accumulators：一般用于进行计数求和的数据。没看太懂论文中这段的解释。</li>
+</ul>
+<p>三、编程示例</p>
+<p>(1) Text Search：类似于 MapReduce 论文中给出的统计单词示例。这里是统计日志文件中出现 “ERROR” 的行数。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">val file = spark.textFile(&#34;hdfs://...&#34;)
+val errs = file.filter(_.contains(&#34;ERROR&#34;))
+val ones = errs.map(_ =&gt; 1)
+val count = ones.reduce(_+_)
+</code></pre></td></tr></table>
+</div>
+</div><p>(2) Logistic Regression：逻辑回归学习的 Spark 并行化版本。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">// Read points from a text file and cache them
+val points = spark.textFile(&#34;hdfs://...&#34;).map(parsePoint).cache()
+
+// Initialize w to random D-dimensional vector
+var w = Vector.random(D)
+
+// Run multiple iterations to update w
+for (i &lt;- 1 to ITERATIONS) {
+    val grad = spark.accumulator(new Vector(D))
+    for (p &lt;- points) { // Runs in parallel
+        val s = (1/(1+exp(-p.y*(w dot p.x)))-1)*p.y
+        grad += s * p.x
+    }
+    w -= grad.value
+}
+</code></pre></td></tr></table>
+</div>
+</div><p>(3) Alternating Least Squares：ALS 算法的 Spark 并行版本</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">val Rb = spark.broadcast(R)
+for (i &lt;- 1 to ITERATIONS) {
+    U = spark.parallelize(0 until u).map(j =&gt; updateUser(j, Rb, M)).collect()
+    M = spark.parallelize(0 until m).map(j =&gt; updateUser(j, Rb, U)).collect()
+}
+</code></pre></td></tr></table>
+</div>
+</div><p>四、Spark 实现细节</p>
+<p>这一节论文也没有讲得很详细，具体细节可以考虑参考工具书</p>
+<ul>
+<li><a href="https://book.douban.com/subject/27035127/" target="_blank" rel="noopener noreffer">Spark: The Definitive Guide: Big Data Processing Made Simple</a></li>
+<li><a href="https://book.douban.com/subject/22139960/" target="_blank" rel="noopener noreffer">Learning Spark: Lightning-Fast Big Data Analysis</a></li>
+</ul>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>The article was updated on 2019-05-09</span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span>
+                            <a class="link-to-markdown" href="/2019-05-09-%E8%AE%BA%E6%96%87-spark/index.md" target="_blank">Read Markdown</a>
+                        </span></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="https://utopizza.github.io/2019-05-09-%E8%AE%BA%E6%96%87-spark/" data-title="Spark"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://utopizza.github.io/2019-05-09-%E8%AE%BA%E6%96%87-spark/"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="Share on WhatsApp" data-sharer="whatsapp" data-url="https://utopizza.github.io/2019-05-09-%E8%AE%BA%E6%96%87-spark/" data-title="Spark" data-web><i class="fab fa-whatsapp fa-fw"></i></a><a href="javascript:void(0);" title="Share on Line" data-sharer="line" data-url="https://utopizza.github.io/2019-05-09-%E8%AE%BA%E6%96%87-spark/" data-title="Spark"><i class="fab fa-line fa-fw"></i></a><a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="https://utopizza.github.io/2019-05-09-%E8%AE%BA%E6%96%87-spark/" data-title="Spark"><i class="fab fa-weibo fa-fw"></i></a><a href="javascript:void(0);" title="Share on Myspace" data-sharer="myspace" data-url="https://utopizza.github.io/2019-05-09-%E8%AE%BA%E6%96%87-spark/" data-title="Spark" data-description=""><i data-svg-src="/lib/simple-icons/icons/myspace.min.svg"></i></a><a href="javascript:void(0);" title="Share on Blogger" data-sharer="blogger" data-url="https://utopizza.github.io/2019-05-09-%E8%AE%BA%E6%96%87-spark/" data-title="Spark" data-description=""><i class="fab fa-blogger fa-fw"></i></a><a href="javascript:void(0);" title="Share on Evernote" data-sharer="evernote" data-url="https://utopizza.github.io/2019-05-09-%E8%AE%BA%E6%96%87-spark/" data-title="Spark"><i class="fab fa-evernote fa-fw"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/2019-05-08-%E8%AE%BA%E6%96%87-mapreduce/" class="prev" rel="prev" title="MapReduce"><i class="fas fa-angle-left fa-fw"></i>MapReduce</a>
+            <a href="/2019-05-19-%E7%AE%97%E6%B3%95-pagerank%E5%9C%A8spark%E7%9A%84%E5%88%86%E5%B8%83%E5%BC%8F%E5%AE%9E%E7%8E%B0/" class="next" rel="next" title="PageRank在Spark的分布式实现">PageRank在Spark的分布式实现<i class="fas fa-angle-right fa-fw"></i></a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.69.2">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.6"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2020</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">yusheng</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><link rel="stylesheet" href="/lib/katex/katex.min.css"><link rel="stylesheet" href="/lib/katex/copy-tex.min.css"><script type="text/javascript">
+    window.config = {"code":{"copyTitle":"Copy to clipboard","maxShownLines":100},"comment":{},"headerMode":{"desktop":"fixed","mobile":"auto"},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false}};
+</script><script type="text/javascript" src="https://polyfill.io/v3/polyfill.min.js?features=html5shiv%2CElement.prototype.closest%2CrequestAnimationFrame%2CCustomEvent%2CPromise%2CObject.entries%2CObject.assign%2CObject.values%2Cfetch%2CElement.prototype.after%2CArray.prototype.fill%2CIntersectionObserver%2CArray.from%2CArray.prototype.find%2CMath.sign"></script><script type="text/javascript" src="/lib/smooth-scroll/smooth-scroll.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/object-fit-images/ofi.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="/lib/sharer/sharer.min.js"></script><script type="text/javascript" src="/lib/katex/katex.min.js"></script><script type="text/javascript" src="/lib/katex/auto-render.min.js"></script><script type="text/javascript" src="/lib/katex/copy-tex.min.js"></script><script type="text/javascript" src="/lib/katex/mhchem.min.js"></script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>

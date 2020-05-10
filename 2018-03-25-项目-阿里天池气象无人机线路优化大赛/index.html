@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>阿里天池气象无人机线路优化大赛 - Utopizza</title>
+        <meta name="Description" content="About LoveIt Theme"><meta property="og:title" content="阿里天池气象无人机线路优化大赛" />
+<meta property="og:description" content="一、赛题
+给出5天的气象数据（风速和降雨量），预测未来5天的气象情况，并根据预测结果，为每天的10架无人机设计最优的飞行路线。要求是无人飞行器不能进入风速大于等于15、降雨量大于等于4的区域，否则立即坠毁。另外还有一些限制条件如任意两架无人飞行器起飞时间必须间隔大于等于10分钟且最大飞行时长为18个小时等等。详情见：未来已来——气象数据领航无人飞行器线路优化大赛。
+其中，我负责气象预测部分，队友负责线路规划部分。由于线路规划是取决于气象预测的结果，如果预测错误导致飞行器进入实际是危险的区域而坠毁，那么将会受到严重的加时惩罚（每架次惩罚24*60分钟）。所以气象预测的准确性在这个比赛中非常重要。因此我们的目标是：尽可能避免坠毁，其次再考虑如何寻找总飞行时长最小的线路。以下主要讲述我负责的气象预测部分。
+二、数据
+官方给出5天的气象数据，分为风速和降雨量两部分。每个地图区域抽象成一个坐标点(x,y)，每个区域每小时一条气象数据，每天一共20个小时。拿到数据后需要进行 Merge，才能得到“每个区域每个小时一条数据”的数据格式。
+Merge 的时候要注意列名是否重复，是否需要重命名新拼接的列，否则会导致错误。完成后需要检查数据是否正确。从图中可以看出，样本的特征不多，只有坐标、天、小时、真值和 10 个气象模型的预测值共 14 个特征。
+三、分析
+把每个小时的静态风速图和一天20个小时的风速动图画出来分析。发现每天的风速变化相当大，即便是同一天内，同一个区域不同小时的风速变化也很大，这为预测增加了不小的难度。
+另一个难点是官方提供的测评方式是直接返回无人飞行器的飞行时长总得分，而不是关于气象预测的某种评价函数的得分。这让我们无法直接获得气象预测结果的反馈，为模型调优增加了难度。
+还有一个难点是前5天和后5天的数据分布不一致。例如前5天平均风速在10左右，远小于危险风速值15，而后5天平均风速在15左右，每天都是大片的飞行危险区域，可行域很少，增加了线路寻优的难度。
+四、初赛
+1、直接二分类
+刚开始的想法是二分类。因为每个区域对于飞行器来说，只有“危险”和“安全”两个状态，因此我们先想到的是把气象预测问题看作二分类问题来处理，使用 LightGBM 的 binary classification 模式直接对每个区域每个小时是否安全进行逻辑回归。尝试过的方案：
+ 取5天的某4天作训练集，剩下一天作为验证集 尝试去掉特征 [xid, yid, date_id, hour] 中的一个或多个 把10列气象特征的平均值作为新特征 特征规范化（minmax）/ 二值化（对10列气象特征） 尝试不同的危险阈值（风速），如 13，13.5，14，14.5，15等 设置正负样本的权重，尝试不同的权重，如 1：1，1：10等  这里的思路是，为了尽量避免预测的时候出现伪安全区域，导致飞行器坠毁而被严重罚时，应该设置更低的危险阈值，更大的负样本（危险区域）权重。当然如果把过多的安全区域预测为危险区域，会导致后面的线路规划没有路可走。
+经过几次提交发现效果不太理想（也可能是线路规划的问题，总之最终得分不是很好）。通过误差分析发现，直接使用二分类对那些接近危险阈值的样本的预测并不好。例如，有某个区域在某个小时的10列气象特征的平均值为14.5，应该判为危险，但是二分类模型却把它判断为安全（为什么？）。
+2、先回归再按阈值二分类
+由于二分类效果不理想，于是转向回归，即先通过回归预测未来5天的风速值，通过与危险阈值比较，大于等于危险阈值的判为危险，否则判为安全区域。尝试过的方案：
+ 随机切分数据集 train、eval、test，按 98%：1%：1% 的比例 去掉特征 date_id 特征标准化（minmax） 删除异常点（就是10个气象特征均值与真值的绝对值之差达到5以上的样本） 每天单独训练，得到5个模型，每个模型对后5天的结果进行预测，再加权平均 对预测结果进行平滑。尝试使用 scipy 的高斯平滑和卷积平滑。具体步骤是先把整个地图某个小时的风速按坐标顺序 reshape 成一个“图像”矩阵，然后调用 scipy.ndimage.filters.gaussian_filter() 和 scipy.ndimage.filters.convolve() 进行平滑处理，再把矩阵平展成原来的数据格式 尝试不同的危险阈值（风速），如 13，13.5，14，14.5，15等 对每个样本，加入周围8个点的10*8共80个风速特征  先回归再按阈值二分类这个方案得到的成绩是比较好的，在线路规划的版本不变的情况下，最好的成绩来自 20000 轮训练的 ligtGBM regression 模型。高斯平滑和卷积平滑方案作用不大，成绩提高在个位数以内，可视为基本无效。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://utopizza.github.io/2018-03-25-%E9%A1%B9%E7%9B%AE-%E9%98%BF%E9%87%8C%E5%A4%A9%E6%B1%A0%E6%B0%94%E8%B1%A1%E6%97%A0%E4%BA%BA%E6%9C%BA%E7%BA%BF%E8%B7%AF%E4%BC%98%E5%8C%96%E5%A4%A7%E8%B5%9B/" />
+<meta property="og:image" content="https://utopizza.github.io/logo.png"/>
+<meta property="article:published_time" content="2018-03-25T20:37:00+00:00" />
+<meta property="article:modified_time" content="2018-03-25T20:37:00+00:00" />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://utopizza.github.io/logo.png"/>
+
+<meta name="twitter:title" content="阿里天池气象无人机线路优化大赛"/>
+<meta name="twitter:description" content="一、赛题
+给出5天的气象数据（风速和降雨量），预测未来5天的气象情况，并根据预测结果，为每天的10架无人机设计最优的飞行路线。要求是无人飞行器不能进入风速大于等于15、降雨量大于等于4的区域，否则立即坠毁。另外还有一些限制条件如任意两架无人飞行器起飞时间必须间隔大于等于10分钟且最大飞行时长为18个小时等等。详情见：未来已来——气象数据领航无人飞行器线路优化大赛。
+其中，我负责气象预测部分，队友负责线路规划部分。由于线路规划是取决于气象预测的结果，如果预测错误导致飞行器进入实际是危险的区域而坠毁，那么将会受到严重的加时惩罚（每架次惩罚24*60分钟）。所以气象预测的准确性在这个比赛中非常重要。因此我们的目标是：尽可能避免坠毁，其次再考虑如何寻找总飞行时长最小的线路。以下主要讲述我负责的气象预测部分。
+二、数据
+官方给出5天的气象数据，分为风速和降雨量两部分。每个地图区域抽象成一个坐标点(x,y)，每个区域每小时一条气象数据，每天一共20个小时。拿到数据后需要进行 Merge，才能得到“每个区域每个小时一条数据”的数据格式。
+Merge 的时候要注意列名是否重复，是否需要重命名新拼接的列，否则会导致错误。完成后需要检查数据是否正确。从图中可以看出，样本的特征不多，只有坐标、天、小时、真值和 10 个气象模型的预测值共 14 个特征。
+三、分析
+把每个小时的静态风速图和一天20个小时的风速动图画出来分析。发现每天的风速变化相当大，即便是同一天内，同一个区域不同小时的风速变化也很大，这为预测增加了不小的难度。
+另一个难点是官方提供的测评方式是直接返回无人飞行器的飞行时长总得分，而不是关于气象预测的某种评价函数的得分。这让我们无法直接获得气象预测结果的反馈，为模型调优增加了难度。
+还有一个难点是前5天和后5天的数据分布不一致。例如前5天平均风速在10左右，远小于危险风速值15，而后5天平均风速在15左右，每天都是大片的飞行危险区域，可行域很少，增加了线路寻优的难度。
+四、初赛
+1、直接二分类
+刚开始的想法是二分类。因为每个区域对于飞行器来说，只有“危险”和“安全”两个状态，因此我们先想到的是把气象预测问题看作二分类问题来处理，使用 LightGBM 的 binary classification 模式直接对每个区域每个小时是否安全进行逻辑回归。尝试过的方案：
+ 取5天的某4天作训练集，剩下一天作为验证集 尝试去掉特征 [xid, yid, date_id, hour] 中的一个或多个 把10列气象特征的平均值作为新特征 特征规范化（minmax）/ 二值化（对10列气象特征） 尝试不同的危险阈值（风速），如 13，13.5，14，14.5，15等 设置正负样本的权重，尝试不同的权重，如 1：1，1：10等  这里的思路是，为了尽量避免预测的时候出现伪安全区域，导致飞行器坠毁而被严重罚时，应该设置更低的危险阈值，更大的负样本（危险区域）权重。当然如果把过多的安全区域预测为危险区域，会导致后面的线路规划没有路可走。
+经过几次提交发现效果不太理想（也可能是线路规划的问题，总之最终得分不是很好）。通过误差分析发现，直接使用二分类对那些接近危险阈值的样本的预测并不好。例如，有某个区域在某个小时的10列气象特征的平均值为14.5，应该判为危险，但是二分类模型却把它判断为安全（为什么？）。
+2、先回归再按阈值二分类
+由于二分类效果不理想，于是转向回归，即先通过回归预测未来5天的风速值，通过与危险阈值比较，大于等于危险阈值的判为危险，否则判为安全区域。尝试过的方案：
+ 随机切分数据集 train、eval、test，按 98%：1%：1% 的比例 去掉特征 date_id 特征标准化（minmax） 删除异常点（就是10个气象特征均值与真值的绝对值之差达到5以上的样本） 每天单独训练，得到5个模型，每个模型对后5天的结果进行预测，再加权平均 对预测结果进行平滑。尝试使用 scipy 的高斯平滑和卷积平滑。具体步骤是先把整个地图某个小时的风速按坐标顺序 reshape 成一个“图像”矩阵，然后调用 scipy.ndimage.filters.gaussian_filter() 和 scipy.ndimage.filters.convolve() 进行平滑处理，再把矩阵平展成原来的数据格式 尝试不同的危险阈值（风速），如 13，13.5，14，14.5，15等 对每个样本，加入周围8个点的10*8共80个风速特征  先回归再按阈值二分类这个方案得到的成绩是比较好的，在线路规划的版本不变的情况下，最好的成绩来自 20000 轮训练的 ligtGBM regression 模型。高斯平滑和卷积平滑方案作用不大，成绩提高在个位数以内，可视为基本无效。"/>
+<meta name="application-name" content="Utopizza">
+<meta name="apple-mobile-web-app-title" content="Utopizza"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://utopizza.github.io/2018-03-25-%E9%A1%B9%E7%9B%AE-%E9%98%BF%E9%87%8C%E5%A4%A9%E6%B1%A0%E6%B0%94%E8%B1%A1%E6%97%A0%E4%BA%BA%E6%9C%BA%E7%BA%BF%E8%B7%AF%E4%BC%98%E5%8C%96%E5%A4%A7%E8%B5%9B/" /><link rel="prev" href="https://utopizza.github.io/2018-03-17-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E7%89%B9%E5%BE%81%E5%B7%A5%E7%A8%8B/" /><link rel="next" href="https://utopizza.github.io/2018-04-28-%E6%80%BB%E7%BB%93-%E9%98%B6%E6%AE%B5%E6%80%BB%E7%BB%934/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "阿里天池气象无人机线路优化大赛",
+        "inLanguage": "en",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https:\/\/utopizza.github.io\/2018-03-25-%E9%A1%B9%E7%9B%AE-%E9%98%BF%E9%87%8C%E5%A4%A9%E6%B1%A0%E6%B0%94%E8%B1%A1%E6%97%A0%E4%BA%BA%E6%9C%BA%E7%BA%BF%E8%B7%AF%E4%BC%98%E5%8C%96%E5%A4%A7%E8%B5%9B\/"
+        },"image": {
+                "@type": "ImageObject",
+                "url": "https:\/\/utopizza.github.io\/cover.png",
+                "width":  800 ,
+                "height":  600 
+            },"genre": "posts","wordcount":  101 ,
+        "url": "https:\/\/utopizza.github.io\/2018-03-25-%E9%A1%B9%E7%9B%AE-%E9%98%BF%E9%87%8C%E5%A4%A9%E6%B1%A0%E6%B0%94%E8%B1%A1%E6%97%A0%E4%BA%BA%E6%9C%BA%E7%BA%BF%E8%B7%AF%E4%BC%98%E5%8C%96%E5%A4%A7%E8%B5%9B\/","datePublished": "2018-03-25T20:37:00+00:00","dateModified": "2018-03-25T20:37:00+00:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+                "@type": "Organization",
+                "name": "",
+                "logo": {
+                "@type": "ImageObject",
+                "url": "https:\/\/utopizza.github.io\/logo.png",
+                "width":  127 ,
+                "height":  40 
+                }
+            },"author": {
+                "@type": "Person",
+                "name": "yusheng"
+            },"description": ""
+    }
+    </script></head>
+    <body><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="Utopizza"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>Utopizza</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> Posts </a><a class="menu-item" href="/categories/"> Categories </a><a class="menu-item" href="https://github.com/utopizza" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i>  </a><span class="menu-item delimiter"></span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="Utopizza"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>Utopizza</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><a class="menu-item" href="/posts/" title="">Posts</a><a class="menu-item" href="/categories/" title="">Categories</a><a class="menu-item" href="https://github.com/utopizza" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i></a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">阿里天池气象无人机线路优化大赛</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;
+                    <span class="post-category">included in<a href="/categories/projects/">
+                                <i class="far fa-folder fa-fw"></i>Projects
+                            </a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i><time datetime=2018-03-25>2018-03-25</time>&nbsp;
+                <i class="fas fa-pencil-alt fa-fw"></i>about 101 words&nbsp;
+                <i class="far fa-clock fa-fw"></i>1 min&nbsp;</div>
+        </div><div class="details toc" id="toc-static">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents"></nav></div>
+            </div><div class="content" id="content"><p>一、赛题</p>
+<p>给出5天的气象数据（风速和降雨量），预测未来5天的气象情况，并根据预测结果，为每天的10架无人机设计最优的飞行路线。要求是无人飞行器不能进入风速大于等于15、降雨量大于等于4的区域，否则立即坠毁。另外还有一些限制条件如任意两架无人飞行器起飞时间必须间隔大于等于10分钟且最大飞行时长为18个小时等等。详情见：未来已来——气象数据领航无人飞行器线路优化大赛。</p>
+<p>其中，我负责气象预测部分，队友负责线路规划部分。由于线路规划是取决于气象预测的结果，如果预测错误导致飞行器进入实际是危险的区域而坠毁，那么将会受到严重的加时惩罚（每架次惩罚24*60分钟）。所以气象预测的准确性在这个比赛中非常重要。因此我们的目标是：尽可能避免坠毁，其次再考虑如何寻找总飞行时长最小的线路。以下主要讲述我负责的气象预测部分。</p>
+<p>二、数据</p>
+<p>官方给出5天的气象数据，分为风速和降雨量两部分。每个地图区域抽象成一个坐标点(x,y)，每个区域每小时一条气象数据，每天一共20个小时。拿到数据后需要进行 Merge，才能得到“每个区域每个小时一条数据”的数据格式。</p>
+<p>Merge 的时候要注意列名是否重复，是否需要重命名新拼接的列，否则会导致错误。完成后需要检查数据是否正确。从图中可以看出，样本的特征不多，只有坐标、天、小时、真值和 10 个气象模型的预测值共 14 个特征。</p>
+<p>三、分析</p>
+<p>把每个小时的静态风速图和一天20个小时的风速动图画出来分析。发现每天的风速变化相当大，即便是同一天内，同一个区域不同小时的风速变化也很大，这为预测增加了不小的难度。</p>
+<p>另一个难点是官方提供的测评方式是直接返回无人飞行器的飞行时长总得分，而不是关于气象预测的某种评价函数的得分。这让我们无法直接获得气象预测结果的反馈，为模型调优增加了难度。</p>
+<p>还有一个难点是前5天和后5天的数据分布不一致。例如前5天平均风速在10左右，远小于危险风速值15，而后5天平均风速在15左右，每天都是大片的飞行危险区域，可行域很少，增加了线路寻优的难度。</p>
+<p>四、初赛</p>
+<p>1、直接二分类</p>
+<p>刚开始的想法是二分类。因为每个区域对于飞行器来说，只有“危险”和“安全”两个状态，因此我们先想到的是把气象预测问题看作二分类问题来处理，使用 LightGBM 的 binary classification 模式直接对每个区域每个小时是否安全进行逻辑回归。尝试过的方案：</p>
+<ol>
+<li>取5天的某4天作训练集，剩下一天作为验证集</li>
+<li>尝试去掉特征 [xid, yid, date_id, hour] 中的一个或多个</li>
+<li>把10列气象特征的平均值作为新特征</li>
+<li>特征规范化（minmax）/ 二值化（对10列气象特征）</li>
+<li>尝试不同的危险阈值（风速），如 13，13.5，14，14.5，15等</li>
+<li>设置正负样本的权重，尝试不同的权重，如 1：1，1：10等</li>
+</ol>
+<p>这里的思路是，为了尽量避免预测的时候出现伪安全区域，导致飞行器坠毁而被严重罚时，应该设置更低的危险阈值，更大的负样本（危险区域）权重。当然如果把过多的安全区域预测为危险区域，会导致后面的线路规划没有路可走。</p>
+<p>经过几次提交发现效果不太理想（也可能是线路规划的问题，总之最终得分不是很好）。通过误差分析发现，直接使用二分类对那些接近危险阈值的样本的预测并不好。例如，有某个区域在某个小时的10列气象特征的平均值为14.5，应该判为危险，但是二分类模型却把它判断为安全（为什么？）。</p>
+<p>2、先回归再按阈值二分类</p>
+<p>由于二分类效果不理想，于是转向回归，即先通过回归预测未来5天的风速值，通过与危险阈值比较，大于等于危险阈值的判为危险，否则判为安全区域。尝试过的方案：</p>
+<ol>
+<li>随机切分数据集 train、eval、test，按 98%：1%：1% 的比例</li>
+<li>去掉特征 date_id</li>
+<li>特征标准化（minmax）</li>
+<li>删除异常点（就是10个气象特征均值与真值的绝对值之差达到5以上的样本）</li>
+<li>每天单独训练，得到5个模型，每个模型对后5天的结果进行预测，再加权平均</li>
+<li>对预测结果进行平滑。尝试使用 scipy 的高斯平滑和卷积平滑。具体步骤是先把整个地图某个小时的风速按坐标顺序 reshape 成一个“图像”矩阵，然后调用 <code>scipy.ndimage.filters.gaussian_filter()</code> 和 <code>scipy.ndimage.filters.convolve()</code> 进行平滑处理，再把矩阵平展成原来的数据格式</li>
+<li>尝试不同的危险阈值（风速），如 13，13.5，14，14.5，15等</li>
+<li>对每个样本，加入周围8个点的10*8共80个风速特征</li>
+</ol>
+<p>先回归再按阈值二分类这个方案得到的成绩是比较好的，在线路规划的版本不变的情况下，最好的成绩来自 20000 轮训练的 ligtGBM regression 模型。高斯平滑和卷积平滑方案作用不大，成绩提高在个位数以内，可视为基本无效。</p>
+<p>3、投票法</p>
+<p>不跑模型不训练，直接统计预测集中每个样本的10列风速值特征中大于等于危险风速值的个数，如果10个中有5个或以上是危险的风速，那么就把这条样本预测为危险，否则预测为安全。也尝试过对九宫格（即加入周围80列特征）进行此方法，但是都效果一般，从最终得分来看提高不大。</p>
+<p>最后还是使用了方案2，20000 轮的回归，结合线路规划的多次优化，最终以第2名的成绩进入复赛。</p>
+<p>五、复赛</p>
+<p>复赛加入了降雨量这个条件，并且对飞行器的飞行规则也加了一些约束，总体来说比初赛难度大了很多。由于时间只有4天，提交的次数有限，我们只尝试了一下方案：</p>
+<ol>
+<li>lightGBM 的 LGBMClassifier 二分类</li>
+<li>xgboost 的 XGBClassifier 二分类</li>
+<li>投票法</li>
+<li>风速和降雨量合并起来一起预测</li>
+</ol>
+<p>打算尝试模型融合，但是时间不够了，最终成绩是17名。最好成绩用的版本是 xgboost 的二分类版本。</p>
+<p>六、第三名分享思路</p>
+<p>链接：<a href="https://tianchi.aliyun.com/forum/new_articleDetail.html?spm=5176.8366600.0.0.771a311fkLZyZe&amp;raceId=231622&amp;postsId=4259" target="_blank" rel="noopener noreffer">Future Chanllenge &ndash; Experience Sharing (3rd place)</a></p>
+<p>他们的思路很简单，就是用 xgboost 和 lightGBM 来做回归然后再模型融合，也没有太多特征工程，就是比我们多了一个“对每一行数据，视那些比真值大太多或者小太多的数据为异常点，用剩下的点的均值替换掉些数据”。这样改数据的方法有什么理论支持？我不是很理解。另外他们做了交叉验证和很多不同的特征组合，但是我们的机器不好，跑一次训练加预测就要两个多小时，我们没有这个时间。再有一个不同的就是他们做了模型融合，我们没有做。我觉得在预测这一部分我们和他们的效果应该是差不太多的。</p>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>The article was updated on 2018-03-25</span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span>
+                            <a class="link-to-markdown" href="/2018-03-25-%E9%A1%B9%E7%9B%AE-%E9%98%BF%E9%87%8C%E5%A4%A9%E6%B1%A0%E6%B0%94%E8%B1%A1%E6%97%A0%E4%BA%BA%E6%9C%BA%E7%BA%BF%E8%B7%AF%E4%BC%98%E5%8C%96%E5%A4%A7%E8%B5%9B/index.md" target="_blank">Read Markdown</a>
+                        </span></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="https://utopizza.github.io/2018-03-25-%E9%A1%B9%E7%9B%AE-%E9%98%BF%E9%87%8C%E5%A4%A9%E6%B1%A0%E6%B0%94%E8%B1%A1%E6%97%A0%E4%BA%BA%E6%9C%BA%E7%BA%BF%E8%B7%AF%E4%BC%98%E5%8C%96%E5%A4%A7%E8%B5%9B/" data-title="阿里天池气象无人机线路优化大赛"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://utopizza.github.io/2018-03-25-%E9%A1%B9%E7%9B%AE-%E9%98%BF%E9%87%8C%E5%A4%A9%E6%B1%A0%E6%B0%94%E8%B1%A1%E6%97%A0%E4%BA%BA%E6%9C%BA%E7%BA%BF%E8%B7%AF%E4%BC%98%E5%8C%96%E5%A4%A7%E8%B5%9B/"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="Share on WhatsApp" data-sharer="whatsapp" data-url="https://utopizza.github.io/2018-03-25-%E9%A1%B9%E7%9B%AE-%E9%98%BF%E9%87%8C%E5%A4%A9%E6%B1%A0%E6%B0%94%E8%B1%A1%E6%97%A0%E4%BA%BA%E6%9C%BA%E7%BA%BF%E8%B7%AF%E4%BC%98%E5%8C%96%E5%A4%A7%E8%B5%9B/" data-title="阿里天池气象无人机线路优化大赛" data-web><i class="fab fa-whatsapp fa-fw"></i></a><a href="javascript:void(0);" title="Share on Line" data-sharer="line" data-url="https://utopizza.github.io/2018-03-25-%E9%A1%B9%E7%9B%AE-%E9%98%BF%E9%87%8C%E5%A4%A9%E6%B1%A0%E6%B0%94%E8%B1%A1%E6%97%A0%E4%BA%BA%E6%9C%BA%E7%BA%BF%E8%B7%AF%E4%BC%98%E5%8C%96%E5%A4%A7%E8%B5%9B/" data-title="阿里天池气象无人机线路优化大赛"><i class="fab fa-line fa-fw"></i></a><a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="https://utopizza.github.io/2018-03-25-%E9%A1%B9%E7%9B%AE-%E9%98%BF%E9%87%8C%E5%A4%A9%E6%B1%A0%E6%B0%94%E8%B1%A1%E6%97%A0%E4%BA%BA%E6%9C%BA%E7%BA%BF%E8%B7%AF%E4%BC%98%E5%8C%96%E5%A4%A7%E8%B5%9B/" data-title="阿里天池气象无人机线路优化大赛"><i class="fab fa-weibo fa-fw"></i></a><a href="javascript:void(0);" title="Share on Myspace" data-sharer="myspace" data-url="https://utopizza.github.io/2018-03-25-%E9%A1%B9%E7%9B%AE-%E9%98%BF%E9%87%8C%E5%A4%A9%E6%B1%A0%E6%B0%94%E8%B1%A1%E6%97%A0%E4%BA%BA%E6%9C%BA%E7%BA%BF%E8%B7%AF%E4%BC%98%E5%8C%96%E5%A4%A7%E8%B5%9B/" data-title="阿里天池气象无人机线路优化大赛" data-description=""><i data-svg-src="/lib/simple-icons/icons/myspace.min.svg"></i></a><a href="javascript:void(0);" title="Share on Blogger" data-sharer="blogger" data-url="https://utopizza.github.io/2018-03-25-%E9%A1%B9%E7%9B%AE-%E9%98%BF%E9%87%8C%E5%A4%A9%E6%B1%A0%E6%B0%94%E8%B1%A1%E6%97%A0%E4%BA%BA%E6%9C%BA%E7%BA%BF%E8%B7%AF%E4%BC%98%E5%8C%96%E5%A4%A7%E8%B5%9B/" data-title="阿里天池气象无人机线路优化大赛" data-description=""><i class="fab fa-blogger fa-fw"></i></a><a href="javascript:void(0);" title="Share on Evernote" data-sharer="evernote" data-url="https://utopizza.github.io/2018-03-25-%E9%A1%B9%E7%9B%AE-%E9%98%BF%E9%87%8C%E5%A4%A9%E6%B1%A0%E6%B0%94%E8%B1%A1%E6%97%A0%E4%BA%BA%E6%9C%BA%E7%BA%BF%E8%B7%AF%E4%BC%98%E5%8C%96%E5%A4%A7%E8%B5%9B/" data-title="阿里天池气象无人机线路优化大赛"><i class="fab fa-evernote fa-fw"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/2018-03-17-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E7%89%B9%E5%BE%81%E5%B7%A5%E7%A8%8B/" class="prev" rel="prev" title="特征工程"><i class="fas fa-angle-left fa-fw"></i>特征工程</a>
+            <a href="/2018-04-28-%E6%80%BB%E7%BB%93-%E9%98%B6%E6%AE%B5%E6%80%BB%E7%BB%934/" class="next" rel="next" title="阶段总结(4)">阶段总结(4)<i class="fas fa-angle-right fa-fw"></i></a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.69.2">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.6"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2020</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">yusheng</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><link rel="stylesheet" href="/lib/katex/katex.min.css"><link rel="stylesheet" href="/lib/katex/copy-tex.min.css"><script type="text/javascript">
+    window.config = {"code":{"copyTitle":"Copy to clipboard","maxShownLines":100},"comment":{},"headerMode":{"desktop":"fixed","mobile":"auto"},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false}};
+</script><script type="text/javascript" src="https://polyfill.io/v3/polyfill.min.js?features=html5shiv%2CElement.prototype.closest%2CrequestAnimationFrame%2CCustomEvent%2CPromise%2CObject.entries%2CObject.assign%2CObject.values%2Cfetch%2CElement.prototype.after%2CArray.prototype.fill%2CIntersectionObserver%2CArray.from%2CArray.prototype.find%2CMath.sign"></script><script type="text/javascript" src="/lib/smooth-scroll/smooth-scroll.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/object-fit-images/ofi.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="/lib/sharer/sharer.min.js"></script><script type="text/javascript" src="/lib/katex/katex.min.js"></script><script type="text/javascript" src="/lib/katex/auto-render.min.js"></script><script type="text/javascript" src="/lib/katex/copy-tex.min.js"></script><script type="text/javascript" src="/lib/katex/mhchem.min.js"></script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>

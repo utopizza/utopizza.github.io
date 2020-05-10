@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>boosting与bagging - Utopizza</title>
+        <meta name="Description" content="About LoveIt Theme"><meta property="og:title" content="boosting与bagging" />
+<meta property="og:description" content="一、boosting
+前面已经学习过，boosting 是一种提升方法，它通过改变训练样本的权重，学习多个分类器，并将这些分类器进行组合，提高分类的性能。
+boosting 方法每一轮学习一个分类器，并根据本次学习的误差，改变整个样本集合中每个样本的权重，被误分类的那些样本的权重将增大。在下一轮学习新的分类器时，这些被误分类的样本将会被赋予更大的关注。
+因此可以看出，boosting 方法是通过串行训练而获得的，下一轮的学习是基于上一轮的误差进行的。另外，每一轮的训练集都是整个原数据集，数据集中的样本不变，变的是各个样本的权重。
+最后，在学习基本分类器时，会同时计算得到每个分类器的权重。boosting 的最终组合分类器是这一系列基本分类器的加权组合。
+目前比较典型的两种 boosting 算法是 Adaboosting （Adaptive Boosting，自适应boosting）算法，和 GBDT（gradient boosting decision tree，梯度提升决策树）算法。
+二、bagging
+自举汇聚法（bootstrap aggregating），也称 bagging 方法。该方法通过从原数据集中随机放回抽样，得到 $S$ 个和原数据集大小相等的数据集，来作为 $S$ 次训练的训练集，从而训练得到 $S$ 个分类器。
+因为是放回抽样，所以新的数据集中可以有重复的样本，原数据集也可以有部分样本不在新数据集中出现。
+得到了 $S$ 个分类器后，就将这些分类器组合成最终的分类器。执行预测时，让这 $S$ 个分类器分别对新数据进行预测，得到 $S$ 个预测结果。如果是分类任务，则采用多数表决的方式，选择这 $S$ 个结果中票数最多的那个类别返回。如果是回归任务，则取均值作为最终结果返回。
+目前比较典型的 bagging 类的方法有随机森林（Random Forest）。
+三、区别
+1、学习方式
+boosting 的每一轮学习是基于前一轮的误差，因此它的一系列基本分类器的训练是串行的。bagging 是随机不放回抽样得到若干个新的训练集进行各自的训练，彼此间没有联系，可并行。
+2、训练样本
+boosting 不改变样本，而是在每一轮根据误差改变每个样本的权重。bagging 不改变权重，而是从原数据集抽选其中一部分样本（可重复）来构成不同的训练集。
+3、分类器组合方式
+boosting 的最终分类器是基本分类器的加权之和，每个分类器有各自的权重，最终的预测结果是每个分类器的预测结果的加权之和。bagging 的分类器没有权重的概念，每个基本分类器都有相等权重的一票，最终的预测结果是票数最多的那一个类（标签）。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://utopizza.github.io/2017-11-30-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-boosting%E4%B8%8Ebagging/" />
+<meta property="og:image" content="https://utopizza.github.io/logo.png"/>
+<meta property="article:published_time" content="2017-11-30T21:02:00+00:00" />
+<meta property="article:modified_time" content="2017-11-30T21:02:00+00:00" />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://utopizza.github.io/logo.png"/>
+
+<meta name="twitter:title" content="boosting与bagging"/>
+<meta name="twitter:description" content="一、boosting
+前面已经学习过，boosting 是一种提升方法，它通过改变训练样本的权重，学习多个分类器，并将这些分类器进行组合，提高分类的性能。
+boosting 方法每一轮学习一个分类器，并根据本次学习的误差，改变整个样本集合中每个样本的权重，被误分类的那些样本的权重将增大。在下一轮学习新的分类器时，这些被误分类的样本将会被赋予更大的关注。
+因此可以看出，boosting 方法是通过串行训练而获得的，下一轮的学习是基于上一轮的误差进行的。另外，每一轮的训练集都是整个原数据集，数据集中的样本不变，变的是各个样本的权重。
+最后，在学习基本分类器时，会同时计算得到每个分类器的权重。boosting 的最终组合分类器是这一系列基本分类器的加权组合。
+目前比较典型的两种 boosting 算法是 Adaboosting （Adaptive Boosting，自适应boosting）算法，和 GBDT（gradient boosting decision tree，梯度提升决策树）算法。
+二、bagging
+自举汇聚法（bootstrap aggregating），也称 bagging 方法。该方法通过从原数据集中随机放回抽样，得到 $S$ 个和原数据集大小相等的数据集，来作为 $S$ 次训练的训练集，从而训练得到 $S$ 个分类器。
+因为是放回抽样，所以新的数据集中可以有重复的样本，原数据集也可以有部分样本不在新数据集中出现。
+得到了 $S$ 个分类器后，就将这些分类器组合成最终的分类器。执行预测时，让这 $S$ 个分类器分别对新数据进行预测，得到 $S$ 个预测结果。如果是分类任务，则采用多数表决的方式，选择这 $S$ 个结果中票数最多的那个类别返回。如果是回归任务，则取均值作为最终结果返回。
+目前比较典型的 bagging 类的方法有随机森林（Random Forest）。
+三、区别
+1、学习方式
+boosting 的每一轮学习是基于前一轮的误差，因此它的一系列基本分类器的训练是串行的。bagging 是随机不放回抽样得到若干个新的训练集进行各自的训练，彼此间没有联系，可并行。
+2、训练样本
+boosting 不改变样本，而是在每一轮根据误差改变每个样本的权重。bagging 不改变权重，而是从原数据集抽选其中一部分样本（可重复）来构成不同的训练集。
+3、分类器组合方式
+boosting 的最终分类器是基本分类器的加权之和，每个分类器有各自的权重，最终的预测结果是每个分类器的预测结果的加权之和。bagging 的分类器没有权重的概念，每个基本分类器都有相等权重的一票，最终的预测结果是票数最多的那一个类（标签）。"/>
+<meta name="application-name" content="Utopizza">
+<meta name="apple-mobile-web-app-title" content="Utopizza"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://utopizza.github.io/2017-11-30-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-boosting%E4%B8%8Ebagging/" /><link rel="prev" href="https://utopizza.github.io/2017-11-26-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E5%88%86%E7%B1%BB%E6%8F%90%E5%8D%87%E6%A0%91%E4%B8%8E%E5%9B%9E%E5%BD%92%E6%8F%90%E5%8D%87%E6%A0%91/" /><link rel="next" href="https://utopizza.github.io/2017-12-05-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-randomforest%E4%B8%8Egbdt/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "boosting与bagging",
+        "inLanguage": "en",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https:\/\/utopizza.github.io\/2017-11-30-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-boosting%E4%B8%8Ebagging\/"
+        },"image": {
+                "@type": "ImageObject",
+                "url": "https:\/\/utopizza.github.io\/cover.png",
+                "width":  800 ,
+                "height":  600 
+            },"genre": "posts","wordcount":  57 ,
+        "url": "https:\/\/utopizza.github.io\/2017-11-30-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-boosting%E4%B8%8Ebagging\/","datePublished": "2017-11-30T21:02:00+00:00","dateModified": "2017-11-30T21:02:00+00:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+                "@type": "Organization",
+                "name": "",
+                "logo": {
+                "@type": "ImageObject",
+                "url": "https:\/\/utopizza.github.io\/logo.png",
+                "width":  127 ,
+                "height":  40 
+                }
+            },"author": {
+                "@type": "Person",
+                "name": "yusheng"
+            },"description": ""
+    }
+    </script></head>
+    <body><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="Utopizza"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>Utopizza</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> Posts </a><a class="menu-item" href="/categories/"> Categories </a><a class="menu-item" href="https://github.com/utopizza" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i>  </a><span class="menu-item delimiter"></span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="Utopizza"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>Utopizza</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><a class="menu-item" href="/posts/" title="">Posts</a><a class="menu-item" href="/categories/" title="">Categories</a><a class="menu-item" href="https://github.com/utopizza" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i></a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">boosting与bagging</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;
+                    <span class="post-category">included in<a href="/categories/machinelearning/">
+                                <i class="far fa-folder fa-fw"></i>MachineLearning
+                            </a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i><time datetime=2017-11-30>2017-11-30</time>&nbsp;
+                <i class="fas fa-pencil-alt fa-fw"></i>about 57 words&nbsp;
+                <i class="far fa-clock fa-fw"></i>1 min&nbsp;</div>
+        </div><div class="details toc" id="toc-static">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents"></nav></div>
+            </div><div class="content" id="content"><p>一、boosting</p>
+<p>前面已经学习过，boosting 是一种提升方法，它通过改变训练样本的权重，学习多个分类器，并将这些分类器进行组合，提高分类的性能。</p>
+<p>boosting 方法每一轮学习一个分类器，并根据本次学习的误差，改变整个样本集合中每个样本的权重，被误分类的那些样本的权重将增大。在下一轮学习新的分类器时，这些被误分类的样本将会被赋予更大的关注。</p>
+<p>因此可以看出，boosting 方法是通过串行训练而获得的，下一轮的学习是基于上一轮的误差进行的。另外，每一轮的训练集都是整个原数据集，数据集中的样本不变，变的是各个样本的权重。</p>
+<p>最后，在学习基本分类器时，会同时计算得到每个分类器的权重。boosting 的最终组合分类器是这一系列基本分类器的加权组合。</p>
+<p>目前比较典型的两种 boosting 算法是 Adaboosting （Adaptive Boosting，自适应boosting）算法，和 GBDT（gradient boosting decision tree，梯度提升决策树）算法。</p>
+<p>二、bagging</p>
+<p>自举汇聚法（bootstrap aggregating），也称 bagging 方法。该方法通过从原数据集中<strong>随机放回抽样</strong>，得到 $S$ 个和原数据集大小相等的数据集，来作为 $S$ 次训练的训练集，从而训练得到 $S$ 个分类器。</p>
+<p>因为是放回抽样，所以新的数据集中可以有重复的样本，原数据集也可以有部分样本不在新数据集中出现。</p>
+<p>得到了 $S$ 个分类器后，就将这些分类器组合成最终的分类器。执行预测时，让这 $S$ 个分类器分别对新数据进行预测，得到  $S$ 个预测结果。如果是分类任务，则采用多数表决的方式，选择这 $S$ 个结果中票数最多的那个类别返回。如果是回归任务，则取均值作为最终结果返回。</p>
+<p>目前比较典型的 bagging 类的方法有随机森林（Random Forest）。</p>
+<p>三、区别</p>
+<p>1、学习方式</p>
+<p>boosting 的每一轮学习是基于前一轮的误差，因此它的一系列基本分类器的训练是串行的。bagging 是随机不放回抽样得到若干个新的训练集进行各自的训练，彼此间没有联系，可并行。</p>
+<p>2、训练样本</p>
+<p>boosting 不改变样本，而是在每一轮根据误差改变每个样本的权重。bagging 不改变权重，而是从原数据集抽选其中一部分样本（可重复）来构成不同的训练集。</p>
+<p>3、分类器组合方式</p>
+<p>boosting 的最终分类器是基本分类器的加权之和，每个分类器有各自的权重，最终的预测结果是每个分类器的预测结果的加权之和。bagging 的分类器没有权重的概念，每个基本分类器都有相等权重的一票，最终的预测结果是票数最多的那一个类（标签）。</p>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>The article was updated on 2017-11-30</span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span>
+                            <a class="link-to-markdown" href="/2017-11-30-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-boosting%E4%B8%8Ebagging/index.md" target="_blank">Read Markdown</a>
+                        </span></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="https://utopizza.github.io/2017-11-30-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-boosting%E4%B8%8Ebagging/" data-title="boosting与bagging"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://utopizza.github.io/2017-11-30-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-boosting%E4%B8%8Ebagging/"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="Share on WhatsApp" data-sharer="whatsapp" data-url="https://utopizza.github.io/2017-11-30-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-boosting%E4%B8%8Ebagging/" data-title="boosting与bagging" data-web><i class="fab fa-whatsapp fa-fw"></i></a><a href="javascript:void(0);" title="Share on Line" data-sharer="line" data-url="https://utopizza.github.io/2017-11-30-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-boosting%E4%B8%8Ebagging/" data-title="boosting与bagging"><i class="fab fa-line fa-fw"></i></a><a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="https://utopizza.github.io/2017-11-30-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-boosting%E4%B8%8Ebagging/" data-title="boosting与bagging"><i class="fab fa-weibo fa-fw"></i></a><a href="javascript:void(0);" title="Share on Myspace" data-sharer="myspace" data-url="https://utopizza.github.io/2017-11-30-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-boosting%E4%B8%8Ebagging/" data-title="boosting与bagging" data-description=""><i data-svg-src="/lib/simple-icons/icons/myspace.min.svg"></i></a><a href="javascript:void(0);" title="Share on Blogger" data-sharer="blogger" data-url="https://utopizza.github.io/2017-11-30-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-boosting%E4%B8%8Ebagging/" data-title="boosting与bagging" data-description=""><i class="fab fa-blogger fa-fw"></i></a><a href="javascript:void(0);" title="Share on Evernote" data-sharer="evernote" data-url="https://utopizza.github.io/2017-11-30-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-boosting%E4%B8%8Ebagging/" data-title="boosting与bagging"><i class="fab fa-evernote fa-fw"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/2017-11-26-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E5%88%86%E7%B1%BB%E6%8F%90%E5%8D%87%E6%A0%91%E4%B8%8E%E5%9B%9E%E5%BD%92%E6%8F%90%E5%8D%87%E6%A0%91/" class="prev" rel="prev" title="分类提升树与回归提升树"><i class="fas fa-angle-left fa-fw"></i>分类提升树与回归提升树</a>
+            <a href="/2017-12-05-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-randomforest%E4%B8%8Egbdt/" class="next" rel="next" title="RandomForest与GBDT">RandomForest与GBDT<i class="fas fa-angle-right fa-fw"></i></a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.69.2">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.6"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2020</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">yusheng</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><link rel="stylesheet" href="/lib/katex/katex.min.css"><link rel="stylesheet" href="/lib/katex/copy-tex.min.css"><script type="text/javascript">
+    window.config = {"code":{"copyTitle":"Copy to clipboard","maxShownLines":100},"comment":{},"headerMode":{"desktop":"fixed","mobile":"auto"},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false}};
+</script><script type="text/javascript" src="https://polyfill.io/v3/polyfill.min.js?features=html5shiv%2CElement.prototype.closest%2CrequestAnimationFrame%2CCustomEvent%2CPromise%2CObject.entries%2CObject.assign%2CObject.values%2Cfetch%2CElement.prototype.after%2CArray.prototype.fill%2CIntersectionObserver%2CArray.from%2CArray.prototype.find%2CMath.sign"></script><script type="text/javascript" src="/lib/smooth-scroll/smooth-scroll.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/object-fit-images/ofi.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="/lib/sharer/sharer.min.js"></script><script type="text/javascript" src="/lib/katex/katex.min.js"></script><script type="text/javascript" src="/lib/katex/auto-render.min.js"></script><script type="text/javascript" src="/lib/katex/copy-tex.min.js"></script><script type="text/javascript" src="/lib/katex/mhchem.min.js"></script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>

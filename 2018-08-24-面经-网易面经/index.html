@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>网易面经 - Utopizza</title>
+        <meta name="Description" content="About LoveIt Theme"><meta property="og:title" content="网易面经" />
+<meta property="og:description" content="网易云音乐，网易杭州总部现场面试，8月24日中午到下午。
+一面(年轻小哥，40分钟)
+ 讲一下索引原理，B&#43;索引，手画插入1到10的过程 场景题，修改歌单排序后保存到数据库，怎么实现最小开销。提示是最长公共子序列，然后手撕代码 算法题，两个字符串最小编辑距离，手撕代码 操作系统基础:进程调度，死锁条件，死锁预防，检测，解除，避免 redis有序集合底层实现原理，跳跃表怎么查找一个数 看了下简历，问为什么不继续做机器学习而是投java研发，以后想做哪方面 有什么要问。我问了歌单保存那题跟最长公共子序列有啥关系，具体怎么实现，感觉小哥也没解释得很清楚，说是他们有一定的策略来实现什么的。  二面(小组leader，谈笑风生1个多小时)
+ 自我介绍，顺带介绍了下在导师公司给导师做的项目 mysql，redis用过没，在项目里怎么用。答没，是自己看的书，了解过一些。然后扯了一些使用方式。 讲redis的时候扯到了缓存和分布式缓存。问了缓存淘汰策略。然后又问我对分布式了解都有哪些，刚好前一天看了，就说了分布式锁，分布式事务。然后问我怎么理解CAP，具体有哪些权衡C和A的案例。估计我扯的还算沾边，面试官来了兴致，开始进入侃侃而谈状态，大谈分布式理论，思想。 不记得怎么就扯到了锁(估计是说了redis分布式锁)，问了AQS实现方式。然后他问我有没有了解过“无锁队列”，然后他又是一顿介绍。感觉已经不是在面试了，纯属聊天。 又扯回到mysql，问我了解到什么程度，我就把所有知道的都说了下，例如innodb和mysian对比，innodb的mvcc，索引，幻读，next-key lock，让我手画实现锁住一个范围的原理。场景题:有两个查询，select &hellip; where a=？ and b =? ，和 select &hellip; where a=? and b&gt;? 如何分别建立索引，为什么，有什么区别。乱扯了一通，然后他也没给答案。 我又讲了下mysql事务。问了实现原理。讲了redo和undo，然后问为什么要这样做。我说扯了一通，他说我没说到点上，关键是因为写缓冲的存在，断电会丢失。 知道哪些设计模式。装饰者和模板、代理有什么区别。jdk里面都有哪些模式。 solid原则 未来几年想做哪方面，技术还是业务，有什么职业规划 有什么要问(中途他接了个电话忙了一会儿)，我问了个技术问题，然后他又是一顿侃侃而谈。  hr面(40分钟左右)
+ 自我介绍 总结自己优缺点，性格 最自豪或者最有成就感的一件事 有什么别的特长，说了弹吉他，然后聊了好久弹吉他的事，说了毕业晚会表演自弹自唱 在导师公司怎么带团队的，有什么经验总结 怎么看待云音乐，和qq音乐对比呢(送分题，反正狂吹就是了) 有什么梦想 平常有没有关注一些其他领域或者什么资讯，说了中兴事件和中国芯，确实是我一直在关注的 都有哪些offer了，为什么不投BAT，又是送分题 职业规划 有什么要问的，问了最后会怎么定岗位 让我先不要走，等5分钟，可能还有一面  总监面(不愧大佬，高冷，短裤拖鞋，霸气侧漏，40分钟)
+ 自我介绍 怎么理解互联网这个行业 又是索引。问了一天的索引。问主键索引和唯一索引的原理区别，什么情况下使用，性能上有何区别。没答上。 jvm怎么垃圾回收。c&#43;&#43;学过吧，你觉得它应该怎么实现类似jvm垃圾回收的功能？你怎么知道一个对象在什么时候是否该被回收？没答上。 你觉得你有什么特点或者特长可以帮助你成功，举个事例证明 职业规划，想做什么 有什么问  " />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://utopizza.github.io/2018-08-24-%E9%9D%A2%E7%BB%8F-%E7%BD%91%E6%98%93%E9%9D%A2%E7%BB%8F/" />
+<meta property="og:image" content="https://utopizza.github.io/logo.png"/>
+<meta property="article:published_time" content="2018-08-24T00:00:00+00:00" />
+<meta property="article:modified_time" content="2018-08-24T00:00:00+00:00" />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://utopizza.github.io/logo.png"/>
+
+<meta name="twitter:title" content="网易面经"/>
+<meta name="twitter:description" content="网易云音乐，网易杭州总部现场面试，8月24日中午到下午。
+一面(年轻小哥，40分钟)
+ 讲一下索引原理，B&#43;索引，手画插入1到10的过程 场景题，修改歌单排序后保存到数据库，怎么实现最小开销。提示是最长公共子序列，然后手撕代码 算法题，两个字符串最小编辑距离，手撕代码 操作系统基础:进程调度，死锁条件，死锁预防，检测，解除，避免 redis有序集合底层实现原理，跳跃表怎么查找一个数 看了下简历，问为什么不继续做机器学习而是投java研发，以后想做哪方面 有什么要问。我问了歌单保存那题跟最长公共子序列有啥关系，具体怎么实现，感觉小哥也没解释得很清楚，说是他们有一定的策略来实现什么的。  二面(小组leader，谈笑风生1个多小时)
+ 自我介绍，顺带介绍了下在导师公司给导师做的项目 mysql，redis用过没，在项目里怎么用。答没，是自己看的书，了解过一些。然后扯了一些使用方式。 讲redis的时候扯到了缓存和分布式缓存。问了缓存淘汰策略。然后又问我对分布式了解都有哪些，刚好前一天看了，就说了分布式锁，分布式事务。然后问我怎么理解CAP，具体有哪些权衡C和A的案例。估计我扯的还算沾边，面试官来了兴致，开始进入侃侃而谈状态，大谈分布式理论，思想。 不记得怎么就扯到了锁(估计是说了redis分布式锁)，问了AQS实现方式。然后他问我有没有了解过“无锁队列”，然后他又是一顿介绍。感觉已经不是在面试了，纯属聊天。 又扯回到mysql，问我了解到什么程度，我就把所有知道的都说了下，例如innodb和mysian对比，innodb的mvcc，索引，幻读，next-key lock，让我手画实现锁住一个范围的原理。场景题:有两个查询，select &hellip; where a=？ and b =? ，和 select &hellip; where a=? and b&gt;? 如何分别建立索引，为什么，有什么区别。乱扯了一通，然后他也没给答案。 我又讲了下mysql事务。问了实现原理。讲了redo和undo，然后问为什么要这样做。我说扯了一通，他说我没说到点上，关键是因为写缓冲的存在，断电会丢失。 知道哪些设计模式。装饰者和模板、代理有什么区别。jdk里面都有哪些模式。 solid原则 未来几年想做哪方面，技术还是业务，有什么职业规划 有什么要问(中途他接了个电话忙了一会儿)，我问了个技术问题，然后他又是一顿侃侃而谈。  hr面(40分钟左右)
+ 自我介绍 总结自己优缺点，性格 最自豪或者最有成就感的一件事 有什么别的特长，说了弹吉他，然后聊了好久弹吉他的事，说了毕业晚会表演自弹自唱 在导师公司怎么带团队的，有什么经验总结 怎么看待云音乐，和qq音乐对比呢(送分题，反正狂吹就是了) 有什么梦想 平常有没有关注一些其他领域或者什么资讯，说了中兴事件和中国芯，确实是我一直在关注的 都有哪些offer了，为什么不投BAT，又是送分题 职业规划 有什么要问的，问了最后会怎么定岗位 让我先不要走，等5分钟，可能还有一面  总监面(不愧大佬，高冷，短裤拖鞋，霸气侧漏，40分钟)
+ 自我介绍 怎么理解互联网这个行业 又是索引。问了一天的索引。问主键索引和唯一索引的原理区别，什么情况下使用，性能上有何区别。没答上。 jvm怎么垃圾回收。c&#43;&#43;学过吧，你觉得它应该怎么实现类似jvm垃圾回收的功能？你怎么知道一个对象在什么时候是否该被回收？没答上。 你觉得你有什么特点或者特长可以帮助你成功，举个事例证明 职业规划，想做什么 有什么问  "/>
+<meta name="application-name" content="Utopizza">
+<meta name="apple-mobile-web-app-title" content="Utopizza"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://utopizza.github.io/2018-08-24-%E9%9D%A2%E7%BB%8F-%E7%BD%91%E6%98%93%E9%9D%A2%E7%BB%8F/" /><link rel="prev" href="https://utopizza.github.io/2018-08-16-%E9%9D%A2%E7%BB%8F-%E5%A4%A7%E7%96%86%E9%9D%A2%E7%BB%8F/" /><link rel="next" href="https://utopizza.github.io/2018-09-13-%E9%9D%A2%E7%BB%8F-%E7%BE%8E%E5%9B%A2%E9%9D%A2%E7%BB%8F/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "网易面经",
+        "inLanguage": "en",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https:\/\/utopizza.github.io\/2018-08-24-%E9%9D%A2%E7%BB%8F-%E7%BD%91%E6%98%93%E9%9D%A2%E7%BB%8F\/"
+        },"image": {
+                "@type": "ImageObject",
+                "url": "https:\/\/utopizza.github.io\/cover.png",
+                "width":  800 ,
+                "height":  600 
+            },"genre": "posts","wordcount":  56 ,
+        "url": "https:\/\/utopizza.github.io\/2018-08-24-%E9%9D%A2%E7%BB%8F-%E7%BD%91%E6%98%93%E9%9D%A2%E7%BB%8F\/","datePublished": "2018-08-24T00:00:00+00:00","dateModified": "2018-08-24T00:00:00+00:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+                "@type": "Organization",
+                "name": "",
+                "logo": {
+                "@type": "ImageObject",
+                "url": "https:\/\/utopizza.github.io\/logo.png",
+                "width":  127 ,
+                "height":  40 
+                }
+            },"author": {
+                "@type": "Person",
+                "name": "yusheng"
+            },"description": ""
+    }
+    </script></head>
+    <body><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="Utopizza"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>Utopizza</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> Posts </a><a class="menu-item" href="/categories/"> Categories </a><a class="menu-item" href="https://github.com/utopizza" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i>  </a><span class="menu-item delimiter"></span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="Utopizza"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>Utopizza</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><a class="menu-item" href="/posts/" title="">Posts</a><a class="menu-item" href="/categories/" title="">Categories</a><a class="menu-item" href="https://github.com/utopizza" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i></a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">网易面经</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;
+                    <span class="post-category">included in<a href="/categories/interview/">
+                                <i class="far fa-folder fa-fw"></i>Interview
+                            </a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i><time datetime=2018-08-24>2018-08-24</time>&nbsp;
+                <i class="fas fa-pencil-alt fa-fw"></i>about 56 words&nbsp;
+                <i class="far fa-clock fa-fw"></i>1 min&nbsp;</div>
+        </div><div class="details toc" id="toc-static">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents"></nav></div>
+            </div><div class="content" id="content"><p>网易云音乐，网易杭州总部现场面试，8月24日中午到下午。</p>
+<p>一面(年轻小哥，40分钟)</p>
+<ol>
+<li>讲一下索引原理，B+索引，手画插入1到10的过程</li>
+<li>场景题，修改歌单排序后保存到数据库，怎么实现最小开销。提示是最长公共子序列，然后手撕代码</li>
+<li>算法题，两个字符串最小编辑距离，手撕代码</li>
+<li>操作系统基础:进程调度，死锁条件，死锁预防，检测，解除，避免</li>
+<li>redis有序集合底层实现原理，跳跃表怎么查找一个数</li>
+<li>看了下简历，问为什么不继续做机器学习而是投java研发，以后想做哪方面</li>
+<li>有什么要问。我问了歌单保存那题跟最长公共子序列有啥关系，具体怎么实现，感觉小哥也没解释得很清楚，说是他们有一定的策略来实现什么的。</li>
+</ol>
+<p>二面(小组leader，谈笑风生1个多小时)</p>
+<ol>
+<li>自我介绍，顺带介绍了下在导师公司给导师做的项目</li>
+<li>mysql，redis用过没，在项目里怎么用。答没，是自己看的书，了解过一些。然后扯了一些使用方式。</li>
+<li>讲redis的时候扯到了缓存和分布式缓存。问了缓存淘汰策略。然后又问我对分布式了解都有哪些，刚好前一天看了，就说了分布式锁，分布式事务。然后问我怎么理解CAP，具体有哪些权衡C和A的案例。估计我扯的还算沾边，面试官来了兴致，开始进入侃侃而谈状态，大谈分布式理论，思想。</li>
+<li>不记得怎么就扯到了锁(估计是说了redis分布式锁)，问了AQS实现方式。然后他问我有没有了解过“无锁队列”，然后他又是一顿介绍。感觉已经不是在面试了，纯属聊天。</li>
+<li>又扯回到mysql，问我了解到什么程度，我就把所有知道的都说了下，例如innodb和mysian对比，innodb的mvcc，索引，幻读，next-key lock，让我手画实现锁住一个范围的原理。场景题:有两个查询，select &hellip; where a=？ and b =? ，和 select &hellip; where a=? and b&gt;? 如何分别建立索引，为什么，有什么区别。乱扯了一通，然后他也没给答案。</li>
+<li>我又讲了下mysql事务。问了实现原理。讲了redo和undo，然后问为什么要这样做。我说扯了一通，他说我没说到点上，关键是因为写缓冲的存在，断电会丢失。</li>
+<li>知道哪些设计模式。装饰者和模板、代理有什么区别。jdk里面都有哪些模式。</li>
+<li>solid原则</li>
+<li>未来几年想做哪方面，技术还是业务，有什么职业规划</li>
+<li>有什么要问(中途他接了个电话忙了一会儿)，我问了个技术问题，然后他又是一顿侃侃而谈。</li>
+</ol>
+<p>hr面(40分钟左右)</p>
+<ol>
+<li>自我介绍</li>
+<li>总结自己优缺点，性格</li>
+<li>最自豪或者最有成就感的一件事</li>
+<li>有什么别的特长，说了弹吉他，然后聊了好久弹吉他的事，说了毕业晚会表演自弹自唱</li>
+<li>在导师公司怎么带团队的，有什么经验总结</li>
+<li>怎么看待云音乐，和qq音乐对比呢(送分题，反正狂吹就是了)</li>
+<li>有什么梦想</li>
+<li>平常有没有关注一些其他领域或者什么资讯，说了中兴事件和中国芯，确实是我一直在关注的</li>
+<li>都有哪些offer了，为什么不投BAT，又是送分题</li>
+<li>职业规划</li>
+<li>有什么要问的，问了最后会怎么定岗位</li>
+<li>让我先不要走，等5分钟，可能还有一面</li>
+</ol>
+<p>总监面(不愧大佬，高冷，短裤拖鞋，霸气侧漏，40分钟)</p>
+<ol>
+<li>自我介绍</li>
+<li>怎么理解互联网这个行业</li>
+<li>又是索引。问了一天的索引。问主键索引和唯一索引的原理区别，什么情况下使用，性能上有何区别。没答上。</li>
+<li>jvm怎么垃圾回收。c++学过吧，你觉得它应该怎么实现类似jvm垃圾回收的功能？你怎么知道一个对象在什么时候是否该被回收？没答上。</li>
+<li>你觉得你有什么特点或者特长可以帮助你成功，举个事例证明</li>
+<li>职业规划，想做什么</li>
+<li>有什么问</li>
+</ol>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>The article was updated on 2018-08-24</span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span>
+                            <a class="link-to-markdown" href="/2018-08-24-%E9%9D%A2%E7%BB%8F-%E7%BD%91%E6%98%93%E9%9D%A2%E7%BB%8F/index.md" target="_blank">Read Markdown</a>
+                        </span></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="https://utopizza.github.io/2018-08-24-%E9%9D%A2%E7%BB%8F-%E7%BD%91%E6%98%93%E9%9D%A2%E7%BB%8F/" data-title="网易面经"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://utopizza.github.io/2018-08-24-%E9%9D%A2%E7%BB%8F-%E7%BD%91%E6%98%93%E9%9D%A2%E7%BB%8F/"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="Share on WhatsApp" data-sharer="whatsapp" data-url="https://utopizza.github.io/2018-08-24-%E9%9D%A2%E7%BB%8F-%E7%BD%91%E6%98%93%E9%9D%A2%E7%BB%8F/" data-title="网易面经" data-web><i class="fab fa-whatsapp fa-fw"></i></a><a href="javascript:void(0);" title="Share on Line" data-sharer="line" data-url="https://utopizza.github.io/2018-08-24-%E9%9D%A2%E7%BB%8F-%E7%BD%91%E6%98%93%E9%9D%A2%E7%BB%8F/" data-title="网易面经"><i class="fab fa-line fa-fw"></i></a><a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="https://utopizza.github.io/2018-08-24-%E9%9D%A2%E7%BB%8F-%E7%BD%91%E6%98%93%E9%9D%A2%E7%BB%8F/" data-title="网易面经"><i class="fab fa-weibo fa-fw"></i></a><a href="javascript:void(0);" title="Share on Myspace" data-sharer="myspace" data-url="https://utopizza.github.io/2018-08-24-%E9%9D%A2%E7%BB%8F-%E7%BD%91%E6%98%93%E9%9D%A2%E7%BB%8F/" data-title="网易面经" data-description=""><i data-svg-src="/lib/simple-icons/icons/myspace.min.svg"></i></a><a href="javascript:void(0);" title="Share on Blogger" data-sharer="blogger" data-url="https://utopizza.github.io/2018-08-24-%E9%9D%A2%E7%BB%8F-%E7%BD%91%E6%98%93%E9%9D%A2%E7%BB%8F/" data-title="网易面经" data-description=""><i class="fab fa-blogger fa-fw"></i></a><a href="javascript:void(0);" title="Share on Evernote" data-sharer="evernote" data-url="https://utopizza.github.io/2018-08-24-%E9%9D%A2%E7%BB%8F-%E7%BD%91%E6%98%93%E9%9D%A2%E7%BB%8F/" data-title="网易面经"><i class="fab fa-evernote fa-fw"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/2018-08-16-%E9%9D%A2%E7%BB%8F-%E5%A4%A7%E7%96%86%E9%9D%A2%E7%BB%8F/" class="prev" rel="prev" title="大疆面经"><i class="fas fa-angle-left fa-fw"></i>大疆面经</a>
+            <a href="/2018-09-13-%E9%9D%A2%E7%BB%8F-%E7%BE%8E%E5%9B%A2%E9%9D%A2%E7%BB%8F/" class="next" rel="next" title="美团面经">美团面经<i class="fas fa-angle-right fa-fw"></i></a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.69.2">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.6"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2020</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">yusheng</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><link rel="stylesheet" href="/lib/katex/katex.min.css"><link rel="stylesheet" href="/lib/katex/copy-tex.min.css"><script type="text/javascript">
+    window.config = {"code":{"copyTitle":"Copy to clipboard","maxShownLines":100},"comment":{},"headerMode":{"desktop":"fixed","mobile":"auto"},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false}};
+</script><script type="text/javascript" src="https://polyfill.io/v3/polyfill.min.js?features=html5shiv%2CElement.prototype.closest%2CrequestAnimationFrame%2CCustomEvent%2CPromise%2CObject.entries%2CObject.assign%2CObject.values%2Cfetch%2CElement.prototype.after%2CArray.prototype.fill%2CIntersectionObserver%2CArray.from%2CArray.prototype.find%2CMath.sign"></script><script type="text/javascript" src="/lib/smooth-scroll/smooth-scroll.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/object-fit-images/ofi.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="/lib/sharer/sharer.min.js"></script><script type="text/javascript" src="/lib/katex/katex.min.js"></script><script type="text/javascript" src="/lib/katex/auto-render.min.js"></script><script type="text/javascript" src="/lib/katex/copy-tex.min.js"></script><script type="text/javascript" src="/lib/katex/mhchem.min.js"></script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>

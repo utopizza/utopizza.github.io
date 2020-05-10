@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>矩阵连乘 - Utopizza</title>
+        <meta name="Description" content="About LoveIt Theme"><meta property="og:title" content="矩阵连乘" />
+<meta property="og:description" content="一、问题：给定 $n$ 个矩阵的链 $&lt; A_1, A_2, \cdots , A_n &gt;$，其中矩阵 $A_i$ $ (1 \leq i \leq n)$ 的规模为 $p_{i-1} \cdot p_i$，求完全括号化方案，使得计算乘积 $A_1A_2 \cdots\ A_n$ 所需标量乘法次数最少。
+二、举例
+以 $&lt; A_1, A_2, A_3 &gt;$ 相乘为例，假设三个矩阵的规模分别为 $10 \cdot 100，100 \cdot 5，5 \cdot 50$ 。
+如果按 $ ((A_1 \cdot A_2) \cdot A_3) $ 的顺序计算，则需要做 $ 10 \cdot 100 \cdot 5&#43;10 \cdot 5 \cdot 50=5000&#43;2500=7500 $ 次标量乘法运算。
+如果按 $ (A_1 \cdot (A_2 \cdot A_3)) $ 的顺序计算，则需要做 $100 \cdot 5 \cdot 50&#43;10 \cdot 100 \cdot 50=25000&#43;50000=75000 $ 次标量乘法运算。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://utopizza.github.io/2017-09-17-%E7%AE%97%E6%B3%95-%E7%9F%A9%E9%98%B5%E8%BF%9E%E4%B9%98/" />
+<meta property="og:image" content="https://utopizza.github.io/logo.png"/>
+<meta property="article:published_time" content="2017-09-17T15:02:00+00:00" />
+<meta property="article:modified_time" content="2017-09-17T15:02:00+00:00" />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://utopizza.github.io/logo.png"/>
+
+<meta name="twitter:title" content="矩阵连乘"/>
+<meta name="twitter:description" content="一、问题：给定 $n$ 个矩阵的链 $&lt; A_1, A_2, \cdots , A_n &gt;$，其中矩阵 $A_i$ $ (1 \leq i \leq n)$ 的规模为 $p_{i-1} \cdot p_i$，求完全括号化方案，使得计算乘积 $A_1A_2 \cdots\ A_n$ 所需标量乘法次数最少。
+二、举例
+以 $&lt; A_1, A_2, A_3 &gt;$ 相乘为例，假设三个矩阵的规模分别为 $10 \cdot 100，100 \cdot 5，5 \cdot 50$ 。
+如果按 $ ((A_1 \cdot A_2) \cdot A_3) $ 的顺序计算，则需要做 $ 10 \cdot 100 \cdot 5&#43;10 \cdot 5 \cdot 50=5000&#43;2500=7500 $ 次标量乘法运算。
+如果按 $ (A_1 \cdot (A_2 \cdot A_3)) $ 的顺序计算，则需要做 $100 \cdot 5 \cdot 50&#43;10 \cdot 100 \cdot 50=25000&#43;50000=75000 $ 次标量乘法运算。"/>
+<meta name="application-name" content="Utopizza">
+<meta name="apple-mobile-web-app-title" content="Utopizza"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://utopizza.github.io/2017-09-17-%E7%AE%97%E6%B3%95-%E7%9F%A9%E9%98%B5%E8%BF%9E%E4%B9%98/" /><link rel="prev" href="https://utopizza.github.io/2017-09-15-%E7%AE%97%E6%B3%95-%E9%92%A2%E6%9D%A1%E5%88%87%E5%89%B2/" /><link rel="next" href="https://utopizza.github.io/2017-09-18-%E7%AE%97%E6%B3%95-%E6%9C%80%E9%95%BF%E5%85%AC%E5%85%B1%E5%AD%90%E5%BA%8F%E5%88%97/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "矩阵连乘",
+        "inLanguage": "en",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https:\/\/utopizza.github.io\/2017-09-17-%E7%AE%97%E6%B3%95-%E7%9F%A9%E9%98%B5%E8%BF%9E%E4%B9%98\/"
+        },"image": {
+                "@type": "ImageObject",
+                "url": "https:\/\/utopizza.github.io\/cover.png",
+                "width":  800 ,
+                "height":  600 
+            },"genre": "posts","wordcount":  529 ,
+        "url": "https:\/\/utopizza.github.io\/2017-09-17-%E7%AE%97%E6%B3%95-%E7%9F%A9%E9%98%B5%E8%BF%9E%E4%B9%98\/","datePublished": "2017-09-17T15:02:00+00:00","dateModified": "2017-09-17T15:02:00+00:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+                "@type": "Organization",
+                "name": "",
+                "logo": {
+                "@type": "ImageObject",
+                "url": "https:\/\/utopizza.github.io\/logo.png",
+                "width":  127 ,
+                "height":  40 
+                }
+            },"author": {
+                "@type": "Person",
+                "name": "yusheng"
+            },"description": ""
+    }
+    </script></head>
+    <body><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="Utopizza"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>Utopizza</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> Posts </a><a class="menu-item" href="/categories/"> Categories </a><a class="menu-item" href="https://github.com/utopizza" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i>  </a><span class="menu-item delimiter"></span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="Utopizza"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>Utopizza</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><a class="menu-item" href="/posts/" title="">Posts</a><a class="menu-item" href="/categories/" title="">Categories</a><a class="menu-item" href="https://github.com/utopizza" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i></a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">矩阵连乘</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;
+                    <span class="post-category">included in<a href="/categories/algorithm/">
+                                <i class="far fa-folder fa-fw"></i>Algorithm
+                            </a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i><time datetime=2017-09-17>2017-09-17</time>&nbsp;
+                <i class="fas fa-pencil-alt fa-fw"></i>about 529 words&nbsp;
+                <i class="far fa-clock fa-fw"></i>3 min&nbsp;</div>
+        </div><div class="details toc" id="toc-static">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents"></nav></div>
+            </div><div class="content" id="content"><p>一、问题：给定 $n$ 个矩阵的链 $&lt; A_1, A_2, \cdots , A_n &gt;$，其中矩阵 $A_i$ $ (1 \leq i \leq n)$ 的规模为 $p_{i-1}  \cdot  p_i$，求完全括号化方案，使得计算乘积 $A_1A_2 \cdots\ A_n$ 所需标量乘法次数最少。</p>
+<p>二、举例</p>
+<p>以 $&lt; A_1, A_2, A_3 &gt;$ 相乘为例，假设三个矩阵的规模分别为 $10 \cdot 100，100 \cdot 5，5 \cdot 50$ 。</p>
+<p>如果按 $ ((A_1  \cdot  A_2)  \cdot  A_3) $ 的顺序计算，则需要做 $ 10 \cdot 100 \cdot 5+10 \cdot 5 \cdot 50=5000+2500=7500 $ 次标量乘法运算。</p>
+<p>如果按 $ (A_1  \cdot  (A_2  \cdot  A_3)) $ 的顺序计算，则需要做 $100 \cdot 5 \cdot 50+10 \cdot 100 \cdot 50=25000+50000=75000 $ 次标量乘法运算。</p>
+<p>可以看到，第二种括号化方案导致的运算量是第一种情况的10倍。采取适当的括号化方案，能够极大的提高矩阵相乘运算的速度。</p>
+<p>三、构造最优子结构，导出子问题递推式</p>
+<p>对于 $n$ 个矩阵相乘进行括号化，可以先把前 $i$ $(1 \leq i \leq n-1)$ 个矩阵和后 $n-i$ 个矩阵加括号，也就是把这条矩阵链分成长度为 $i$ 和 $n-i$ 的两条子矩阵链，再继续对各子链递归地进行括号化。这样，矩阵括号化问题就类似于“钢条切割”问题了，只是这里求的是矩阵相乘的最小总标量乘法次数，而不是“钢条段的最大总价格”。</p>
+<p>现在我们对某段矩阵链 $&lt; A_i \cdots A_j &gt;$ 进行一次括号化，我们选择在第 $k$ $(1 \leq k \leq j-1)$ 个矩阵处断开该链，使得该链分成两条子链 $&lt; A_i \cdots A_k &gt;$ 和 $&lt; A_{k+1} \cdots A_j &gt;$ 。</p>
+<p>设 $r[i,j]$ 表示链 $&lt; A_i \cdots A_j &gt;$ 的总标量乘法次数，则由矩阵相乘的规则得</p>
+<p>$$r[i,j]=r[i,k]+r[k+1,j]+p(i-1) \cdot p(k) \cdot p(j)$$</p>
+<p>式中</p>
+<ul>
+<li>$r[i,k]$ 和 $r[k+1,j]$ 分别表示两条子链的各自的总标量乘法次数</li>
+<li>$ p(i-1) \cdot p(k) \cdot p(j) $ 表示两条子链合并时的标量乘法次数</li>
+</ul>
+<p>对上面公式，同理于“钢条切割问题”，如果 $r[i,j]$ 是对链 $&lt; A_i \cdots A_j &gt;$ 括号化的所有方案中，总标量乘法次数最小（最优解），那么 $r[i,k]$ 和 $r[k+1,j]$ 一定是各自子链的最小总标量乘法次数（最优解）。</p>
+<p>（因为当选定某个 $k$ 后，合并子链的代价随之确定，即公式中 $p(i-1) \cdot p(k) \cdot p(j)$ 部分。假设 $r[i,k]$ 和 $r[k+1,j]$ 不是两条子链各自的最优解，那么如果用它们各自的最优解（更小的 $r[i,k]$ 和 $r[k+1,j]$）代换进上面公式，那么必然产生比 $r[i,j]$ 更小的值，与 $r[i,j]$ 是最优解的假设矛盾。）</p>
+<p>设 $m[i,j]$ 表示链 $&lt; A_i \cdots A_j &gt;$ 的最小总标量乘法次数（最优解），由上述思考过程可以得出最优解递推式：</p>
+<div>
+$$
+m[i,j]=
+\begin{cases}
+0, & \text{if $i=j$} \\
+min_{i \leq k \leq j-1} (m[i,k]+m[k+1,j]+p(i-1) \cdot p(k) \cdot p(j)), & \text{if $i < j$}
+\end{cases}
+$$
+</div>
+<p>四、动态规划法求解</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">public static int matrixChainBottonUp(int n, int[] s) {
+
+    if (n &lt; 2)
+        return 0;
+    int[] p = new int[s.length + 1];
+    for (int i = 0; i &lt; s.length; i++) {
+        p[i + 1] = s[i];
+    }
+
+    int[][] m = new int[n + 1][n + 1];
+
+
+    for (int length = 0; length &lt;= n - 1; length++) {
+        for (int i = 1; i + length &lt;= n; i++) {
+            int j = i + length;
+            if (i == j) m[i][j] = 0;
+            else {
+                int min = Integer.MAX_VALUE;
+                for (int k = i; k &lt;= j - 1; k++) {
+                    int temp = m[i][k] + m[k + 1][j] + p[2 * i - 1] * p[2 * k] * p[2 * j];
+                    if (temp &lt; min) min = temp;
+                }
+                m[i][j] = min;
+            }
+        }
+    }
+
+    return m[1][n];
+}
+
+
+public static void main(String[] args) {
+    int n1 = 2;
+    int[] p1 = {30, 35, 35, 15, 15, 5, 5, 10, 10, 20, 20, 25};
+    int n2 = 3;
+    int[] p2 = {10, 100, 100, 5, 5, 50};
+    System.out.println(matrixChainBottonUp(n1, p1));
+}
+</code></pre></td></tr></table>
+</div>
+</div><p>为了便于理解，通过预处理使所有数组的下标从 $1$ 开始使用，这样第 $i$ 个矩阵的行和列就分别是 $p[2 \cdot i-1]$ 和 $p[2 \cdot i]$，二维 $m$ 数组的元素 $m[i][j]$ 表示矩阵链 $&lt; A_i \cdots A_j &gt;$ 的最优解。</p>
+<p>根据自底向上的思路，代码的计算过程为：</p>
+<ul>
+<li>m[1][1]，m[2][2]，m[3][3]，m[4][4]，m[5][5]，m[6][6]</li>
+<li>m[1][2]，m[2][3]，m[3][4]，m[4][5]，m[5][6]</li>
+<li>m[1][3]，m[2][4]，m[3][5]，m[4][6]</li>
+<li>m[1][4]，m[2][5]，m[3][6]</li>
+<li>m[1][5]，m[2][6]</li>
+<li>m[1][6]</li>
+</ul>
+<p>其中，对 m[2][5]，算法会尝试在每一处$（2 \leq k &lt; 5）$把链断开，然后求最优解：</p>
+<div>
+$$
+\begin{aligned}
+m[2][5] & = min
+\begin{cases}
+m[2][2]+m[3][5]+p[2 \cdot 2-1] \cdot p[2 \cdot 2] \cdot p[5 \cdot 2]=13000 \\
+m[2][3]+m[4][5]+p[2 \cdot 2-1] \cdot p[3 \cdot 2] \cdot p[5 \cdot 2]=7125 \\
+m[2][4]+m[4][5]+p[2 \cdot 2-1] \cdot p[4 \cdot 2] \cdot p[5 \cdot 2]=11375
+\end{cases} \\
+& = 7125
+\end{aligned}
+$$
+</div>
+<p>由于循环嵌套的深度为三层，每层的循环变量 $i,j,k$ 最多取 $n-1$ 个值，因此算法的运行时间为 $O(n^3)$。另外还需要大小为 $n*n$ 的二维数组来存放中间过程，因此算法的空间开销为 $O(n^2)$。</p>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>The article was updated on 2017-09-17</span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span>
+                            <a class="link-to-markdown" href="/2017-09-17-%E7%AE%97%E6%B3%95-%E7%9F%A9%E9%98%B5%E8%BF%9E%E4%B9%98/index.md" target="_blank">Read Markdown</a>
+                        </span></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="https://utopizza.github.io/2017-09-17-%E7%AE%97%E6%B3%95-%E7%9F%A9%E9%98%B5%E8%BF%9E%E4%B9%98/" data-title="矩阵连乘"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://utopizza.github.io/2017-09-17-%E7%AE%97%E6%B3%95-%E7%9F%A9%E9%98%B5%E8%BF%9E%E4%B9%98/"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="Share on WhatsApp" data-sharer="whatsapp" data-url="https://utopizza.github.io/2017-09-17-%E7%AE%97%E6%B3%95-%E7%9F%A9%E9%98%B5%E8%BF%9E%E4%B9%98/" data-title="矩阵连乘" data-web><i class="fab fa-whatsapp fa-fw"></i></a><a href="javascript:void(0);" title="Share on Line" data-sharer="line" data-url="https://utopizza.github.io/2017-09-17-%E7%AE%97%E6%B3%95-%E7%9F%A9%E9%98%B5%E8%BF%9E%E4%B9%98/" data-title="矩阵连乘"><i class="fab fa-line fa-fw"></i></a><a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="https://utopizza.github.io/2017-09-17-%E7%AE%97%E6%B3%95-%E7%9F%A9%E9%98%B5%E8%BF%9E%E4%B9%98/" data-title="矩阵连乘"><i class="fab fa-weibo fa-fw"></i></a><a href="javascript:void(0);" title="Share on Myspace" data-sharer="myspace" data-url="https://utopizza.github.io/2017-09-17-%E7%AE%97%E6%B3%95-%E7%9F%A9%E9%98%B5%E8%BF%9E%E4%B9%98/" data-title="矩阵连乘" data-description=""><i data-svg-src="/lib/simple-icons/icons/myspace.min.svg"></i></a><a href="javascript:void(0);" title="Share on Blogger" data-sharer="blogger" data-url="https://utopizza.github.io/2017-09-17-%E7%AE%97%E6%B3%95-%E7%9F%A9%E9%98%B5%E8%BF%9E%E4%B9%98/" data-title="矩阵连乘" data-description=""><i class="fab fa-blogger fa-fw"></i></a><a href="javascript:void(0);" title="Share on Evernote" data-sharer="evernote" data-url="https://utopizza.github.io/2017-09-17-%E7%AE%97%E6%B3%95-%E7%9F%A9%E9%98%B5%E8%BF%9E%E4%B9%98/" data-title="矩阵连乘"><i class="fab fa-evernote fa-fw"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/2017-09-15-%E7%AE%97%E6%B3%95-%E9%92%A2%E6%9D%A1%E5%88%87%E5%89%B2/" class="prev" rel="prev" title="钢条切割"><i class="fas fa-angle-left fa-fw"></i>钢条切割</a>
+            <a href="/2017-09-18-%E7%AE%97%E6%B3%95-%E6%9C%80%E9%95%BF%E5%85%AC%E5%85%B1%E5%AD%90%E5%BA%8F%E5%88%97/" class="next" rel="next" title="最长公共子序列">最长公共子序列<i class="fas fa-angle-right fa-fw"></i></a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.69.2">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.6"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2020</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">yusheng</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><link rel="stylesheet" href="/lib/katex/katex.min.css"><link rel="stylesheet" href="/lib/katex/copy-tex.min.css"><script type="text/javascript">
+    window.config = {"code":{"copyTitle":"Copy to clipboard","maxShownLines":100},"comment":{},"headerMode":{"desktop":"fixed","mobile":"auto"},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false}};
+</script><script type="text/javascript" src="https://polyfill.io/v3/polyfill.min.js?features=html5shiv%2CElement.prototype.closest%2CrequestAnimationFrame%2CCustomEvent%2CPromise%2CObject.entries%2CObject.assign%2CObject.values%2Cfetch%2CElement.prototype.after%2CArray.prototype.fill%2CIntersectionObserver%2CArray.from%2CArray.prototype.find%2CMath.sign"></script><script type="text/javascript" src="/lib/smooth-scroll/smooth-scroll.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/object-fit-images/ofi.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="/lib/sharer/sharer.min.js"></script><script type="text/javascript" src="/lib/katex/katex.min.js"></script><script type="text/javascript" src="/lib/katex/auto-render.min.js"></script><script type="text/javascript" src="/lib/katex/copy-tex.min.js"></script><script type="text/javascript" src="/lib/katex/mhchem.min.js"></script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>

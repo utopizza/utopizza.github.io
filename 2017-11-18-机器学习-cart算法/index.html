@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>CART算法 - Utopizza</title>
+        <meta name="Description" content="About LoveIt Theme"><meta property="og:title" content="CART算法" />
+<meta property="og:description" content="分类与回归树（classification and regression tree, CART）模型是应用广泛的决策树学习方法，既可以用于分类，也可以用于回归。
+回顾之前学习的 ID3 算法，它的做法是每次选取当前最佳的特征来分割数据，分割依据是该特征的所有取值。也就是说，如果这个特征有 $n$ 个取值，那么数据将立即被分割成 $n$ 分。一旦被切分之后，该特征在之后将不会再被考虑。这样有两个问题：一是切分过于迅速，如果 $n$ 很大，那么数据将被马上切分成大量的小份，影响后续切分的效果。二是，这样的决策树只能处理离散型的数值，如果特征的取值是连续型数值，则需要将其预处理转化成离散型，但这样就会人为地破坏了连续型变量的内在性质。
+CART 算法解决了上述问题。CART 设定决策树是二叉树，每次切分数据只做二元切分，即把数据集切分成两份。对某个连续型的特征，设定一个切分值，大于此值的数据进入左子树，反之则进入右子树。然后递归地构建子树。
+一、CART 生成
+CART 决策树的生成就是递归地构建二叉决策树的过程。对回归树用平方误差最小化准则，对分类树用基尼指数最小化准则，进行特征选择。
+1、回归树的生成
+输入：训练数据集 $D$，特征集 $A$ 输出：回归树 $T$
+(1)、寻找最佳的切分特征 $A_g$ 和对应的最佳切分值 $v$：遍历特征集中每一个特征，尝试以该特征的每一个取值作为切分值，对数据集执行二元切分，然后计算切分误差，如果当前误差小于记录的最小误差，那么更新最优切分特征、最优切分值、最小误差。遍历完成后，返回最优切分特征、最优切分值。
+其中误差一般使用目标变量的方差来计算，设数据集为 $D$，数据集中的目标变量为 $D.Y$，数据集在执行一次二元切分后被切分成 $D_{left}$ 和 $D_{right}$，则此次切分减小的混乱程度为
+$$g(D,A_g,v)=var(D.Y)- \left[ var(D_{left}.Y)&#43;var(D_{right}.Y) \right]$$
+其中 $D_{left}={D \mid D.A_g&gt;v}$，$D_{right}={D \mid D.A_g \leq v}$。
+(2)、如果该结点不能再分（左右两个子集方差之和比原数据集方差还大，或者大于给定的某个阈值等等），将该结点存为叶结点，把该结点上的数据集目标变量的平均值作为该结点的输出值返回；否则执行二元切分，把数据集以 $v$ 为切分值，按特征 $A_g$ 切分成 $D_{left}$ 和 $D_{right}$ 两个子集，并对应地生成左右两个子树
+(3)、递归地对左右子树重复执行前面的步骤，直到满足停止条件
+构造决策树：
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21  def createTree(dataSet,tolN,tolS): # 寻找最优切分特征、最优切分值 feat, value = chooseBestSplit(dataSet,tolN,tolS) # 切分特征为空，说明不能再分，直接返回value作为叶结点的输出值 if feat is None: return value # 把最优切分特征、最优切分值记录到树中 retTree = {} retTree[&#39;spInd&#39;] = feat retTree[&#39;spVal&#39;] = value # 执行二元切分，得到左右子树对应的两个数据集子集 leftSet, rightSet = binSplitDataSet(dataSet, feat, value) # 在左右子树继续递归地调用自己，构造决策树 retTree[&#39;left&#39;] = createTree(leftSet, leafType, errType, ops) retTree[&#39;right&#39;] = createTree(rightSet, leafType, errType, ops) return retTree   选择最优切分特征、最优切分值：" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://utopizza.github.io/2017-11-18-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-cart%E7%AE%97%E6%B3%95/" />
+<meta property="og:image" content="https://utopizza.github.io/logo.png"/>
+<meta property="article:published_time" content="2017-11-18T16:34:00+00:00" />
+<meta property="article:modified_time" content="2017-11-18T16:34:00+00:00" />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://utopizza.github.io/logo.png"/>
+
+<meta name="twitter:title" content="CART算法"/>
+<meta name="twitter:description" content="分类与回归树（classification and regression tree, CART）模型是应用广泛的决策树学习方法，既可以用于分类，也可以用于回归。
+回顾之前学习的 ID3 算法，它的做法是每次选取当前最佳的特征来分割数据，分割依据是该特征的所有取值。也就是说，如果这个特征有 $n$ 个取值，那么数据将立即被分割成 $n$ 分。一旦被切分之后，该特征在之后将不会再被考虑。这样有两个问题：一是切分过于迅速，如果 $n$ 很大，那么数据将被马上切分成大量的小份，影响后续切分的效果。二是，这样的决策树只能处理离散型的数值，如果特征的取值是连续型数值，则需要将其预处理转化成离散型，但这样就会人为地破坏了连续型变量的内在性质。
+CART 算法解决了上述问题。CART 设定决策树是二叉树，每次切分数据只做二元切分，即把数据集切分成两份。对某个连续型的特征，设定一个切分值，大于此值的数据进入左子树，反之则进入右子树。然后递归地构建子树。
+一、CART 生成
+CART 决策树的生成就是递归地构建二叉决策树的过程。对回归树用平方误差最小化准则，对分类树用基尼指数最小化准则，进行特征选择。
+1、回归树的生成
+输入：训练数据集 $D$，特征集 $A$ 输出：回归树 $T$
+(1)、寻找最佳的切分特征 $A_g$ 和对应的最佳切分值 $v$：遍历特征集中每一个特征，尝试以该特征的每一个取值作为切分值，对数据集执行二元切分，然后计算切分误差，如果当前误差小于记录的最小误差，那么更新最优切分特征、最优切分值、最小误差。遍历完成后，返回最优切分特征、最优切分值。
+其中误差一般使用目标变量的方差来计算，设数据集为 $D$，数据集中的目标变量为 $D.Y$，数据集在执行一次二元切分后被切分成 $D_{left}$ 和 $D_{right}$，则此次切分减小的混乱程度为
+$$g(D,A_g,v)=var(D.Y)- \left[ var(D_{left}.Y)&#43;var(D_{right}.Y) \right]$$
+其中 $D_{left}={D \mid D.A_g&gt;v}$，$D_{right}={D \mid D.A_g \leq v}$。
+(2)、如果该结点不能再分（左右两个子集方差之和比原数据集方差还大，或者大于给定的某个阈值等等），将该结点存为叶结点，把该结点上的数据集目标变量的平均值作为该结点的输出值返回；否则执行二元切分，把数据集以 $v$ 为切分值，按特征 $A_g$ 切分成 $D_{left}$ 和 $D_{right}$ 两个子集，并对应地生成左右两个子树
+(3)、递归地对左右子树重复执行前面的步骤，直到满足停止条件
+构造决策树：
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21  def createTree(dataSet,tolN,tolS): # 寻找最优切分特征、最优切分值 feat, value = chooseBestSplit(dataSet,tolN,tolS) # 切分特征为空，说明不能再分，直接返回value作为叶结点的输出值 if feat is None: return value # 把最优切分特征、最优切分值记录到树中 retTree = {} retTree[&#39;spInd&#39;] = feat retTree[&#39;spVal&#39;] = value # 执行二元切分，得到左右子树对应的两个数据集子集 leftSet, rightSet = binSplitDataSet(dataSet, feat, value) # 在左右子树继续递归地调用自己，构造决策树 retTree[&#39;left&#39;] = createTree(leftSet, leafType, errType, ops) retTree[&#39;right&#39;] = createTree(rightSet, leafType, errType, ops) return retTree   选择最优切分特征、最优切分值："/>
+<meta name="application-name" content="Utopizza">
+<meta name="apple-mobile-web-app-title" content="Utopizza"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://utopizza.github.io/2017-11-18-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-cart%E7%AE%97%E6%B3%95/" /><link rel="prev" href="https://utopizza.github.io/2017-11-15-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-id3%E7%AE%97%E6%B3%95%E4%B8%8Ec4.5%E7%AE%97%E6%B3%95/" /><link rel="next" href="https://utopizza.github.io/2017-11-20-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E8%AE%AD%E7%BB%83%E8%AF%AF%E5%B7%AE%E4%B8%8E%E6%B5%8B%E8%AF%95%E8%AF%AF%E5%B7%AE/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "CART算法",
+        "inLanguage": "en",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https:\/\/utopizza.github.io\/2017-11-18-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-cart%E7%AE%97%E6%B3%95\/"
+        },"image": {
+                "@type": "ImageObject",
+                "url": "https:\/\/utopizza.github.io\/cover.png",
+                "width":  800 ,
+                "height":  600 
+            },"genre": "posts","wordcount":  588 ,
+        "url": "https:\/\/utopizza.github.io\/2017-11-18-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-cart%E7%AE%97%E6%B3%95\/","datePublished": "2017-11-18T16:34:00+00:00","dateModified": "2017-11-18T16:34:00+00:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+                "@type": "Organization",
+                "name": "",
+                "logo": {
+                "@type": "ImageObject",
+                "url": "https:\/\/utopizza.github.io\/logo.png",
+                "width":  127 ,
+                "height":  40 
+                }
+            },"author": {
+                "@type": "Person",
+                "name": "yusheng"
+            },"description": ""
+    }
+    </script></head>
+    <body><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="Utopizza"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>Utopizza</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> Posts </a><a class="menu-item" href="/categories/"> Categories </a><a class="menu-item" href="https://github.com/utopizza" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i>  </a><span class="menu-item delimiter"></span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="Utopizza"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>Utopizza</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><a class="menu-item" href="/posts/" title="">Posts</a><a class="menu-item" href="/categories/" title="">Categories</a><a class="menu-item" href="https://github.com/utopizza" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i></a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">CART算法</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;
+                    <span class="post-category">included in<a href="/categories/machinelearning/">
+                                <i class="far fa-folder fa-fw"></i>MachineLearning
+                            </a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i><time datetime=2017-11-18>2017-11-18</time>&nbsp;
+                <i class="fas fa-pencil-alt fa-fw"></i>about 588 words&nbsp;
+                <i class="far fa-clock fa-fw"></i>3 min&nbsp;</div>
+        </div><div class="details toc" id="toc-static">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents"></nav></div>
+            </div><div class="content" id="content"><p>分类与回归树（classification and regression tree, CART）模型是应用广泛的决策树学习方法，<strong>既可以用于分类，也可以用于回归</strong>。</p>
+<p>回顾之前学习的 ID3 算法，它的做法是每次选取当前最佳的特征来分割数据，分割依据是该特征的所有取值。也就是说，如果这个特征有 $n$ 个取值，那么数据将立即被分割成 $n$ 分。一旦被切分之后，该特征在之后将不会再被考虑。这样有两个问题：一是切分过于迅速，如果 $n$ 很大，那么数据将被马上切分成大量的小份，影响后续切分的效果。二是，这样的决策树只能处理离散型的数值，如果特征的取值是连续型数值，则需要将其预处理转化成离散型，但这样就会人为地破坏了连续型变量的内在性质。</p>
+<p>CART 算法解决了上述问题。CART 设定决策树是<strong>二叉树</strong>，每次切分数据只做二元切分，即把数据集切分成两份。对某个连续型的特征，设定一个切分值，大于此值的数据进入左子树，反之则进入右子树。然后递归地构建子树。</p>
+<p>一、CART 生成</p>
+<p>CART 决策树的生成就是递归地构建二叉决策树的过程。对回归树用<strong>平方误差最小化</strong>准则，对分类树用<strong>基尼指数最小化</strong>准则，进行特征选择。</p>
+<p>1、回归树的生成</p>
+<p>输入：训练数据集 $D$，特征集 $A$
+输出：回归树 $T$</p>
+<p>(1)、寻找最佳的切分特征 $A_g$ 和对应的最佳切分值 $v$：遍历特征集中每一个特征，尝试以该特征的每一个取值作为切分值，对数据集执行二元切分，然后计算切分误差，如果当前误差小于记录的最小误差，那么更新最优切分特征、最优切分值、最小误差。遍历完成后，返回最优切分特征、最优切分值。</p>
+<p>其中误差一般使用目标变量的方差来计算，设数据集为 $D$，数据集中的目标变量为 $D.Y$，数据集在执行一次二元切分后被切分成 $D_{left}$ 和 $D_{right}$，则此次切分减小的混乱程度为</p>
+<p>$$g(D,A_g,v)=var(D.Y)- \left[ var(D_{left}.Y)+var(D_{right}.Y) \right]$$</p>
+<p>其中 $D_{left}={D \mid D.A_g&gt;v}$，$D_{right}={D \mid D.A_g \leq v}$。</p>
+<p>(2)、如果该结点不能再分（左右两个子集方差之和比原数据集方差还大，或者大于给定的某个阈值等等），将该结点存为叶结点，把该结点上的数据集<strong>目标变量的平均值</strong>作为该结点的输出值返回；否则执行二元切分，把数据集以 $v$ 为切分值，按特征 $A_g$ 切分成 $D_{left}$ 和 $D_{right}$ 两个子集，并对应地生成左右两个子树</p>
+<p>(3)、递归地对左右子树重复执行前面的步骤，直到满足停止条件</p>
+<p>构造决策树：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">def createTree(dataSet,tolN,tolS):
+    # 寻找最优切分特征、最优切分值
+    feat, value = chooseBestSplit(dataSet,tolN,tolS)
+    
+    # 切分特征为空，说明不能再分，直接返回value作为叶结点的输出值
+    if feat is None:
+        return value
+        
+    # 把最优切分特征、最优切分值记录到树中
+    retTree = {}
+    retTree[&#39;spInd&#39;] = feat
+    retTree[&#39;spVal&#39;] = value
+
+    # 执行二元切分，得到左右子树对应的两个数据集子集
+    leftSet, rightSet = binSplitDataSet(dataSet, feat, value)
+    
+    # 在左右子树继续递归地调用自己，构造决策树
+    retTree[&#39;left&#39;] = createTree(leftSet, leafType, errType, ops)
+    retTree[&#39;right&#39;] = createTree(rightSet, leafType, errType, ops)
+    
+    return retTree
+</code></pre></td></tr></table>
+</div>
+</div><p>选择最优切分特征、最优切分值：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">def chooseBestSplit(dataSet,tolN,tolS):
+    # 如果数据集的目标变量全部属于同一个值，则不用再切分
+    # 此时返回空特征，并把数据集的目标变量（最后一列）的平均值作为返回值
+    if len(set(dataSet[:, -1].T.tolist()[0])) == 1:
+        return None, mean(dataSet[:, -1])
+        
+    # 求数据集的目标变量的总方差
+    m, n = shape(dataSet)
+    S = var(dataSet[:, -1]) * m
+
+    # 初始化最小方差、最优特征、最优切分值
+    bestS = inf
+    bestIndex = 0
+    bestValue = 0
+    
+    # 遍历每个特征的每个取值
+    for featIndex in range(n - 1):
+        for splitVal in set((dataSet[:, featIndex].T.A.tolist())[0]):
+            
+            # 执行一次二元切分尝试
+            mat0, mat1 = binSplitDataSet(dataSet, featIndex, splitVal)
+
+            # 计算两个子集的方差之和
+            newS = var(mat0[:, -1]) * shape(mat0)[0] + var(mat1[:, -1]) * shape(mat1)[0]
+            
+            # 如果误差小于当前记录的最小误差，则记录这次切分
+            if newS &lt; bestS:
+                bestIndex = featIndex
+                bestValue = splitVal
+                bestS = newS
+
+    # 如果误差减小不大，小于给定的阈值 tolS，则不再切分
+    if S - bestS &lt; tolS:
+        return None, mean(dataSet[:, -1])
+
+    # 如果切分的两个子集的大小小于给定的阈值 tolN，则不再切分
+    mat0, mat1 = binSplitDataSet(dataSet, bestIndex, bestValue)
+    if shape(mat0)[0] &lt; tolN or shape(mat1)[1] &lt; tolN:
+        return None, mean(dataSet[:, -1])
+
+    # 返回最优切分特征和最优切分值
+    return bestIndex, bestValue
+</code></pre></td></tr></table>
+</div>
+</div><p>执行一次二元切分：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">def binSplitDataSet(dataSet, feature, value):
+    mat0 = dataSet[nonzero(dataSet[:, feature] &gt; value)[0], :]  # [0]
+    mat1 = dataSet[nonzero(dataSet[:, feature] &lt;= value)[0], :]  # [0]
+    return mat0, mat1
+</code></pre></td></tr></table>
+</div>
+</div><p>2、分类树的生成</p>
+<p>分类树用基尼指数选择最优特征，同时决定该特征的最优切分值。</p>
+<p>基尼指数：分类问题中，假设有 $K$ 个类，样本点属于第 $k$ 类的概率为 $p_k$ ，则概率分布的基尼指数为：</p>
+<p>$$Gini(p)=\sum_{k=1}^{K}p_k(1-p_k)=1-\sum_{k=1}^{K}p_{k}^{2}$$</p>
+<p>对于给定的样本集合 $D$，其基尼指数为：</p>
+<p>$$Gini(D)=1-\sum_{k=1}^{K} \left( \frac{|C_k|}{|D|} \right)^2$$</p>
+<p>这里，$C_k$ 是 $D$ 中属于第 $k$ 类的样本子集，$K$ 是类的个数。</p>
+<p>设集合 $D$ 被特征 $A_g$ 的某个取值 $v$ 二元切分，得到两个子集 $D_{left}$ 和 $D_{right}$，则在特征 $A_g$ 和切分值 $v$ 的条件下，集合 $D$ 的基尼指数定义为</p>
+<p>$$
+Gini(D,A_g,v)=
+\frac{|D_{left}|}{|D|}Gini(D_{left})+
+\frac{|D_{right}|}{|D|}Gini(D_{right})
+$$</p>
+<p>其中 $D_{left}={D \mid D.A_g&gt;v}$，$D_{right}={D \mid D.A_g \leq v}$。</p>
+<p>基尼指数 $Gini(D)$ 表示集合 $D$ 的不确定性，基尼指数 $Gini(D,A_g,v)$ 表示按特征 $A_g$ 的值 $v$ 二元切分后的不确定性。基尼指数越大，样本集合的不确定性越大，这一点和熵类似。</p>
+<p>输入：训练数据集 $D$，停止计算的条件
+输出：CART 决策树</p>
+<p>根据训练数据集，从根节点开始，递归地对每个结点进行一下操作：</p>
+<p>(1)、设结点的数据集为 $D$，计算 $Gini(D)$。然后遍历每一个特征的每一个取值，尝试二元切分，并计算 $Gini(D,A_g,v)$，找出基尼指数最小的特征及其对应的切分值，作为最优切分特征和最优切分值。</p>
+<p>(2)、把数据集 $D$ 按照最优切分特征和最优切分值进行二元切分，得到两个子集，并对应地从本结点生成两个子结点，将两个子集分配到对应的结点中去。</p>
+<p>(3)、对左右子树递归地调用前面步骤，直至满足停止条件。算法的停止条件是结点中的样本个数小于预定阈值，或样本集的基尼指数小于预定阈值，或者没有更多特征。这里需要注意，分类树的叶子结点不是像回归树那样取叶子结点所对应的数据集的目标变量的均值，而是像 ID3 算法那个，选择叶子结点对应的数据集中实例数最大的那个类别作为叶子结点的类别返回。</p>
+<p>二、CART 剪枝</p>
+<p>如果一棵决策树的结点过多，表明该模型可能对数据进行了“过拟合”。要分析是否确实发生了过拟合，可以使用交叉验证来判断。另一方面，可以在构造决策树的时候采取一些措施来防止发生过拟合，降低决策树模型的复杂度，此称为决策树的剪枝（pruning）。决策树的剪枝有两种方式，一种是预剪枝（prepruning），另一种是后剪枝（postpruning）。</p>
+<p>1、预剪枝</p>
+<p>预剪枝实际上就是在决策树构建过程中加入算法的停止条件。具体来说，就是前面所述的例子中，在选择最优特征最优切分点的函数 $chooseBestSplit()$ 中加入的停止条件： $tolS$ 和 $tolN$ 两个参数。这两个参数所表达的意义是，对某个结点的数据集，如果二元切分之后的两个子集总误差比原数据集误差下降很小，或者子集的大小太小，那么不对这个结点进行切分，直接把它当作一个叶子结点返回，这样就阻止了决策树在这个结点上的过分生长，简化了决策树。实验证明，决策树生成算法对这两个参数非常敏感。但是这样也会有一个缺点，需要不断的人为地调整这两个参数来达到好的结果，这并不是一个好的办法。</p>
+<p>2、后剪枝</p>
+<p>后剪枝方法需要将数据分成测试集和训练集。首先用训练集生成长一棵足够大足够复杂的决策树，然后从上而下找到叶子结点，用测试集来判断将这些叶子结点合并是否能降低测试误差。如果是就合并。剪枝算法相关代码如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback"># 从叶子结点到根结点坍塌树，把每棵子树根结点替换成左右子树的均值
+def getMean(tree):
+    if isTree(tree[&#39;right&#39;]):
+        tree[&#39;right&#39;] = getMean(tree[&#39;right&#39;])
+    if isTree(tree[&#39;left&#39;]):
+        tree[&#39;left&#39;] = getMean(tree[&#39;left&#39;])
+    return (tree[&#39;left&#39;] + tree[&#39;right&#39;]) / 2
+
+# 剪枝算法
+def prune(tree, testData):
+    # 若测试集大小为0，对本子树进行坍塌，收缩到一个值返回
+    if shape(testData)[0] == 0:
+        return getMean(tree)
+
+    # 若本结点有左右子树，则把测试集按本结点进行二元划分得到左右子集
+    if isTree(tree[&#39;right&#39;]) or isTree(tree[&#39;left&#39;]):
+        leftSet, rightSet = binSplitDataSet(testData, tree[&#39;spInd&#39;], tree[&#39;spVal&#39;])
+
+    # 如果本结点有左子树，用测试集的左子集对该子树剪枝
+    if isTree(tree[&#39;left&#39;]):
+        tree[&#39;left&#39;] = prune(tree[&#39;left&#39;], leftSet)
+    
+    # 如果本结点有右子树，用测试集的右子集对该子树剪枝
+    if isTree(tree[&#39;right&#39;]):
+        tree[&#39;right&#39;] = prune(tree[&#39;right&#39;], rightSet)
+
+    # 若本结点既无左子树，也无右子树
+    # 仍然按本结点把测试集进行二元划分
+    if not isTree(tree[&#39;left&#39;]) and not isTree(tree[&#39;right&#39;]):
+        leftSet, rightSet = binSplitDataSet(testData, tree[&#39;spInd&#39;], tree[&#39;spVal&#39;])
+        
+        # 分别计算不合并和合并的误差
+        errorNoMerge = sum(power(leftSet[:, -1] - tree[&#39;left&#39;], 2)) + sum(power(rightSet[:, -1] - tree[&#39;right&#39;], 2))
+        treeMean = (tree[&#39;left&#39;] + tree[&#39;right&#39;]) / 2.0
+        errorMerge = sum(power(testData[:, -1] - treeMean, 2))
+        
+        # 确定是否合并
+        if errorMerge &lt; errorNoMerge:
+            print &#34;merging&#34;
+            return treeMean
+        else:
+            return tree
+    else:
+        return tree
+</code></pre></td></tr></table>
+</div>
+</div></div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>The article was updated on 2017-11-18</span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span>
+                            <a class="link-to-markdown" href="/2017-11-18-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-cart%E7%AE%97%E6%B3%95/index.md" target="_blank">Read Markdown</a>
+                        </span></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="https://utopizza.github.io/2017-11-18-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-cart%E7%AE%97%E6%B3%95/" data-title="CART算法"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://utopizza.github.io/2017-11-18-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-cart%E7%AE%97%E6%B3%95/"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="Share on WhatsApp" data-sharer="whatsapp" data-url="https://utopizza.github.io/2017-11-18-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-cart%E7%AE%97%E6%B3%95/" data-title="CART算法" data-web><i class="fab fa-whatsapp fa-fw"></i></a><a href="javascript:void(0);" title="Share on Line" data-sharer="line" data-url="https://utopizza.github.io/2017-11-18-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-cart%E7%AE%97%E6%B3%95/" data-title="CART算法"><i class="fab fa-line fa-fw"></i></a><a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="https://utopizza.github.io/2017-11-18-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-cart%E7%AE%97%E6%B3%95/" data-title="CART算法"><i class="fab fa-weibo fa-fw"></i></a><a href="javascript:void(0);" title="Share on Myspace" data-sharer="myspace" data-url="https://utopizza.github.io/2017-11-18-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-cart%E7%AE%97%E6%B3%95/" data-title="CART算法" data-description=""><i data-svg-src="/lib/simple-icons/icons/myspace.min.svg"></i></a><a href="javascript:void(0);" title="Share on Blogger" data-sharer="blogger" data-url="https://utopizza.github.io/2017-11-18-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-cart%E7%AE%97%E6%B3%95/" data-title="CART算法" data-description=""><i class="fab fa-blogger fa-fw"></i></a><a href="javascript:void(0);" title="Share on Evernote" data-sharer="evernote" data-url="https://utopizza.github.io/2017-11-18-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-cart%E7%AE%97%E6%B3%95/" data-title="CART算法"><i class="fab fa-evernote fa-fw"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/2017-11-15-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-id3%E7%AE%97%E6%B3%95%E4%B8%8Ec4.5%E7%AE%97%E6%B3%95/" class="prev" rel="prev" title="ID3算法与C4.5算法"><i class="fas fa-angle-left fa-fw"></i>ID3算法与C4.5算法</a>
+            <a href="/2017-11-20-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E8%AE%AD%E7%BB%83%E8%AF%AF%E5%B7%AE%E4%B8%8E%E6%B5%8B%E8%AF%95%E8%AF%AF%E5%B7%AE/" class="next" rel="next" title="训练误差与测试误差">训练误差与测试误差<i class="fas fa-angle-right fa-fw"></i></a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.69.2">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.6"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2020</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">yusheng</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><link rel="stylesheet" href="/lib/katex/katex.min.css"><link rel="stylesheet" href="/lib/katex/copy-tex.min.css"><script type="text/javascript">
+    window.config = {"code":{"copyTitle":"Copy to clipboard","maxShownLines":100},"comment":{},"headerMode":{"desktop":"fixed","mobile":"auto"},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false}};
+</script><script type="text/javascript" src="https://polyfill.io/v3/polyfill.min.js?features=html5shiv%2CElement.prototype.closest%2CrequestAnimationFrame%2CCustomEvent%2CPromise%2CObject.entries%2CObject.assign%2CObject.values%2Cfetch%2CElement.prototype.after%2CArray.prototype.fill%2CIntersectionObserver%2CArray.from%2CArray.prototype.find%2CMath.sign"></script><script type="text/javascript" src="/lib/smooth-scroll/smooth-scroll.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/object-fit-images/ofi.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="/lib/sharer/sharer.min.js"></script><script type="text/javascript" src="/lib/katex/katex.min.js"></script><script type="text/javascript" src="/lib/katex/auto-render.min.js"></script><script type="text/javascript" src="/lib/katex/copy-tex.min.js"></script><script type="text/javascript" src="/lib/katex/mhchem.min.js"></script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>

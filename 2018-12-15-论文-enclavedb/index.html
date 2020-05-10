@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>EnclaveDB - Utopizza</title>
+        <meta name="Description" content="About LoveIt Theme"><meta property="og:title" content="EnclaveDB" />
+<meta property="og:description" content="一、背景及问题
+目前一些云端的数据处理服务经常受到可能来自数据库管理员、服务器管理员、利用操作系统漏洞的黑客等的攻击。虽然一般意义上的数据加密可以为静态数据和数据传输提供强力高效的保护，但是却无法为数据处理系统提供足够的保护，因为数据处理系统在处理查询的时会在内存解密敏感数据。而内存是容易被攻击者入侵并掌控的区域，因此这会导致数据的不安全。
+一种实现安全查询（secure query）的方法是，一些系统如 CryptDB，Monomi 以及 Seabed 等通过使用 property-preserving encryption 技术来进行在已加密数据上的安全查询。然而这种方法只能处理十分有限的查询请求，并且有信息泄漏的风险。
+另一种实现安全查询的方法是在受信任的执行环境（trusted execution environment）或者内飞地（enclaves） 中执行查询。系统的内飞地如 Intel Software Guard Extensions (SGX) 可以保护敏感数据和代码，即使攻击者控制了整个操作系统或者主机。虽然如此，使用内飞地存在几个问题：
+ 为了实现安全保护，需要仔细地对应用程序进行重构，分解出可信任部分和不可信任部分 为了实现高层次的安全特性如机密性（confidentiality）、完整性（integrity）、时新性（freshness），需要增加额外的逻辑和机制来确保机密信息在进入和离开内飞地的时候不会被泄漏  这些问题对于一些简单的应用程序来说并不困难，但是对于一些大型复杂系统如数据库系统来说则非常不容易。先前的一些研究例如 CipherBase、TrustedDB 等采取的方式是将查询引擎（query engine）的一小部分放置于受信任的硬件之上，这种方式的问题是无法提供上述的机密性、完整性、时新性。另一种选择是将整个数据库放置于内飞地之中，但这显然会导致大量的 trusted computing base (TCB) 以及服务性能的下降，并且无法阻止来自数据库管理员的攻击。
+ 【根据维基百科，飞地指在某个地理区划境内有一块隶属于他地的区域。根据地区与国家之间的相对关系，飞地又可以分为“外飞地”（Exclave）与“内飞地”（Enclave）两种概念，其关系如下：内飞地（enclave）：意指某个国家境内有块土地，其主权属于另外一个国家，则该地区称为此国家的内飞地。外飞地（exclave）：某国家拥有一块与本国分离开来的领土，该领土被其他国家包围，则该领土称为某国的外飞地。】
+ 二、解决方案
+文章提出了一个称为 EnclaveDB 的数据库，它可以为查询和数据提供机密性、完整性、时新性。它与传统关系型数据库一样提供了数据处理、SQL查询、存储过程等基本功能。与传统数据库不同的是：
+ EnclaveDB 通过把所有敏感数据（tables, indexes, queries and other intermediate state）维护在内飞地的内存中来保护数据库状态 EnclaveDB 使用可信任的 EnclaveDB 客户端来预编译查询代码，并进行加密 预编译代码后，受信任的 EnclaveDB 客户端与不受信任的服务器上的内飞地直接建立一个安全的加密通道，然后将已加密的查询和参数发送过去 不受信任的服务器上的内飞地收到查询请求后，对请求进行验证、解密、执行查询、对查询结果进行加密、返回给客户端 EnclaveDB 重新设计了数据库的日志与恢复机制，以确保服务器无法对数据库的日志进行攻击 EnclaveDB 采取了一些优化手段，减少线程上下文切换，减少服务器开销  三、总结
+文章提出了一个通过使用内飞地来实现不信任服务器上的安全数据库。通过可信任客户端的预编译、加密安全通道的通信、内飞地的隔离保护、重新设计数据库的日志与恢复机制等一系列措施，实现了机密性、完整性、时新性这三个重要的安全特性。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://utopizza.github.io/2018-12-15-%E8%AE%BA%E6%96%87-enclavedb/" />
+<meta property="og:image" content="https://utopizza.github.io/logo.png"/>
+<meta property="article:published_time" content="2018-12-15T00:00:00+00:00" />
+<meta property="article:modified_time" content="2018-12-15T00:00:00+00:00" />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://utopizza.github.io/logo.png"/>
+
+<meta name="twitter:title" content="EnclaveDB"/>
+<meta name="twitter:description" content="一、背景及问题
+目前一些云端的数据处理服务经常受到可能来自数据库管理员、服务器管理员、利用操作系统漏洞的黑客等的攻击。虽然一般意义上的数据加密可以为静态数据和数据传输提供强力高效的保护，但是却无法为数据处理系统提供足够的保护，因为数据处理系统在处理查询的时会在内存解密敏感数据。而内存是容易被攻击者入侵并掌控的区域，因此这会导致数据的不安全。
+一种实现安全查询（secure query）的方法是，一些系统如 CryptDB，Monomi 以及 Seabed 等通过使用 property-preserving encryption 技术来进行在已加密数据上的安全查询。然而这种方法只能处理十分有限的查询请求，并且有信息泄漏的风险。
+另一种实现安全查询的方法是在受信任的执行环境（trusted execution environment）或者内飞地（enclaves） 中执行查询。系统的内飞地如 Intel Software Guard Extensions (SGX) 可以保护敏感数据和代码，即使攻击者控制了整个操作系统或者主机。虽然如此，使用内飞地存在几个问题：
+ 为了实现安全保护，需要仔细地对应用程序进行重构，分解出可信任部分和不可信任部分 为了实现高层次的安全特性如机密性（confidentiality）、完整性（integrity）、时新性（freshness），需要增加额外的逻辑和机制来确保机密信息在进入和离开内飞地的时候不会被泄漏  这些问题对于一些简单的应用程序来说并不困难，但是对于一些大型复杂系统如数据库系统来说则非常不容易。先前的一些研究例如 CipherBase、TrustedDB 等采取的方式是将查询引擎（query engine）的一小部分放置于受信任的硬件之上，这种方式的问题是无法提供上述的机密性、完整性、时新性。另一种选择是将整个数据库放置于内飞地之中，但这显然会导致大量的 trusted computing base (TCB) 以及服务性能的下降，并且无法阻止来自数据库管理员的攻击。
+ 【根据维基百科，飞地指在某个地理区划境内有一块隶属于他地的区域。根据地区与国家之间的相对关系，飞地又可以分为“外飞地”（Exclave）与“内飞地”（Enclave）两种概念，其关系如下：内飞地（enclave）：意指某个国家境内有块土地，其主权属于另外一个国家，则该地区称为此国家的内飞地。外飞地（exclave）：某国家拥有一块与本国分离开来的领土，该领土被其他国家包围，则该领土称为某国的外飞地。】
+ 二、解决方案
+文章提出了一个称为 EnclaveDB 的数据库，它可以为查询和数据提供机密性、完整性、时新性。它与传统关系型数据库一样提供了数据处理、SQL查询、存储过程等基本功能。与传统数据库不同的是：
+ EnclaveDB 通过把所有敏感数据（tables, indexes, queries and other intermediate state）维护在内飞地的内存中来保护数据库状态 EnclaveDB 使用可信任的 EnclaveDB 客户端来预编译查询代码，并进行加密 预编译代码后，受信任的 EnclaveDB 客户端与不受信任的服务器上的内飞地直接建立一个安全的加密通道，然后将已加密的查询和参数发送过去 不受信任的服务器上的内飞地收到查询请求后，对请求进行验证、解密、执行查询、对查询结果进行加密、返回给客户端 EnclaveDB 重新设计了数据库的日志与恢复机制，以确保服务器无法对数据库的日志进行攻击 EnclaveDB 采取了一些优化手段，减少线程上下文切换，减少服务器开销  三、总结
+文章提出了一个通过使用内飞地来实现不信任服务器上的安全数据库。通过可信任客户端的预编译、加密安全通道的通信、内飞地的隔离保护、重新设计数据库的日志与恢复机制等一系列措施，实现了机密性、完整性、时新性这三个重要的安全特性。"/>
+<meta name="application-name" content="Utopizza">
+<meta name="apple-mobile-web-app-title" content="Utopizza"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://utopizza.github.io/2018-12-15-%E8%AE%BA%E6%96%87-enclavedb/" /><link rel="prev" href="https://utopizza.github.io/2018-12-14-%E6%95%B0%E5%AD%A6-%E4%B8%8D%E5%AE%9A%E7%A7%AF%E5%88%86/" /><link rel="next" href="https://utopizza.github.io/2018-12-18-%E6%95%B0%E5%AD%A6-%E5%AE%9A%E7%A7%AF%E5%88%86/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "EnclaveDB",
+        "inLanguage": "en",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https:\/\/utopizza.github.io\/2018-12-15-%E8%AE%BA%E6%96%87-enclavedb\/"
+        },"image": {
+                "@type": "ImageObject",
+                "url": "https:\/\/utopizza.github.io\/cover.png",
+                "width":  800 ,
+                "height":  600 
+            },"genre": "posts","wordcount":  59 ,
+        "url": "https:\/\/utopizza.github.io\/2018-12-15-%E8%AE%BA%E6%96%87-enclavedb\/","datePublished": "2018-12-15T00:00:00+00:00","dateModified": "2018-12-15T00:00:00+00:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+                "@type": "Organization",
+                "name": "",
+                "logo": {
+                "@type": "ImageObject",
+                "url": "https:\/\/utopizza.github.io\/logo.png",
+                "width":  127 ,
+                "height":  40 
+                }
+            },"author": {
+                "@type": "Person",
+                "name": "yusheng"
+            },"description": ""
+    }
+    </script></head>
+    <body><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="Utopizza"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>Utopizza</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> Posts </a><a class="menu-item" href="/categories/"> Categories </a><a class="menu-item" href="https://github.com/utopizza" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i>  </a><span class="menu-item delimiter"></span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="Utopizza"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>Utopizza</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><a class="menu-item" href="/posts/" title="">Posts</a><a class="menu-item" href="/categories/" title="">Categories</a><a class="menu-item" href="https://github.com/utopizza" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i></a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">EnclaveDB</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;
+                    <span class="post-category">included in<a href="/categories/thesis/">
+                                <i class="far fa-folder fa-fw"></i>Thesis
+                            </a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i><time datetime=2018-12-15>2018-12-15</time>&nbsp;
+                <i class="fas fa-pencil-alt fa-fw"></i>about 59 words&nbsp;
+                <i class="far fa-clock fa-fw"></i>1 min&nbsp;</div>
+        </div><div class="details toc" id="toc-static">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents"></nav></div>
+            </div><div class="content" id="content"><p>一、背景及问题</p>
+<p>目前一些云端的数据处理服务经常受到可能来自数据库管理员、服务器管理员、利用操作系统漏洞的黑客等的攻击。虽然一般意义上的数据加密可以为静态数据和数据传输提供强力高效的保护，但是却无法为数据处理系统提供足够的保护，因为数据处理系统在处理查询的时会在内存解密敏感数据。而内存是容易被攻击者入侵并掌控的区域，因此这会导致数据的不安全。</p>
+<p>一种实现安全查询（secure query）的方法是，一些系统如 CryptDB，Monomi 以及 Seabed 等通过使用 property-preserving encryption 技术来进行在已加密数据上的安全查询。然而这种方法只能处理十分有限的查询请求，并且有信息泄漏的风险。</p>
+<p>另一种实现安全查询的方法是在受信任的执行环境（trusted execution environment）或者内飞地（enclaves） 中执行查询。系统的内飞地如 Intel Software Guard Extensions (SGX) 可以保护敏感数据和代码，即使攻击者控制了整个操作系统或者主机。虽然如此，使用内飞地存在几个问题：</p>
+<ol>
+<li>为了实现安全保护，需要仔细地对应用程序进行重构，分解出可信任部分和不可信任部分</li>
+<li>为了实现高层次的安全特性如机密性（confidentiality）、完整性（integrity）、时新性（freshness），需要增加额外的逻辑和机制来确保机密信息在进入和离开内飞地的时候不会被泄漏</li>
+</ol>
+<p>这些问题对于一些简单的应用程序来说并不困难，但是对于一些大型复杂系统如数据库系统来说则非常不容易。先前的一些研究例如 CipherBase、TrustedDB 等采取的方式是将查询引擎（query engine）的一小部分放置于受信任的硬件之上，这种方式的问题是无法提供上述的机密性、完整性、时新性。另一种选择是将整个数据库放置于内飞地之中，但这显然会导致大量的 trusted computing base (TCB) 以及服务性能的下降，并且无法阻止来自数据库管理员的攻击。</p>
+<blockquote>
+<p>【根据维基百科，飞地指在某个地理区划境内有一块隶属于他地的区域。根据地区与国家之间的相对关系，飞地又可以分为“外飞地”（Exclave）与“内飞地”（Enclave）两种概念，其关系如下：内飞地（enclave）：意指某个国家境内有块土地，其主权属于另外一个国家，则该地区称为此国家的内飞地。外飞地（exclave）：某国家拥有一块与本国分离开来的领土，该领土被其他国家包围，则该领土称为某国的外飞地。】</p>
+</blockquote>
+<p>二、解决方案</p>
+<p>文章提出了一个称为 EnclaveDB 的数据库，它可以为查询和数据提供机密性、完整性、时新性。它与传统关系型数据库一样提供了数据处理、SQL查询、存储过程等基本功能。与传统数据库不同的是：</p>
+<ol>
+<li>EnclaveDB 通过把所有敏感数据（tables, indexes, queries and other intermediate state）维护在内飞地的内存中来保护数据库状态</li>
+<li>EnclaveDB 使用可信任的 EnclaveDB 客户端来预编译查询代码，并进行加密</li>
+<li>预编译代码后，受信任的 EnclaveDB 客户端与不受信任的服务器上的内飞地直接建立一个安全的加密通道，然后将已加密的查询和参数发送过去</li>
+<li>不受信任的服务器上的内飞地收到查询请求后，对请求进行验证、解密、执行查询、对查询结果进行加密、返回给客户端</li>
+<li>EnclaveDB 重新设计了数据库的日志与恢复机制，以确保服务器无法对数据库的日志进行攻击</li>
+<li>EnclaveDB 采取了一些优化手段，减少线程上下文切换，减少服务器开销</li>
+</ol>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="/2018-12-15-%e8%ae%ba%e6%96%87-EnclaveDB/EnclaveDB.png"
+        data-srcset="/2018-12-15-%e8%ae%ba%e6%96%87-EnclaveDB/EnclaveDB.png, /2018-12-15-%e8%ae%ba%e6%96%87-EnclaveDB/EnclaveDB.png 1.5x, /2018-12-15-%e8%ae%ba%e6%96%87-EnclaveDB/EnclaveDB.png 2x"
+        data-sizes="auto"
+        alt="/2018-12-15-论文-EnclaveDB/EnclaveDB.png"
+        title="/2018-12-15-论文-EnclaveDB/EnclaveDB.png" /></p>
+<p>三、总结</p>
+<p>文章提出了一个通过使用内飞地来实现不信任服务器上的安全数据库。通过可信任客户端的预编译、加密安全通道的通信、内飞地的隔离保护、重新设计数据库的日志与恢复机制等一系列措施，实现了机密性、完整性、时新性这三个重要的安全特性。</p>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>The article was updated on 2018-12-15</span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span>
+                            <a class="link-to-markdown" href="/2018-12-15-%E8%AE%BA%E6%96%87-enclavedb/index.md" target="_blank">Read Markdown</a>
+                        </span></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="https://utopizza.github.io/2018-12-15-%E8%AE%BA%E6%96%87-enclavedb/" data-title="EnclaveDB"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://utopizza.github.io/2018-12-15-%E8%AE%BA%E6%96%87-enclavedb/"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="Share on WhatsApp" data-sharer="whatsapp" data-url="https://utopizza.github.io/2018-12-15-%E8%AE%BA%E6%96%87-enclavedb/" data-title="EnclaveDB" data-web><i class="fab fa-whatsapp fa-fw"></i></a><a href="javascript:void(0);" title="Share on Line" data-sharer="line" data-url="https://utopizza.github.io/2018-12-15-%E8%AE%BA%E6%96%87-enclavedb/" data-title="EnclaveDB"><i class="fab fa-line fa-fw"></i></a><a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="https://utopizza.github.io/2018-12-15-%E8%AE%BA%E6%96%87-enclavedb/" data-title="EnclaveDB"><i class="fab fa-weibo fa-fw"></i></a><a href="javascript:void(0);" title="Share on Myspace" data-sharer="myspace" data-url="https://utopizza.github.io/2018-12-15-%E8%AE%BA%E6%96%87-enclavedb/" data-title="EnclaveDB" data-description=""><i data-svg-src="/lib/simple-icons/icons/myspace.min.svg"></i></a><a href="javascript:void(0);" title="Share on Blogger" data-sharer="blogger" data-url="https://utopizza.github.io/2018-12-15-%E8%AE%BA%E6%96%87-enclavedb/" data-title="EnclaveDB" data-description=""><i class="fab fa-blogger fa-fw"></i></a><a href="javascript:void(0);" title="Share on Evernote" data-sharer="evernote" data-url="https://utopizza.github.io/2018-12-15-%E8%AE%BA%E6%96%87-enclavedb/" data-title="EnclaveDB"><i class="fab fa-evernote fa-fw"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/2018-12-14-%E6%95%B0%E5%AD%A6-%E4%B8%8D%E5%AE%9A%E7%A7%AF%E5%88%86/" class="prev" rel="prev" title="不定积分"><i class="fas fa-angle-left fa-fw"></i>不定积分</a>
+            <a href="/2018-12-18-%E6%95%B0%E5%AD%A6-%E5%AE%9A%E7%A7%AF%E5%88%86/" class="next" rel="next" title="定积分">定积分<i class="fas fa-angle-right fa-fw"></i></a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.69.2">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.6"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2020</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">yusheng</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><link rel="stylesheet" href="/lib/katex/katex.min.css"><link rel="stylesheet" href="/lib/katex/copy-tex.min.css"><script type="text/javascript">
+    window.config = {"code":{"copyTitle":"Copy to clipboard","maxShownLines":100},"comment":{},"headerMode":{"desktop":"fixed","mobile":"auto"},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false}};
+</script><script type="text/javascript" src="https://polyfill.io/v3/polyfill.min.js?features=html5shiv%2CElement.prototype.closest%2CrequestAnimationFrame%2CCustomEvent%2CPromise%2CObject.entries%2CObject.assign%2CObject.values%2Cfetch%2CElement.prototype.after%2CArray.prototype.fill%2CIntersectionObserver%2CArray.from%2CArray.prototype.find%2CMath.sign"></script><script type="text/javascript" src="/lib/smooth-scroll/smooth-scroll.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/object-fit-images/ofi.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="/lib/sharer/sharer.min.js"></script><script type="text/javascript" src="/lib/katex/katex.min.js"></script><script type="text/javascript" src="/lib/katex/auto-render.min.js"></script><script type="text/javascript" src="/lib/katex/copy-tex.min.js"></script><script type="text/javascript" src="/lib/katex/mhchem.min.js"></script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>

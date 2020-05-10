@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>RandomForest与GBDT - Utopizza</title>
+        <meta name="Description" content="About LoveIt Theme"><meta property="og:title" content="RandomForest与GBDT" />
+<meta property="og:description" content="一、随机森林（RandomForest）
+前面学习过了 bagging 方法，我们知道该方法是通过有放回随机抽样来构建 $S$ 个和原数据集大小相等的训练集，然后分别进行训练，得到 $S$ 个分类器，再把这些分类器通过多数表决的方式组合得到最终的分类器。
+随机森林算法正是 bagging 方法的一种扩展。随机森林算法不仅对训练集的样本（行）进行抽样，而且对训练集的特征（列）也进行抽样。具体来说，随机森林分为三个步骤：
+1、随机采样
+对于行采样，使用有放回随机采样，和常规 bagging 方法一致，前面已经介绍过，此处不再赘述。
+对于列采样，假设样本有 $M$ 个特征（即训练集有 $M$ 列），那么该算法在每次决策树的节点要分裂的时候，随机选择其中 $m$ 个特征作为考察的特征子集（即只在这 $m$ 个特征之中选出最优特征作为分裂决策，而不是像传统决策树那样考察全部特征）。满足 $m &laquo; M$ ，即每次随机选择的子特征集的大小应远小于总特征集的大小，一般情况下推荐取 $m=log_2(M)$。
+行采样的目的是 “用有限数据模拟无限数据”，而列采样的目的是使每个决策树专注于一小部分特征的学习，使其成为各自的 “窄领域专家”，当最终把这些 “擅长于不同领域的专家” 组合到一起时，就可以大大减少 “所有专家犯同样错误” 的可能，也即过拟合的可能。
+2、完全分裂
+因为有了上一步采样的过程，最终分类器的过拟合现象基本不可能发生，因此在学习各个决策树的时候就按照完全分裂的方式来构造，无须剪枝。如在执行分类任务时，分裂的决策依据就可以选择常规决策树的生成算法的决策依据，如 ID3 算法的信息增益等。
+3、执行决策
+当学习完成，得到 $S$ 个彼此独立的决策树后，就可以把这些决策树组合在一起，作为最终的分类器。组合的方式是常规 bagging 方式，即在对预测输出进行结合时，让各个分类器分别执行预测，得到 $S$ 个预测结果，如果预测任务是分类任务则使用投票法选择票数最多的那个类别返回，如果是回归任务则使用均值法取这些预测结果的均值返回。
+二、梯度提升树（Gradient boosting decision tree，GBDT）
+梯度提升树是 boosting 提升方法中的一种。它的提出是为了解决 “回归提升树在使用一般损失函数的时候，求解目标函数时每一步的优化比较困难” 这一问题。之前学习的回归提升树在使用前向分步算法求解目标函数时，使用的损失函数是指数函数，每一步的优化很简单。但如果要扩展到一般的损失函数，就不那么容易了。因此 Freidman 提出了梯度提升（gradient boosting）算法，利用最速下降法的近似方法，其关键是利用损失函数的负梯度在当前模型的值作为回归提升树中的残差的近似值，来拟合一个回归树。
+梯度提升算法：
+输入：训练数据集 $T$，输入空间 $X$，输出空间 $Y$，损失函数 $L(y,f(x))$ 输出：回归提升树 $f_M(x)$
+1、初始化
+$$f_0(x)=argmin\sum_{i=1}^{N}L(y_i,c)$$" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://utopizza.github.io/2017-12-05-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-randomforest%E4%B8%8Egbdt/" />
+<meta property="og:image" content="https://utopizza.github.io/logo.png"/>
+<meta property="article:published_time" content="2017-12-05T11:40:00+00:00" />
+<meta property="article:modified_time" content="2017-12-05T11:40:00+00:00" />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://utopizza.github.io/logo.png"/>
+
+<meta name="twitter:title" content="RandomForest与GBDT"/>
+<meta name="twitter:description" content="一、随机森林（RandomForest）
+前面学习过了 bagging 方法，我们知道该方法是通过有放回随机抽样来构建 $S$ 个和原数据集大小相等的训练集，然后分别进行训练，得到 $S$ 个分类器，再把这些分类器通过多数表决的方式组合得到最终的分类器。
+随机森林算法正是 bagging 方法的一种扩展。随机森林算法不仅对训练集的样本（行）进行抽样，而且对训练集的特征（列）也进行抽样。具体来说，随机森林分为三个步骤：
+1、随机采样
+对于行采样，使用有放回随机采样，和常规 bagging 方法一致，前面已经介绍过，此处不再赘述。
+对于列采样，假设样本有 $M$ 个特征（即训练集有 $M$ 列），那么该算法在每次决策树的节点要分裂的时候，随机选择其中 $m$ 个特征作为考察的特征子集（即只在这 $m$ 个特征之中选出最优特征作为分裂决策，而不是像传统决策树那样考察全部特征）。满足 $m &laquo; M$ ，即每次随机选择的子特征集的大小应远小于总特征集的大小，一般情况下推荐取 $m=log_2(M)$。
+行采样的目的是 “用有限数据模拟无限数据”，而列采样的目的是使每个决策树专注于一小部分特征的学习，使其成为各自的 “窄领域专家”，当最终把这些 “擅长于不同领域的专家” 组合到一起时，就可以大大减少 “所有专家犯同样错误” 的可能，也即过拟合的可能。
+2、完全分裂
+因为有了上一步采样的过程，最终分类器的过拟合现象基本不可能发生，因此在学习各个决策树的时候就按照完全分裂的方式来构造，无须剪枝。如在执行分类任务时，分裂的决策依据就可以选择常规决策树的生成算法的决策依据，如 ID3 算法的信息增益等。
+3、执行决策
+当学习完成，得到 $S$ 个彼此独立的决策树后，就可以把这些决策树组合在一起，作为最终的分类器。组合的方式是常规 bagging 方式，即在对预测输出进行结合时，让各个分类器分别执行预测，得到 $S$ 个预测结果，如果预测任务是分类任务则使用投票法选择票数最多的那个类别返回，如果是回归任务则使用均值法取这些预测结果的均值返回。
+二、梯度提升树（Gradient boosting decision tree，GBDT）
+梯度提升树是 boosting 提升方法中的一种。它的提出是为了解决 “回归提升树在使用一般损失函数的时候，求解目标函数时每一步的优化比较困难” 这一问题。之前学习的回归提升树在使用前向分步算法求解目标函数时，使用的损失函数是指数函数，每一步的优化很简单。但如果要扩展到一般的损失函数，就不那么容易了。因此 Freidman 提出了梯度提升（gradient boosting）算法，利用最速下降法的近似方法，其关键是利用损失函数的负梯度在当前模型的值作为回归提升树中的残差的近似值，来拟合一个回归树。
+梯度提升算法：
+输入：训练数据集 $T$，输入空间 $X$，输出空间 $Y$，损失函数 $L(y,f(x))$ 输出：回归提升树 $f_M(x)$
+1、初始化
+$$f_0(x)=argmin\sum_{i=1}^{N}L(y_i,c)$$"/>
+<meta name="application-name" content="Utopizza">
+<meta name="apple-mobile-web-app-title" content="Utopizza"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://utopizza.github.io/2017-12-05-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-randomforest%E4%B8%8Egbdt/" /><link rel="prev" href="https://utopizza.github.io/2017-11-30-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-boosting%E4%B8%8Ebagging/" /><link rel="next" href="https://utopizza.github.io/2017-12-12-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92%E5%9C%A8%E6%A2%AF%E5%BA%A6%E6%8F%90%E5%8D%87%E6%A0%91%E4%B8%AD%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E7%9A%84%E6%A2%AF%E5%BA%A6%E6%8E%A8%E5%AF%BC/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "RandomForest与GBDT",
+        "inLanguage": "en",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https:\/\/utopizza.github.io\/2017-12-05-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-randomforest%E4%B8%8Egbdt\/"
+        },"image": {
+                "@type": "ImageObject",
+                "url": "https:\/\/utopizza.github.io\/cover.png",
+                "width":  800 ,
+                "height":  600 
+            },"genre": "posts","wordcount":  122 ,
+        "url": "https:\/\/utopizza.github.io\/2017-12-05-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-randomforest%E4%B8%8Egbdt\/","datePublished": "2017-12-05T11:40:00+00:00","dateModified": "2017-12-05T11:40:00+00:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+                "@type": "Organization",
+                "name": "",
+                "logo": {
+                "@type": "ImageObject",
+                "url": "https:\/\/utopizza.github.io\/logo.png",
+                "width":  127 ,
+                "height":  40 
+                }
+            },"author": {
+                "@type": "Person",
+                "name": "yusheng"
+            },"description": ""
+    }
+    </script></head>
+    <body><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="Utopizza"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>Utopizza</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> Posts </a><a class="menu-item" href="/categories/"> Categories </a><a class="menu-item" href="https://github.com/utopizza" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i>  </a><span class="menu-item delimiter"></span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="Utopizza"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>Utopizza</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><a class="menu-item" href="/posts/" title="">Posts</a><a class="menu-item" href="/categories/" title="">Categories</a><a class="menu-item" href="https://github.com/utopizza" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i></a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">RandomForest与GBDT</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;
+                    <span class="post-category">included in<a href="/categories/machinelearning/">
+                                <i class="far fa-folder fa-fw"></i>MachineLearning
+                            </a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i><time datetime=2017-12-05>2017-12-05</time>&nbsp;
+                <i class="fas fa-pencil-alt fa-fw"></i>about 122 words&nbsp;
+                <i class="far fa-clock fa-fw"></i>1 min&nbsp;</div>
+        </div><div class="details toc" id="toc-static">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents"></nav></div>
+            </div><div class="content" id="content"><p>一、随机森林（RandomForest）</p>
+<p>前面学习过了 bagging 方法，我们知道该方法是通过<strong>有放回随机抽样</strong>来构建 $S$ 个和原数据集大小相等的训练集，然后分别进行训练，得到 $S$ 个分类器，再把这些分类器通过多数表决的方式组合得到最终的分类器。</p>
+<p>随机森林算法正是 bagging 方法的一种扩展。随机森林算法不仅对训练集的样本（行）进行抽样，而且对训练集的特征（列）也进行抽样。具体来说，随机森林分为三个步骤：</p>
+<p>1、随机采样</p>
+<p>对于行采样，使用有放回随机采样，和常规 bagging 方法一致，前面已经介绍过，此处不再赘述。</p>
+<p>对于列采样，假设样本有 $M$ 个特征（即训练集有 $M$ 列），那么该算法在每次决策树的节点要分裂的时候，随机选择其中 $m$ 个特征作为考察的特征子集（即只在这 $m$ 个特征之中选出最优特征作为分裂决策，而不是像传统决策树那样考察全部特征）。满足 $m &laquo; M$ ，即每次随机选择的子特征集的大小应远小于总特征集的大小，一般情况下推荐取 $m=log_2(M)$。</p>
+<p>行采样的目的是 “用有限数据模拟无限数据”，而列采样的目的是使每个决策树专注于一小部分特征的学习，使其成为各自的 “窄领域专家”，当最终把这些 “擅长于不同领域的专家” 组合到一起时，就可以大大减少 “所有专家犯同样错误” 的可能，也即过拟合的可能。</p>
+<p>2、完全分裂</p>
+<p>因为有了上一步采样的过程，最终分类器的过拟合现象基本不可能发生，因此在学习各个决策树的时候就按照完全分裂的方式来构造，无须剪枝。如在执行分类任务时，分裂的决策依据就可以选择常规决策树的生成算法的决策依据，如 ID3 算法的信息增益等。</p>
+<p>3、执行决策</p>
+<p>当学习完成，得到 $S$ 个彼此独立的决策树后，就可以把这些决策树组合在一起，作为最终的分类器。组合的方式是常规 bagging 方式，即在对预测输出进行结合时，让各个分类器分别执行预测，得到 $S$ 个预测结果，如果预测任务是分类任务则使用投票法选择票数最多的那个类别返回，如果是回归任务则使用均值法取这些预测结果的均值返回。</p>
+<p>二、梯度提升树（Gradient boosting decision tree，GBDT）</p>
+<p>梯度提升树是 boosting 提升方法中的一种。它的提出是为了解决 “回归提升树在使用一般损失函数的时候，求解目标函数时每一步的优化比较困难” 这一问题。之前学习的回归提升树在使用<strong>前向分步算法</strong>求解目标函数时，使用的损失函数是指数函数，每一步的优化很简单。但如果要扩展到一般的损失函数，就不那么容易了。因此 Freidman 提出了梯度提升（gradient boosting）算法，利用最速下降法的近似方法，其关键是利用损失函数的负梯度在当前模型的值作为回归提升树中的残差的近似值，来拟合一个回归树。</p>
+<p>梯度提升算法：</p>
+<p>输入：训练数据集 $T$，输入空间 $X$，输出空间 $Y$，损失函数 $L(y,f(x))$
+输出：回归提升树 $f_M(x)$</p>
+<p>1、初始化</p>
+<p>$$f_0(x)=argmin\sum_{i=1}^{N}L(y_i,c)$$</p>
+<p>2、对 $M$ 个分类器，进行对应的第 $m=1,2,\cdots,M$ 轮学习。对第 $m$ 轮学习：</p>
+<p>(1)、计算</p>
+<p>$$r_{mi}=-\left[ \frac{\partial L(y_i,f(x_i))}{\partial f(x_i)} \right]_{f(x)=f_{m-1}(x)}$$</p>
+<p>(2)、拟合 $r_{mi}$，得到第 $m$ 个回归树的叶结点区域 $R_{mj}$，$j=1,2,\cdots,J$</p>
+<p>(3)、对 $j=1,2,\cdots,J$，计算</p>
+<p>$$c_{mj}=argmin\sum_{x_i \in R_{mj}} L(y_i,f(x_i)+c)$$</p>
+<p>(4)、更新</p>
+<p>$$f_m(x)=f_{m-1}(x)+\sum_{j=1}^{J}c_{mj}I(x \in R_{mj})$$</p>
+<p>3、执行完 $M$ 轮学习后，得到最终的回归提升树</p>
+<p>$$f_M(x)=\sum_{m=1}^{M}\sum_{j=1}^{J}c_{mj}I(x \in R_{mj})$$</p>
+<p>目前比较流行的 GBDT 算法实现有两个，分别是陈天奇的 xgboost（eXtreme Gradient Boosting） 和 微软的 lightGBM。关于两者的详细分析对比看<a href="https://zhuanlan.zhihu.com/p/24498293" target="_blank" rel="noopener noreffer">这里</a>。</p>
+<p>参考：</p>
+<ol>
+<li><a href="http://blog.csdn.net/holybin/article/details/25653597" target="_blank" rel="noopener noreffer">机器学习中的算法：决策树模型组合之随机森林（Random Forest）</a></li>
+<li><a href="http://blog.csdn.net/flying_sfeng/article/details/64133822" target="_blank" rel="noopener noreffer">随机森林的原理分析及Python代码实现</a></li>
+<li>《统计学习方法》李航</li>
+<li><a href="http://www.jianshu.com/p/005a4e6ac775" target="_blank" rel="noopener noreffer">GBDT：梯度提升决策树</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/24498293" target="_blank" rel="noopener noreffer">XGBoost, LightGBM性能大对比</a></li>
+<li>《机器学习》周志华</li>
+</ol>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>The article was updated on 2017-12-05</span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span>
+                            <a class="link-to-markdown" href="/2017-12-05-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-randomforest%E4%B8%8Egbdt/index.md" target="_blank">Read Markdown</a>
+                        </span></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="https://utopizza.github.io/2017-12-05-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-randomforest%E4%B8%8Egbdt/" data-title="RandomForest与GBDT"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://utopizza.github.io/2017-12-05-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-randomforest%E4%B8%8Egbdt/"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="Share on WhatsApp" data-sharer="whatsapp" data-url="https://utopizza.github.io/2017-12-05-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-randomforest%E4%B8%8Egbdt/" data-title="RandomForest与GBDT" data-web><i class="fab fa-whatsapp fa-fw"></i></a><a href="javascript:void(0);" title="Share on Line" data-sharer="line" data-url="https://utopizza.github.io/2017-12-05-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-randomforest%E4%B8%8Egbdt/" data-title="RandomForest与GBDT"><i class="fab fa-line fa-fw"></i></a><a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="https://utopizza.github.io/2017-12-05-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-randomforest%E4%B8%8Egbdt/" data-title="RandomForest与GBDT"><i class="fab fa-weibo fa-fw"></i></a><a href="javascript:void(0);" title="Share on Myspace" data-sharer="myspace" data-url="https://utopizza.github.io/2017-12-05-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-randomforest%E4%B8%8Egbdt/" data-title="RandomForest与GBDT" data-description=""><i data-svg-src="/lib/simple-icons/icons/myspace.min.svg"></i></a><a href="javascript:void(0);" title="Share on Blogger" data-sharer="blogger" data-url="https://utopizza.github.io/2017-12-05-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-randomforest%E4%B8%8Egbdt/" data-title="RandomForest与GBDT" data-description=""><i class="fab fa-blogger fa-fw"></i></a><a href="javascript:void(0);" title="Share on Evernote" data-sharer="evernote" data-url="https://utopizza.github.io/2017-12-05-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-randomforest%E4%B8%8Egbdt/" data-title="RandomForest与GBDT"><i class="fab fa-evernote fa-fw"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/2017-11-30-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-boosting%E4%B8%8Ebagging/" class="prev" rel="prev" title="boosting与bagging"><i class="fas fa-angle-left fa-fw"></i>boosting与bagging</a>
+            <a href="/2017-12-12-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92%E5%9C%A8%E6%A2%AF%E5%BA%A6%E6%8F%90%E5%8D%87%E6%A0%91%E4%B8%AD%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E7%9A%84%E6%A2%AF%E5%BA%A6%E6%8E%A8%E5%AF%BC/" class="next" rel="next" title="逻辑回归在梯度提升树中损失函数的梯度推导">逻辑回归在梯度提升树中损失函数的梯度推导<i class="fas fa-angle-right fa-fw"></i></a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.69.2">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.6"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2020</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">yusheng</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><link rel="stylesheet" href="/lib/katex/katex.min.css"><link rel="stylesheet" href="/lib/katex/copy-tex.min.css"><script type="text/javascript">
+    window.config = {"code":{"copyTitle":"Copy to clipboard","maxShownLines":100},"comment":{},"headerMode":{"desktop":"fixed","mobile":"auto"},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false}};
+</script><script type="text/javascript" src="https://polyfill.io/v3/polyfill.min.js?features=html5shiv%2CElement.prototype.closest%2CrequestAnimationFrame%2CCustomEvent%2CPromise%2CObject.entries%2CObject.assign%2CObject.values%2Cfetch%2CElement.prototype.after%2CArray.prototype.fill%2CIntersectionObserver%2CArray.from%2CArray.prototype.find%2CMath.sign"></script><script type="text/javascript" src="/lib/smooth-scroll/smooth-scroll.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/object-fit-images/ofi.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="/lib/sharer/sharer.min.js"></script><script type="text/javascript" src="/lib/katex/katex.min.js"></script><script type="text/javascript" src="/lib/katex/auto-render.min.js"></script><script type="text/javascript" src="/lib/katex/copy-tex.min.js"></script><script type="text/javascript" src="/lib/katex/mhchem.min.js"></script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>

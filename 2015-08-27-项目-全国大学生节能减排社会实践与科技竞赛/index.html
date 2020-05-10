@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>全国大学生节能减排社会实践与科技竞赛 - Utopizza</title>
+        <meta name="Description" content="About LoveIt Theme"><meta property="og:title" content="全国大学生节能减排社会实践与科技竞赛" />
+<meta property="og:description" content="一、简介
+参赛作品是《面向物联网的无线无源风速仪》，设计一种面向物联网的无线无源小型三杯式风速仪，其工作原理是： (1) 无源：在有风时通过一个内置的小型发电装置，捕获风能，转化为电能供应自身工作，在无风时使用后备电源。为节省电源，大部分时间处于休眠状态，除非被上位机唤醒进行数据交互； (2) 无线：使用zigbee无线通讯模块，与上位机进行通信。
+其中我实现的部分是上位机软件，主要功能：定时向串口发送数据采集命令，然后从串口读取风速仪返回的风速值，显示到屏幕上。
+二、上位机软件的实现
+我用 WinForm &#43; MS.Chart 的方式来实现，用 WinForm 来制作窗体，用 MS.Chart 来实现风速值的实时显示。上位机的采集数据的过程包括：定时、读写串口、CRC校验、字符串和十六进制等的数值转换、更新图形界面、监控报警最大风速值等。关键代码：
+初始化
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16  //用于更新图形化界面的事件委托 delegate void UpdateTextEventHandler_experimental(List&lt;double&gt; experimentalWSList); UpdateTextEventHandler_experimental updateTextEventHandler_experimental; delegate void UpdateChartEventHandler_experimental(string experimentalWSstr); UpdateChartEventHandler_experimental updateChartEventHandler_experimental; //初始化串口 public void InitCOM_experimental(string PortName) { experimentalPort = new SerialPort(PortName); experimentalPort.BaudRate = 9600;//波特率 experimentalPort.Parity = Parity.None;//无奇偶校验位 experimentalPort.StopBits = StopBits.One;//一个停止位 experimentalPort.DataBits = 8;//8位数据位 experimentalPort." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://utopizza.github.io/2015-08-27-%E9%A1%B9%E7%9B%AE-%E5%85%A8%E5%9B%BD%E5%A4%A7%E5%AD%A6%E7%94%9F%E8%8A%82%E8%83%BD%E5%87%8F%E6%8E%92%E7%A4%BE%E4%BC%9A%E5%AE%9E%E8%B7%B5%E4%B8%8E%E7%A7%91%E6%8A%80%E7%AB%9E%E8%B5%9B/" />
+<meta property="og:image" content="https://utopizza.github.io/logo.png"/>
+<meta property="article:published_time" content="2015-08-27T09:15:33+00:00" />
+<meta property="article:modified_time" content="2015-08-27T09:15:33+00:00" />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://utopizza.github.io/logo.png"/>
+
+<meta name="twitter:title" content="全国大学生节能减排社会实践与科技竞赛"/>
+<meta name="twitter:description" content="一、简介
+参赛作品是《面向物联网的无线无源风速仪》，设计一种面向物联网的无线无源小型三杯式风速仪，其工作原理是： (1) 无源：在有风时通过一个内置的小型发电装置，捕获风能，转化为电能供应自身工作，在无风时使用后备电源。为节省电源，大部分时间处于休眠状态，除非被上位机唤醒进行数据交互； (2) 无线：使用zigbee无线通讯模块，与上位机进行通信。
+其中我实现的部分是上位机软件，主要功能：定时向串口发送数据采集命令，然后从串口读取风速仪返回的风速值，显示到屏幕上。
+二、上位机软件的实现
+我用 WinForm &#43; MS.Chart 的方式来实现，用 WinForm 来制作窗体，用 MS.Chart 来实现风速值的实时显示。上位机的采集数据的过程包括：定时、读写串口、CRC校验、字符串和十六进制等的数值转换、更新图形界面、监控报警最大风速值等。关键代码：
+初始化
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16  //用于更新图形化界面的事件委托 delegate void UpdateTextEventHandler_experimental(List&lt;double&gt; experimentalWSList); UpdateTextEventHandler_experimental updateTextEventHandler_experimental; delegate void UpdateChartEventHandler_experimental(string experimentalWSstr); UpdateChartEventHandler_experimental updateChartEventHandler_experimental; //初始化串口 public void InitCOM_experimental(string PortName) { experimentalPort = new SerialPort(PortName); experimentalPort.BaudRate = 9600;//波特率 experimentalPort.Parity = Parity.None;//无奇偶校验位 experimentalPort.StopBits = StopBits.One;//一个停止位 experimentalPort.DataBits = 8;//8位数据位 experimentalPort."/>
+<meta name="application-name" content="Utopizza">
+<meta name="apple-mobile-web-app-title" content="Utopizza"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://utopizza.github.io/2015-08-27-%E9%A1%B9%E7%9B%AE-%E5%85%A8%E5%9B%BD%E5%A4%A7%E5%AD%A6%E7%94%9F%E8%8A%82%E8%83%BD%E5%87%8F%E6%8E%92%E7%A4%BE%E4%BC%9A%E5%AE%9E%E8%B7%B5%E4%B8%8E%E7%A7%91%E6%8A%80%E7%AB%9E%E8%B5%9B/" /><link rel="prev" href="https://utopizza.github.io/2015-05-28-%E9%A1%B9%E7%9B%AE-%E6%8C%91%E6%88%98%E6%9D%AF%E6%B2%B3%E5%8C%97%E7%9C%81%E5%A4%A7%E5%AD%A6%E7%94%9F%E8%AF%BE%E5%A4%96%E5%AD%A6%E6%9C%AF%E7%A7%91%E6%8A%80%E4%BD%9C%E5%93%81%E7%AB%9E%E8%B5%9B/" /><link rel="next" href="https://utopizza.github.io/2015-10-14-%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B010/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "全国大学生节能减排社会实践与科技竞赛",
+        "inLanguage": "en",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https:\/\/utopizza.github.io\/2015-08-27-%E9%A1%B9%E7%9B%AE-%E5%85%A8%E5%9B%BD%E5%A4%A7%E5%AD%A6%E7%94%9F%E8%8A%82%E8%83%BD%E5%87%8F%E6%8E%92%E7%A4%BE%E4%BC%9A%E5%AE%9E%E8%B7%B5%E4%B8%8E%E7%A7%91%E6%8A%80%E7%AB%9E%E8%B5%9B\/"
+        },"image": {
+                "@type": "ImageObject",
+                "url": "https:\/\/utopizza.github.io\/cover.png",
+                "width":  800 ,
+                "height":  600 
+            },"genre": "posts","wordcount":  427 ,
+        "url": "https:\/\/utopizza.github.io\/2015-08-27-%E9%A1%B9%E7%9B%AE-%E5%85%A8%E5%9B%BD%E5%A4%A7%E5%AD%A6%E7%94%9F%E8%8A%82%E8%83%BD%E5%87%8F%E6%8E%92%E7%A4%BE%E4%BC%9A%E5%AE%9E%E8%B7%B5%E4%B8%8E%E7%A7%91%E6%8A%80%E7%AB%9E%E8%B5%9B\/","datePublished": "2015-08-27T09:15:33+00:00","dateModified": "2015-08-27T09:15:33+00:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+                "@type": "Organization",
+                "name": "",
+                "logo": {
+                "@type": "ImageObject",
+                "url": "https:\/\/utopizza.github.io\/logo.png",
+                "width":  127 ,
+                "height":  40 
+                }
+            },"author": {
+                "@type": "Person",
+                "name": "yusheng"
+            },"description": ""
+    }
+    </script></head>
+    <body><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="Utopizza"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>Utopizza</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> Posts </a><a class="menu-item" href="/categories/"> Categories </a><a class="menu-item" href="https://github.com/utopizza" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i>  </a><span class="menu-item delimiter"></span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="Utopizza"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>Utopizza</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><a class="menu-item" href="/posts/" title="">Posts</a><a class="menu-item" href="/categories/" title="">Categories</a><a class="menu-item" href="https://github.com/utopizza" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i></a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">全国大学生节能减排社会实践与科技竞赛</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;
+                    <span class="post-category">included in<a href="/categories/projects/">
+                                <i class="far fa-folder fa-fw"></i>Projects
+                            </a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i><time datetime=2015-08-27>2015-08-27</time>&nbsp;
+                <i class="fas fa-pencil-alt fa-fw"></i>about 427 words&nbsp;
+                <i class="far fa-clock fa-fw"></i>3 min&nbsp;</div>
+        </div><div class="details toc" id="toc-static">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents"></nav></div>
+            </div><div class="content" id="content"><p>一、简介</p>
+<p>参赛作品是《面向物联网的无线无源风速仪》，设计一种面向物联网的无线无源小型三杯式风速仪，其工作原理是：
+(1) 无源：在有风时通过一个内置的小型发电装置，捕获风能，转化为电能供应自身工作，在无风时使用后备电源。为节省电源，大部分时间处于休眠状态，除非被上位机唤醒进行数据交互；
+(2) 无线：使用zigbee无线通讯模块，与上位机进行通信。</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="/2015-08-27-%e9%a1%b9%e7%9b%ae-%e5%85%a8%e5%9b%bd%e5%a4%a7%e5%ad%a6%e7%94%9f%e8%8a%82%e8%83%bd%e5%87%8f%e6%8e%92%e7%a4%be%e4%bc%9a%e5%ae%9e%e8%b7%b5%e4%b8%8e%e7%a7%91%e6%8a%80%e7%ab%9e%e8%b5%9b/%e8%a3%85%e7%bd%ae%e5%ae%9e%e7%89%a9.png"
+        data-srcset="/2015-08-27-%e9%a1%b9%e7%9b%ae-%e5%85%a8%e5%9b%bd%e5%a4%a7%e5%ad%a6%e7%94%9f%e8%8a%82%e8%83%bd%e5%87%8f%e6%8e%92%e7%a4%be%e4%bc%9a%e5%ae%9e%e8%b7%b5%e4%b8%8e%e7%a7%91%e6%8a%80%e7%ab%9e%e8%b5%9b/%e8%a3%85%e7%bd%ae%e5%ae%9e%e7%89%a9.png, /2015-08-27-%e9%a1%b9%e7%9b%ae-%e5%85%a8%e5%9b%bd%e5%a4%a7%e5%ad%a6%e7%94%9f%e8%8a%82%e8%83%bd%e5%87%8f%e6%8e%92%e7%a4%be%e4%bc%9a%e5%ae%9e%e8%b7%b5%e4%b8%8e%e7%a7%91%e6%8a%80%e7%ab%9e%e8%b5%9b/%e8%a3%85%e7%bd%ae%e5%ae%9e%e7%89%a9.png 1.5x, /2015-08-27-%e9%a1%b9%e7%9b%ae-%e5%85%a8%e5%9b%bd%e5%a4%a7%e5%ad%a6%e7%94%9f%e8%8a%82%e8%83%bd%e5%87%8f%e6%8e%92%e7%a4%be%e4%bc%9a%e5%ae%9e%e8%b7%b5%e4%b8%8e%e7%a7%91%e6%8a%80%e7%ab%9e%e8%b5%9b/%e8%a3%85%e7%bd%ae%e5%ae%9e%e7%89%a9.png 2x"
+        data-sizes="auto"
+        alt="/2015-08-27-项目-全国大学生节能减排社会实践与科技竞赛/装置实物.png"
+        title="/2015-08-27-项目-全国大学生节能减排社会实践与科技竞赛/装置实物.png" /></p>
+<p>其中我实现的部分是上位机软件，主要功能：定时向串口发送数据采集命令，然后从串口读取风速仪返回的风速值，显示到屏幕上。</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="/2015-08-27-%e9%a1%b9%e7%9b%ae-%e5%85%a8%e5%9b%bd%e5%a4%a7%e5%ad%a6%e7%94%9f%e8%8a%82%e8%83%bd%e5%87%8f%e6%8e%92%e7%a4%be%e4%bc%9a%e5%ae%9e%e8%b7%b5%e4%b8%8e%e7%a7%91%e6%8a%80%e7%ab%9e%e8%b5%9b/%e4%b8%8a%e4%bd%8d%e6%9c%ba%e9%87%87%e9%9b%86%e9%a3%8e%e9%80%9f%e5%80%bc.png"
+        data-srcset="/2015-08-27-%e9%a1%b9%e7%9b%ae-%e5%85%a8%e5%9b%bd%e5%a4%a7%e5%ad%a6%e7%94%9f%e8%8a%82%e8%83%bd%e5%87%8f%e6%8e%92%e7%a4%be%e4%bc%9a%e5%ae%9e%e8%b7%b5%e4%b8%8e%e7%a7%91%e6%8a%80%e7%ab%9e%e8%b5%9b/%e4%b8%8a%e4%bd%8d%e6%9c%ba%e9%87%87%e9%9b%86%e9%a3%8e%e9%80%9f%e5%80%bc.png, /2015-08-27-%e9%a1%b9%e7%9b%ae-%e5%85%a8%e5%9b%bd%e5%a4%a7%e5%ad%a6%e7%94%9f%e8%8a%82%e8%83%bd%e5%87%8f%e6%8e%92%e7%a4%be%e4%bc%9a%e5%ae%9e%e8%b7%b5%e4%b8%8e%e7%a7%91%e6%8a%80%e7%ab%9e%e8%b5%9b/%e4%b8%8a%e4%bd%8d%e6%9c%ba%e9%87%87%e9%9b%86%e9%a3%8e%e9%80%9f%e5%80%bc.png 1.5x, /2015-08-27-%e9%a1%b9%e7%9b%ae-%e5%85%a8%e5%9b%bd%e5%a4%a7%e5%ad%a6%e7%94%9f%e8%8a%82%e8%83%bd%e5%87%8f%e6%8e%92%e7%a4%be%e4%bc%9a%e5%ae%9e%e8%b7%b5%e4%b8%8e%e7%a7%91%e6%8a%80%e7%ab%9e%e8%b5%9b/%e4%b8%8a%e4%bd%8d%e6%9c%ba%e9%87%87%e9%9b%86%e9%a3%8e%e9%80%9f%e5%80%bc.png 2x"
+        data-sizes="auto"
+        alt="/2015-08-27-项目-全国大学生节能减排社会实践与科技竞赛/上位机采集风速值.png"
+        title="/2015-08-27-项目-全国大学生节能减排社会实践与科技竞赛/上位机采集风速值.png" /></p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="/2015-08-27-%e9%a1%b9%e7%9b%ae-%e5%85%a8%e5%9b%bd%e5%a4%a7%e5%ad%a6%e7%94%9f%e8%8a%82%e8%83%bd%e5%87%8f%e6%8e%92%e7%a4%be%e4%bc%9a%e5%ae%9e%e8%b7%b5%e4%b8%8e%e7%a7%91%e6%8a%80%e7%ab%9e%e8%b5%9b/%e4%b8%8a%e4%bd%8d%e6%9c%ba%e8%bd%af%e4%bb%b6.jpg"
+        data-srcset="/2015-08-27-%e9%a1%b9%e7%9b%ae-%e5%85%a8%e5%9b%bd%e5%a4%a7%e5%ad%a6%e7%94%9f%e8%8a%82%e8%83%bd%e5%87%8f%e6%8e%92%e7%a4%be%e4%bc%9a%e5%ae%9e%e8%b7%b5%e4%b8%8e%e7%a7%91%e6%8a%80%e7%ab%9e%e8%b5%9b/%e4%b8%8a%e4%bd%8d%e6%9c%ba%e8%bd%af%e4%bb%b6.jpg, /2015-08-27-%e9%a1%b9%e7%9b%ae-%e5%85%a8%e5%9b%bd%e5%a4%a7%e5%ad%a6%e7%94%9f%e8%8a%82%e8%83%bd%e5%87%8f%e6%8e%92%e7%a4%be%e4%bc%9a%e5%ae%9e%e8%b7%b5%e4%b8%8e%e7%a7%91%e6%8a%80%e7%ab%9e%e8%b5%9b/%e4%b8%8a%e4%bd%8d%e6%9c%ba%e8%bd%af%e4%bb%b6.jpg 1.5x, /2015-08-27-%e9%a1%b9%e7%9b%ae-%e5%85%a8%e5%9b%bd%e5%a4%a7%e5%ad%a6%e7%94%9f%e8%8a%82%e8%83%bd%e5%87%8f%e6%8e%92%e7%a4%be%e4%bc%9a%e5%ae%9e%e8%b7%b5%e4%b8%8e%e7%a7%91%e6%8a%80%e7%ab%9e%e8%b5%9b/%e4%b8%8a%e4%bd%8d%e6%9c%ba%e8%bd%af%e4%bb%b6.jpg 2x"
+        data-sizes="auto"
+        alt="/2015-08-27-项目-全国大学生节能减排社会实践与科技竞赛/上位机软件.jpg"
+        title="/2015-08-27-项目-全国大学生节能减排社会实践与科技竞赛/上位机软件.jpg" /></p>
+<p>二、上位机软件的实现</p>
+<p>我用 WinForm + MS.Chart 的方式来实现，用 WinForm 来制作窗体，用 MS.Chart 来实现风速值的实时显示。上位机的采集数据的过程包括：定时、读写串口、CRC校验、字符串和十六进制等的数值转换、更新图形界面、监控报警最大风速值等。关键代码：</p>
+<p>初始化</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">//用于更新图形化界面的事件委托
+delegate void UpdateTextEventHandler_experimental(List&lt;double&gt; experimentalWSList);
+UpdateTextEventHandler_experimental updateTextEventHandler_experimental;
+delegate void UpdateChartEventHandler_experimental(string experimentalWSstr);
+UpdateChartEventHandler_experimental updateChartEventHandler_experimental;
+
+//初始化串口
+public void InitCOM_experimental(string PortName)
+{
+    experimentalPort = new SerialPort(PortName);
+    experimentalPort.BaudRate = 9600;//波特率
+    experimentalPort.Parity = Parity.None;//无奇偶校验位
+    experimentalPort.StopBits = StopBits.One;//一个停止位
+    experimentalPort.DataBits = 8;//8位数据位
+    experimentalPort.DataReceived += experimentalPort_DataReceived;//接收返回数据时触发的事件
+}
+</code></pre></td></tr></table>
+</div>
+</div><p>接收数据，更新图形化界面</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">//串口接收到风速仪返回数据时触发的事件
+private void experimentalPort_DataReceived(object sender, SerialDataReceivedEventArgs e)
+{
+    //读取缓冲区的数据，这里应该先处理读取的数据
+    int[] buffer = new int[7];
+    for (int i = 0; i &lt; buffer.Length; i++)
+    {
+        buffer[i] = experimentalPort.ReadByte();
+    }
+    double newWindSpeed = Convert.ToDouble(DataHandler_ExperimentalMachine(buffer));
+    speedWarnTest(newWindSpeed);
+    experimentalWSList.Add(newWindSpeed);
+
+    //更新Textbox
+    updateTextEventHandler_experimental = new UpdateTextEventHandler_experimental(UpdateTextBox_experimental);
+    this.Invoke(updateTextEventHandler_experimental, new List&lt;double&gt;[] { experimentalWSList });
+
+    //更新Chart
+    updateChartEventHandler_experimental = new UpdateChartEventHandler_experimental(UpdateChart_experimental);
+    this.Invoke(updateChartEventHandler_experimental, new string[] { newWindSpeed.ToString() });
+}
+</code></pre></td></tr></table>
+</div>
+</div><p>发送数据采集命令</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">//用于发送采集命令的定时器
+private void SendCommand_Timer()
+{
+    myTimer = new System.Timers.Timer();
+    myTimer.Elapsed += new ElapsedEventHandler(SendCommand_TimedEvent);
+    myTimer.AutoReset = true;
+    myTimer.Enabled = true;
+    myTimer.Interval = 1000;
+}
+
+//发送采集命令事件
+private void SendCommand_TimedEvent(object sender, System.Timers.ElapsedEventArgs e)
+{
+    SendCommand_ExperimentalMachine();
+}
+
+//发送采集命令具体操作：写数据到串口
+private void SendCommand_ExperimentalMachine()
+{
+    //ID 03 00 00 00 01 CR0 CR1；十六进制，ID为设备地址，CR0，CR1为CRC校验位，其他固定
+    byte[] commandByte = { 0x01, 0x03, 0x00, 0x00, 0x00, 0x01 }; //01 03 00 00 00 01 0A 84
+    byte[] commandByteCRC = CRC(commandByte, commandByte.Length);
+    experimentalPort.Write(commandByteCRC, 0, commandByteCRC.Length);
+}
+
+//实验机型CRC校验算法
+private byte[] CRC(byte[] byteArray, int datalen)
+{
+    byte CRC16Lo, CRC16Hi, CL, CH, SaveHi, SaveLo;
+    int i, Flag;
+    CRC16Lo = 0xFF;
+    CRC16Hi = 0xFF;
+    CL = 0x01;
+    CH = 0xA0;
+    for (i = 0; i &lt; datalen; i++)
+    {
+        CRC16Lo ^= byteArray[i];
+        for (Flag = 0; Flag &lt; 8; Flag++)
+        {
+            SaveHi = CRC16Hi;
+            SaveLo = CRC16Lo;
+            CRC16Hi &gt;&gt;= 1;
+            CRC16Lo &gt;&gt;= 1;
+            if ((SaveHi &amp; 0x01) == 0x01)
+            {
+                CRC16Lo |= 0x80;
+            }
+            if ((SaveLo &amp; 0x01) == 0x01)
+            {
+                CRC16Hi ^= CH;
+                CRC16Lo ^= CL;
+            }
+        }
+    }
+
+    byte[] newByteArray = new byte[datalen + 2];
+    for (int j = 0; j &lt; datalen; j++)
+    {
+        newByteArray[j] = byteArray[j];
+    }
+    newByteArray[datalen] = CRC16Lo;
+    newByteArray[datalen + 1] = CRC16Hi;
+    //return (CRC16Hi &lt;&lt; 8) | CRC16Lo;
+    return newByteArray;
+}
+</code></pre></td></tr></table>
+</div>
+</div><p>三、调试</p>
+<p>1 先使用虚拟串口，让COM1和COM2连接</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="/2015-08-27-%e9%a1%b9%e7%9b%ae-%e5%85%a8%e5%9b%bd%e5%a4%a7%e5%ad%a6%e7%94%9f%e8%8a%82%e8%83%bd%e5%87%8f%e6%8e%92%e7%a4%be%e4%bc%9a%e5%ae%9e%e8%b7%b5%e4%b8%8e%e7%a7%91%e6%8a%80%e7%ab%9e%e8%b5%9b/%e8%b0%83%e8%af%95-%e8%99%9a%e6%8b%9f%e4%b8%b2%e5%8f%a3.png"
+        data-srcset="/2015-08-27-%e9%a1%b9%e7%9b%ae-%e5%85%a8%e5%9b%bd%e5%a4%a7%e5%ad%a6%e7%94%9f%e8%8a%82%e8%83%bd%e5%87%8f%e6%8e%92%e7%a4%be%e4%bc%9a%e5%ae%9e%e8%b7%b5%e4%b8%8e%e7%a7%91%e6%8a%80%e7%ab%9e%e8%b5%9b/%e8%b0%83%e8%af%95-%e8%99%9a%e6%8b%9f%e4%b8%b2%e5%8f%a3.png, /2015-08-27-%e9%a1%b9%e7%9b%ae-%e5%85%a8%e5%9b%bd%e5%a4%a7%e5%ad%a6%e7%94%9f%e8%8a%82%e8%83%bd%e5%87%8f%e6%8e%92%e7%a4%be%e4%bc%9a%e5%ae%9e%e8%b7%b5%e4%b8%8e%e7%a7%91%e6%8a%80%e7%ab%9e%e8%b5%9b/%e8%b0%83%e8%af%95-%e8%99%9a%e6%8b%9f%e4%b8%b2%e5%8f%a3.png 1.5x, /2015-08-27-%e9%a1%b9%e7%9b%ae-%e5%85%a8%e5%9b%bd%e5%a4%a7%e5%ad%a6%e7%94%9f%e8%8a%82%e8%83%bd%e5%87%8f%e6%8e%92%e7%a4%be%e4%bc%9a%e5%ae%9e%e8%b7%b5%e4%b8%8e%e7%a7%91%e6%8a%80%e7%ab%9e%e8%b5%9b/%e8%b0%83%e8%af%95-%e8%99%9a%e6%8b%9f%e4%b8%b2%e5%8f%a3.png 2x"
+        data-sizes="auto"
+        alt="/2015-08-27-项目-全国大学生节能减排社会实践与科技竞赛/调试-虚拟串口.png"
+        title="/2015-08-27-项目-全国大学生节能减排社会实践与科技竞赛/调试-虚拟串口.png" /></p>
+<p>2 打开串口助手，连接COM1，模拟风速仪</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="/2015-08-27-%e9%a1%b9%e7%9b%ae-%e5%85%a8%e5%9b%bd%e5%a4%a7%e5%ad%a6%e7%94%9f%e8%8a%82%e8%83%bd%e5%87%8f%e6%8e%92%e7%a4%be%e4%bc%9a%e5%ae%9e%e8%b7%b5%e4%b8%8e%e7%a7%91%e6%8a%80%e7%ab%9e%e8%b5%9b/%e8%b0%83%e8%af%95-%e4%b8%b2%e5%8f%a3%e5%8a%a9%e6%89%8b.png"
+        data-srcset="/2015-08-27-%e9%a1%b9%e7%9b%ae-%e5%85%a8%e5%9b%bd%e5%a4%a7%e5%ad%a6%e7%94%9f%e8%8a%82%e8%83%bd%e5%87%8f%e6%8e%92%e7%a4%be%e4%bc%9a%e5%ae%9e%e8%b7%b5%e4%b8%8e%e7%a7%91%e6%8a%80%e7%ab%9e%e8%b5%9b/%e8%b0%83%e8%af%95-%e4%b8%b2%e5%8f%a3%e5%8a%a9%e6%89%8b.png, /2015-08-27-%e9%a1%b9%e7%9b%ae-%e5%85%a8%e5%9b%bd%e5%a4%a7%e5%ad%a6%e7%94%9f%e8%8a%82%e8%83%bd%e5%87%8f%e6%8e%92%e7%a4%be%e4%bc%9a%e5%ae%9e%e8%b7%b5%e4%b8%8e%e7%a7%91%e6%8a%80%e7%ab%9e%e8%b5%9b/%e8%b0%83%e8%af%95-%e4%b8%b2%e5%8f%a3%e5%8a%a9%e6%89%8b.png 1.5x, /2015-08-27-%e9%a1%b9%e7%9b%ae-%e5%85%a8%e5%9b%bd%e5%a4%a7%e5%ad%a6%e7%94%9f%e8%8a%82%e8%83%bd%e5%87%8f%e6%8e%92%e7%a4%be%e4%bc%9a%e5%ae%9e%e8%b7%b5%e4%b8%8e%e7%a7%91%e6%8a%80%e7%ab%9e%e8%b5%9b/%e8%b0%83%e8%af%95-%e4%b8%b2%e5%8f%a3%e5%8a%a9%e6%89%8b.png 2x"
+        data-sizes="auto"
+        alt="/2015-08-27-项目-全国大学生节能减排社会实践与科技竞赛/调试-串口助手.png"
+        title="/2015-08-27-项目-全国大学生节能减排社会实践与科技竞赛/调试-串口助手.png" /></p>
+<p>3 启动上位机软件，连接COM2，测试数据采集命令的发送、风速值的采集和显示</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="/2015-08-27-%e9%a1%b9%e7%9b%ae-%e5%85%a8%e5%9b%bd%e5%a4%a7%e5%ad%a6%e7%94%9f%e8%8a%82%e8%83%bd%e5%87%8f%e6%8e%92%e7%a4%be%e4%bc%9a%e5%ae%9e%e8%b7%b5%e4%b8%8e%e7%a7%91%e6%8a%80%e7%ab%9e%e8%b5%9b/%e8%b0%83%e8%af%95-%e4%b8%8a%e4%bd%8d%e6%9c%ba%e8%bd%af%e4%bb%b6.png"
+        data-srcset="/2015-08-27-%e9%a1%b9%e7%9b%ae-%e5%85%a8%e5%9b%bd%e5%a4%a7%e5%ad%a6%e7%94%9f%e8%8a%82%e8%83%bd%e5%87%8f%e6%8e%92%e7%a4%be%e4%bc%9a%e5%ae%9e%e8%b7%b5%e4%b8%8e%e7%a7%91%e6%8a%80%e7%ab%9e%e8%b5%9b/%e8%b0%83%e8%af%95-%e4%b8%8a%e4%bd%8d%e6%9c%ba%e8%bd%af%e4%bb%b6.png, /2015-08-27-%e9%a1%b9%e7%9b%ae-%e5%85%a8%e5%9b%bd%e5%a4%a7%e5%ad%a6%e7%94%9f%e8%8a%82%e8%83%bd%e5%87%8f%e6%8e%92%e7%a4%be%e4%bc%9a%e5%ae%9e%e8%b7%b5%e4%b8%8e%e7%a7%91%e6%8a%80%e7%ab%9e%e8%b5%9b/%e8%b0%83%e8%af%95-%e4%b8%8a%e4%bd%8d%e6%9c%ba%e8%bd%af%e4%bb%b6.png 1.5x, /2015-08-27-%e9%a1%b9%e7%9b%ae-%e5%85%a8%e5%9b%bd%e5%a4%a7%e5%ad%a6%e7%94%9f%e8%8a%82%e8%83%bd%e5%87%8f%e6%8e%92%e7%a4%be%e4%bc%9a%e5%ae%9e%e8%b7%b5%e4%b8%8e%e7%a7%91%e6%8a%80%e7%ab%9e%e8%b5%9b/%e8%b0%83%e8%af%95-%e4%b8%8a%e4%bd%8d%e6%9c%ba%e8%bd%af%e4%bb%b6.png 2x"
+        data-sizes="auto"
+        alt="/2015-08-27-项目-全国大学生节能减排社会实践与科技竞赛/调试-上位机软件.png"
+        title="/2015-08-27-项目-全国大学生节能减排社会实践与科技竞赛/调试-上位机软件.png" /></p>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>The article was updated on 2015-08-27</span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span>
+                            <a class="link-to-markdown" href="/2015-08-27-%E9%A1%B9%E7%9B%AE-%E5%85%A8%E5%9B%BD%E5%A4%A7%E5%AD%A6%E7%94%9F%E8%8A%82%E8%83%BD%E5%87%8F%E6%8E%92%E7%A4%BE%E4%BC%9A%E5%AE%9E%E8%B7%B5%E4%B8%8E%E7%A7%91%E6%8A%80%E7%AB%9E%E8%B5%9B/index.md" target="_blank">Read Markdown</a>
+                        </span></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="https://utopizza.github.io/2015-08-27-%E9%A1%B9%E7%9B%AE-%E5%85%A8%E5%9B%BD%E5%A4%A7%E5%AD%A6%E7%94%9F%E8%8A%82%E8%83%BD%E5%87%8F%E6%8E%92%E7%A4%BE%E4%BC%9A%E5%AE%9E%E8%B7%B5%E4%B8%8E%E7%A7%91%E6%8A%80%E7%AB%9E%E8%B5%9B/" data-title="全国大学生节能减排社会实践与科技竞赛"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://utopizza.github.io/2015-08-27-%E9%A1%B9%E7%9B%AE-%E5%85%A8%E5%9B%BD%E5%A4%A7%E5%AD%A6%E7%94%9F%E8%8A%82%E8%83%BD%E5%87%8F%E6%8E%92%E7%A4%BE%E4%BC%9A%E5%AE%9E%E8%B7%B5%E4%B8%8E%E7%A7%91%E6%8A%80%E7%AB%9E%E8%B5%9B/"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="Share on WhatsApp" data-sharer="whatsapp" data-url="https://utopizza.github.io/2015-08-27-%E9%A1%B9%E7%9B%AE-%E5%85%A8%E5%9B%BD%E5%A4%A7%E5%AD%A6%E7%94%9F%E8%8A%82%E8%83%BD%E5%87%8F%E6%8E%92%E7%A4%BE%E4%BC%9A%E5%AE%9E%E8%B7%B5%E4%B8%8E%E7%A7%91%E6%8A%80%E7%AB%9E%E8%B5%9B/" data-title="全国大学生节能减排社会实践与科技竞赛" data-web><i class="fab fa-whatsapp fa-fw"></i></a><a href="javascript:void(0);" title="Share on Line" data-sharer="line" data-url="https://utopizza.github.io/2015-08-27-%E9%A1%B9%E7%9B%AE-%E5%85%A8%E5%9B%BD%E5%A4%A7%E5%AD%A6%E7%94%9F%E8%8A%82%E8%83%BD%E5%87%8F%E6%8E%92%E7%A4%BE%E4%BC%9A%E5%AE%9E%E8%B7%B5%E4%B8%8E%E7%A7%91%E6%8A%80%E7%AB%9E%E8%B5%9B/" data-title="全国大学生节能减排社会实践与科技竞赛"><i class="fab fa-line fa-fw"></i></a><a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="https://utopizza.github.io/2015-08-27-%E9%A1%B9%E7%9B%AE-%E5%85%A8%E5%9B%BD%E5%A4%A7%E5%AD%A6%E7%94%9F%E8%8A%82%E8%83%BD%E5%87%8F%E6%8E%92%E7%A4%BE%E4%BC%9A%E5%AE%9E%E8%B7%B5%E4%B8%8E%E7%A7%91%E6%8A%80%E7%AB%9E%E8%B5%9B/" data-title="全国大学生节能减排社会实践与科技竞赛"><i class="fab fa-weibo fa-fw"></i></a><a href="javascript:void(0);" title="Share on Myspace" data-sharer="myspace" data-url="https://utopizza.github.io/2015-08-27-%E9%A1%B9%E7%9B%AE-%E5%85%A8%E5%9B%BD%E5%A4%A7%E5%AD%A6%E7%94%9F%E8%8A%82%E8%83%BD%E5%87%8F%E6%8E%92%E7%A4%BE%E4%BC%9A%E5%AE%9E%E8%B7%B5%E4%B8%8E%E7%A7%91%E6%8A%80%E7%AB%9E%E8%B5%9B/" data-title="全国大学生节能减排社会实践与科技竞赛" data-description=""><i data-svg-src="/lib/simple-icons/icons/myspace.min.svg"></i></a><a href="javascript:void(0);" title="Share on Blogger" data-sharer="blogger" data-url="https://utopizza.github.io/2015-08-27-%E9%A1%B9%E7%9B%AE-%E5%85%A8%E5%9B%BD%E5%A4%A7%E5%AD%A6%E7%94%9F%E8%8A%82%E8%83%BD%E5%87%8F%E6%8E%92%E7%A4%BE%E4%BC%9A%E5%AE%9E%E8%B7%B5%E4%B8%8E%E7%A7%91%E6%8A%80%E7%AB%9E%E8%B5%9B/" data-title="全国大学生节能减排社会实践与科技竞赛" data-description=""><i class="fab fa-blogger fa-fw"></i></a><a href="javascript:void(0);" title="Share on Evernote" data-sharer="evernote" data-url="https://utopizza.github.io/2015-08-27-%E9%A1%B9%E7%9B%AE-%E5%85%A8%E5%9B%BD%E5%A4%A7%E5%AD%A6%E7%94%9F%E8%8A%82%E8%83%BD%E5%87%8F%E6%8E%92%E7%A4%BE%E4%BC%9A%E5%AE%9E%E8%B7%B5%E4%B8%8E%E7%A7%91%E6%8A%80%E7%AB%9E%E8%B5%9B/" data-title="全国大学生节能减排社会实践与科技竞赛"><i class="fab fa-evernote fa-fw"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/2015-05-28-%E9%A1%B9%E7%9B%AE-%E6%8C%91%E6%88%98%E6%9D%AF%E6%B2%B3%E5%8C%97%E7%9C%81%E5%A4%A7%E5%AD%A6%E7%94%9F%E8%AF%BE%E5%A4%96%E5%AD%A6%E6%9C%AF%E7%A7%91%E6%8A%80%E4%BD%9C%E5%93%81%E7%AB%9E%E8%B5%9B/" class="prev" rel="prev" title="挑战杯河北省大学生课外学术科技作品竞赛"><i class="fas fa-angle-left fa-fw"></i>挑战杯河北省大学生课外学术科技作品竞赛</a>
+            <a href="/2015-10-14-%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B010/" class="next" rel="next" title="技术笔记(10)-CentOS7部署">技术笔记(10)-CentOS7部署<i class="fas fa-angle-right fa-fw"></i></a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.69.2">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.6"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2020</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">yusheng</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><link rel="stylesheet" href="/lib/katex/katex.min.css"><link rel="stylesheet" href="/lib/katex/copy-tex.min.css"><script type="text/javascript">
+    window.config = {"code":{"copyTitle":"Copy to clipboard","maxShownLines":100},"comment":{},"headerMode":{"desktop":"fixed","mobile":"auto"},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false}};
+</script><script type="text/javascript" src="https://polyfill.io/v3/polyfill.min.js?features=html5shiv%2CElement.prototype.closest%2CrequestAnimationFrame%2CCustomEvent%2CPromise%2CObject.entries%2CObject.assign%2CObject.values%2Cfetch%2CElement.prototype.after%2CArray.prototype.fill%2CIntersectionObserver%2CArray.from%2CArray.prototype.find%2CMath.sign"></script><script type="text/javascript" src="/lib/smooth-scroll/smooth-scroll.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/object-fit-images/ofi.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="/lib/sharer/sharer.min.js"></script><script type="text/javascript" src="/lib/katex/katex.min.js"></script><script type="text/javascript" src="/lib/katex/auto-render.min.js"></script><script type="text/javascript" src="/lib/katex/copy-tex.min.js"></script><script type="text/javascript" src="/lib/katex/mhchem.min.js"></script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>

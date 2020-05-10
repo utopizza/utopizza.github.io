@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>技术笔记(2)-SQL语法小结 - Utopizza</title>
+        <meta name="Description" content="About LoveIt Theme"><meta property="og:title" content="技术笔记(2)-SQL语法小结" />
+<meta property="og:description" content="1、 Transact-SQL语言分类
+ 数据定义语言（DDL）：创建，删除，修改数据表，建立索引和约束，创建其他数据库对象等 数据操纵语言（DML）：查询，添加，删除，修改数据等 数据控制语言（DCL）：控制安全性的命令  2、数据类型：
+ 数值型：int,smallint,bigint,tinyint,bit,decimal,numeric,float,real 字符型：char,varchar,text 日期/时间型：datetime,smalldatetime 货币型：money,smallmoney 二进制型：binary,varbinary,image unicode型：nchar,nvarchar,ntext sql-variant型：混合型 table型：临时表 自定义型  3、标识符命名规则：
+ 规则标识符（符合标识符规则，不用分隔符） 分隔标识符（不符合标识符规则，必须包含在&rdquo; &ldquo;和内）  4、对象命名规则：服务器名&#43;数据库名&#43;所有者名&#43;对象名，如：sever.database.owner_name.object_name
+5、常量：见上数据类型
+6、变量：
+1 2 3 4 5 6 7 8 9 10  //声明 DECLARE @myint int，@mychar char(8) //赋值： SET @myint=10 SET @mychar=&#39;wang&#39; SELECT @myint=10，@mychar=&#39;wang&#39; //查询（即输出） SELECT @myint as myint   7、全局变量：系统预定好的变量，只读，如：@@ERROR，@@DBTS
+8、算术运算：&#43;，-，*，/，%
+9、逻辑运算：
+ and：仅当两个都为true时返回true or：仅当两个都为false时返回false not：对布尔表达式取反 all：如果全都为true，返回true any：如果有一个为true，返回true like：如果操作数与一种模式匹配，返回true in：如果操作数等于表达式列表中的一个，返回true  10、字符串连接符：&#43;" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://utopizza.github.io/2013-10-23-%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B02/" />
+<meta property="og:image" content="https://utopizza.github.io/logo.png"/>
+<meta property="article:published_time" content="2013-10-23T17:53:00+00:00" />
+<meta property="article:modified_time" content="2013-10-23T17:53:00+00:00" />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://utopizza.github.io/logo.png"/>
+
+<meta name="twitter:title" content="技术笔记(2)-SQL语法小结"/>
+<meta name="twitter:description" content="1、 Transact-SQL语言分类
+ 数据定义语言（DDL）：创建，删除，修改数据表，建立索引和约束，创建其他数据库对象等 数据操纵语言（DML）：查询，添加，删除，修改数据等 数据控制语言（DCL）：控制安全性的命令  2、数据类型：
+ 数值型：int,smallint,bigint,tinyint,bit,decimal,numeric,float,real 字符型：char,varchar,text 日期/时间型：datetime,smalldatetime 货币型：money,smallmoney 二进制型：binary,varbinary,image unicode型：nchar,nvarchar,ntext sql-variant型：混合型 table型：临时表 自定义型  3、标识符命名规则：
+ 规则标识符（符合标识符规则，不用分隔符） 分隔标识符（不符合标识符规则，必须包含在&rdquo; &ldquo;和内）  4、对象命名规则：服务器名&#43;数据库名&#43;所有者名&#43;对象名，如：sever.database.owner_name.object_name
+5、常量：见上数据类型
+6、变量：
+1 2 3 4 5 6 7 8 9 10  //声明 DECLARE @myint int，@mychar char(8) //赋值： SET @myint=10 SET @mychar=&#39;wang&#39; SELECT @myint=10，@mychar=&#39;wang&#39; //查询（即输出） SELECT @myint as myint   7、全局变量：系统预定好的变量，只读，如：@@ERROR，@@DBTS
+8、算术运算：&#43;，-，*，/，%
+9、逻辑运算：
+ and：仅当两个都为true时返回true or：仅当两个都为false时返回false not：对布尔表达式取反 all：如果全都为true，返回true any：如果有一个为true，返回true like：如果操作数与一种模式匹配，返回true in：如果操作数等于表达式列表中的一个，返回true  10、字符串连接符：&#43;"/>
+<meta name="application-name" content="Utopizza">
+<meta name="apple-mobile-web-app-title" content="Utopizza"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://utopizza.github.io/2013-10-23-%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B02/" /><link rel="prev" href="https://utopizza.github.io/2013-09-20-%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B01/" /><link rel="next" href="https://utopizza.github.io/2013-12-18-%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B03/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "技术笔记(2)-SQL语法小结",
+        "inLanguage": "en",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https:\/\/utopizza.github.io\/2013-10-23-%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B02\/"
+        },"image": {
+                "@type": "ImageObject",
+                "url": "https:\/\/utopizza.github.io\/cover.png",
+                "width":  800 ,
+                "height":  600 
+            },"genre": "posts","wordcount":  470 ,
+        "url": "https:\/\/utopizza.github.io\/2013-10-23-%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B02\/","datePublished": "2013-10-23T17:53:00+00:00","dateModified": "2013-10-23T17:53:00+00:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+                "@type": "Organization",
+                "name": "",
+                "logo": {
+                "@type": "ImageObject",
+                "url": "https:\/\/utopizza.github.io\/logo.png",
+                "width":  127 ,
+                "height":  40 
+                }
+            },"author": {
+                "@type": "Person",
+                "name": "yusheng"
+            },"description": ""
+    }
+    </script></head>
+    <body><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="Utopizza"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>Utopizza</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> Posts </a><a class="menu-item" href="/categories/"> Categories </a><a class="menu-item" href="https://github.com/utopizza" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i>  </a><span class="menu-item delimiter"></span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="Utopizza"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>Utopizza</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><a class="menu-item" href="/posts/" title="">Posts</a><a class="menu-item" href="/categories/" title="">Categories</a><a class="menu-item" href="https://github.com/utopizza" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i></a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">技术笔记(2)-SQL语法小结</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;
+                    <span class="post-category">included in<a href="/categories/technology/">
+                                <i class="far fa-folder fa-fw"></i>Technology
+                            </a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i><time datetime=2013-10-23>2013-10-23</time>&nbsp;
+                <i class="fas fa-pencil-alt fa-fw"></i>about 470 words&nbsp;
+                <i class="far fa-clock fa-fw"></i>3 min&nbsp;</div>
+        </div><div class="details toc" id="toc-static">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents"></nav></div>
+            </div><div class="content" id="content"><p>1、 Transact-SQL语言分类</p>
+<ul>
+<li>数据定义语言（DDL）：创建，删除，修改数据表，建立索引和约束，创建其他数据库对象等</li>
+<li>数据操纵语言（DML）：查询，添加，删除，修改数据等</li>
+<li>数据控制语言（DCL）：控制安全性的命令</li>
+</ul>
+<p>2、数据类型：</p>
+<ul>
+<li>数值型：int,smallint,bigint,tinyint,bit,decimal,numeric,float,real</li>
+<li>字符型：char,varchar,text</li>
+<li>日期/时间型：datetime,smalldatetime</li>
+<li>货币型：money,smallmoney</li>
+<li>二进制型：binary,varbinary,image</li>
+<li>unicode型：nchar,nvarchar,ntext</li>
+<li>sql-variant型：混合型</li>
+<li>table型：临时表</li>
+<li>自定义型</li>
+</ul>
+<p>3、标识符命名规则：</p>
+<ul>
+<li>规则标识符（符合标识符规则，不用分隔符）</li>
+<li>分隔标识符（不符合标识符规则，必须包含在&rdquo; &ldquo;和<i class="far fa-square fa-fw"></i> 内）</li>
+</ul>
+<p>4、对象命名规则：服务器名+数据库名+所有者名+对象名，如：sever.database.owner_name.object_name</p>
+<p>5、常量：见上数据类型</p>
+<p>6、变量：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">//声明
+DECLARE  @myint int，@mychar char(8)
+	  	           
+//赋值：
+SET  @myint=10  
+SET @mychar=&#39;wang&#39; 
+SELECT  @myint=10，@mychar=&#39;wang&#39;
+
+//查询（即输出）
+SELECT  @myint  as  myint
+</code></pre></td></tr></table>
+</div>
+</div><p>7、全局变量：系统预定好的变量，只读，如：@@ERROR，@@DBTS</p>
+<p>8、算术运算：+，-，*，/，%</p>
+<p>9、逻辑运算：</p>
+<ul>
+<li>and：仅当两个都为true时返回true</li>
+<li>or：仅当两个都为false时返回false</li>
+<li>not：对布尔表达式取反</li>
+<li>all：如果全都为true，返回true</li>
+<li>any：如果有一个为true，返回true</li>
+<li>like：如果操作数与一种模式匹配，返回true</li>
+<li>in：如果操作数等于表达式列表中的一个，返回true</li>
+</ul>
+<p>10、字符串连接符：+</p>
+<p>11、比较运算符：=，&lt;，&gt;，！=，&lt;=，&gt;=，&lt;&gt;（不等于）</p>
+<p>12、null与空判断：null为空值，即未知值（不是0或空字符），用操作符is来运算，而不是用比较运算符</p>
+<p>13、大对象处理：对ntext，text，image都是当作二进制大对象（BLOB）进行访问的，有专门的语句writetext，updatetext，readtext等来处理</p>
+<p>14、流程控制：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">declare @cal int
+select @cal=1
+while(@cal&lt;5)
+begin
+    select @cal=@cal+1
+end
+</code></pre></td></tr></table>
+</div>
+</div><p>15、select语句</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">select * from newstable  
+select ID,title,content from newstable  
+select content1 + &#39; , &#39; + content2 as content from newstable  
+select top 10 ID from newstable
+</code></pre></td></tr></table>
+</div>
+</div><p>16、where语句：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">select * from newstable where ID = 10
+</code></pre></td></tr></table>
+</div>
+</div><p>17、添加排序顺序：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">select * from newstable where caID = 10 order by createTime  
+select * from newstable where caID = 10 order by createTime desc
+</code></pre></td></tr></table>
+</div>
+</div><p>18、添加汇总信息：（聚合函数）</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">select AVG(ID) from newstable  返回newstable表的ID列的平均值
+select MAX(ID) from newstable  返回newstable表的ID列的最大值
+select MIN(ID) from newstable  返回newstable表的ID列的最小值
+select COUNT(ID) from newstable where ID&lt;10  
+select SUM(ID) from newstable where ID&lt;10  
+</code></pre></td></tr></table>
+</div>
+</div><p>19、group by语句：必须对不出现在聚合函数中的列使用该语句，否则报错。SQL要求，在含聚合函数的查询中，任何列名要么加入聚合函数中，要么包含在group by短语中</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">select SUM(ID),caID from newstable 
+// 必须改为
+select SUM(ID),caID from newstable group by caID
+</code></pre></td></tr></table>
+</div>
+</div><p>20、添加HAVING子句</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">select caID from newstable group by caID having min(ID)&gt;7
+</code></pre></td></tr></table>
+</div>
+</div><p>21、distinct：去除重复的值</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">select distinct caID from newstable
+</code></pre></td></tr></table>
+</div>
+</div><p>22、内连接：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">select * from table1 inner join table2 on table1.ID=table2.ID  返回table1和table2中所有满足table1.ID=table2.ID的行
+</code></pre></td></tr></table>
+</div>
+</div><p>23、外连接：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">select * from table1 left join table2 on table1.ID=table2.ID ;
+select * from table1 right join table2 on table1.ID=table2.ID
+</code></pre></td></tr></table>
+</div>
+</div><p>24、组合字段，建立新列</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">select ID * caID as ID_caID from newstable  
+</code></pre></td></tr></table>
+</div>
+</div><p>25、insert语句：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">insert into newstable(title,content) values(&#39;wang&#39;,&#39;yusheng&#39;) 
+insert into test select title,content,createTime from newstable where createTime&lt;GETDATE()
+</code></pre></td></tr></table>
+</div>
+</div><p>26、select into语句，利用已有表的字段创建新表（可作为临时表）：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">select newstable.title,content,createTime into test2 from newstable
+</code></pre></td></tr></table>
+</div>
+</div><p>27、update语句：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">update test set createTime=GETDATE(),content=&#39;abcdefg&#39; where ID=1
+update test2 set createTime=GETDATE() where title not like &#39;wang&#39;
+update test2 set content=&#39;update2&#39; where title in (&#39;wang&#39;,&#39;sheng&#39;)
+</code></pre></td></tr></table>
+</div>
+</div><p>28、delete语句：由于delete语句操作不可恢复，所以删除数据前最好用select into语句建立一个临时表来备份</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">delete from test where ID=1
+delete from test where ID in (select ID from test group by ID having sum(ID) &lt;3)
+</code></pre></td></tr></table>
+</div>
+</div><p>29、创建表：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">create table categorytable
+(
+  ID int identity(1,1) primary key , 
+  [name] varchar(20) not null default &#39;abcd&#39;
+  ...
+)
+</code></pre></td></tr></table>
+</div>
+</div><p>30、键：键是行标识符，能唯一的标识行和列。但键并不是独立的另一个列，它可以是表中任何一列或多个列组合来表达，但被定义为键的列不能有重复的项，必须保持其唯一性。</p>
+<p>31、主键：本表的行标识符</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">create table newtable(newText char(10) null primary key)
+</code></pre></td></tr></table>
+</div>
+</div><p>32、外键：外键是在另一个表中出现的主键的实例</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">create table newstable(newsID int references category(newsID))
+</code></pre></td></tr></table>
+</div>
+</div><p>33、数据规范化：设计一组表的过程叫规范化，目标是避免数据的冗余存储</p>
+<ul>
+<li>第一范式：列出所有要保存的数据项，并为他们建立列名称，并把相关的列组合到表中，对每个表建立一个主键</li>
+<li>第二范式：检查每一列，将完全依赖主键的列保留，将部分依赖主键的列移到另一个新表中重新组合</li>
+<li>第三范式：存在可传递关系的列从单一的表中除去，移到单独的表中</li>
+</ul>
+<p>34、添加索引：（数据库一般自动为表中的主键建立索引）</p>
+<ul>
+<li>唯一索引：不允许两行有相同的索引，不允许重复值，没有可以引用到多行的索引条目</li>
+<li>群集索引：在其内部排序的索引，并且按照索引排序结构规定了行的存储结构（存储顺序），每张表中只能有一个群集索引，索引要求唯一</li>
+<li>非群集索引：对表中的行生成索引但不改变他们的存储顺序，索引不要求唯一</li>
+</ul>
+<p>35、建立索引：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">create table newstable
+(
+    newsText char(6) null) primary key unique(唯一索引)
+    [或clustered(群集索引)，nonclustered(非群集索引)]
+)
+    
+create table newstable(...)
+create unique clustered index newsID_ind on newstable(newsID)
+</code></pre></td></tr></table>
+</div>
+</div><p>36、添加约束：约束可以是主键，外键的引用，或者是数据验证的规则</p>
+<p>37、更改表：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">alter table newstable add ID2 int null  
+alter table newstable drop column ID2  
+</code></pre></td></tr></table>
+</div>
+</div><p>38、删除表：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">drop table test
+</code></pre></td></tr></table>
+</div>
+</div><p>40、创建数据库：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">create database mydatabase
+</code></pre></td></tr></table>
+</div>
+</div><p>41、存储过程：存储在服务器上的查询过程称为存储过程</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">create procedure pro_test
+as
+	select ....
+	from test
+go
+</code></pre></td></tr></table>
+</div>
+</div><p>42、调用存储过程：
+(1) 在数据库中</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">exec  pro_test
+</code></pre></td></tr></table>
+</div>
+</div><p>(2) 在客户端得数据控件中：设定对象，命令对象发出exec语句</p>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>The article was updated on 2013-10-23</span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span>
+                            <a class="link-to-markdown" href="/2013-10-23-%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B02/index.md" target="_blank">Read Markdown</a>
+                        </span></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="https://utopizza.github.io/2013-10-23-%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B02/" data-title="技术笔记(2)-SQL语法小结"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://utopizza.github.io/2013-10-23-%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B02/"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="Share on WhatsApp" data-sharer="whatsapp" data-url="https://utopizza.github.io/2013-10-23-%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B02/" data-title="技术笔记(2)-SQL语法小结" data-web><i class="fab fa-whatsapp fa-fw"></i></a><a href="javascript:void(0);" title="Share on Line" data-sharer="line" data-url="https://utopizza.github.io/2013-10-23-%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B02/" data-title="技术笔记(2)-SQL语法小结"><i class="fab fa-line fa-fw"></i></a><a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="https://utopizza.github.io/2013-10-23-%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B02/" data-title="技术笔记(2)-SQL语法小结"><i class="fab fa-weibo fa-fw"></i></a><a href="javascript:void(0);" title="Share on Myspace" data-sharer="myspace" data-url="https://utopizza.github.io/2013-10-23-%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B02/" data-title="技术笔记(2)-SQL语法小结" data-description=""><i data-svg-src="/lib/simple-icons/icons/myspace.min.svg"></i></a><a href="javascript:void(0);" title="Share on Blogger" data-sharer="blogger" data-url="https://utopizza.github.io/2013-10-23-%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B02/" data-title="技术笔记(2)-SQL语法小结" data-description=""><i class="fab fa-blogger fa-fw"></i></a><a href="javascript:void(0);" title="Share on Evernote" data-sharer="evernote" data-url="https://utopizza.github.io/2013-10-23-%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B02/" data-title="技术笔记(2)-SQL语法小结"><i class="fab fa-evernote fa-fw"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/2013-09-20-%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B01/" class="prev" rel="prev" title="技术笔记(1)-C#语法小结"><i class="fas fa-angle-left fa-fw"></i>技术笔记(1)-C#语法小结</a>
+            <a href="/2013-12-18-%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B03/" class="next" rel="next" title="技术笔记(3)-C#连接数据库">技术笔记(3)-C#连接数据库<i class="fas fa-angle-right fa-fw"></i></a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.69.2">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.6"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2020</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">yusheng</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><link rel="stylesheet" href="/lib/katex/katex.min.css"><link rel="stylesheet" href="/lib/katex/copy-tex.min.css"><script type="text/javascript">
+    window.config = {"code":{"copyTitle":"Copy to clipboard","maxShownLines":100},"comment":{},"headerMode":{"desktop":"fixed","mobile":"auto"},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false}};
+</script><script type="text/javascript" src="https://polyfill.io/v3/polyfill.min.js?features=html5shiv%2CElement.prototype.closest%2CrequestAnimationFrame%2CCustomEvent%2CPromise%2CObject.entries%2CObject.assign%2CObject.values%2Cfetch%2CElement.prototype.after%2CArray.prototype.fill%2CIntersectionObserver%2CArray.from%2CArray.prototype.find%2CMath.sign"></script><script type="text/javascript" src="/lib/smooth-scroll/smooth-scroll.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/object-fit-images/ofi.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="/lib/sharer/sharer.min.js"></script><script type="text/javascript" src="/lib/katex/katex.min.js"></script><script type="text/javascript" src="/lib/katex/auto-render.min.js"></script><script type="text/javascript" src="/lib/katex/copy-tex.min.js"></script><script type="text/javascript" src="/lib/katex/mhchem.min.js"></script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>

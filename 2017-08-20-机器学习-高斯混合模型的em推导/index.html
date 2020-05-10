@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>高斯混合模型的EM推导 - Utopizza</title>
+        <meta name="Description" content="About LoveIt Theme"><meta property="og:title" content="高斯混合模型的EM推导" />
+<meta property="og:description" content="一、高斯混合模型：
+$$P(y \mid \theta) = \sum_{k=1}^{K} \alpha_k \cdot \phi(y \mid \theta_k)$$
+其中，$\alpha_k \text{是系数，} \alpha_k \geq0 \text{，且 } \sum_{k=1}^{K} \alpha_k=1 \text{；}$
+$\phi(y \mid \theta_k) = \frac{1}{\sqrt{2\pi}} exp (-\frac{(y-\mu_k)^2}{2\sigma_k^2}) \text{，}\theta_k = (\mu_k ,\sigma_k^2)\text{ 是第k个高斯模型。}$
+二、高斯混合模型参数估计的EM算法
+输入：观测数据 ($y_1,y_2,\cdots,y_N$)，高斯混合模型 输出：高斯混合参数模型
+(1) 取参数的初始值开始迭代
+(2) E步：依据当前模型参数，计算分模型 k 对观测数据 $y_j$ 的响应度
+ $$\hat{\gamma}_{jk} = \frac{\alpha_k \cdot \phi(y_j \mid \theta_k)}{\sum_{k=1}^{K} \alpha_k \cdot \phi(y_j \mid\theta_k)}\text{，}j=1,2,\cdots,N;k=1,2,\cdots,K$$  (3) M步：计算新一轮迭代的模型参数
+ $$\hat{\mu}_k =\frac{\sum_{j=1}^{N} \hat{\gamma}_{jk} \cdot y_j}{\sum_{j=1}^{N} \hat{\gamma}_{jk}}\text{，}k=1,2,\cdots,K$$   $$\hat{\sigma}_k^2 = \frac{\sum_{j=1}^{N} \hat{\gamma}_{jk}\cdot (y_j - \mu_k)^2}{\sum_{j=1}^{N} \hat{\gamma}_{jk}}\text{，}k=1,2,\cdots,K$$   $$\hat{\alpha}_k =\frac{\sum_{j=1}^{N} \hat{\gamma}_{jk}}{N}\text{，}k=1,2,\cdots,K$$  (4) 重复第(2)步和第(3)步，直到收敛。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://utopizza.github.io/2017-08-20-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E9%AB%98%E6%96%AF%E6%B7%B7%E5%90%88%E6%A8%A1%E5%9E%8B%E7%9A%84em%E6%8E%A8%E5%AF%BC/" />
+<meta property="og:image" content="https://utopizza.github.io/logo.png"/>
+<meta property="article:published_time" content="2017-08-20T16:14:10+00:00" />
+<meta property="article:modified_time" content="2017-08-20T16:14:10+00:00" />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://utopizza.github.io/logo.png"/>
+
+<meta name="twitter:title" content="高斯混合模型的EM推导"/>
+<meta name="twitter:description" content="一、高斯混合模型：
+$$P(y \mid \theta) = \sum_{k=1}^{K} \alpha_k \cdot \phi(y \mid \theta_k)$$
+其中，$\alpha_k \text{是系数，} \alpha_k \geq0 \text{，且 } \sum_{k=1}^{K} \alpha_k=1 \text{；}$
+$\phi(y \mid \theta_k) = \frac{1}{\sqrt{2\pi}} exp (-\frac{(y-\mu_k)^2}{2\sigma_k^2}) \text{，}\theta_k = (\mu_k ,\sigma_k^2)\text{ 是第k个高斯模型。}$
+二、高斯混合模型参数估计的EM算法
+输入：观测数据 ($y_1,y_2,\cdots,y_N$)，高斯混合模型 输出：高斯混合参数模型
+(1) 取参数的初始值开始迭代
+(2) E步：依据当前模型参数，计算分模型 k 对观测数据 $y_j$ 的响应度
+ $$\hat{\gamma}_{jk} = \frac{\alpha_k \cdot \phi(y_j \mid \theta_k)}{\sum_{k=1}^{K} \alpha_k \cdot \phi(y_j \mid\theta_k)}\text{，}j=1,2,\cdots,N;k=1,2,\cdots,K$$  (3) M步：计算新一轮迭代的模型参数
+ $$\hat{\mu}_k =\frac{\sum_{j=1}^{N} \hat{\gamma}_{jk} \cdot y_j}{\sum_{j=1}^{N} \hat{\gamma}_{jk}}\text{，}k=1,2,\cdots,K$$   $$\hat{\sigma}_k^2 = \frac{\sum_{j=1}^{N} \hat{\gamma}_{jk}\cdot (y_j - \mu_k)^2}{\sum_{j=1}^{N} \hat{\gamma}_{jk}}\text{，}k=1,2,\cdots,K$$   $$\hat{\alpha}_k =\frac{\sum_{j=1}^{N} \hat{\gamma}_{jk}}{N}\text{，}k=1,2,\cdots,K$$  (4) 重复第(2)步和第(3)步，直到收敛。"/>
+<meta name="application-name" content="Utopizza">
+<meta name="apple-mobile-web-app-title" content="Utopizza"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://utopizza.github.io/2017-08-20-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E9%AB%98%E6%96%AF%E6%B7%B7%E5%90%88%E6%A8%A1%E5%9E%8B%E7%9A%84em%E6%8E%A8%E5%AF%BC/" /><link rel="prev" href="https://utopizza.github.io/2017-08-17-%E6%80%BB%E7%BB%93-%E9%98%B6%E6%AE%B5%E6%80%BB%E7%BB%931/" /><link rel="next" href="https://utopizza.github.io/2017-08-20-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%85%A5%E9%97%A8%E8%B5%84%E6%96%99%E6%B1%87%E6%80%BB/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "高斯混合模型的EM推导",
+        "inLanguage": "en",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https:\/\/utopizza.github.io\/2017-08-20-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E9%AB%98%E6%96%AF%E6%B7%B7%E5%90%88%E6%A8%A1%E5%9E%8B%E7%9A%84em%E6%8E%A8%E5%AF%BC\/"
+        },"image": {
+                "@type": "ImageObject",
+                "url": "https:\/\/utopizza.github.io\/cover.png",
+                "width":  800 ,
+                "height":  600 
+            },"genre": "posts","wordcount":  295 ,
+        "url": "https:\/\/utopizza.github.io\/2017-08-20-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E9%AB%98%E6%96%AF%E6%B7%B7%E5%90%88%E6%A8%A1%E5%9E%8B%E7%9A%84em%E6%8E%A8%E5%AF%BC\/","datePublished": "2017-08-20T16:14:10+00:00","dateModified": "2017-08-20T16:14:10+00:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+                "@type": "Organization",
+                "name": "",
+                "logo": {
+                "@type": "ImageObject",
+                "url": "https:\/\/utopizza.github.io\/logo.png",
+                "width":  127 ,
+                "height":  40 
+                }
+            },"author": {
+                "@type": "Person",
+                "name": "yusheng"
+            },"description": ""
+    }
+    </script></head>
+    <body><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="Utopizza"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>Utopizza</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> Posts </a><a class="menu-item" href="/categories/"> Categories </a><a class="menu-item" href="https://github.com/utopizza" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i>  </a><span class="menu-item delimiter"></span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="Utopizza"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>Utopizza</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><a class="menu-item" href="/posts/" title="">Posts</a><a class="menu-item" href="/categories/" title="">Categories</a><a class="menu-item" href="https://github.com/utopizza" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i></a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">高斯混合模型的EM推导</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;
+                    <span class="post-category">included in<a href="/categories/machinelearning/">
+                                <i class="far fa-folder fa-fw"></i>MachineLearning
+                            </a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i><time datetime=2017-08-20>2017-08-20</time>&nbsp;
+                <i class="fas fa-pencil-alt fa-fw"></i>about 295 words&nbsp;
+                <i class="far fa-clock fa-fw"></i>2 min&nbsp;</div>
+        </div><div class="details toc" id="toc-static">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents"></nav></div>
+            </div><div class="content" id="content"><p>一、高斯混合模型：</p>
+<p>$$P(y \mid \theta) = \sum_{k=1}^{K} \alpha_k \cdot \phi(y \mid \theta_k)$$</p>
+<p>其中，$\alpha_k \text{是系数，} \alpha_k \geq0 \text{，且 }
+\sum_{k=1}^{K} \alpha_k=1 \text{；}$</p>
+<p>$\phi(y \mid \theta_k) = \frac{1}{\sqrt{2\pi}} exp (-\frac{(y-\mu_k)^2}{2\sigma_k^2}) \text{，}\theta_k = (\mu_k ,\sigma_k^2)\text{ 是第k个高斯模型。}$</p>
+<p>二、高斯混合模型参数估计的EM算法</p>
+<p>输入：观测数据 ($y_1,y_2,\cdots,y_N$)，高斯混合模型
+输出：高斯混合参数模型</p>
+<p>(1) 取参数的初始值开始迭代</p>
+<p>(2) E步：依据当前模型参数，计算分模型 k 对观测数据 $y_j$ 的响应度</p>
+<div>
+$$\hat{\gamma}_{jk} = \frac{\alpha_k \cdot \phi(y_j \mid \theta_k)}{\sum_{k=1}^{K} \alpha_k \cdot \phi(y_j \mid\theta_k)}\text{，}j=1,2,\cdots,N;k=1,2,\cdots,K$$
+</div>
+<p>(3) M步：计算新一轮迭代的模型参数</p>
+<div>
+$$\hat{\mu}_k =\frac{\sum_{j=1}^{N} \hat{\gamma}_{jk} \cdot y_j}{\sum_{j=1}^{N} \hat{\gamma}_{jk}}\text{，}k=1,2,\cdots,K$$
+</div>
+<div>
+$$\hat{\sigma}_k^2 = \frac{\sum_{j=1}^{N} \hat{\gamma}_{jk}\cdot (y_j - \mu_k)^2}{\sum_{j=1}^{N} \hat{\gamma}_{jk}}\text{，}k=1,2,\cdots,K$$
+</div>
+<div>
+$$\hat{\alpha}_k =\frac{\sum_{j=1}^{N} \hat{\gamma}_{jk}}{N}\text{，}k=1,2,\cdots,K$$
+</div>
+<p>(4) 重复第(2)步和第(3)步，直到收敛。</p>
+<p>三、上述算法基于似然估计进行推导：</p>
+<p>(1). 似然函数：</p>
+<div>
+$$
+\begin{aligned}
+P(y,\gamma \mid \theta) &=
+\prod_{j=1}^{N} P(y_j, (\gamma_{j1},\cdots,\gamma_{jK}) \mid \theta) \\
+&=\prod_{k=1}^{K} \prod_{j=1}^{N} [\alpha_k \cdot \phi(y_j \mid \theta_k)]^{\gamma_{jk}} \\
+&=\prod_{k=1}^{K} \alpha_k \prod_{j=1}^{N} [\phi(y_j \mid \theta_k)]^{\gamma_{jk}} \\
+&=\prod_{k=1}^{K} \alpha_k \prod_{j=1}^{N} 
+[\frac{1}{\sqrt{2\pi}} exp(- \frac{(y-\mu_k)^2}{2\sigma_k^2})]^{\gamma_{jk}} \\
+\end{aligned}
+$$
+</div>
+<p>式中，$n_k=\sum_{j=1}^{N} \gamma_{jk}$，$\sum_{k=1}^{K} n_k=N$。</p>
+<p>(2) 在 $E$ 步确定 $Q$ 函数：</p>
+<div>
+$$
+\begin{aligned}
+Q(\theta,\theta^{(i)}) &= E[logP(y,\gamma \mid \theta) \mid y, \theta^{(i)}] \\
+&= \cdots \\
+&= \sum_{k=1}^{K} \{ n_k \cdot log\alpha_k + \sum_{j=1}^{N} [log(\frac{1}{\sqrt{2\pi}}) - log(\sigma_k)- \frac{1}{2\sigma_k^2}(y_j-\mu_k)^2] \}
+\end{aligned}
+$$
+</div>
+<p>(3) 在 $M$ 步中，求 $Q(\theta,\theta^{(i)})$ 对 $\theta$ 的极大值，即求新一轮迭代的模型参数：</p>
+<div>
+$$
+\theta^{(i)} = 
+\underset{\theta}{\operatorname{argmax}} Q(\theta,\theta^{(i)})
+$$
+</div>
+<p>求 $\hat{\mu}_k，\hat{\sigma}_k^2$ 只需将上式分别对 $\hat{\mu}_k，\hat{\sigma}_k^2$ 求导并令导数等于0即可，这是常规的求极值的方法。但是对于 $\hat{\alpha}<em>k$，因为存在着 $\sum</em>{k=1}^{K} \alpha_k = 1$ 这个条件，所以这里要注意对有多个有关系的变量的求偏导问题。</p>
+<p>(4) 对 $\alpha_k$ 求偏导：</p>
+<div>
+$$
+\frac{\partial Q}{\partial \alpha_k} = 
+\frac{\partial\{\sum_{k=1}^{K} [ n_k \cdot log(\alpha_k) ]\} }
+{\partial \alpha_k} \\
+s.t. \quad \sum_{k=1}^{K} \alpha_k = 1
+$$
+</div>
+<p>由于存在和为1的这个条件，各个变量之间存在联系，所以不能简单的分别对各个 $\alpha_k$ 求偏导。如果忽略这个约束，那么每个概率都可以无限大，目标函数也无限大了。</p>
+<p>当对其中一个变量如 $\alpha_1$ 求偏导的时候，考虑到总和为1的约束条件，此时应该把剩下的 $K-1$ 个变量看作“另一个”变量(可取其中一个变量如 $\alpha_K$ 作为代表)：</p>
+<div>
+$$
+\begin{aligned}
+\frac{\partial Q}{\partial \alpha_1} &= \frac{\partial\{ n_1 \cdot log(\alpha_1) + \sum_{k=2}^{K} n_k \cdot log(\alpha_k)\}}
+{\partial \alpha_1} \\
+&= \frac{n_1}{\alpha_1} + \frac{n_K \cdot \partial log(\alpha_K)}{\alpha_1} \\
+&= \frac{n_1}{\alpha_1} + \frac{n_K}{\alpha_K} \cdot \frac{\partial \alpha_K}{\alpha_1} \\
+&= \frac{n_1}{\alpha_1} + \frac{n_K}{\alpha_K} \cdot \frac{\partial (1-\sum_{k=1}^{K-1} \alpha_k)}{\alpha_1} \\
+&= \frac{n_1}{\alpha_1} + \frac{n_K}{\alpha_K} \cdot \frac{\partial (-\alpha_1)}{\partial \alpha_1} \\
+&= \frac{n_1}{\alpha_1} - \frac{n_K}{\alpha_K}
+\end{aligned}
+$$
+</div>
+<p>令
+$$\frac{\partial Q}{\partial \alpha_1}=\frac{n_1}{\alpha_1} - \frac{n_K}{\alpha_K}=0$$</p>
+<p>得
+$$\frac{n_1}{\alpha_1} = \frac{n_K}{\alpha_K}$$</p>
+<p>同理
+$$\frac{n_1}{\alpha_1}
+=\frac{n_2}{\alpha_2}
+=\cdots
+=\frac{n_{K-1}}{\alpha_{K-1}}
+=\frac{n_K}{\alpha_K}$$</p>
+<p>因此
+$$\frac{n_1}{\alpha_1}=\frac{n_1+\cdots+n_K}{\alpha_1+\cdots+\alpha_K}=\frac{N}{1}=N$$</p>
+<p>因此
+$$\alpha_1=\frac{n_1}{N},\cdots,\alpha_K=\frac{n_K}{N}$$</p>
+<p>即
+$$\alpha_k=\frac{n_k}{N},k=1,2,\cdots,K$$</p>
+<p>求解完毕。</p>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>The article was updated on 2017-08-20</span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span>
+                            <a class="link-to-markdown" href="/2017-08-20-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E9%AB%98%E6%96%AF%E6%B7%B7%E5%90%88%E6%A8%A1%E5%9E%8B%E7%9A%84em%E6%8E%A8%E5%AF%BC/index.md" target="_blank">Read Markdown</a>
+                        </span></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="https://utopizza.github.io/2017-08-20-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E9%AB%98%E6%96%AF%E6%B7%B7%E5%90%88%E6%A8%A1%E5%9E%8B%E7%9A%84em%E6%8E%A8%E5%AF%BC/" data-title="高斯混合模型的EM推导"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://utopizza.github.io/2017-08-20-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E9%AB%98%E6%96%AF%E6%B7%B7%E5%90%88%E6%A8%A1%E5%9E%8B%E7%9A%84em%E6%8E%A8%E5%AF%BC/"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="Share on WhatsApp" data-sharer="whatsapp" data-url="https://utopizza.github.io/2017-08-20-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E9%AB%98%E6%96%AF%E6%B7%B7%E5%90%88%E6%A8%A1%E5%9E%8B%E7%9A%84em%E6%8E%A8%E5%AF%BC/" data-title="高斯混合模型的EM推导" data-web><i class="fab fa-whatsapp fa-fw"></i></a><a href="javascript:void(0);" title="Share on Line" data-sharer="line" data-url="https://utopizza.github.io/2017-08-20-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E9%AB%98%E6%96%AF%E6%B7%B7%E5%90%88%E6%A8%A1%E5%9E%8B%E7%9A%84em%E6%8E%A8%E5%AF%BC/" data-title="高斯混合模型的EM推导"><i class="fab fa-line fa-fw"></i></a><a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="https://utopizza.github.io/2017-08-20-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E9%AB%98%E6%96%AF%E6%B7%B7%E5%90%88%E6%A8%A1%E5%9E%8B%E7%9A%84em%E6%8E%A8%E5%AF%BC/" data-title="高斯混合模型的EM推导"><i class="fab fa-weibo fa-fw"></i></a><a href="javascript:void(0);" title="Share on Myspace" data-sharer="myspace" data-url="https://utopizza.github.io/2017-08-20-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E9%AB%98%E6%96%AF%E6%B7%B7%E5%90%88%E6%A8%A1%E5%9E%8B%E7%9A%84em%E6%8E%A8%E5%AF%BC/" data-title="高斯混合模型的EM推导" data-description=""><i data-svg-src="/lib/simple-icons/icons/myspace.min.svg"></i></a><a href="javascript:void(0);" title="Share on Blogger" data-sharer="blogger" data-url="https://utopizza.github.io/2017-08-20-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E9%AB%98%E6%96%AF%E6%B7%B7%E5%90%88%E6%A8%A1%E5%9E%8B%E7%9A%84em%E6%8E%A8%E5%AF%BC/" data-title="高斯混合模型的EM推导" data-description=""><i class="fab fa-blogger fa-fw"></i></a><a href="javascript:void(0);" title="Share on Evernote" data-sharer="evernote" data-url="https://utopizza.github.io/2017-08-20-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E9%AB%98%E6%96%AF%E6%B7%B7%E5%90%88%E6%A8%A1%E5%9E%8B%E7%9A%84em%E6%8E%A8%E5%AF%BC/" data-title="高斯混合模型的EM推导"><i class="fab fa-evernote fa-fw"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/2017-08-17-%E6%80%BB%E7%BB%93-%E9%98%B6%E6%AE%B5%E6%80%BB%E7%BB%931/" class="prev" rel="prev" title="阶段总结(1)"><i class="fas fa-angle-left fa-fw"></i>阶段总结(1)</a>
+            <a href="/2017-08-20-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%85%A5%E9%97%A8%E8%B5%84%E6%96%99%E6%B1%87%E6%80%BB/" class="next" rel="next" title="机器学习入门资料汇总">机器学习入门资料汇总<i class="fas fa-angle-right fa-fw"></i></a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.69.2">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.6"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2020</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">yusheng</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><link rel="stylesheet" href="/lib/katex/katex.min.css"><link rel="stylesheet" href="/lib/katex/copy-tex.min.css"><script type="text/javascript">
+    window.config = {"code":{"copyTitle":"Copy to clipboard","maxShownLines":100},"comment":{},"headerMode":{"desktop":"fixed","mobile":"auto"},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false}};
+</script><script type="text/javascript" src="https://polyfill.io/v3/polyfill.min.js?features=html5shiv%2CElement.prototype.closest%2CrequestAnimationFrame%2CCustomEvent%2CPromise%2CObject.entries%2CObject.assign%2CObject.values%2Cfetch%2CElement.prototype.after%2CArray.prototype.fill%2CIntersectionObserver%2CArray.from%2CArray.prototype.find%2CMath.sign"></script><script type="text/javascript" src="/lib/smooth-scroll/smooth-scroll.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/object-fit-images/ofi.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="/lib/sharer/sharer.min.js"></script><script type="text/javascript" src="/lib/katex/katex.min.js"></script><script type="text/javascript" src="/lib/katex/auto-render.min.js"></script><script type="text/javascript" src="/lib/katex/copy-tex.min.js"></script><script type="text/javascript" src="/lib/katex/mhchem.min.js"></script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>

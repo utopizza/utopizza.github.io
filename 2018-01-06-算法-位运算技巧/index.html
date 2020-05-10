@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>位运算技巧 - Utopizza</title>
+        <meta name="Description" content="About LoveIt Theme"><meta property="og:title" content="位运算技巧" />
+<meta property="og:description" content="一、6种基本位操作
+   符号 描述 运算规则     &amp; And（按位与） 对应位上同时为 1 时，结果才为 1，否则为 0   $\mid$ Or（按位或） 对应位上同时为 0 时，结果才为 0，否则为 1   ~ Not（取反） 1 变 0，0 变 1   ^ Xor（异或） 对应位上相同时输出 0，相异时输出 1   &laquo; Left Shift（左移） 各二进位全部左移若干位，高位丢弃，低位补 0   &gt;&gt; Right Shift（右移） 各二进位全部右移若干位，低位丢弃，高位分情况    注：
+ 计算机内部使用补码作为机器数，正数的补码等于原码，负数的补码等于原码的符号位外取反加一，切记。另外注意机器字长，如果题目没有明确说明，一般默认是32位或64位 这6种操作符中，只有~取反是单目操作符，其它5种都是双目操作符 位操作只能用于整型数据 位操作运算优先级比较低（比加减乘除低），因此一般需要使用括号来保证正确的运算顺序，否则容易出错 右移运算（&gt;&gt;）时，对无符号数，高位补0。对有符号数，各编译器处理方法不一样，有的补符号位（算术右移），有的补0（逻辑右移） Java中的右移（&gt;&gt;）执行的是算术右移，高位补符号位；Java中的无符号（逻辑）右移有单独的运算符号：&gt;&raquo; 另外位操作还有一些复合操作符，如 &amp;=、|=、^=、&laquo;=、&gt;&gt;= 等  二、常用技巧" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://utopizza.github.io/2018-01-06-%E7%AE%97%E6%B3%95-%E4%BD%8D%E8%BF%90%E7%AE%97%E6%8A%80%E5%B7%A7/" />
+<meta property="og:image" content="https://utopizza.github.io/logo.png"/>
+<meta property="article:published_time" content="2018-01-06T20:20:00+00:00" />
+<meta property="article:modified_time" content="2018-01-06T20:20:00+00:00" />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://utopizza.github.io/logo.png"/>
+
+<meta name="twitter:title" content="位运算技巧"/>
+<meta name="twitter:description" content="一、6种基本位操作
+   符号 描述 运算规则     &amp; And（按位与） 对应位上同时为 1 时，结果才为 1，否则为 0   $\mid$ Or（按位或） 对应位上同时为 0 时，结果才为 0，否则为 1   ~ Not（取反） 1 变 0，0 变 1   ^ Xor（异或） 对应位上相同时输出 0，相异时输出 1   &laquo; Left Shift（左移） 各二进位全部左移若干位，高位丢弃，低位补 0   &gt;&gt; Right Shift（右移） 各二进位全部右移若干位，低位丢弃，高位分情况    注：
+ 计算机内部使用补码作为机器数，正数的补码等于原码，负数的补码等于原码的符号位外取反加一，切记。另外注意机器字长，如果题目没有明确说明，一般默认是32位或64位 这6种操作符中，只有~取反是单目操作符，其它5种都是双目操作符 位操作只能用于整型数据 位操作运算优先级比较低（比加减乘除低），因此一般需要使用括号来保证正确的运算顺序，否则容易出错 右移运算（&gt;&gt;）时，对无符号数，高位补0。对有符号数，各编译器处理方法不一样，有的补符号位（算术右移），有的补0（逻辑右移） Java中的右移（&gt;&gt;）执行的是算术右移，高位补符号位；Java中的无符号（逻辑）右移有单独的运算符号：&gt;&raquo; 另外位操作还有一些复合操作符，如 &amp;=、|=、^=、&laquo;=、&gt;&gt;= 等  二、常用技巧"/>
+<meta name="application-name" content="Utopizza">
+<meta name="apple-mobile-web-app-title" content="Utopizza"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://utopizza.github.io/2018-01-06-%E7%AE%97%E6%B3%95-%E4%BD%8D%E8%BF%90%E7%AE%97%E6%8A%80%E5%B7%A7/" /><link rel="prev" href="https://utopizza.github.io/2017-12-31-%E7%AE%97%E6%B3%95-%E6%9C%BA%E5%99%A8%E6%95%B0%E7%9A%84%E4%B8%89%E7%A7%8D%E7%BC%96%E7%A0%81%E7%AD%96%E7%95%A5/" /><link rel="next" href="https://utopizza.github.io/2018-01-13-%E7%AE%97%E6%B3%95-foursum/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "位运算技巧",
+        "inLanguage": "en",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https:\/\/utopizza.github.io\/2018-01-06-%E7%AE%97%E6%B3%95-%E4%BD%8D%E8%BF%90%E7%AE%97%E6%8A%80%E5%B7%A7\/"
+        },"image": {
+                "@type": "ImageObject",
+                "url": "https:\/\/utopizza.github.io\/cover.png",
+                "width":  800 ,
+                "height":  600 
+            },"genre": "posts","wordcount":  481 ,
+        "url": "https:\/\/utopizza.github.io\/2018-01-06-%E7%AE%97%E6%B3%95-%E4%BD%8D%E8%BF%90%E7%AE%97%E6%8A%80%E5%B7%A7\/","datePublished": "2018-01-06T20:20:00+00:00","dateModified": "2018-01-06T20:20:00+00:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+                "@type": "Organization",
+                "name": "",
+                "logo": {
+                "@type": "ImageObject",
+                "url": "https:\/\/utopizza.github.io\/logo.png",
+                "width":  127 ,
+                "height":  40 
+                }
+            },"author": {
+                "@type": "Person",
+                "name": "yusheng"
+            },"description": ""
+    }
+    </script></head>
+    <body><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="Utopizza"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>Utopizza</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> Posts </a><a class="menu-item" href="/categories/"> Categories </a><a class="menu-item" href="https://github.com/utopizza" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i>  </a><span class="menu-item delimiter"></span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="Utopizza"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>Utopizza</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><a class="menu-item" href="/posts/" title="">Posts</a><a class="menu-item" href="/categories/" title="">Categories</a><a class="menu-item" href="https://github.com/utopizza" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i></a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">位运算技巧</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;
+                    <span class="post-category">included in<a href="/categories/algorithm/">
+                                <i class="far fa-folder fa-fw"></i>Algorithm
+                            </a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i><time datetime=2018-01-06>2018-01-06</time>&nbsp;
+                <i class="fas fa-pencil-alt fa-fw"></i>about 481 words&nbsp;
+                <i class="far fa-clock fa-fw"></i>3 min&nbsp;</div>
+        </div><div class="details toc" id="toc-static">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents"></nav></div>
+            </div><div class="content" id="content"><p>一、6种基本位操作</p>
+<table>
+<thead>
+<tr>
+<th align="center">符号</th>
+<th align="center">描述</th>
+<th align="center">运算规则</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center">&amp;</td>
+<td align="center">And（按位与）</td>
+<td align="center">对应位上同时为 1 时，结果才为 1，否则为 0</td>
+</tr>
+<tr>
+<td align="center">$\mid$</td>
+<td align="center">Or（按位或）</td>
+<td align="center">对应位上同时为 0 时，结果才为 0，否则为 1</td>
+</tr>
+<tr>
+<td align="center">~</td>
+<td align="center">Not（取反）</td>
+<td align="center">1 变 0，0 变 1</td>
+</tr>
+<tr>
+<td align="center">^</td>
+<td align="center">Xor（异或）</td>
+<td align="center">对应位上相同时输出 0，相异时输出 1</td>
+</tr>
+<tr>
+<td align="center">&laquo;</td>
+<td align="center">Left Shift（左移）</td>
+<td align="center">各二进位全部左移若干位，高位丢弃，低位补 0</td>
+</tr>
+<tr>
+<td align="center">&gt;&gt;</td>
+<td align="center">Right Shift（右移）</td>
+<td align="center">各二进位全部右移若干位，低位丢弃，高位分情况</td>
+</tr>
+</tbody>
+</table>
+<p>注：</p>
+<ol>
+<li>计算机内部使用补码作为机器数，正数的补码等于原码，负数的补码等于原码的符号位外取反加一，切记。另外注意机器字长，如果题目没有明确说明，一般默认是32位或64位</li>
+<li>这6种操作符中，只有~取反是单目操作符，其它5种都是双目操作符</li>
+<li>位操作只能用于整型数据</li>
+<li>位操作运算优先级比较低（比加减乘除低），因此一般需要使用括号来保证正确的运算顺序，否则容易出错</li>
+<li>右移运算（&gt;&gt;）时，对无符号数，高位补0。对有符号数，各编译器处理方法不一样，有的补符号位（算术右移），有的补0（逻辑右移）</li>
+<li>Java中的右移（&gt;&gt;）执行的是算术右移，高位补符号位；Java中的无符号（逻辑）右移有单独的运算符号：&gt;&raquo;</li>
+<li>另外位操作还有一些复合操作符，如 &amp;=、|=、^=、&laquo;=、&gt;&gt;= 等</li>
+</ol>
+<p>二、常用技巧</p>
+<p>1、计算给定的整数对应的二进制数中 1 的个数。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">public int countOnes(int n) {
+    int count=0;
+    while(n!=0) {
+        n = n&amp;(n-1);
+        count++;
+    }
+    return count;
+}
+</code></pre></td></tr></table>
+</div>
+</div><p>2、判断一个整数是否是 4 的 n 次方。思路很清晰，4 的 n 次方即为 2 的 2n 次方，因此其二进制形式必定是由一个 1 和偶数个 0 组成。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">public boolean isPowerOfFour(int num) {
+    int count0=0;
+    int count1=0;
+    while(num&gt;0){
+        if((num&amp;1)==1){
+            count1++;
+        }else{
+            count0++;
+        }
+        num&gt;&gt;=1;
+    }
+    return count1==1 &amp;&amp; (count0%2==0);
+}
+</code></pre></td></tr></table>
+</div>
+</div><p>3、仅用位运算求两个整数的和。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">public int getSum(int a, int b) {
+    //return b==0? a:getSum(a^b, (a&amp;b)&lt;&lt;1);
+    while(b!=0){
+        int temp=a^b;
+        b=(a&amp;b)&lt;&lt;1;
+        a=temp;
+    }
+    return a;
+}
+</code></pre></td></tr></table>
+</div>
+</div><p>4、找出缺失的数。给定一个整型数组，每个数字都出现了两次，现在缺失了一个数字，即有一个数字只出现一次，找出这个数字。思路：利用异或运算的两个特性， 自己与自己异或结果为0，异或满足交换律</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">public int missingNumber(int[] nums) {
+    int ret = 0;
+    for (int i = 0; i &lt; nums.length; ++i) {
+        ret ^= nums[i];
+    }
+    return ret;
+}
+</code></pre></td></tr></table>
+</div>
+</div><p>5、找出缺失的数。给定一个整型数组，长度为 $n$，取值范围为 $[0,&hellip;,n]$。找出缺失的那一个数。例如给定 $[0,1,3]$，返回 2。思路同上，把数组的 n 个数和完整的序列 $[0,&hellip;,n]$ 异或起来，最后结果就是只出现一次的也即在数组中缺失的那个数。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">public static int missingNumber(int[] nums) {
+    int ret = 0;
+    for (int i = 0; i &lt; nums.length; ++i) {
+        ret ^= i;
+        ret ^= nums[i];
+    }
+    return ret ^ nums.length;
+}
+</code></pre></td></tr></table>
+</div>
+</div><p>6、判断奇偶。只要根据最未位是 0 还是 1 来决定，为 0 就是偶数，为 1 就是奇数。因此可以用 if((a &amp; 1) == 0) 代替 if(a % 2 == 0) 来判断 a 是不是偶数。</p>
+<p>7、不使用第三方变量交换两个数。利用一个数异或上自己等于 0 （消去这个数）的性质。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">public void swap(int a, int b)  
+{  
+    if (a != b)  
+    {  
+        a ^= b;  
+        b ^= a;  
+        a ^= b;  
+    }  
+}
+</code></pre></td></tr></table>
+</div>
+</div><p>8、变换符号，即最高位 1 变 0，0 变 1。把该数取反加 1 即可。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">public int signReversal(int a)  
+{  
+    return ~a + 1;  
+}  
+</code></pre></td></tr></table>
+</div>
+</div><p>9、取绝对值。由上述可知对于负数可以通过对其取反加一来得到正数。因此现在只要判断输入的数是正数还是负数，如果是正数就直接输出，是负数就取反加一。对输入的数算术右移31位，由于高位补的是符号位，因此右移后如果原来是正数那么结果就是 0（0x 0000 0000），如果是负数那么右移的结果是 -1（0x FFFF FFFF）。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">public int abs(int a)  
+{  
+    int i = a &gt;&gt; 31;  
+    return i == 0 ? a : (~a + 1);  
+} 
+</code></pre></td></tr></table>
+</div>
+</div><p>如果进一步考虑，注意到任何数与 0 异或等于自己，与 -1 异或等于取反，而代码中的 i 要么是 0，要么是 -1，因此 a 与 i 异或再减去 i 和原代码等价，并且这样省去了判断。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">public int abs(int a)  
+{  
+    int i = a &gt;&gt; 31;  
+    return (a ^ i) - i;  
+} 
+</code></pre></td></tr></table>
+</div>
+</div><p>10、逆序一个二进制数。这里只关注正整数的有效位，例如，正整数 11 的二进制是 1011，逆序后得到 1101，输出 13。思路是对输入的数不断地取最低位并右移，取到的位赋到输出结果的最低位并不断左移。当输入的数减小到 0 时，算法完成。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">public int reverseBit(int n) {
+    int mask = 1, res = 0;
+    while (n != 0) {
+        res &lt;&lt;= 1;
+        res |= (n &amp; mask);
+        n &gt;&gt;= 1;
+    }
+    return res;
+}
+</code></pre></td></tr></table>
+</div>
+</div><p>11、逆序一个 32 位无符号整数的二进制。我们知道机器码是最高位是用于表示符号位的，但是 Java 中没有无符号整数的数据类型，怎办呢？</p>
+<p>三、参考资料</p>
+<ol>
+<li><a href="http://blog.csdn.net/morewindows/article/details/7354571" target="_blank" rel="noopener noreffer">位操作基础篇之位操作全面总结</a></li>
+<li><a href="https://leetcode.com/problems/sum-of-two-integers/discuss/84278/" target="_blank" rel="noopener noreffer">leetcode-A summary: how to use bit manipulation to solve problems easily and efficiently</a></li>
+<li><a href="https://stackoverflow.com/questions/3165776/reverse-bits-in-number" target="_blank" rel="noopener noreffer">Stack Overflow-Reverse bits in number</a></li>
+<li><a href="https://stackoverflow.com/questions/3324707/how-can-i-invert-bits-of-an-unsigned-byte-in-java" target="_blank" rel="noopener noreffer">Stack Overflow-How can I invert bits of an unsigned byte in Java?</a></li>
+</ol>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>The article was updated on 2018-01-06</span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span>
+                            <a class="link-to-markdown" href="/2018-01-06-%E7%AE%97%E6%B3%95-%E4%BD%8D%E8%BF%90%E7%AE%97%E6%8A%80%E5%B7%A7/index.md" target="_blank">Read Markdown</a>
+                        </span></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="https://utopizza.github.io/2018-01-06-%E7%AE%97%E6%B3%95-%E4%BD%8D%E8%BF%90%E7%AE%97%E6%8A%80%E5%B7%A7/" data-title="位运算技巧"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://utopizza.github.io/2018-01-06-%E7%AE%97%E6%B3%95-%E4%BD%8D%E8%BF%90%E7%AE%97%E6%8A%80%E5%B7%A7/"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="Share on WhatsApp" data-sharer="whatsapp" data-url="https://utopizza.github.io/2018-01-06-%E7%AE%97%E6%B3%95-%E4%BD%8D%E8%BF%90%E7%AE%97%E6%8A%80%E5%B7%A7/" data-title="位运算技巧" data-web><i class="fab fa-whatsapp fa-fw"></i></a><a href="javascript:void(0);" title="Share on Line" data-sharer="line" data-url="https://utopizza.github.io/2018-01-06-%E7%AE%97%E6%B3%95-%E4%BD%8D%E8%BF%90%E7%AE%97%E6%8A%80%E5%B7%A7/" data-title="位运算技巧"><i class="fab fa-line fa-fw"></i></a><a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="https://utopizza.github.io/2018-01-06-%E7%AE%97%E6%B3%95-%E4%BD%8D%E8%BF%90%E7%AE%97%E6%8A%80%E5%B7%A7/" data-title="位运算技巧"><i class="fab fa-weibo fa-fw"></i></a><a href="javascript:void(0);" title="Share on Myspace" data-sharer="myspace" data-url="https://utopizza.github.io/2018-01-06-%E7%AE%97%E6%B3%95-%E4%BD%8D%E8%BF%90%E7%AE%97%E6%8A%80%E5%B7%A7/" data-title="位运算技巧" data-description=""><i data-svg-src="/lib/simple-icons/icons/myspace.min.svg"></i></a><a href="javascript:void(0);" title="Share on Blogger" data-sharer="blogger" data-url="https://utopizza.github.io/2018-01-06-%E7%AE%97%E6%B3%95-%E4%BD%8D%E8%BF%90%E7%AE%97%E6%8A%80%E5%B7%A7/" data-title="位运算技巧" data-description=""><i class="fab fa-blogger fa-fw"></i></a><a href="javascript:void(0);" title="Share on Evernote" data-sharer="evernote" data-url="https://utopizza.github.io/2018-01-06-%E7%AE%97%E6%B3%95-%E4%BD%8D%E8%BF%90%E7%AE%97%E6%8A%80%E5%B7%A7/" data-title="位运算技巧"><i class="fab fa-evernote fa-fw"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/2017-12-31-%E7%AE%97%E6%B3%95-%E6%9C%BA%E5%99%A8%E6%95%B0%E7%9A%84%E4%B8%89%E7%A7%8D%E7%BC%96%E7%A0%81%E7%AD%96%E7%95%A5/" class="prev" rel="prev" title="机器数的三种编码策略"><i class="fas fa-angle-left fa-fw"></i>机器数的三种编码策略</a>
+            <a href="/2018-01-13-%E7%AE%97%E6%B3%95-foursum/" class="next" rel="next" title="FourSum">FourSum<i class="fas fa-angle-right fa-fw"></i></a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.69.2">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.6"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2020</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">yusheng</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><link rel="stylesheet" href="/lib/katex/katex.min.css"><link rel="stylesheet" href="/lib/katex/copy-tex.min.css"><script type="text/javascript">
+    window.config = {"code":{"copyTitle":"Copy to clipboard","maxShownLines":100},"comment":{},"headerMode":{"desktop":"fixed","mobile":"auto"},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false}};
+</script><script type="text/javascript" src="https://polyfill.io/v3/polyfill.min.js?features=html5shiv%2CElement.prototype.closest%2CrequestAnimationFrame%2CCustomEvent%2CPromise%2CObject.entries%2CObject.assign%2CObject.values%2Cfetch%2CElement.prototype.after%2CArray.prototype.fill%2CIntersectionObserver%2CArray.from%2CArray.prototype.find%2CMath.sign"></script><script type="text/javascript" src="/lib/smooth-scroll/smooth-scroll.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/object-fit-images/ofi.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="/lib/sharer/sharer.min.js"></script><script type="text/javascript" src="/lib/katex/katex.min.js"></script><script type="text/javascript" src="/lib/katex/auto-render.min.js"></script><script type="text/javascript" src="/lib/katex/copy-tex.min.js"></script><script type="text/javascript" src="/lib/katex/mhchem.min.js"></script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>

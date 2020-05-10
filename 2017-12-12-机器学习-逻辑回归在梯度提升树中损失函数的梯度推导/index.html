@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>逻辑回归在梯度提升树中损失函数的梯度推导 - Utopizza</title>
+        <meta name="Description" content="About LoveIt Theme"><meta property="og:title" content="逻辑回归在梯度提升树中损失函数的梯度推导" />
+<meta property="og:description" content="一、梯度提升树
+因为做比赛最近用到了 LightGBM 来实现逻辑回归，并尝试修改 LightGBM 的目标函数，于是顺便温习一下梯度提升树和逻辑回归，并简单推导了一下逻辑回归在梯度提升树中的损失函数的梯度计算。
+前面的博文介绍过，当损失函数是平方损失和指数损失时，前向加法模型的提升树（回归提升树）可以很方便地进行目标函数的优化并构造决策树。但对于一般的损失函数，前向加法提升树就比较难实现优化。这时就需要使用梯度提升模型的提升树，它能适应一般的损失函数。类似最速下降法，梯度提升树利用损失函数的负梯度在当前模型的值
+$$- \left[ \frac{\partial L(y,f(x_i))}{\partial f(x_i)} \right]$$
+作为回归提升树算法中的残差的近似值，来拟合一个回归树。
+二、逻辑回归
+逻辑回归是比较简单而且应用非常广泛的机器学习算法。它主要用于二分类任务，但是与一般的分类器不同，逻辑回归并不直接给出未知样本的预测类别，而是给出属于某个类别的概率。
+对一个二分类任务，每个训练样本都属于且只属于两种类别之中的一种，即要么是正样本，要么是负样本。习惯上，一般用 $0$ 表示负样本，用 $1$ 表示正样本。
+设训练集一共有 $m$ 个样本，每个样本有 $n$ 个属性，第 $i$ 个训练样本表示为 $x_i=(x_{i}^{(1)},x_{i}^{(2)},\cdots,x_{i}^{(n)})$，$1 \leq i \leq m$。对应地，每个样本有一个类别，设为 $Y$，则对第 $i$ 个样本，要么 $Y_i=1$，要么 $Y_i=0$。
+现在的任务是，给定 $m$ 个已知对应类别的样本 ${(x_1,Y_1),(x_2,Y_2),\cdots,(x_m,Y_m)}$，用来作为训练集，学习一个分类器模型 $f(x,Y)$，然后用这个模型来对未知类别的样本如 $(x_{m&#43;1},？)$ 进行预测，预测它的类别 $Y_{m&#43;1}$ 是等于 $1$ 还是等于 $0$。
+逻辑回归使用 $sigmod$ 函数作为预测模型，它不直接判定某个样本是正样本还是负样本，而是给出一个条件概率，即在已知样本的 $n$ 个属性的情况下，该样本属于正样本或负样本的概率。数学描述为
+$$P(Y=1 \mid x)=\frac{1}{1&#43;e^{-w \cdot x}}$$
+$$P(Y=0 \mid x)=1-\frac{1}{1&#43;e^{-w \cdot x}}$$
+其中 $w$ 是 $n$ 维的向量，每一维对应样本 $x$ 的 $n$ 个特征，可以理解为：$w^{(i)}$ 表示训练样本 $x$ 第 $i$ 个特征 $x^{(i)}$ 的权重。$w \cdot x$ 为两个向量的内积，即" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://utopizza.github.io/2017-12-12-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92%E5%9C%A8%E6%A2%AF%E5%BA%A6%E6%8F%90%E5%8D%87%E6%A0%91%E4%B8%AD%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E7%9A%84%E6%A2%AF%E5%BA%A6%E6%8E%A8%E5%AF%BC/" />
+<meta property="og:image" content="https://utopizza.github.io/logo.png"/>
+<meta property="article:published_time" content="2017-12-12T16:40:00+00:00" />
+<meta property="article:modified_time" content="2017-12-12T16:40:00+00:00" />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://utopizza.github.io/logo.png"/>
+
+<meta name="twitter:title" content="逻辑回归在梯度提升树中损失函数的梯度推导"/>
+<meta name="twitter:description" content="一、梯度提升树
+因为做比赛最近用到了 LightGBM 来实现逻辑回归，并尝试修改 LightGBM 的目标函数，于是顺便温习一下梯度提升树和逻辑回归，并简单推导了一下逻辑回归在梯度提升树中的损失函数的梯度计算。
+前面的博文介绍过，当损失函数是平方损失和指数损失时，前向加法模型的提升树（回归提升树）可以很方便地进行目标函数的优化并构造决策树。但对于一般的损失函数，前向加法提升树就比较难实现优化。这时就需要使用梯度提升模型的提升树，它能适应一般的损失函数。类似最速下降法，梯度提升树利用损失函数的负梯度在当前模型的值
+$$- \left[ \frac{\partial L(y,f(x_i))}{\partial f(x_i)} \right]$$
+作为回归提升树算法中的残差的近似值，来拟合一个回归树。
+二、逻辑回归
+逻辑回归是比较简单而且应用非常广泛的机器学习算法。它主要用于二分类任务，但是与一般的分类器不同，逻辑回归并不直接给出未知样本的预测类别，而是给出属于某个类别的概率。
+对一个二分类任务，每个训练样本都属于且只属于两种类别之中的一种，即要么是正样本，要么是负样本。习惯上，一般用 $0$ 表示负样本，用 $1$ 表示正样本。
+设训练集一共有 $m$ 个样本，每个样本有 $n$ 个属性，第 $i$ 个训练样本表示为 $x_i=(x_{i}^{(1)},x_{i}^{(2)},\cdots,x_{i}^{(n)})$，$1 \leq i \leq m$。对应地，每个样本有一个类别，设为 $Y$，则对第 $i$ 个样本，要么 $Y_i=1$，要么 $Y_i=0$。
+现在的任务是，给定 $m$ 个已知对应类别的样本 ${(x_1,Y_1),(x_2,Y_2),\cdots,(x_m,Y_m)}$，用来作为训练集，学习一个分类器模型 $f(x,Y)$，然后用这个模型来对未知类别的样本如 $(x_{m&#43;1},？)$ 进行预测，预测它的类别 $Y_{m&#43;1}$ 是等于 $1$ 还是等于 $0$。
+逻辑回归使用 $sigmod$ 函数作为预测模型，它不直接判定某个样本是正样本还是负样本，而是给出一个条件概率，即在已知样本的 $n$ 个属性的情况下，该样本属于正样本或负样本的概率。数学描述为
+$$P(Y=1 \mid x)=\frac{1}{1&#43;e^{-w \cdot x}}$$
+$$P(Y=0 \mid x)=1-\frac{1}{1&#43;e^{-w \cdot x}}$$
+其中 $w$ 是 $n$ 维的向量，每一维对应样本 $x$ 的 $n$ 个特征，可以理解为：$w^{(i)}$ 表示训练样本 $x$ 第 $i$ 个特征 $x^{(i)}$ 的权重。$w \cdot x$ 为两个向量的内积，即"/>
+<meta name="application-name" content="Utopizza">
+<meta name="apple-mobile-web-app-title" content="Utopizza"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://utopizza.github.io/2017-12-12-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92%E5%9C%A8%E6%A2%AF%E5%BA%A6%E6%8F%90%E5%8D%87%E6%A0%91%E4%B8%AD%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E7%9A%84%E6%A2%AF%E5%BA%A6%E6%8E%A8%E5%AF%BC/" /><link rel="prev" href="https://utopizza.github.io/2017-12-05-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-randomforest%E4%B8%8Egbdt/" /><link rel="next" href="https://utopizza.github.io/2017-12-23-%E6%80%BB%E7%BB%93-%E9%98%B6%E6%AE%B5%E6%80%BB%E7%BB%932/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "逻辑回归在梯度提升树中损失函数的梯度推导",
+        "inLanguage": "en",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https:\/\/utopizza.github.io\/2017-12-12-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92%E5%9C%A8%E6%A2%AF%E5%BA%A6%E6%8F%90%E5%8D%87%E6%A0%91%E4%B8%AD%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E7%9A%84%E6%A2%AF%E5%BA%A6%E6%8E%A8%E5%AF%BC\/"
+        },"image": {
+                "@type": "ImageObject",
+                "url": "https:\/\/utopizza.github.io\/cover.png",
+                "width":  800 ,
+                "height":  600 
+            },"genre": "posts","wordcount":  543 ,
+        "url": "https:\/\/utopizza.github.io\/2017-12-12-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92%E5%9C%A8%E6%A2%AF%E5%BA%A6%E6%8F%90%E5%8D%87%E6%A0%91%E4%B8%AD%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E7%9A%84%E6%A2%AF%E5%BA%A6%E6%8E%A8%E5%AF%BC\/","datePublished": "2017-12-12T16:40:00+00:00","dateModified": "2017-12-12T16:40:00+00:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+                "@type": "Organization",
+                "name": "",
+                "logo": {
+                "@type": "ImageObject",
+                "url": "https:\/\/utopizza.github.io\/logo.png",
+                "width":  127 ,
+                "height":  40 
+                }
+            },"author": {
+                "@type": "Person",
+                "name": "yusheng"
+            },"description": ""
+    }
+    </script></head>
+    <body><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="Utopizza"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>Utopizza</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> Posts </a><a class="menu-item" href="/categories/"> Categories </a><a class="menu-item" href="https://github.com/utopizza" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i>  </a><span class="menu-item delimiter"></span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="Utopizza"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>Utopizza</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><a class="menu-item" href="/posts/" title="">Posts</a><a class="menu-item" href="/categories/" title="">Categories</a><a class="menu-item" href="https://github.com/utopizza" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i></a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">逻辑回归在梯度提升树中损失函数的梯度推导</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;
+                    <span class="post-category">included in<a href="/categories/machinelearning/">
+                                <i class="far fa-folder fa-fw"></i>MachineLearning
+                            </a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i><time datetime=2017-12-12>2017-12-12</time>&nbsp;
+                <i class="fas fa-pencil-alt fa-fw"></i>about 543 words&nbsp;
+                <i class="far fa-clock fa-fw"></i>3 min&nbsp;</div>
+        </div><div class="details toc" id="toc-static">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents"></nav></div>
+            </div><div class="content" id="content"><p>一、梯度提升树</p>
+<p>因为做比赛最近用到了 LightGBM 来实现逻辑回归，并尝试修改 LightGBM 的目标函数，于是顺便温习一下梯度提升树和逻辑回归，并简单推导了一下逻辑回归在梯度提升树中的损失函数的梯度计算。</p>
+<p>前面的博文介绍过，当损失函数是平方损失和指数损失时，前向加法模型的提升树（回归提升树）可以很方便地进行目标函数的优化并构造决策树。但对于一般的损失函数，前向加法提升树就比较难实现优化。这时就需要使用梯度提升模型的提升树，它能适应一般的损失函数。类似最速下降法，梯度提升树利用损失函数的负梯度在当前模型的值</p>
+<p>$$- \left[ \frac{\partial L(y,f(x_i))}{\partial f(x_i)} \right]$$</p>
+<p>作为回归提升树算法中的残差的近似值，来拟合一个回归树。</p>
+<p>二、逻辑回归</p>
+<p>逻辑回归是比较简单而且应用非常广泛的机器学习算法。它主要用于二分类任务，但是与一般的分类器不同，逻辑回归并不直接给出未知样本的预测类别，而是给出属于某个类别的概率。</p>
+<p>对一个二分类任务，每个训练样本都属于且只属于两种类别之中的一种，即要么是正样本，要么是负样本。习惯上，一般用 $0$ 表示负样本，用 $1$ 表示正样本。</p>
+<p>设训练集一共有 $m$ 个样本，每个样本有 $n$ 个属性，第 $i$ 个训练样本表示为 $x_i=(x_{i}^{(1)},x_{i}^{(2)},\cdots,x_{i}^{(n)})$，$1 \leq i \leq m$。对应地，每个样本有一个类别，设为 $Y$，则对第 $i$ 个样本，要么 $Y_i=1$，要么 $Y_i=0$。</p>
+<p>现在的任务是，给定 $m$ 个已知对应类别的样本 ${(x_1,Y_1),(x_2,Y_2),\cdots,(x_m,Y_m)}$，用来作为训练集，学习一个分类器模型 $f(x,Y)$，然后用这个模型来对未知类别的样本如 $(x_{m+1},？)$ 进行预测，预测它的类别 $Y_{m+1}$ 是等于 $1$ 还是等于 $0$。</p>
+<p>逻辑回归使用 $sigmod$ 函数作为预测模型，它不直接判定某个样本是正样本还是负样本，而是给出一个条件概率，即在已知样本的 $n$ 个属性的情况下，该样本属于正样本或负样本的概率。数学描述为</p>
+<p>$$P(Y=1 \mid x)=\frac{1}{1+e^{-w \cdot x}}$$</p>
+<p>$$P(Y=0 \mid x)=1-\frac{1}{1+e^{-w \cdot x}}$$</p>
+<p>其中 $w$ 是 $n$ 维的向量，每一维对应样本 $x$ 的 $n$ 个特征，可以理解为：$w^{(i)}$ 表示训练样本 $x$ 第 $i$ 个特征 $x^{(i)}$ 的权重。$w \cdot x$ 为两个向量的内积，即</p>
+<p>$$w \cdot x=w^{(1)}*x^{(1)}+w^{(2)}*x^{(2)}+\cdots+w^{(n)}*x^{(n)}$$</p>
+<p>如果给定了训练集，那么模型训练的任务就是学习上面的权重参数 $w$，如果找到某个确定的向量 $w=w^{*}$ 能把训练样本最正确地分类，那么它就是我们要找的那个最优解。确定这个参数后，模型也就完全确定了。当使用该模型执行预测任务时，只需要把未知样本输入这个模型，即可得出未知样本属于正样本或负样本的概率。</p>
+<p>那么我们如何找到这个最优的向量 $w^{*}$ ？对于逻辑回归，因为它是概率问题，所以一般使用极大似然估计法来估计模型参数。</p>
+<p>极大似然估计法思路：“存在即合理”，使得每个已知样本（即训练样本）出现的概率最大的参数 $w^{*}$ 就是最优的参数。设给定的训练集为 $T={(x_1,Y_1),(x_2,Y_2),\cdots,(x_m,Y_m)}$，其中 $x_i \in R^n$，$Y_i \in {0,1}$，由逻辑回归的定义知每个样本（作为正样本或负样本）出现的概率为</p>
+<div>
+$$
+P(x_i)=
+\begin{cases}
+P(Y_i=1 \mid x_i)=\frac{1}{1+e^{-w \cdot x_i}}  \\
+P(Y_i=0 \mid x_i)=1-\frac{1}{1+e^{-w \cdot x_i}}
+\end{cases}
+$$
+</div>
+<p>有了每个样本的概率 $P(x_i)$，现在只要找到一个 $w=w^{*}$ 使得所有样本的概率同时最大，应该怎么做呢？思路很简单，因为目标是使它们同时最大，因此把它们全部乘起来，得到一个关于 $w$ 的函数，只要使这个函数的值最大，那就相当于使这些概率同时最大了。这个函数称为似然函数，设为 $L(w)$，即</p>
+<p>$$L(w)=P(x_1) * P(x_2) * \cdots * P(x_m)=\prod_{i=1}^{m} P(x_i)$$</p>
+<p>到这里其实已经基本完成学习任务的数学定义了。但是为了能让机器执行学习任务，还需要解决两个小问题，一是公式的推导化简，二是使用什么方法搜索 $w$ 的解空间。</p>
+<p>对于第一个问题，当你尝试把 $P(x_i)$ 的公式代入似然函数 $L(w)$ 时，你就会发现非常困难，因为 $P(x_i)$ 公式针对 $Y_i$ 分了两种情况。这里用到了一个小技巧，可以把两种情况的公式在形式上统一到一个公式。如果你注意到，对于每个样本的类别属性 $Y_i$，它要么是 $1$ 要么是 $0$ ，那么就可以利用这个性质，把两种情况统一写成：</p>
+<div>
+$$
+\begin{aligned}
+P(x_i) 
+&=P(Y_i=1 \mid x_i)^{Y_i} * P(Y_i=0 \mid x_i)^{1-Y_i} \\
+&=(\frac{1}{1+e^{-w \cdot x_i}})^{Y_i} * (1-\frac{1}{1+e^{-w \cdot x_i}})^{1-Y_i}
+\end{aligned}
+$$
+</div>
+<p>这个形式的 $P(x_i)$ 和上面的原始定义是完全等价的。你可以发现，当 $Y_i=1$ 时，乘号右边的部分因为指数为 $1-Y_i=0$ 就变成了 $1$ 而只剩下左边的部分，这就相当于当 $Y_i=1$ 自动时把 $P(Y_i=1 \mid x_i)$ 这部分选择出来了，反之亦然。</p>
+<p>有了如此统一的 $P(x_i)$ 的表达形式，就可以代入似然函数得到</p>
+<p>$$L(w)=\prod_{i=1}^{m} P(x_i)=\prod_{i=1}^{m} \left[ (\frac{1}{1+e^{-w \cdot x_i}})^{Y_i} * (1-\frac{1}{1+e^{-w \cdot x_i}})^{1-Y_i} \right]$$</p>
+<p>如果进一步考虑到，因为 $P(x_i)$ 是一个概率，如果样本数目太多，大量的小数连乘对于机器来说容易出现下溢等等的精度问题，为避免这些实际问题一般对似然函数取对数，把连乘变成连加，从而得到对数似然函数</p>
+<p>$$\log L(w)=\sum_{i=1}^{m} \left[ Y_i*\log(\frac{1}{1+e^{-w \cdot x_i}})+(1-Y_i)*(1-\frac{1}{1+e^{-w \cdot x_i}}) \right]$$</p>
+<p>现在只要让机器找到一个 $w=w^{*}$ 使得 $\log L(w)$ 最大，也即极大值，那么这就是最优的解。对第二个问题，一般常用的方法是梯度下降法或者拟牛顿法来搜索 $w$ 的解空间，这里限于篇幅不再展开。</p>
+<p>三、逻辑回归之于梯度提升树</p>
+<p>现在有了逻辑回归的目标函数，就可以推导出逻辑回归的损失函数在梯度提升树中的每一轮训练时的负梯度的值。</p>
+<p>首先为了在形式上与第一节中的梯度提升树的负梯度公式保持统一，我们把上面逻辑回归的目标函数 $\log L(w)$ 写成<strong>关于每一个样本的损失函数</strong>的形式</p>
+<p>$$L(Y_i,P(x_i))=Y_i*\log(\frac{1}{1+e^{-w \cdot x_i}})+(1-Y_i)*(1-\frac{1}{1+e^{-w \cdot x_i}})$$</p>
+<p>为了在接下来的推导过程简便表达，先设</p>
+<p>$$z=\frac{1}{1+e^{-w \cdot x_i}}, \quad 1-z=1-\frac{1}{1+e^{-w \cdot x_i}}$$</p>
+<p>为了简洁过程在这里我们把 $-w*x_i$ 看作一个整体的变量即可，现在分别对 $z$ 和 $1-z$ 求导，有</p>
+<p>$$z'=\frac{e^{-w \cdot x_i}}{(1+e^{-w \cdot x_i})^2}, \quad
+(1-z)&lsquo;=-\frac{e^{-w \cdot x_i}}{(1+e^{-w \cdot x_i})^2}
+$$</p>
+<p>因此梯度提升树在第 $i$ 个样本处的负梯度（一阶导）：</p>
+<div>
+$$
+\begin{aligned}
+-\frac{\partial L(Y_i,P(x_i))}{\partial P(x_i)} 
+&= -\left[ Y_i * \log(z) + (1-Y_i) * \log(1-z) \right]' \\
+&= -\left[ Y_i * \frac{1}{z} * z' + (1-Y_i) * \frac{1}{1-z} * (1-z)' \right]\\
+&= -\left[ Y_i * (1+e^{-w \cdot x}) * \frac{e^{-w \cdot x_i}}{(1+e^{-w \cdot x_i})^2} + (1-Y_i) * \frac{1+e^{-w \cdot x}}{e^{-w \cdot x}} * -\frac{e^{-w \cdot x_i}}{(1+e^{-w \cdot x_i})^2} \right]\\
+&= -\left[ Y_i * (1-\frac{1}{1+e^{-w \cdot x_i}}) + (1-Y_i) * -\frac{1}{1+e^{-w \cdot x_i}} \right]\\
+&= -\left[ Y_i - Y_i * \frac{1}{1+e^{-w \cdot x_i}} - \frac{1}{1+e^{-w \cdot x_i}} + Y_i * \frac{1}{1+e^{-w \cdot x_i}} \right]\\
+&= -\left[ Y_i - \frac{1}{1+e^{-w \cdot x_i}} \right] \\
+&= \frac{1}{1+e^{-w \cdot x_i}} - Y_i
+\end{aligned}
+$$
+</div>
+<p>进一步，在 LightGBM 中自定义训练的目标函数的时候需要计算二阶导：</p>
+<div>
+$$
+\begin{aligned}
+\frac{\partial^2 L(Y_i,P(x_i))}{\partial P(x_i)} 
+&= (\frac{1}{1+e^{-w \cdot x_i}} - Y_i)' \\
+&= \frac{e^{-w \cdot x_i}}{(1+e^{-w \cdot x_i})^2} \\
+&= \frac{1}{1+e^{-w \cdot x_i}} * \frac{e^{-w \cdot x_i}}{1+e^{-w \cdot x_i}} \\
+&= \frac{1}{1+e^{-w \cdot x_i}} * (1-\frac{1}{1+e^{-w \cdot x_i}})
+\end{aligned}
+$$
+</div>
+<p>关于设置自定义目标函数和验证函数，lightGBM 的官方示例代码：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback"># self-defined objective function
+# f(preds: array, train_data: Dataset) -&gt; grad: array, hess: array
+# log likelihood loss
+def loglikelood(preds, train_data):
+    labels = train_data.get_label()
+    preds = 1. / (1. + np.exp(-preds))
+    grad = preds - labels
+    hess = preds * (1. - preds)
+    return grad, hess
+    
+# self-defined eval metric
+# f(preds: array, train_data: Dataset) -&gt; name: string, value: array, is_higher_better: bool
+# binary error
+def binary_error(preds, train_data):
+    labels = train_data.get_label()
+    return &#39;error&#39;, np.mean(labels != (preds &gt; 0.5)), False
+
+# train model
+gbm = lgb.train(params,
+                lgb_train,
+                num_boost_round=10,
+                init_model=gbm,
+                fobj=loglikelood,
+                feval=binary_error,
+                valid_sets=lgb_eval)
+</code></pre></td></tr></table>
+</div>
+</div><p>参考：</p>
+<ol>
+<li>《统计学习方法》 李航</li>
+<li>《Machine Learning》 Andrew NG, Coursera</li>
+<li><a href="https://github.com/Microsoft/LightGBM/tree/master/examples/python-guide" target="_blank" rel="noopener noreffer">微软 LightGBM 官方完整代码示例</a></li>
+<li><a href="https://github.com/dmlc/xgboost/issues/15" target="_blank" rel="noopener noreffer">关于Xgboost的自定义目标函数的相关问题</a></li>
+</ol>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>The article was updated on 2017-12-12</span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span>
+                            <a class="link-to-markdown" href="/2017-12-12-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92%E5%9C%A8%E6%A2%AF%E5%BA%A6%E6%8F%90%E5%8D%87%E6%A0%91%E4%B8%AD%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E7%9A%84%E6%A2%AF%E5%BA%A6%E6%8E%A8%E5%AF%BC/index.md" target="_blank">Read Markdown</a>
+                        </span></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="https://utopizza.github.io/2017-12-12-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92%E5%9C%A8%E6%A2%AF%E5%BA%A6%E6%8F%90%E5%8D%87%E6%A0%91%E4%B8%AD%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E7%9A%84%E6%A2%AF%E5%BA%A6%E6%8E%A8%E5%AF%BC/" data-title="逻辑回归在梯度提升树中损失函数的梯度推导"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://utopizza.github.io/2017-12-12-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92%E5%9C%A8%E6%A2%AF%E5%BA%A6%E6%8F%90%E5%8D%87%E6%A0%91%E4%B8%AD%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E7%9A%84%E6%A2%AF%E5%BA%A6%E6%8E%A8%E5%AF%BC/"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="Share on WhatsApp" data-sharer="whatsapp" data-url="https://utopizza.github.io/2017-12-12-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92%E5%9C%A8%E6%A2%AF%E5%BA%A6%E6%8F%90%E5%8D%87%E6%A0%91%E4%B8%AD%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E7%9A%84%E6%A2%AF%E5%BA%A6%E6%8E%A8%E5%AF%BC/" data-title="逻辑回归在梯度提升树中损失函数的梯度推导" data-web><i class="fab fa-whatsapp fa-fw"></i></a><a href="javascript:void(0);" title="Share on Line" data-sharer="line" data-url="https://utopizza.github.io/2017-12-12-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92%E5%9C%A8%E6%A2%AF%E5%BA%A6%E6%8F%90%E5%8D%87%E6%A0%91%E4%B8%AD%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E7%9A%84%E6%A2%AF%E5%BA%A6%E6%8E%A8%E5%AF%BC/" data-title="逻辑回归在梯度提升树中损失函数的梯度推导"><i class="fab fa-line fa-fw"></i></a><a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="https://utopizza.github.io/2017-12-12-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92%E5%9C%A8%E6%A2%AF%E5%BA%A6%E6%8F%90%E5%8D%87%E6%A0%91%E4%B8%AD%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E7%9A%84%E6%A2%AF%E5%BA%A6%E6%8E%A8%E5%AF%BC/" data-title="逻辑回归在梯度提升树中损失函数的梯度推导"><i class="fab fa-weibo fa-fw"></i></a><a href="javascript:void(0);" title="Share on Myspace" data-sharer="myspace" data-url="https://utopizza.github.io/2017-12-12-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92%E5%9C%A8%E6%A2%AF%E5%BA%A6%E6%8F%90%E5%8D%87%E6%A0%91%E4%B8%AD%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E7%9A%84%E6%A2%AF%E5%BA%A6%E6%8E%A8%E5%AF%BC/" data-title="逻辑回归在梯度提升树中损失函数的梯度推导" data-description=""><i data-svg-src="/lib/simple-icons/icons/myspace.min.svg"></i></a><a href="javascript:void(0);" title="Share on Blogger" data-sharer="blogger" data-url="https://utopizza.github.io/2017-12-12-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92%E5%9C%A8%E6%A2%AF%E5%BA%A6%E6%8F%90%E5%8D%87%E6%A0%91%E4%B8%AD%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E7%9A%84%E6%A2%AF%E5%BA%A6%E6%8E%A8%E5%AF%BC/" data-title="逻辑回归在梯度提升树中损失函数的梯度推导" data-description=""><i class="fab fa-blogger fa-fw"></i></a><a href="javascript:void(0);" title="Share on Evernote" data-sharer="evernote" data-url="https://utopizza.github.io/2017-12-12-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92%E5%9C%A8%E6%A2%AF%E5%BA%A6%E6%8F%90%E5%8D%87%E6%A0%91%E4%B8%AD%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E7%9A%84%E6%A2%AF%E5%BA%A6%E6%8E%A8%E5%AF%BC/" data-title="逻辑回归在梯度提升树中损失函数的梯度推导"><i class="fab fa-evernote fa-fw"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/2017-12-05-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-randomforest%E4%B8%8Egbdt/" class="prev" rel="prev" title="RandomForest与GBDT"><i class="fas fa-angle-left fa-fw"></i>RandomForest与GBDT</a>
+            <a href="/2017-12-23-%E6%80%BB%E7%BB%93-%E9%98%B6%E6%AE%B5%E6%80%BB%E7%BB%932/" class="next" rel="next" title="阶段总结(2)">阶段总结(2)<i class="fas fa-angle-right fa-fw"></i></a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.69.2">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.6"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2020</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">yusheng</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><link rel="stylesheet" href="/lib/katex/katex.min.css"><link rel="stylesheet" href="/lib/katex/copy-tex.min.css"><script type="text/javascript">
+    window.config = {"code":{"copyTitle":"Copy to clipboard","maxShownLines":100},"comment":{},"headerMode":{"desktop":"fixed","mobile":"auto"},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false}};
+</script><script type="text/javascript" src="https://polyfill.io/v3/polyfill.min.js?features=html5shiv%2CElement.prototype.closest%2CrequestAnimationFrame%2CCustomEvent%2CPromise%2CObject.entries%2CObject.assign%2CObject.values%2Cfetch%2CElement.prototype.after%2CArray.prototype.fill%2CIntersectionObserver%2CArray.from%2CArray.prototype.find%2CMath.sign"></script><script type="text/javascript" src="/lib/smooth-scroll/smooth-scroll.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/object-fit-images/ofi.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="/lib/sharer/sharer.min.js"></script><script type="text/javascript" src="/lib/katex/katex.min.js"></script><script type="text/javascript" src="/lib/katex/auto-render.min.js"></script><script type="text/javascript" src="/lib/katex/copy-tex.min.js"></script><script type="text/javascript" src="/lib/katex/mhchem.min.js"></script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>

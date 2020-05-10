@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>事件与概率 - Utopizza</title>
+        <meta name="Description" content="About LoveIt Theme"><meta property="og:title" content="事件与概率" />
+<meta property="og:description" content="一、概率 1、概率的公理化定义（柯氏理论体系）：事件有概率，其大小随事件而异。也即，概率是事件的函数：事件 $A$ 的概率记为 $P(A)$。
+2、古典概率：设一个试验有 $N$ 个等可能的结果，而事件 $E$ 恰包含其中的 $M$ 个结果，则事件 $E$ 的概率，记为 $P(E)$，定义为
+$$P(E)=\frac{M}{N}$$
+3、古典概率计算归结为计算两个数 $M$ 和 $N$。这种计算大多涉及排列组合。排列组合公式： (1) $n$ 个相异物件取 $r(1\leq r \leq n)$ 个的不同排列总数为
+$$A_{n}^{r}=n(n-1)(n-2) \cdots (n-r&#43;1)=\frac{n!}{(n-r)!}$$
+(2) $n$ 个相异物件取 $r(1\leq r \leq n)$ 个的不同组合总数为
+$$C_{n}^{r}=\frac{A_{n}^{r}}{r!}=\frac{n!}{r!(n-r)!}$$
+(3) 组合系数 $C_{n}^{r}$ 又常称为二项式系数，因为它出现在二项式展开的公式中：
+$$(a&#43;b)^n=\sum_{i=0}^{n}C_{n}^{i}a^{i}b^{n-i}$$
+(4) $n$ 个相异物分成 $k$ 堆，各堆物件数分别为 $r_1,\cdots,r_k$，分法种数为：
+$$\frac{n!}{r_1! \cdots r_k!}$$
+二、事件的运算、条件概率与独立性 1、事件的蕴含、包含以及相等：在同一试验下的两个事件 $A$ 和 $B$，如果： (1) 当 $A$ 发生时 $B$ 必发生，则称 $A$ 蕴含 $B$，或者 $B$ 包含 A，记为 $A \subset B$ (2) 若 $A$、$B$ 相互蕴含，即 $A \subset B$ 且 $B \subset A$，则称 $A$、$B$ 两事件相等，记为 $A=B$" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://utopizza.github.io/2019-01-09-%E6%A6%82%E7%8E%87-%E4%BA%8B%E4%BB%B6%E4%B8%8E%E6%A6%82%E7%8E%87/" />
+<meta property="og:image" content="https://utopizza.github.io/logo.png"/>
+<meta property="article:published_time" content="2019-01-09T00:00:00+00:00" />
+<meta property="article:modified_time" content="2019-01-09T00:00:00+00:00" />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://utopizza.github.io/logo.png"/>
+
+<meta name="twitter:title" content="事件与概率"/>
+<meta name="twitter:description" content="一、概率 1、概率的公理化定义（柯氏理论体系）：事件有概率，其大小随事件而异。也即，概率是事件的函数：事件 $A$ 的概率记为 $P(A)$。
+2、古典概率：设一个试验有 $N$ 个等可能的结果，而事件 $E$ 恰包含其中的 $M$ 个结果，则事件 $E$ 的概率，记为 $P(E)$，定义为
+$$P(E)=\frac{M}{N}$$
+3、古典概率计算归结为计算两个数 $M$ 和 $N$。这种计算大多涉及排列组合。排列组合公式： (1) $n$ 个相异物件取 $r(1\leq r \leq n)$ 个的不同排列总数为
+$$A_{n}^{r}=n(n-1)(n-2) \cdots (n-r&#43;1)=\frac{n!}{(n-r)!}$$
+(2) $n$ 个相异物件取 $r(1\leq r \leq n)$ 个的不同组合总数为
+$$C_{n}^{r}=\frac{A_{n}^{r}}{r!}=\frac{n!}{r!(n-r)!}$$
+(3) 组合系数 $C_{n}^{r}$ 又常称为二项式系数，因为它出现在二项式展开的公式中：
+$$(a&#43;b)^n=\sum_{i=0}^{n}C_{n}^{i}a^{i}b^{n-i}$$
+(4) $n$ 个相异物分成 $k$ 堆，各堆物件数分别为 $r_1,\cdots,r_k$，分法种数为：
+$$\frac{n!}{r_1! \cdots r_k!}$$
+二、事件的运算、条件概率与独立性 1、事件的蕴含、包含以及相等：在同一试验下的两个事件 $A$ 和 $B$，如果： (1) 当 $A$ 发生时 $B$ 必发生，则称 $A$ 蕴含 $B$，或者 $B$ 包含 A，记为 $A \subset B$ (2) 若 $A$、$B$ 相互蕴含，即 $A \subset B$ 且 $B \subset A$，则称 $A$、$B$ 两事件相等，记为 $A=B$"/>
+<meta name="application-name" content="Utopizza">
+<meta name="apple-mobile-web-app-title" content="Utopizza"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://utopizza.github.io/2019-01-09-%E6%A6%82%E7%8E%87-%E4%BA%8B%E4%BB%B6%E4%B8%8E%E6%A6%82%E7%8E%87/" /><link rel="prev" href="https://utopizza.github.io/2019-01-05-%E8%AE%BA%E6%96%87-priortracker/" /><link rel="next" href="https://utopizza.github.io/2019-01-11-%E6%95%B0%E5%AD%A6-%E6%B3%B0%E5%8B%92%E5%B1%95%E5%BC%80%E5%BC%8F/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "事件与概率",
+        "inLanguage": "en",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https:\/\/utopizza.github.io\/2019-01-09-%E6%A6%82%E7%8E%87-%E4%BA%8B%E4%BB%B6%E4%B8%8E%E6%A6%82%E7%8E%87\/"
+        },"image": {
+                "@type": "ImageObject",
+                "url": "https:\/\/utopizza.github.io\/cover.png",
+                "width":  800 ,
+                "height":  600 
+            },"genre": "posts","wordcount":  265 ,
+        "url": "https:\/\/utopizza.github.io\/2019-01-09-%E6%A6%82%E7%8E%87-%E4%BA%8B%E4%BB%B6%E4%B8%8E%E6%A6%82%E7%8E%87\/","datePublished": "2019-01-09T00:00:00+00:00","dateModified": "2019-01-09T00:00:00+00:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+                "@type": "Organization",
+                "name": "",
+                "logo": {
+                "@type": "ImageObject",
+                "url": "https:\/\/utopizza.github.io\/logo.png",
+                "width":  127 ,
+                "height":  40 
+                }
+            },"author": {
+                "@type": "Person",
+                "name": "yusheng"
+            },"description": ""
+    }
+    </script></head>
+    <body><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="Utopizza"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>Utopizza</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> Posts </a><a class="menu-item" href="/categories/"> Categories </a><a class="menu-item" href="https://github.com/utopizza" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i>  </a><span class="menu-item delimiter"></span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="Utopizza"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>Utopizza</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><a class="menu-item" href="/posts/" title="">Posts</a><a class="menu-item" href="/categories/" title="">Categories</a><a class="menu-item" href="https://github.com/utopizza" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i></a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">事件与概率</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;
+                    <span class="post-category">included in<a href="/categories/math/">
+                                <i class="far fa-folder fa-fw"></i>Math
+                            </a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i><time datetime=2019-01-09>2019-01-09</time>&nbsp;
+                <i class="fas fa-pencil-alt fa-fw"></i>about 265 words&nbsp;
+                <i class="far fa-clock fa-fw"></i>2 min&nbsp;</div>
+        </div><div class="details toc" id="toc-static">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#一概率">一、概率</a></li>
+        <li><a href="#二事件的运算条件概率与独立性">二、事件的运算、条件概率与独立性</a></li>
+        <li><a href="#三概率定理">三、概率定理</a></li>
+        <li><a href="#四全概率公式与贝叶斯公式">四、全概率公式与贝叶斯公式</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><h3 id="一概率">一、概率</h3>
+<p>1、概率的公理化定义（柯氏理论体系）：事件有概率，其大小随事件而异。也即，概率是事件的函数：事件 $A$ 的概率记为 $P(A)$。</p>
+<p>2、古典概率：设一个试验有 $N$ 个等可能的结果，而事件 $E$ 恰包含其中的 $M$ 个结果，则事件 $E$ 的概率，记为 $P(E)$，定义为</p>
+<p>$$P(E)=\frac{M}{N}$$</p>
+<p>3、古典概率计算归结为计算两个数 $M$ 和 $N$。这种计算大多涉及排列组合。排列组合公式：
+(1) $n$ 个相异物件取 $r(1\leq r \leq n)$ 个的不同排列总数为</p>
+<p>$$A_{n}^{r}=n(n-1)(n-2) \cdots (n-r+1)=\frac{n!}{(n-r)!}$$</p>
+<p>(2) $n$ 个相异物件取 $r(1\leq r \leq n)$ 个的不同组合总数为</p>
+<p>$$C_{n}^{r}=\frac{A_{n}^{r}}{r!}=\frac{n!}{r!(n-r)!}$$</p>
+<p>(3) 组合系数 $C_{n}^{r}$ 又常称为二项式系数，因为它出现在二项式展开的公式中：</p>
+<p>$$(a+b)^n=\sum_{i=0}^{n}C_{n}^{i}a^{i}b^{n-i}$$</p>
+<p>(4) $n$ 个相异物分成 $k$ 堆，各堆物件数分别为 $r_1,\cdots,r_k$，分法种数为：</p>
+<p>$$\frac{n!}{r_1! \cdots r_k!}$$</p>
+<h3 id="二事件的运算条件概率与独立性">二、事件的运算、条件概率与独立性</h3>
+<p>1、事件的蕴含、包含以及相等：在同一试验下的两个事件 $A$ 和 $B$，如果：
+(1) 当 $A$ 发生时 $B$ 必发生，则称 $A$ 蕴含 $B$，或者 $B$ 包含 A，记为 $A \subset B$
+(2) 若 $A$、$B$ 相互蕴含，即 $A \subset B$ 且 $B \subset A$，则称 $A$、$B$ 两事件相等，记为 $A=B$</p>
+<p>2、事件的互斥和对立
+(1) 若两事件 $A$、$B$ 不能在同一次试验中都发生（但可以都不发生），则称它们是互斥的
+(2) 若 $A$、$B$ 互斥，并且当其中一个不发生时，另一个必定发生，那么称它们是对立的。记 $A$ 的对立事件为 $\bar A$</p>
+<p>3、事件的和：设有两个事件 $A$、$B$，定义一个新事件 $C$ 为 $C$={ $A$ 发生或 $B$ 发生}={ $A$、$B$ 至少发生一个}，则称事件 $C$ 为 事件 $A$、$B$ 的和，记为 $C=A+B$</p>
+<p>4、事件的积：设有两个事件 $A$、$B$，定义一个新事件 $C$ 为 $C$={ $A$、$B$ 都发生}，则称事件 $C$ 为 事件 $A$、$B$ 的积，记为 $C=AB$</p>
+<p>5、事件的差：设有两个事件 $A$、$B$，定义一个新事件 $C$ 为 $C$={ $A$ 发生、$B$ 不发生}，则称事件 $C$ 为 事件 $A$、$B$ 的差，记为 $C=A-B$</p>
+<p>6、条件概率：设有两个事件 $A$、$B$，其中 $P(B) \neq 0$。则 “在给定 $B$ 发生的条件下 $A$ 的条件概率”，记为 $P(A \mid B)$，定义为 $P(A \mid B)=\frac{P(AB)}{P(B)}$</p>
+<p>7、事件的独立性：设有两个事件 $A$、$B$，若 $P(A)=P(A \mid B)$，则说明 $B$ 的发生与否对 $A$ 发生的可能性毫无影响。这时在概率上称 $A$、$B$ 独立。此时根据条件概率公式可推得 $P(AB)=P(A)P(B)$</p>
+<h3 id="三概率定理">三、概率定理</h3>
+<p>1、$0 \leq P(A) \leq 1$。其中当 $$ 等于 $0$ 时 $A$ 是不可能事件，等于 $1$ 时是必然事件</p>
+<p>2、加法定理：若干个互斥事件之和的概率，等于各事件的概率之和：</p>
+<p>$$P(A_1+A_2+\cdots)=P(A_1)+P(A_2)+\cdots$$</p>
+<p>3、乘法定理：若干个独立事件之积的概率，等于各事件概率的乘积：</p>
+<p>$$P(A_1 \cdots A_n)=P(A_1) \cdots P(A_n)$$</p>
+<h3 id="四全概率公式与贝叶斯公式">四、全概率公式与贝叶斯公式</h3>
+<p>1、全概率公式：设 $B_1,B_2,\cdots$ 为有限或无限个事件，它们两两互斥且在每次试验中至少发生一个。即</p>
+<p>$$B_{i}B_{j} (i \neq j) = \emptyset \text{(不可能事件)}$$</p>
+<p>$$B_1+B_2+\cdots=\Omega \text{(必然事件)}$$</p>
+<p>有时，把具有这些性质的一组事件称为一个“完备事件群”。现考虑任一事件 $A$，因为 $\Omega$ 为必然事件，有 $A=A\Omega=AB_1+AB_2+\cdots$。因 $B_1$、$B_2$、$\cdots$ 两两互斥，所以 $AB_1$、$AB_2$、$\cdots$ 也两两互斥。故依加法定理有</p>
+<p>$$P(A)=P(AB_1)+P(AB_2)+\cdots$$</p>
+<p>再由条件概率的定义，有 $P(AB_i)=P(A \mid B_i)P(B_i)$，代入上式得</p>
+<div>
+$$
+\begin{aligned}
+P(A) &=P(A \mid B_1)P(B_1)+P(A \mid B_2)P(B_2)+\cdots \\
+&=\sum_{i} P(A \mid B_i)P(B_i)
+\end{aligned}
+$$
+</div>
+<p>可理解为事件 $A$ 的概率是从各个 $B_i$ 中 “收集” 回来的。也可以理解为 $B_i$ 是导致 $A$ 发生的一种可能 “途径”，或者 称为“原因”。</p>
+<p>2、贝叶斯公式：在全概率公式的基础上，可以推导出：</p>
+<p>$$P(B_i \mid A)=\frac{P(AB_i)}{P(A)}=\frac{P(A\mid B_i)P(B_i)}{\sum_{j} P(B_j)P(A\mid B_j)}$$</p>
+<p>其实就是对分子使用条件概率公式，对分母使用全概率公式。但是它所包含的哲理意义却不普通，引用陈希儒教授的《概率论与数理统计》一书中的解释：</p>
+<blockquote>
+<p>如果我们把事件 $A$ 看做“结果”，把诸事件 $B_1$、$B_2$、$\cdots$  看做导致这个结果的“原因”，则可以形象地把全概率公式看作“由原因推导结果”；而贝叶斯公式则恰好相反，其作用在于“由结果推原因”：现在有一个“结果” $A$ 已经发生了，在众多可能的“原因”中，到底是哪一个导致了这个“结果”？</p>
+</blockquote>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>The article was updated on 2019-01-09</span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span>
+                            <a class="link-to-markdown" href="/2019-01-09-%E6%A6%82%E7%8E%87-%E4%BA%8B%E4%BB%B6%E4%B8%8E%E6%A6%82%E7%8E%87/index.md" target="_blank">Read Markdown</a>
+                        </span></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="https://utopizza.github.io/2019-01-09-%E6%A6%82%E7%8E%87-%E4%BA%8B%E4%BB%B6%E4%B8%8E%E6%A6%82%E7%8E%87/" data-title="事件与概率"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://utopizza.github.io/2019-01-09-%E6%A6%82%E7%8E%87-%E4%BA%8B%E4%BB%B6%E4%B8%8E%E6%A6%82%E7%8E%87/"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="Share on WhatsApp" data-sharer="whatsapp" data-url="https://utopizza.github.io/2019-01-09-%E6%A6%82%E7%8E%87-%E4%BA%8B%E4%BB%B6%E4%B8%8E%E6%A6%82%E7%8E%87/" data-title="事件与概率" data-web><i class="fab fa-whatsapp fa-fw"></i></a><a href="javascript:void(0);" title="Share on Line" data-sharer="line" data-url="https://utopizza.github.io/2019-01-09-%E6%A6%82%E7%8E%87-%E4%BA%8B%E4%BB%B6%E4%B8%8E%E6%A6%82%E7%8E%87/" data-title="事件与概率"><i class="fab fa-line fa-fw"></i></a><a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="https://utopizza.github.io/2019-01-09-%E6%A6%82%E7%8E%87-%E4%BA%8B%E4%BB%B6%E4%B8%8E%E6%A6%82%E7%8E%87/" data-title="事件与概率"><i class="fab fa-weibo fa-fw"></i></a><a href="javascript:void(0);" title="Share on Myspace" data-sharer="myspace" data-url="https://utopizza.github.io/2019-01-09-%E6%A6%82%E7%8E%87-%E4%BA%8B%E4%BB%B6%E4%B8%8E%E6%A6%82%E7%8E%87/" data-title="事件与概率" data-description=""><i data-svg-src="/lib/simple-icons/icons/myspace.min.svg"></i></a><a href="javascript:void(0);" title="Share on Blogger" data-sharer="blogger" data-url="https://utopizza.github.io/2019-01-09-%E6%A6%82%E7%8E%87-%E4%BA%8B%E4%BB%B6%E4%B8%8E%E6%A6%82%E7%8E%87/" data-title="事件与概率" data-description=""><i class="fab fa-blogger fa-fw"></i></a><a href="javascript:void(0);" title="Share on Evernote" data-sharer="evernote" data-url="https://utopizza.github.io/2019-01-09-%E6%A6%82%E7%8E%87-%E4%BA%8B%E4%BB%B6%E4%B8%8E%E6%A6%82%E7%8E%87/" data-title="事件与概率"><i class="fab fa-evernote fa-fw"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/2019-01-05-%E8%AE%BA%E6%96%87-priortracker/" class="prev" rel="prev" title="PriorTracker"><i class="fas fa-angle-left fa-fw"></i>PriorTracker</a>
+            <a href="/2019-01-11-%E6%95%B0%E5%AD%A6-%E6%B3%B0%E5%8B%92%E5%B1%95%E5%BC%80%E5%BC%8F/" class="next" rel="next" title="泰勒展开式">泰勒展开式<i class="fas fa-angle-right fa-fw"></i></a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.69.2">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.6"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2020</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">yusheng</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><link rel="stylesheet" href="/lib/katex/katex.min.css"><link rel="stylesheet" href="/lib/katex/copy-tex.min.css"><script type="text/javascript">
+    window.config = {"code":{"copyTitle":"Copy to clipboard","maxShownLines":100},"comment":{},"headerMode":{"desktop":"fixed","mobile":"auto"},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false}};
+</script><script type="text/javascript" src="https://polyfill.io/v3/polyfill.min.js?features=html5shiv%2CElement.prototype.closest%2CrequestAnimationFrame%2CCustomEvent%2CPromise%2CObject.entries%2CObject.assign%2CObject.values%2Cfetch%2CElement.prototype.after%2CArray.prototype.fill%2CIntersectionObserver%2CArray.from%2CArray.prototype.find%2CMath.sign"></script><script type="text/javascript" src="/lib/smooth-scroll/smooth-scroll.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/object-fit-images/ofi.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="/lib/sharer/sharer.min.js"></script><script type="text/javascript" src="/lib/katex/katex.min.js"></script><script type="text/javascript" src="/lib/katex/auto-render.min.js"></script><script type="text/javascript" src="/lib/katex/copy-tex.min.js"></script><script type="text/javascript" src="/lib/katex/mhchem.min.js"></script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>

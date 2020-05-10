@@ -1,966 +1,216 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-  <channel>
-    <title>MachineLearning on Utopizza</title>
-    <link>https://utopizza.github.io/categories/machinelearning/</link>
-    <description>Recent content in MachineLearning on Utopizza</description>
-    <generator>Hugo -- gohugo.io</generator>
-    <language>en</language>
-    <lastBuildDate>Sat, 17 Mar 2018 20:37:00 +0000</lastBuildDate>
-    
-	<atom:link href="https://utopizza.github.io/categories/machinelearning/index.xml" rel="self" type="application/rss+xml" />
-    
-    
-    <item>
-      <title>特征工程</title>
-      <link>https://utopizza.github.io/posts/machinelearning/2018-03-17-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E7%89%B9%E5%BE%81%E5%B7%A5%E7%A8%8B/</link>
-      <pubDate>Sat, 17 Mar 2018 20:37:00 +0000</pubDate>
-      
-      <guid>https://utopizza.github.io/posts/machinelearning/2018-03-17-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E7%89%B9%E5%BE%81%E5%B7%A5%E7%A8%8B/</guid>
-      <description>&lt;p&gt;特征工程（Feature Engineering）：利用领域知识和现有数据，构造出需要的特征，用于机器学习算法【参考维基百科：&lt;a href=&#34;https://en.wikipedia.org/wiki/Feature_engineering&#34;&gt;Feature engineering&lt;/a&gt;】。&lt;/p&gt;
-&lt;p&gt;俗话说，数据与特征工程决定了模型的上限，改进算法只是逼近这个上限。可见特征工程在机器学习领域里的地位之重要。针对数据挖掘以及传统的机器学习，通过人们的总结和归纳，特征工程主要包括以下方面：&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://utopizza.github.io/2018-03-17-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E7%89%B9%E5%BE%81%E5%B7%A5%E7%A8%8B/1.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
-&lt;p&gt;目前比较流行的方案是借助一个强大的 python 类库—— sklearn 来实现特征工程。它的&lt;a href=&#34;http://scikit-learn.org/stable/&#34;&gt;官方文档&lt;/a&gt;是教材级别的文档，值得深入学习。言归正传，下面开始总结特征工程的方法。&lt;/p&gt;
-&lt;p&gt;一、数据预处理（参考sklearn官方文档 &lt;a href=&#34;http://scikit-learn.org/stable/modules/preprocessing.html&#34;&gt;Preprocessing data&lt;/a&gt;）&lt;/p&gt;
-&lt;p&gt;1、无量纲化：使不同规格的数据转换到同一规格。常用的方法有标准化、缩放化、正则化三种，它们的具体区别参见：&lt;a href=&#34;http://www.cnblogs.com/chaosimple/p/4153167.html&#34;&gt;归一化/标准化/正则化&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;(1)、标准化：减去均值并除以标准差。公式表达为：&lt;/p&gt;
-&lt;p&gt;$$x_{new}=\frac{x-\bar{x}}{S}$$&lt;/p&gt;
-&lt;p&gt;使用 sklearn 的 StandardScaler 实现：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;from sklearn.preprocessing import StandardScaler
-
-data_new = StandardScaler().fit_transform(data)
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;(2)、缩放化：常用最大最小值进行缩放，把特征缩放到区间 [0，1] 内，公式表达为：&lt;/p&gt;
-&lt;p&gt;$$x_{new}=\frac{x-x_{min}}{x_{max}-x_{min}}$$&lt;/p&gt;
-&lt;p&gt;使用 skearn 的 MinMaxScaler 实现：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;from sklearn.preprocessing import MinMaxScaler
-
-data_new = MinMaxScaler().fit_transform(data)
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;(3)、正则化：对每个样本计算其 p-范数，然后对该样本中每个元素除以该范数，这样处理的结果是使得每个处理后样本的 p-范数（L1-norm，L2-norm）等于1。其目的在于样本向量在点乘运算或其他核函数计算相似性时，拥有统一的标准，也就是说都转化为“单位向量”。在 L2 范数下正则化公式表达为：&lt;/p&gt;
-&lt;p&gt;$$x_{new}=\frac{x}{||x||_{2}}$$&lt;/p&gt;
-&lt;p&gt;使用 sklearn 的 Normalizer 实现：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;from sklearn.preprocessing import Normalizer
-
-data_new = Normalizer().fit_transform(data)
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;2、二值化：设定一个阈值，大于阈值的赋值为1，小于等于阈值的赋值为0，公式表达如下：&lt;/p&gt;
-&lt;p&gt;$$x_{new} =
-\begin{cases}
-1, &amp;amp; \text {if $x &amp;gt; threshold$} \
-0, &amp;amp; \text{if $x \leq threshold$}
-\end{cases}$$&lt;/p&gt;
-&lt;p&gt;使用 sklearn 的 Binarizer 实现：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;from sklearn.preprocessing import Binarizer
-
-data_new = Binarizer(threshold=3).fit_transform(data)
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;3、独热编码：常用于类别特征（category feature）的处理，把如“男/女”这样的字符型特征转化为数值类型特征。思想是使用 N 位状态寄存器来对 N 个状态进行编码，每个状态都由他独立的寄存器位，并且在任意时候，其中只有一位有效。详情参见：&lt;a href=&#34;http://blog.csdn.net/dulingtingzi/article/details/51374487&#34;&gt;数据预处理之独热编码&lt;/a&gt;。使用 sklearn 的 OneHotEncoder 实现：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;from sklearn.preprocessing import OneHotEncoder
-
-data_new = OneHotEncoder().fit_transform(data)
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;4、缺失值处理：缺失值的填补方法有多种，中位数填补、众数填补、均值填补、临近数填补。采用怎么样的填补方法，或者直接放弃该特征，需视具体情况而定。可参考：&lt;a href=&#34;http://www.cnblogs.com/xiaohuahua108/p/6237906.html&#34;&gt;浅谈数据挖掘中的数据处理（缺失值处理以及异常值检测）&lt;/a&gt;。使用 sklearn 的 Imputer 实现：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;from sklearn.preprocessing import Imputer
-
-data_new = Imputer(strategy=&amp;#39;mean&amp;#39;).fit_transform(data)
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;5、构造多项式特征：假设有数据集有两个特征 $[X_1, X_2]$，则可以利用 sklearn 的 PolynomialFeatures 构造二次多项式特征如 $[1,X_1,X_2,X_1^2,X_1*X_2,X_2^2]$。也可以构造更高次数的多项式特征，只需要调整参数即可。&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;from sklearn.preprocessing import PolynomialFeatures
-
-data_new = PolynomialFeatures(2).fit_transform(data) 
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;6、函数转换：利用 Python 的函数对特征进行转换。可以用 sklearn 的 FunctionTransformer 实现：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;import numpy as np
-from sklearn.preprocessing import FunctionTransformer
-
-data_new = FunctionTransformer(np.log1p).transform(X)
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;二、特征选择（参考sklearn官方文档 &lt;a href=&#34;http://scikit-learn.org/stable/modules/feature_selection.html&#34;&gt;Feature selection&lt;/a&gt;）&lt;/p&gt;
-&lt;p&gt;1、Filter：过滤法或称选择法，按照发散性或者相关性对各个特征进行评分，设定阈值或者待选择阈值的个数，选择特征。&lt;/p&gt;
-&lt;p&gt;(1)、方差选择法：先计算各个特征的方差，然后根据阈值，选择方差大于阈值的特征。这样可以去掉一些方差特别小的特征如常量特征，这种特征对于模型的训练和预测不会有太多贡献。方差的数学公式表达：&lt;/p&gt;
-&lt;p&gt;$$\delta^{2}=\frac{(X-\mu)^2}{N}$$&lt;/p&gt;
-&lt;p&gt;使用 sklearn 的 VarianceThreshold 实现：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;from sklearn.feature_selection import VarianceThreshold
-
-data_new = VarianceThreshold(threshold=3).fit_transform(data)
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;(2)、Pearson 相关系数选择法：计算各个特征对目标值的相关系数以及相关系数的P值，然后选择相关性最高的 k 个。Pearson 相关系数是用两个变量的协方差除以两个变量的标准差得到的，详情参考 &lt;a href=&#34;https://www.zhihu.com/question/19734616&#34;&gt;知乎：如何理解皮尔逊相关系数&lt;/a&gt; 以及 &lt;a href=&#34;https://zh.wikipedia.org/wiki/%E7%9A%AE%E5%B0%94%E9%80%8A%E7%A7%AF%E7%9F%A9%E7%9B%B8%E5%85%B3%E7%B3%BB%E6%95%B0&#34;&gt;维基百科：皮尔逊积矩相关系数&lt;/a&gt;。数学公式表达：&lt;/p&gt;
-&lt;p&gt;$$P(X,Y)
-=\frac{Cov(X,Y)}{\sigma_X \sigma_Y}
-=\frac{E[(X-\mu_{X})(Y-\mu_{Y})]}{\sigma_X \sigma_Y}
-$$&lt;/p&gt;
-&lt;p&gt;使用 sklearn 的 SelectKBest 与 scipy 的 pearsonr 结合实现：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;from sklearn.feature_selection import SelectKBest
-from scipy.stats import pearsonr
-
-data_new = SelectKBest(lambda X, Y: array(map(lambda x:pearsonr(x, Y), X.T)).T, k=2).fit_transform(data, target)
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;(3)、卡方检验法：经典的卡方检验（Chi-Square）是检验定性自变量对定性因变量的相关性，详情参考：&lt;a href=&#34;https://zh.wikipedia.org/wiki/%E5%8D%A1%E6%96%B9%E6%A3%80%E9%AA%8C&#34;&gt;卡方检验&lt;/a&gt;。使用 sklearn 的 SelectKBest 与 chi2 结合实现：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;from sklearn.feature_selection import SelectKBest
-from sklearn.feature_selection import chi2
-
-X_new = SelectKBest(chi2, k=2).fit_transform(X, y)
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;(4)、互信息法：皮尔逊系数只能衡量线性相关性，而互信息系数能够很好地度量各种相关性，但是计算相对复杂一些。互信息是用来评价一个事件的出现对于另一个事件的出现所贡献的信息量，可用来评价定性自变量对定性因变量的相关性，详情参考&lt;a href=&#34;http://blog.csdn.net/liu_zhlai/article/details/53512939&#34;&gt;特征选择方法之互信息&lt;/a&gt;。数学描述为：&lt;/p&gt;
-&lt;p&gt;$$I(X,Y)=\sum_{x \in X}\sum_{y \in Y} p(x,y) \log \frac{p(x,y)}{p(x)p(y)}$$&lt;/p&gt;
-&lt;p&gt;使用 sklearn 的 SelectKBest 与 minepy 的 MINE 结合实现：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;from sklearn.feature_selection import SelectKBest
-from minepy import MINE
-
-def mic(x, y):
-    m = MINE()
-    m.compute_score(x, y)
-    return (m.mic(), 0.5)
-
-X_new = SelectKBest(lambda X, Y: array(map(lambda x:mic(x, Y), X.T)).T, k=2).fit_transform(X, Y)
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;2、Wrapper：包装法，根据目标函数（通常是预测效果评分），每次选择若干特征，或者排除若干特征。&lt;/p&gt;
-&lt;p&gt;(1)、递归特征消除：使用一个基模型来进行多轮训练，每轮训练后，模型选择 importance 排在前列的若干特征构建新的特征集，再基于新的特征集进行下一轮训练，如此重复直至特征个数达到指定的数量。使用 sklearn 的 RFE 类实现如下，这里使用逻辑斯蒂回归作为基模型，也可以使用 sklearn 中其他的模型如 svm 等等：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;from sklearn.feature_selection import RFE
-from sklearn.linear_model import LogisticRegression
-
-X_new = RFE(estimator=LogisticRegression(), n_features_to_select=2).fit_transform(X, Y)
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;3、Embedded：嵌入法，先使用某些机器学习的算法和模型进行训练，得到各个特征的权值系数，根据系数从大到小选择特征。类似于Filter方法，但是是通过训练来确定特征的优劣。&lt;/p&gt;
-&lt;p&gt;(1)、基于正则项的特征选择法：使用带正则项的基模型，除了筛选出特征外同时也进行了降维，例如使用具有特征稀疏能力的 L1 范数作为正则项（&lt;a href=&#34;https://www.zhihu.com/question/37096933&#34;&gt;知乎：l1 相比于 l2 为什么容易获得稀疏解？&lt;/a&gt;）。使用 sklearn 的 SelectFromModel 结合带 L1 正则项的逻辑回归模型实现：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;from sklearn.feature_selection import SelectFromModel
-from sklearn.linear_model import LogisticRegression
-
-X_new = SelectFromModel(LogisticRegression(penalty=&amp;#34;l1&amp;#34;, C=0.1)).fit_transform(X, Y)
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;(2)、基于树模型的特征选择法：树模型中GBDT也可用来作为基模型进行特征选择。使用 sklearn 的 SelectFromModel 结合 GradientBoostingClassifier 实现：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;from sklearn.feature_selection import SelectFromModel
-from sklearn.ensemble import GradientBoostingClassifier
-
-X_new = SelectFromModel(GradientBoostingClassifier()).fit_transform(X, Y)
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;三、降维&lt;/p&gt;
-&lt;p&gt;当特征选择完成后，可以直接训练模型了，但是可能由于特征矩阵过大，导致计算量大，训练时间长的问题，因此降低特征矩阵维度也是必不可少的。常见的降维方法除了以上提到的基于 L1 正则项的模型以外，另外还有主成分分析法（PCA）和线性判别分析（LDA），线性判别分析本身也是一个分类模型。PCA 和 LDA 有很多的相似点，其本质是要将原始的样本映射到维度更低的样本空间中，但是 PCA 和 LDA 的映射目标不一样：&lt;a href=&#34;http://www.cnblogs.com/LeftNotEasy/archive/2011/01/08/lda-and-pca-machine-learning.html&#34;&gt;PCA 是为了让映射后的样本具有最大的发散性；而 LDA 是为了让映射后的样本有最好的分类性能&lt;/a&gt;。所以说 PCA 是一种无监督的降维方法，而 LDA 是一种有监督的降维方法。&lt;/p&gt;
-&lt;p&gt;1、主成分分析法（PCA）：使用 sklearn 的 PCA 实现&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;from sklearn.decomposition import PCA
-
-X_new = PCA(n_components=2).fit_transform(X)
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;2、线性判别分析法（LDA）：使用 sklearn 的 LDA 实现&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;from sklearn.lda import LDA
-
-X_new = LDA(n_components=2).fit_transform(X, Y)
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;四、特征交互（Feature interaction）&lt;/p&gt;
-&lt;p&gt;通过结合领域知识或者数据特点等等，利用多个特征组合成新的特征，例如&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;利用某个特征，构造多项式特征&lt;/li&gt;
-&lt;li&gt;把某个特征进行某些函数变换，例如取绝对值、平移、取对数等等&lt;/li&gt;
-&lt;li&gt;通过某几个特征的加减乘除运算、与或非等运算，或者各种 join 等操作得到的新特征&lt;/li&gt;
-&lt;li&gt;按某个特征进行 groupby 分组，把每一组作为新的特征，样本属于哪一组就在对应的特征用 1 表示，其余用 0 表示&lt;/li&gt;
-&lt;li&gt;用基因编程创造新特征&lt;/li&gt;
-&lt;li&gt;用决策树创造新特征&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;五、参考资料：&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;&lt;a href=&#34;http://www.cnblogs.com/jasonfreak/p/5448385.html&#34;&gt;使用sklearn做单机特征工程&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://blog.csdn.net/sqiu_11/article/details/59487177&#34;&gt;sklearn学习——特征工程(特征选择)&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://www.17bigdata.com/%E7%BB%93%E5%90%88scikit-learn%E4%BB%8B%E7%BB%8D%E5%87%A0%E7%A7%8D%E5%B8%B8%E7%94%A8%E7%9A%84%E7%89%B9%E5%BE%81%E9%80%89%E6%8B%A9%E6%96%B9%E6%B3%95.html&#34;&gt;结合Scikit-learn介绍几种常用的特征选择方法&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://www.zhihu.com/question/28641663/answer/41653367&#34;&gt;知乎：机器学习中，有哪些特征选择的工程方法？&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://zhuanlan.zhihu.com/p/26444240&#34;&gt;机器学习特征工程实用技巧大全&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://zhuanlan.zhihu.com/p/33651227&#34;&gt;警惕「特征工程」中的陷阱&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://zhuanlan.zhihu.com/p/24635014&#34;&gt;特征选择， 经典三刀&lt;/a&gt;&lt;/li&gt;
-&lt;/ol&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>机器学习类竞赛</title>
-      <link>https://utopizza.github.io/posts/machinelearning/2018-02-04-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%B1%BB%E7%AB%9E%E8%B5%9B/</link>
-      <pubDate>Sun, 04 Feb 2018 22:07:00 +0000</pubDate>
-      
-      <guid>https://utopizza.github.io/posts/machinelearning/2018-02-04-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%B1%BB%E7%AB%9E%E8%B5%9B/</guid>
-      <description>&lt;p&gt;一、国外&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;&lt;a href=&#34;https://www.kaggle.com/&#34;&gt;Kaggle&lt;/a&gt;：最著名最活跃的大数据竞赛平台，竞赛题目源源不断，种类丰富，而且有不菲的竞赛奖金。特别是上面的论坛大牛众多而且非常 nice，如果英文能力过关的话在上面可以学到最多最好的数据挖掘和机器学习、深度学习的知识。&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://www.kdd.org/kdd-cup&#34;&gt;KDD Cup&lt;/a&gt;：SIGKDD 是 Data Mining 领域的顶会。KDD Cup 是其下的一个比赛。含金量很高。每年都会有比较有意思的题目。难度较大，偏学术，因而全世界的DM、ML大牛、小牛都可能在做这个。这个比赛偶尔会在国内的阿里天池平台上出现，有不少清北博士参加。&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;二、国内&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;&lt;a href=&#34;https://tianchi.shuju.aliyun.com/&#34;&gt;阿里巴巴天池大数据科研平台&lt;/a&gt;：由国内科技巨头阿里举办，应该算是国内名气最大的数据挖掘类型的比赛了。由于是阿里举办，所以比赛获得不错名次的可以获得阿里校招直通车的权利。我参加过几个，感觉不少细节问题处理得并不是很好，例如有时候会出现赛题规则混乱，数据集因为各种问题不断更换等等，和 Kaggle 的差距还是不小。&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://www.datafountain.cn&#34;&gt;CCF大数据与计算智能大赛（BDCI）&lt;/a&gt;：由中国计算机学会 CCF 主办，是目前国内权威的大数据类赛事之一，组织单位都很权威，也有很多院士、专家参与评审。&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://www.dcjingsai.com/common/cmptIndex.html&#34;&gt;DataCastle&lt;/a&gt;：国内的另一个比较有名气的大数据竞赛平台，不过奖金较少。DC在成都，可能是和电子科大有某些联系，评委多是电子科大的老师。&lt;/li&gt;
-&lt;li&gt;另外国内一些IT巨头例如百度，腾讯，京东等等会自己举办一些机器学习大数据和算法竞赛，例如京东金融的 &lt;a href=&#34;http://www.datafountain.cn//#/competitions/247/intro&#34;&gt;京东JData算法大赛&lt;/a&gt; 、&lt;a href=&#34;http://jddjr.jd.com/&#34;&gt;京东金融全球数据探索者大赛&lt;/a&gt; ，腾讯的 &lt;a href=&#34;http://algo.tpai.qq.com/&#34;&gt;腾讯社交广告赛（TSA）&lt;/a&gt;，华为的 &lt;a href=&#34;http://codecraft.devcloud.huaweicloud.com/&#34;&gt;华为软件精英挑战赛&lt;/a&gt; 等等，大概每年一度，因为是企业自己举办的比赛，其目的就是为了招揽人才，所以这种比赛除了奖金外，一般都会发 Special Offer，十分诱人。&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;三、参考&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;&lt;a href=&#34;https://www.zhihu.com/question/41450532/answer/91325509&#34;&gt;天池大数据竞赛和Kaggle、DataCastle的比较，哪个比较好？&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://zhuanlan.zhihu.com/p/25686876&#34;&gt;Kaggle入门，看这一篇就够了&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://www.zhihu.com/question/32032932/answer/58810196&#34;&gt;Kaggle 的比赛在 Machine Learning 领域中属于什么地位？&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://zhuanlan.zhihu.com/p/27424282&#34;&gt;分分钟带你杀入Kaggle Top 1%&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://www.zhihu.com/question/41449961/answer/92090896&#34;&gt;参加天池大数据竞赛对校园招聘有帮助吗？&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://www.zhihu.com/question/29916643&#34;&gt;国内数据挖掘竞赛哪个好？&lt;/a&gt;&lt;/li&gt;
-&lt;/ol&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>逻辑回归在梯度提升树中损失函数的梯度推导</title>
-      <link>https://utopizza.github.io/posts/machinelearning/2017-12-12-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92%E5%9C%A8%E6%A2%AF%E5%BA%A6%E6%8F%90%E5%8D%87%E6%A0%91%E4%B8%AD%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E7%9A%84%E6%A2%AF%E5%BA%A6%E6%8E%A8%E5%AF%BC/</link>
-      <pubDate>Tue, 12 Dec 2017 16:40:00 +0000</pubDate>
-      
-      <guid>https://utopizza.github.io/posts/machinelearning/2017-12-12-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92%E5%9C%A8%E6%A2%AF%E5%BA%A6%E6%8F%90%E5%8D%87%E6%A0%91%E4%B8%AD%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E7%9A%84%E6%A2%AF%E5%BA%A6%E6%8E%A8%E5%AF%BC/</guid>
-      <description>&lt;p&gt;一、梯度提升树&lt;/p&gt;
-&lt;p&gt;因为做比赛最近用到了 LightGBM 来实现逻辑回归，并尝试修改 LightGBM 的目标函数，于是顺便温习一下梯度提升树和逻辑回归，并简单推导了一下逻辑回归在梯度提升树中的损失函数的梯度计算。&lt;/p&gt;
-&lt;p&gt;前面的博文介绍过，当损失函数是平方损失和指数损失时，前向加法模型的提升树（回归提升树）可以很方便地进行目标函数的优化并构造决策树。但对于一般的损失函数，前向加法提升树就比较难实现优化。这时就需要使用梯度提升模型的提升树，它能适应一般的损失函数。类似最速下降法，梯度提升树利用损失函数的负梯度在当前模型的值&lt;/p&gt;
-&lt;p&gt;$$- \left[ \frac{\partial L(y,f(x_i))}{\partial f(x_i)} \right]$$&lt;/p&gt;
-&lt;p&gt;作为回归提升树算法中的残差的近似值，来拟合一个回归树。&lt;/p&gt;
-&lt;p&gt;二、逻辑回归&lt;/p&gt;
-&lt;p&gt;逻辑回归是比较简单而且应用非常广泛的机器学习算法。它主要用于二分类任务，但是与一般的分类器不同，逻辑回归并不直接给出未知样本的预测类别，而是给出属于某个类别的概率。&lt;/p&gt;
-&lt;p&gt;对一个二分类任务，每个训练样本都属于且只属于两种类别之中的一种，即要么是正样本，要么是负样本。习惯上，一般用 $0$ 表示负样本，用 $1$ 表示正样本。&lt;/p&gt;
-&lt;p&gt;设训练集一共有 $m$ 个样本，每个样本有 $n$ 个属性，第 $i$ 个训练样本表示为 $x_i=(x_{i}^{(1)},x_{i}^{(2)},\cdots,x_{i}^{(n)})$，$1 \leq i \leq m$。对应地，每个样本有一个类别，设为 $Y$，则对第 $i$ 个样本，要么 $Y_i=1$，要么 $Y_i=0$。&lt;/p&gt;
-&lt;p&gt;现在的任务是，给定 $m$ 个已知对应类别的样本 ${(x_1,Y_1),(x_2,Y_2),\cdots,(x_m,Y_m)}$，用来作为训练集，学习一个分类器模型 $f(x,Y)$，然后用这个模型来对未知类别的样本如 $(x_{m+1},？)$ 进行预测，预测它的类别 $Y_{m+1}$ 是等于 $1$ 还是等于 $0$。&lt;/p&gt;
-&lt;p&gt;逻辑回归使用 $sigmod$ 函数作为预测模型，它不直接判定某个样本是正样本还是负样本，而是给出一个条件概率，即在已知样本的 $n$ 个属性的情况下，该样本属于正样本或负样本的概率。数学描述为&lt;/p&gt;
-&lt;p&gt;$$P(Y=1 \mid x)=\frac{1}{1+e^{-w \cdot x}}$$&lt;/p&gt;
-&lt;p&gt;$$P(Y=0 \mid x)=1-\frac{1}{1+e^{-w \cdot x}}$$&lt;/p&gt;
-&lt;p&gt;其中 $w$ 是 $n$ 维的向量，每一维对应样本 $x$ 的 $n$ 个特征，可以理解为：$w^{(i)}$ 表示训练样本 $x$ 第 $i$ 个特征 $x^{(i)}$ 的权重。$w \cdot x$ 为两个向量的内积，即&lt;/p&gt;
-&lt;p&gt;$$w \cdot x=w^{(1)}*x^{(1)}+w^{(2)}*x^{(2)}+\cdots+w^{(n)}*x^{(n)}$$&lt;/p&gt;
-&lt;p&gt;如果给定了训练集，那么模型训练的任务就是学习上面的权重参数 $w$，如果找到某个确定的向量 $w=w^{*}$ 能把训练样本最正确地分类，那么它就是我们要找的那个最优解。确定这个参数后，模型也就完全确定了。当使用该模型执行预测任务时，只需要把未知样本输入这个模型，即可得出未知样本属于正样本或负样本的概率。&lt;/p&gt;
-&lt;p&gt;那么我们如何找到这个最优的向量 $w^{*}$ ？对于逻辑回归，因为它是概率问题，所以一般使用极大似然估计法来估计模型参数。&lt;/p&gt;
-&lt;p&gt;极大似然估计法思路：“存在即合理”，使得每个已知样本（即训练样本）出现的概率最大的参数 $w^{*}$ 就是最优的参数。设给定的训练集为 $T={(x_1,Y_1),(x_2,Y_2),\cdots,(x_m,Y_m)}$，其中 $x_i \in R^n$，$Y_i \in {0,1}$，由逻辑回归的定义知每个样本（作为正样本或负样本）出现的概率为&lt;/p&gt;
-&lt;p&gt;$$
-P(x_i)=
-\begin{cases}
-P(Y_i=1 \mid x_i)=\frac{1}{1+e^{-w \cdot x_i}}  \&lt;br&gt;
-P(Y_i=0 \mid x_i)=1-\frac{1}{1+e^{-w \cdot x_i}}
-\end{cases}
-$$&lt;/p&gt;
-&lt;p&gt;有了每个样本的概率 $P(x_i)$，现在只要找到一个 $w=w^{*}$ 使得所有样本的概率同时最大，应该怎么做呢？思路很简单，因为目标是使它们同时最大，因此把它们全部乘起来，得到一个关于 $w$ 的函数，只要使这个函数的值最大，那就相当于使这些概率同时最大了。这个函数称为似然函数，设为 $L(w)$，即&lt;/p&gt;
-&lt;p&gt;$$L(w)=P(x_1) * P(x_2) * \cdots * P(x_m)=\prod_{i=1}^{m} P(x_i)$$&lt;/p&gt;
-&lt;p&gt;到这里其实已经基本完成学习任务的数学定义了。但是为了能让机器执行学习任务，还需要解决两个小问题，一是公式的推导化简，二是使用什么方法搜索 $w$ 的解空间。&lt;/p&gt;
-&lt;p&gt;对于第一个问题，当你尝试把 $P(x_i)$ 的公式代入似然函数 $L(w)$ 时，你就会发现非常困难，因为 $P(x_i)$ 公式针对 $Y_i$ 分了两种情况。这里用到了一个小技巧，可以把两种情况的公式在形式上统一到一个公式。如果你注意到，对于每个样本的类别属性 $Y_i$，它要么是 $1$ 要么是 $0$ ，那么就可以利用这个性质，把两种情况统一写成：&lt;/p&gt;
-&lt;p&gt;$$
-\begin{aligned}
-P(x_i)
-&amp;amp;=P(Y_i=1 \mid x_i)^{Y_i} * P(Y_i=0 \mid x_i)^{1-Y_i} \&lt;br&gt;
-&amp;amp;=(\frac{1}{1+e^{-w \cdot x_i}})^{Y_i} * (1-\frac{1}{1+e^{-w \cdot x_i}})^{1-Y_i}
-\end{aligned}
-$$&lt;/p&gt;
-&lt;p&gt;这个形式的 $P(x_i)$ 和上面的原始定义是完全等价的。你可以发现，当 $Y_i=1$ 时，乘号右边的部分因为指数为 $1-Y_i=0$ 就变成了 $1$ 而只剩下左边的部分，这就相当于当 $Y_i=1$ 自动时把 $P(Y_i=1 \mid x_i)$ 这部分选择出来了，反之亦然。&lt;/p&gt;
-&lt;p&gt;有了如此统一的 $P(x_i)$ 的表达形式，就可以代入似然函数得到&lt;/p&gt;
-&lt;p&gt;$$L(w)=\prod_{i=1}^{m} P(x_i)=\prod_{i=1}^{m} \left[ (\frac{1}{1+e^{-w \cdot x_i}})^{Y_i} * (1-\frac{1}{1+e^{-w \cdot x_i}})^{1-Y_i} \right]$$&lt;/p&gt;
-&lt;p&gt;如果进一步考虑到，因为 $P(x_i)$ 是一个概率，如果样本数目太多，大量的小数连乘对于机器来说容易出现下溢等等的精度问题，为避免这些实际问题一般对似然函数取对数，把连乘变成连加，从而得到对数似然函数&lt;/p&gt;
-&lt;p&gt;$$\log L(w)=\sum_{i=1}^{m} \left[ Y_i*\log(\frac{1}{1+e^{-w \cdot x_i}})+(1-Y_i)*(1-\frac{1}{1+e^{-w \cdot x_i}}) \right]$$&lt;/p&gt;
-&lt;p&gt;现在只要让机器找到一个 $w=w^{*}$ 使得 $\log L(w)$ 最大，也即极大值，那么这就是最优的解。对第二个问题，一般常用的方法是梯度下降法或者拟牛顿法来搜索 $w$ 的解空间，这里限于篇幅不再展开。&lt;/p&gt;
-&lt;p&gt;三、逻辑回归之于梯度提升树&lt;/p&gt;
-&lt;p&gt;现在有了逻辑回归的目标函数，就可以推导出逻辑回归的损失函数在梯度提升树中的每一轮训练时的负梯度的值。&lt;/p&gt;
-&lt;p&gt;首先为了在形式上与第一节中的梯度提升树的负梯度公式保持统一，我们把上面逻辑回归的目标函数 $\log L(w)$ 写成&lt;strong&gt;关于每一个样本的损失函数&lt;/strong&gt;的形式&lt;/p&gt;
-&lt;p&gt;$$L(Y_i,P(x_i))=Y_i*\log(\frac{1}{1+e^{-w \cdot x_i}})+(1-Y_i)*(1-\frac{1}{1+e^{-w \cdot x_i}})$$&lt;/p&gt;
-&lt;p&gt;为了在接下来的推导过程简便表达，先设&lt;/p&gt;
-&lt;p&gt;$$z=\frac{1}{1+e^{-w \cdot x_i}}, \quad 1-z=1-\frac{1}{1+e^{-w \cdot x_i}}$$&lt;/p&gt;
-&lt;p&gt;为了简洁过程在这里我们把 $-w*x_i$ 看作一个整体的变量即可，现在分别对 $z$ 和 $1-z$ 求导，有&lt;/p&gt;
-&lt;p&gt;$$z&#39;=\frac{e^{-w \cdot x_i}}{(1+e^{-w \cdot x_i})^2}, \quad
-(1-z)&amp;lsquo;=-\frac{e^{-w \cdot x_i}}{(1+e^{-w \cdot x_i})^2}
-$$&lt;/p&gt;
-&lt;p&gt;因此梯度提升树在第 $i$ 个样本处的负梯度（一阶导）：&lt;/p&gt;
-&lt;p&gt;$$
-\begin{aligned}
--\frac{\partial L(Y_i,P(x_i))}{\partial P(x_i)}
-&amp;amp;= -\left[ Y_i * \log(z) + (1-Y_i) * \log(1-z) \right]&amp;rsquo; \&lt;br&gt;
-&amp;amp;= -\left[ Y_i * \frac{1}{z} * z&amp;rsquo; + (1-Y_i) * \frac{1}{1-z} * (1-z)&amp;rsquo; \right]\&lt;br&gt;
-&amp;amp;= -\left[ Y_i * (1+e^{-w \cdot x}) * \frac{e^{-w \cdot x_i}}{(1+e^{-w \cdot x_i})^2} + (1-Y_i) * \frac{1+e^{-w \cdot x}}{e^{-w \cdot x}} * -\frac{e^{-w \cdot x_i}}{(1+e^{-w \cdot x_i})^2} \right]\&lt;br&gt;
-&amp;amp;= -\left[ Y_i * (1-\frac{1}{1+e^{-w \cdot x_i}}) + (1-Y_i) * -\frac{1}{1+e^{-w \cdot x_i}} \right]\&lt;br&gt;
-&amp;amp;= -\left[ Y_i - Y_i * \frac{1}{1+e^{-w \cdot x_i}} - \frac{1}{1+e^{-w \cdot x_i}} + Y_i * \frac{1}{1+e^{-w \cdot x_i}} \right]\&lt;br&gt;
-&amp;amp;= -\left[ Y_i - \frac{1}{1+e^{-w \cdot x_i}} \right] \&lt;br&gt;
-&amp;amp;= \frac{1}{1+e^{-w \cdot x_i}} - Y_i
-\end{aligned}
-$$&lt;/p&gt;
-&lt;p&gt;进一步，在 LightGBM 中自定义训练的目标函数的时候需要计算二阶导：&lt;/p&gt;
-&lt;p&gt;$$
-\begin{aligned}
-\frac{\partial^2 L(Y_i,P(x_i))}{\partial P(x_i)}
-&amp;amp;= (\frac{1}{1+e^{-w \cdot x_i}} - Y_i)&amp;rsquo; \&lt;br&gt;
-&amp;amp;= \frac{e^{-w \cdot x_i}}{(1+e^{-w \cdot x_i})^2} \&lt;br&gt;
-&amp;amp;= \frac{1}{1+e^{-w \cdot x_i}} * \frac{e^{-w \cdot x_i}}{1+e^{-w \cdot x_i}} \&lt;br&gt;
-&amp;amp;= \frac{1}{1+e^{-w \cdot x_i}} * (1-\frac{1}{1+e^{-w \cdot x_i}})
-\end{aligned}
-$$&lt;/p&gt;
-&lt;p&gt;关于设置自定义目标函数和验证函数，lightGBM 的官方示例代码：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;# self-defined objective function
-# f(preds: array, train_data: Dataset) -&amp;gt; grad: array, hess: array
-# log likelihood loss
-def loglikelood(preds, train_data):
-    labels = train_data.get_label()
-    preds = 1. / (1. + np.exp(-preds))
-    grad = preds - labels
-    hess = preds * (1. - preds)
-    return grad, hess
-    
-# self-defined eval metric
-# f(preds: array, train_data: Dataset) -&amp;gt; name: string, value: array, is_higher_better: bool
-# binary error
-def binary_error(preds, train_data):
-    labels = train_data.get_label()
-    return &amp;#39;error&amp;#39;, np.mean(labels != (preds &amp;gt; 0.5)), False
-
-# train model
-gbm = lgb.train(params,
-                lgb_train,
-                num_boost_round=10,
-                init_model=gbm,
-                fobj=loglikelood,
-                feval=binary_error,
-                valid_sets=lgb_eval)
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;参考：&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;《统计学习方法》 李航&lt;/li&gt;
-&lt;li&gt;《Machine Learning》 Andrew NG, Coursera&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://github.com/Microsoft/LightGBM/tree/master/examples/python-guide&#34;&gt;微软 LightGBM 官方完整代码示例&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://github.com/dmlc/xgboost/issues/15&#34;&gt;关于Xgboost的自定义目标函数的相关问题&lt;/a&gt;&lt;/li&gt;
-&lt;/ol&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>RandomForest与GBDT</title>
-      <link>https://utopizza.github.io/posts/machinelearning/2017-12-05-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-randomforest%E4%B8%8Egbdt/</link>
-      <pubDate>Tue, 05 Dec 2017 11:40:00 +0000</pubDate>
-      
-      <guid>https://utopizza.github.io/posts/machinelearning/2017-12-05-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-randomforest%E4%B8%8Egbdt/</guid>
-      <description>&lt;p&gt;一、随机森林（RandomForest）&lt;/p&gt;
-&lt;p&gt;前面学习过了 bagging 方法，我们知道该方法是通过&lt;strong&gt;有放回随机抽样&lt;/strong&gt;来构建 $S$ 个和原数据集大小相等的训练集，然后分别进行训练，得到 $S$ 个分类器，再把这些分类器通过多数表决的方式组合得到最终的分类器。&lt;/p&gt;
-&lt;p&gt;随机森林算法正是 bagging 方法的一种扩展。随机森林算法不仅对训练集的样本（行）进行抽样，而且对训练集的特征（列）也进行抽样。具体来说，随机森林分为三个步骤：&lt;/p&gt;
-&lt;p&gt;1、随机采样&lt;/p&gt;
-&lt;p&gt;对于行采样，使用有放回随机采样，和常规 bagging 方法一致，前面已经介绍过，此处不再赘述。&lt;/p&gt;
-&lt;p&gt;对于列采样，假设样本有 $M$ 个特征（即训练集有 $M$ 列），那么该算法在每次决策树的节点要分裂的时候，随机选择其中 $m$ 个特征作为考察的特征子集（即只在这 $m$ 个特征之中选出最优特征作为分裂决策，而不是像传统决策树那样考察全部特征）。满足 $m &amp;laquo; M$ ，即每次随机选择的子特征集的大小应远小于总特征集的大小，一般情况下推荐取 $m=log_2(M)$。&lt;/p&gt;
-&lt;p&gt;行采样的目的是 “用有限数据模拟无限数据”，而列采样的目的是使每个决策树专注于一小部分特征的学习，使其成为各自的 “窄领域专家”，当最终把这些 “擅长于不同领域的专家” 组合到一起时，就可以大大减少 “所有专家犯同样错误” 的可能，也即过拟合的可能。&lt;/p&gt;
-&lt;p&gt;2、完全分裂&lt;/p&gt;
-&lt;p&gt;因为有了上一步采样的过程，最终分类器的过拟合现象基本不可能发生，因此在学习各个决策树的时候就按照完全分裂的方式来构造，无须剪枝。如在执行分类任务时，分裂的决策依据就可以选择常规决策树的生成算法的决策依据，如 ID3 算法的信息增益等。&lt;/p&gt;
-&lt;p&gt;3、执行决策&lt;/p&gt;
-&lt;p&gt;当学习完成，得到 $S$ 个彼此独立的决策树后，就可以把这些决策树组合在一起，作为最终的分类器。组合的方式是常规 bagging 方式，即在对预测输出进行结合时，让各个分类器分别执行预测，得到 $S$ 个预测结果，如果预测任务是分类任务则使用投票法选择票数最多的那个类别返回，如果是回归任务则使用均值法取这些预测结果的均值返回。&lt;/p&gt;
-&lt;p&gt;二、梯度提升树（Gradient boosting decision tree，GBDT）&lt;/p&gt;
-&lt;p&gt;梯度提升树是 boosting 提升方法中的一种。它的提出是为了解决 “回归提升树在使用一般损失函数的时候，求解目标函数时每一步的优化比较困难” 这一问题。之前学习的回归提升树在使用&lt;strong&gt;前向分步算法&lt;/strong&gt;求解目标函数时，使用的损失函数是指数函数，每一步的优化很简单。但如果要扩展到一般的损失函数，就不那么容易了。因此 Freidman 提出了梯度提升（gradient boosting）算法，利用最速下降法的近似方法，其关键是利用损失函数的负梯度在当前模型的值作为回归提升树中的残差的近似值，来拟合一个回归树。&lt;/p&gt;
-&lt;p&gt;梯度提升算法：&lt;/p&gt;
-&lt;p&gt;输入：训练数据集 $T$，输入空间 $X$，输出空间 $Y$，损失函数 $L(y,f(x))$
-输出：回归提升树 $f_M(x)$&lt;/p&gt;
-&lt;p&gt;1、初始化&lt;/p&gt;
-&lt;p&gt;$$f_0(x)=argmin\sum_{i=1}^{N}L(y_i,c)$$&lt;/p&gt;
-&lt;p&gt;2、对 $M$ 个分类器，进行对应的第 $m=1,2,\cdots,M$ 轮学习。对第 $m$ 轮学习：&lt;/p&gt;
-&lt;p&gt;(1)、计算&lt;/p&gt;
-&lt;p&gt;$$r_{mi}=-\left[ \frac{\partial L(y_i,f(x_i))}{\partial f(x_i)} \right]_{f(x)=f_{m-1}(x)}$$&lt;/p&gt;
-&lt;p&gt;(2)、拟合 $r_{mi}$，得到第 $m$ 个回归树的叶结点区域 $R_{mj}$，$j=1,2,\cdots,J$&lt;/p&gt;
-&lt;p&gt;(3)、对 $j=1,2,\cdots,J$，计算&lt;/p&gt;
-&lt;p&gt;$$c_{mj}=argmin\sum_{x_i \in R_{mj}} L(y_i,f(x_i)+c)$$&lt;/p&gt;
-&lt;p&gt;(4)、更新&lt;/p&gt;
-&lt;p&gt;$$f_m(x)=f_{m-1}(x)+\sum_{j=1}^{J}c_{mj}I(x \in R_{mj})$$&lt;/p&gt;
-&lt;p&gt;3、执行完 $M$ 轮学习后，得到最终的回归提升树&lt;/p&gt;
-&lt;p&gt;$$f_M(x)=\sum_{m=1}^{M}\sum_{j=1}^{J}c_{mj}I(x \in R_{mj})$$&lt;/p&gt;
-&lt;p&gt;目前比较流行的 GBDT 算法实现有两个，分别是陈天奇的 xgboost（eXtreme Gradient Boosting） 和 微软的 lightGBM。关于两者的详细分析对比看&lt;a href=&#34;https://zhuanlan.zhihu.com/p/24498293&#34;&gt;这里&lt;/a&gt;。&lt;/p&gt;
-&lt;p&gt;参考：&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;&lt;a href=&#34;http://blog.csdn.net/holybin/article/details/25653597&#34;&gt;机器学习中的算法：决策树模型组合之随机森林（Random Forest）&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://blog.csdn.net/flying_sfeng/article/details/64133822&#34;&gt;随机森林的原理分析及Python代码实现&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;《统计学习方法》李航&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://www.jianshu.com/p/005a4e6ac775&#34;&gt;GBDT：梯度提升决策树&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://zhuanlan.zhihu.com/p/24498293&#34;&gt;XGBoost, LightGBM性能大对比&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;《机器学习》周志华&lt;/li&gt;
-&lt;/ol&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>boosting与bagging</title>
-      <link>https://utopizza.github.io/posts/machinelearning/2017-11-30-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-boosting%E4%B8%8Ebagging/</link>
-      <pubDate>Thu, 30 Nov 2017 21:02:00 +0000</pubDate>
-      
-      <guid>https://utopizza.github.io/posts/machinelearning/2017-11-30-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-boosting%E4%B8%8Ebagging/</guid>
-      <description>&lt;p&gt;一、boosting&lt;/p&gt;
-&lt;p&gt;前面已经学习过，boosting 是一种提升方法，它通过改变训练样本的权重，学习多个分类器，并将这些分类器进行组合，提高分类的性能。&lt;/p&gt;
-&lt;p&gt;boosting 方法每一轮学习一个分类器，并根据本次学习的误差，改变整个样本集合中每个样本的权重，被误分类的那些样本的权重将增大。在下一轮学习新的分类器时，这些被误分类的样本将会被赋予更大的关注。&lt;/p&gt;
-&lt;p&gt;因此可以看出，boosting 方法是通过串行训练而获得的，下一轮的学习是基于上一轮的误差进行的。另外，每一轮的训练集都是整个原数据集，数据集中的样本不变，变的是各个样本的权重。&lt;/p&gt;
-&lt;p&gt;最后，在学习基本分类器时，会同时计算得到每个分类器的权重。boosting 的最终组合分类器是这一系列基本分类器的加权组合。&lt;/p&gt;
-&lt;p&gt;目前比较典型的两种 boosting 算法是 Adaboosting （Adaptive Boosting，自适应boosting）算法，和 GBDT（gradient boosting decision tree，梯度提升决策树）算法。&lt;/p&gt;
-&lt;p&gt;二、bagging&lt;/p&gt;
-&lt;p&gt;自举汇聚法（bootstrap aggregating），也称 bagging 方法。该方法通过从原数据集中&lt;strong&gt;随机放回抽样&lt;/strong&gt;，得到 $S$ 个和原数据集大小相等的数据集，来作为 $S$ 次训练的训练集，从而训练得到 $S$ 个分类器。&lt;/p&gt;
-&lt;p&gt;因为是放回抽样，所以新的数据集中可以有重复的样本，原数据集也可以有部分样本不在新数据集中出现。&lt;/p&gt;
-&lt;p&gt;得到了 $S$ 个分类器后，就将这些分类器组合成最终的分类器。执行预测时，让这 $S$ 个分类器分别对新数据进行预测，得到  $S$ 个预测结果。如果是分类任务，则采用多数表决的方式，选择这 $S$ 个结果中票数最多的那个类别返回。如果是回归任务，则取均值作为最终结果返回。&lt;/p&gt;
-&lt;p&gt;目前比较典型的 bagging 类的方法有随机森林（Random Forest）。&lt;/p&gt;
-&lt;p&gt;三、区别&lt;/p&gt;
-&lt;p&gt;1、学习方式&lt;/p&gt;
-&lt;p&gt;boosting 的每一轮学习是基于前一轮的误差，因此它的一系列基本分类器的训练是串行的。bagging 是随机不放回抽样得到若干个新的训练集进行各自的训练，彼此间没有联系，可并行。&lt;/p&gt;
-&lt;p&gt;2、训练样本&lt;/p&gt;
-&lt;p&gt;boosting 不改变样本，而是在每一轮根据误差改变每个样本的权重。bagging 不改变权重，而是从原数据集抽选其中一部分样本（可重复）来构成不同的训练集。&lt;/p&gt;
-&lt;p&gt;3、分类器组合方式&lt;/p&gt;
-&lt;p&gt;boosting 的最终分类器是基本分类器的加权之和，每个分类器有各自的权重，最终的预测结果是每个分类器的预测结果的加权之和。bagging 的分类器没有权重的概念，每个基本分类器都有相等权重的一票，最终的预测结果是票数最多的那一个类（标签）。&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>分类提升树与回归提升树</title>
-      <link>https://utopizza.github.io/posts/machinelearning/2017-11-26-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E5%88%86%E7%B1%BB%E6%8F%90%E5%8D%87%E6%A0%91%E4%B8%8E%E5%9B%9E%E5%BD%92%E6%8F%90%E5%8D%87%E6%A0%91/</link>
-      <pubDate>Sun, 26 Nov 2017 14:40:00 +0000</pubDate>
-      
-      <guid>https://utopizza.github.io/posts/machinelearning/2017-11-26-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E5%88%86%E7%B1%BB%E6%8F%90%E5%8D%87%E6%A0%91%E4%B8%8E%E5%9B%9E%E5%BD%92%E6%8F%90%E5%8D%87%E6%A0%91/</guid>
-      <description>&lt;p&gt;一、提升树（boosting tree）&lt;/p&gt;
-&lt;p&gt;提升树是以&lt;strong&gt;分类树&lt;/strong&gt;或&lt;strong&gt;回归树&lt;/strong&gt;为&lt;strong&gt;基本分类器&lt;/strong&gt;的提升方法。提升树被认为是统计学习中性能最好的方法之一。提升方法采用加法模型（即基函数的线性组合）与前向分步算法。对分类问题，决策树是二叉分类树；对回归问题，决策树是二叉回归树。&lt;/p&gt;
-&lt;p&gt;提升树模型可以表示为决策树的加法模型：&lt;/p&gt;
-&lt;p&gt;$$f_M(x)=\sum_{m=1}^{M}T(x;\theta_m)$$&lt;/p&gt;
-&lt;p&gt;其中，$T(x;\theta_m)$ 表示决策树，$\theta_m$ 为决策树的参数，$M$ 为决策树的个数。&lt;/p&gt;
-&lt;p&gt;二、二分类问题的提升树&lt;/p&gt;
-&lt;p&gt;对于二分类问题，提升树算法只需将 Adaboost 算法中的基本分类器限制为二分类树即可。&lt;/p&gt;
-&lt;p&gt;目前比较流行的方案是采用一种简单决策树作为基本分类器：单层决策树（decision stump，也称决策树桩）。它仅仅基于单个特征来执行决策，因此对应地只有一个树结点：根节点。它只能执行一次二分类，如 $x &amp;lt; v$ 或 $x &amp;gt; v$。&lt;/p&gt;
-&lt;p&gt;三、回归问题的提升树&lt;/p&gt;
-&lt;p&gt;回归树的形式化描述：设训练数据集 $T={(x_1,y_1),(x_2,y_2),\cdots,(x_N,y_N)}$，$x_i \in X \subseteq R^n$，$y_i \in Y \subseteq R$，$X$ 是输入空间，$Y$ 是输出空间。如果将输入空间 $X$ 划分为 $J$ 个不相交的区域 $R_1,R_2,\cdots,R_J$，并且在每个区域上有确定的输出常量 $c_j$，那么回归树可以表示为：&lt;/p&gt;
-&lt;p&gt;$$T(x;\theta)=\sum_{j=1}^{J}c_j \cdot I(x \in R_j)$$&lt;/p&gt;
-&lt;p&gt;其中，参数 $\theta={(R_1,c_1),(R_2,c_2),\cdots,(R_J,c_J)}$ 表示回归树的区域划分和各区域上的输出常量（即输出的回归值），$J$ 是回归树的复杂度（即&lt;strong&gt;叶结点&lt;/strong&gt;个数）。&lt;/p&gt;
-&lt;p&gt;回归问题的提升树算法：&lt;/p&gt;
-&lt;p&gt;输入：如上，训练数据集 $T$，输入空间 $X$，输出空间 $Y$
-输出：回归提升树 $f_M(x)$&lt;/p&gt;
-&lt;p&gt;1、初始化 $f_0(x)=0$&lt;/p&gt;
-&lt;p&gt;2、对 $M$ 个分类器，进行对应的第 $m=1,2,\cdots,M$ 轮学习。对第 $m$ 轮学习：&lt;/p&gt;
-&lt;p&gt;(1)、计算以前一轮为止，目前学习到的回归提升树 $f_{m-1}(x)$ 的残差&lt;/p&gt;
-&lt;p&gt;$$r_{mi}=y_i-f_{m-1}(x_i)，i=1,2,\cdots,N$$&lt;/p&gt;
-&lt;p&gt;(2)、拟合残差 $r_{mi}$ 学习得到第 $m$ 个回归树 $T(x;\theta_m)$&lt;/p&gt;
-&lt;p&gt;(3)、把该回归树加入 $f_{m-1}(x)$，得到新的回归提升树&lt;/p&gt;
-&lt;p&gt;$$f_m(x)=f_{m-1}(x)+T(x;\theta_m)$$&lt;/p&gt;
-&lt;p&gt;3、执行完 $M$ 轮学习后，得到最终的回归提升树&lt;/p&gt;
-&lt;p&gt;$$f_M(x)=\sum_{m=1}^{M}T(x;\theta_m)$$&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Adaboost算法</title>
-      <link>https://utopizza.github.io/posts/machinelearning/2017-11-22-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-adaboost%E7%AE%97%E6%B3%95/</link>
-      <pubDate>Wed, 22 Nov 2017 14:17:00 +0000</pubDate>
-      
-      <guid>https://utopizza.github.io/posts/machinelearning/2017-11-22-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-adaboost%E7%AE%97%E6%B3%95/</guid>
-      <description>&lt;p&gt;一、提升方法（boosting）&lt;/p&gt;
-&lt;p&gt;提升方法主要用于分类问题，它的基本思想是，通过改变训练样本的权重，学习多个不同的分类器，最后把这些基本分类器（也称弱分类器）通过线性组合，得到最终的强分类器。&lt;/p&gt;
-&lt;p&gt;这里所谓的提升，通俗地说其实就是将一个分类问题交给多个分类器来处理，“对于一个复杂任务来说，将多个专家的判断进行适当的综合，得出的最终判断，要比任何一个专家单独的判断要好”。虽然每一个弱分类器都是只是一个窄领域的专家，但是把一系列这样的弱分类组合到一起，得到的分类能力并不比单个强分类器差。而且直接学习一个强分类器远比学习一个弱分类器难。&lt;/p&gt;
-&lt;p&gt;目前大多数提升方法是通过不断改变训练数据的概率分布（样本权重分布）来不断学习出一系列弱分类器。那么这样需要确定两个问题：&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;在每一轮如何改变训练样本的权值或者概率分布&lt;/li&gt;
-&lt;li&gt;如何将这些弱分类器组合成一个强分类器&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;提升方法中的代表性算法有 Adaboost 算法，它的做法是：&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;在每一轮学习后，提高前一轮学习中被错误分类的样本的权值，降低前一轮学习中被正确分类的样本的权值。这样，后面学习的分类器将会专注于前面的分类器不能很好处理的那些样本，弥补了前面的分类器的不足（窄领域）。举个例子，小明和小红在学习分类一堆水果，小明先学习，他在学习分类的时候由于精力和时间有限，在一轮学习后，小明只能很好地对体积大的水果进行分类，对那些体积小的水果经常分错类。然后到小红学习的时候，为了保证两个人最终能够把这堆水果都正确分类，那么聪明的小红应该知道，自己应该专注于对那些小明不擅长的体积小的水果进行学习，因为如果小明能够很好地分类体积大的水果，而自己能够很好地分类体积小的水果，那么两个人组合互补起来得到的分类能力，远比两个人都强行学习对所有水果分类的效果好得多。&lt;/li&gt;
-&lt;li&gt;对于弱分类器的组合，Adaboost 采取加权多数表决的方法，即加大分类误差小的弱分类器的权值，使其在最终表决的时候起较大作用，减小分类误差较大的弱分类器的权值，使其在最终表决中起较小作用。这个很容易理解，谁分类的误差小、准确度高，当然谁在最终的表决里就有更大的话语权了。&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;二、Adaboost 算法&lt;/p&gt;
-&lt;p&gt;算法目标：给定一个二分类的训练数据集 $T={(x_1,y_1),(x_2,y_2),\cdots,(x_N,y_N)}$，其中 $x_i \in R^n$ 是样本实例，$y_i \in {-1,+1}$ 是样本类别标记。本算法目标是从该训练数据集中，学习出 $M$ 个弱分类器，最后将这些弱分类器通过&lt;strong&gt;线性组合&lt;/strong&gt;，得到最终的一个强分类器。&lt;/p&gt;
-&lt;p&gt;输入：训练数据集 $T$，弱学习算法
-输出：最终分类器 $G(x)$&lt;/p&gt;
-&lt;p&gt;1、初始化训练集 $N$ 个样本的权重分布&lt;/p&gt;
-&lt;p&gt;$$D_1=(w_{1,1},\cdots,w_{1,i},\cdots,w_{1,N})$$&lt;/p&gt;
-&lt;p&gt;$$w_{1,i}=\frac{1}{N}，i=1,2,\cdots,N$$&lt;/p&gt;
-&lt;p&gt;2、对 $M$ 个分类器，开展对应的 $m=1,2,\cdots,M$ 轮学习。对第 $m$ 轮学习：&lt;/p&gt;
-&lt;p&gt;(1)、用训练数据集 $T$、第 $m$ 轮的样本权重 $D_m$、和弱分类器学习算法，学习得到第 $m$ 个弱分类器&lt;/p&gt;
-&lt;p&gt;$$G_m(x):X \to {-1,+1}$$&lt;/p&gt;
-&lt;p&gt;(2)、计算 $G_m(x)$ 在训练集上的分类误差率&lt;/p&gt;
-&lt;p&gt;$$e_m=P(G_m(x_i) \neq y_i)=\sum_{i=1}^{N}w_{m,i}I(G_m(x_i) \neq y_i)$$&lt;/p&gt;
-&lt;p&gt;(3)、计算 $G_m(x)$ 的权重&lt;/p&gt;
-&lt;p&gt;$$\alpha_m=\frac{1}{2}\ln(\frac{1}{e_m}-1)$$&lt;/p&gt;
-&lt;p&gt;(4)、计算下一轮学习的样本权重分布&lt;/p&gt;
-&lt;p&gt;$$D_{m+1}=(w_{m+1,1},\cdots,w_{m+1,i},\cdots,w_{m+1,N})$$&lt;/p&gt;
-&lt;p&gt;$$
-w_{m+1,i}=\frac
-{w_{m,i} \cdot e^{-\alpha_m y_i G_m(x_i)}}
-{\sum_{i=1}^{N} w_{m,i} \cdot e^{-\alpha_m y_i G_m(x_i)}}
-，i=1,2,\cdots,N
-$$&lt;/p&gt;
-&lt;p&gt;3、执行完 $M$ 轮学习后，得到 $M$ 个弱分类器 $G_1(x),G_2(x),\cdots,G_M(x)$，通过线性组合得到最终表决&lt;/p&gt;
-&lt;p&gt;$$f(x)=\sum_{m=1}^{M} \alpha_m \cdot G_m(x)$$&lt;/p&gt;
-&lt;p&gt;加上符号函数 $sign()$，从而得到最终分类器&lt;/p&gt;
-&lt;p&gt;$$G(x)=sign(f(x))=sign \left( \sum_{m=1}^{M} \alpha_m \cdot G_m(x) \right)$$&lt;/p&gt;
-&lt;p&gt;三、Adaboost 的解释&lt;/p&gt;
-&lt;p&gt;Adaboost 算法是模型为&lt;strong&gt;加法模型&lt;/strong&gt;、损失函数为&lt;strong&gt;指数函数&lt;/strong&gt;、学习算法为&lt;strong&gt;前向分步算法&lt;/strong&gt;时的&lt;strong&gt;二分类&lt;/strong&gt;学习方法。&lt;/p&gt;
-&lt;p&gt;1、加法模型（additive model）：&lt;/p&gt;
-&lt;p&gt;$$f(x)=\sum_{m=1}^{M} \beta_m \cdot b(x;\gamma_m)$$&lt;/p&gt;
-&lt;p&gt;其中 $b(x;\gamma_m)$ 为基函数，$\gamma_m$ 为基函数的参数，$\beta_m$ 为基函数的系数。&lt;/p&gt;
-&lt;p&gt;2、前向分步算法&lt;/p&gt;
-&lt;p&gt;具体参见《统计学习方法》，这里直接给出结论：由前向分步算法可以推导出 Adaboost 算法，Adaboost 算法是前向分步算法的一个特例。以后有时间再回来补这部分推导。&lt;/p&gt;
-&lt;p&gt;3、Adaboost 的训练误差&lt;/p&gt;
-&lt;p&gt;Adaboost 的训练误差可以证明是指数下降的。&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>训练误差与测试误差</title>
-      <link>https://utopizza.github.io/posts/machinelearning/2017-11-20-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E8%AE%AD%E7%BB%83%E8%AF%AF%E5%B7%AE%E4%B8%8E%E6%B5%8B%E8%AF%95%E8%AF%AF%E5%B7%AE/</link>
-      <pubDate>Mon, 20 Nov 2017 13:57:00 +0000</pubDate>
-      
-      <guid>https://utopizza.github.io/posts/machinelearning/2017-11-20-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E8%AE%AD%E7%BB%83%E8%AF%AF%E5%B7%AE%E4%B8%8E%E6%B5%8B%E8%AF%95%E8%AF%AF%E5%B7%AE/</guid>
-      <description>&lt;p&gt;今天和队友讨论好准备做交叉验证的时候，我们竟然都搞错了对交叉验证的理解，回过头来看书的时候发现是竟然因为搞错了一些最基本的但十分重要的知识，特此记录一下。&lt;/p&gt;
-&lt;p&gt;一、交叉验证（cross validation）&lt;/p&gt;
-&lt;p&gt;机器学习中的交叉验证是一种常用的模型选择的方法。交叉验证的基本思想是重复地使用数据，把给定的数据集进行切分，分成训练集和测试集，在此基础上反复地进行训练、测试，并选择最好的模型。&lt;/p&gt;
-&lt;p&gt;1、简单交叉验证&lt;/p&gt;
-&lt;p&gt;随机地将已给数据集分为两部分，约 70% 作为训练集，剩下 30% 作为测试集。然后用训练集在不同的参数条件下训练模型，得到各个参数不同的模型，接着在测试集上评价模型的测试误差，选出测试集误差最小的模型。 这种方法只把训练集和测试集做一次划分。&lt;/p&gt;
-&lt;p&gt;2、$S$ 折交叉验证&lt;/p&gt;
-&lt;p&gt;目前应用最多的是 $S$ 折交叉验证，首先随机地将已给数据切分成 $S$ 个互不相交的大小相同的子集，然后利用其中任意 $S-1$ 个子集作为训练集训练得到一个模型，把剩下的那一个子集作为测试集测试模型得到一个测试误差。如此重复 $S$ 次，直到每一个子集都作为一次测试集，一共得出 $S$ 个不同的模型，和 $S$ 个对应的测试误差。最后，选择出这 $S$ 个测试误差中最小的那个模型，作为最终确定的最优模型。&lt;/p&gt;
-&lt;p&gt;到这里，我就不明白，为什么这样做可以避免过拟合？选择测试误差最小的那个模型，不就又过拟合了吗？后来查了一下书，其实是我把训练误差和测试误差搞混了，而且过拟合的定义没理解好。&lt;/p&gt;
-&lt;p&gt;二、过拟合（over-fitting）&lt;/p&gt;
-&lt;p&gt;所谓过拟合，是指在学习时选择的模型包含参数过多，以致于出现这一模型对已知数据预测得很好，但是对未知数据预测很差的现象。也就是说，在训练集上训练误差已经非常小，但在测试集上测试误差却非常大。&lt;/p&gt;
-&lt;p&gt;出现这个问题往往是因为在设定训练的目标函数时，只片面地追求对训练数据的预测能力。例如，假设现在有一个任务是用训练集（点集）去拟合一个多项式函数，然后用这个多项式函数去预测一些未知的样本。如果在设定训练的目标函数时，只考虑多项式函数与训练样本总误差的最小化，那么在学习的时候为了找到这个最小误差，模型会不断地提高自己的多项式次数（也即模型的复杂度），尝试用三次，四次，或者更高次的多项式，去逼近所有训练样本，达到最小误差。极端的情况下有可能找到一个极高次的多项式函数，使得所有样本都落在这个函数上，训练样本总误差达到了 $0$。但实际上，数据集中往往包含各种噪音和离群点，而模型却无法分辨，在计算总误差的时候依然包含了这些噪音，为了减小这些误差不得不提高多项式函数的次数。如下图所示，理想的模型其实是一个二次多项式函数，但是由于只考虑了使总误差最小，学习的结果是得到一个高次的多项式函数，那么如果用这个高次多项式来预测本应该是二次多项式的未知数据，那么预测效果将会非常糟糕。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://utopizza.github.io/2017-11-20-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E8%AE%AD%E7%BB%83%E8%AF%AF%E5%B7%AE%E4%B8%8E%E6%B5%8B%E8%AF%95%E8%AF%AF%E5%B7%AE/%E8%BF%87%E6%8B%9F%E5%90%88.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
-&lt;p&gt;可以认为，在训练误差已经比较小的情况下（模型训练完成后），测试误差是对过拟合程度的一种衡量。如果模型在测试集上的测试误差越小，说明过拟合程度越小，如果测试误差越大，则说明过拟合程度比较严重了。所以上面交叉验证中，选择测试误差最小的模型，实际上就是过拟合程度最小的模型。&lt;/p&gt;
-&lt;p&gt;三、训练误差（training error）与测试误差（test error）&lt;/p&gt;
-&lt;p&gt;统计学习的目的是使学习到的模型不仅对已知数据（训练集），而且对未知数据（测试集）都有很好的预测能力。当损失函数给定时，基于损失函数的模型的训练误差和预测误差就成为了模型训练效果评估的标准。&lt;/p&gt;
-&lt;p&gt;假设给定训练集为 $Tr={ (x_1,y_1),(x_2,y_2),\cdots,(x_N,y_N) }$，测试集为 $Te={ (x_1,y_1),(x_2,y_2),\cdots,(x_M,y_M) }$，其中 $x_i \in R^n$，$y_i \in R$，选定的损失函数是 $L(Y,f(X))$，学习到的模型是 $Y=\hat{f}(X)$，则输入某个样本到模型得到的预测值为 $\hat{y}_i=\hat{f}(x_i)$，则&lt;/p&gt;
-&lt;p&gt;训练误差是模型 $Y=\hat{f}(X)$ 在训练集 $Tr$ 上的平均损失：&lt;/p&gt;
-&lt;p&gt;$$R_{emp}(\hat{f})=\frac{1}{N}\sum_{i=1}^{N}L(y_i,\hat{y}_i)$$&lt;/p&gt;
-&lt;p&gt;测试误差是模型 $Y=\hat{f}(X)$ 在测试集 $Te$ 上的平均损失：&lt;/p&gt;
-&lt;p&gt;$$e_{test}=\frac{1}{M}\sum_{i=1}^{M}L(y_i,\hat{y}_i)$$&lt;/p&gt;
-&lt;p&gt;根据前人的经验，训练误差和测试误差与模型有着如下图的关系：当模型的复杂度增大时，训练误差会逐渐减小并趋向于 0，而测试误差会先减小，达到最小值后又增大。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://utopizza.github.io/2017-11-20-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E8%AE%AD%E7%BB%83%E8%AF%AF%E5%B7%AE%E4%B8%8E%E6%B5%8B%E8%AF%95%E8%AF%AF%E5%B7%AE/%E6%A8%A1%E5%9E%8B%E5%A4%8D%E6%9D%82%E5%BA%A6.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
-&lt;p&gt;当选择的模型复杂度过大时，过拟合现象就会发生（训练误差很小，但测试误差很大），这样在训练模型时，就需要防止过拟合，进行最优的模型选择，即选择复杂度适当的模型，目的是找到具有最优泛化能力（最小测试误差）的模型，因为我们训练模型的目的不是让模型完美逼近训练集，而是让模型完美预测未知数据。&lt;/p&gt;
-&lt;p&gt;而常用的模型选择方式有两种，一种是上面的交叉验证法，取预测效果最好的众多个模型中的一个，另一个方法就是在目标函数中加入正则项，惩罚模型在学习过程中增大的复杂度。例如在上面所举的例子中，可以在目标函数中加入关于模型复杂度的函数，当模型复杂度越高，这个函数的值就越大。那么这样一来，模型在学习的时候，最小化的目标就不仅仅是训练样本的总误差了，而是训练样本总误差与模型复杂度之和。如此这般就可以因避免片面追求误差最小而提高了复杂度。&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>CART算法</title>
-      <link>https://utopizza.github.io/posts/machinelearning/2017-11-18-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-cart%E7%AE%97%E6%B3%95/</link>
-      <pubDate>Sat, 18 Nov 2017 16:34:00 +0000</pubDate>
-      
-      <guid>https://utopizza.github.io/posts/machinelearning/2017-11-18-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-cart%E7%AE%97%E6%B3%95/</guid>
-      <description>&lt;p&gt;分类与回归树（classification and regression tree, CART）模型是应用广泛的决策树学习方法，&lt;strong&gt;既可以用于分类，也可以用于回归&lt;/strong&gt;。&lt;/p&gt;
-&lt;p&gt;回顾之前学习的 ID3 算法，它的做法是每次选取当前最佳的特征来分割数据，分割依据是该特征的所有取值。也就是说，如果这个特征有 $n$ 个取值，那么数据将立即被分割成 $n$ 分。一旦被切分之后，该特征在之后将不会再被考虑。这样有两个问题：一是切分过于迅速，如果 $n$ 很大，那么数据将被马上切分成大量的小份，影响后续切分的效果。二是，这样的决策树只能处理离散型的数值，如果特征的取值是连续型数值，则需要将其预处理转化成离散型，但这样就会人为地破坏了连续型变量的内在性质。&lt;/p&gt;
-&lt;p&gt;CART 算法解决了上述问题。CART 设定决策树是&lt;strong&gt;二叉树&lt;/strong&gt;，每次切分数据只做二元切分，即把数据集切分成两份。对某个连续型的特征，设定一个切分值，大于此值的数据进入左子树，反之则进入右子树。然后递归地构建子树。&lt;/p&gt;
-&lt;p&gt;一、CART 生成&lt;/p&gt;
-&lt;p&gt;CART 决策树的生成就是递归地构建二叉决策树的过程。对回归树用&lt;strong&gt;平方误差最小化&lt;/strong&gt;准则，对分类树用&lt;strong&gt;基尼指数最小化&lt;/strong&gt;准则，进行特征选择。&lt;/p&gt;
-&lt;p&gt;1、回归树的生成&lt;/p&gt;
-&lt;p&gt;输入：训练数据集 $D$，特征集 $A$
-输出：回归树 $T$&lt;/p&gt;
-&lt;p&gt;(1)、寻找最佳的切分特征 $A_g$ 和对应的最佳切分值 $v$：遍历特征集中每一个特征，尝试以该特征的每一个取值作为切分值，对数据集执行二元切分，然后计算切分误差，如果当前误差小于记录的最小误差，那么更新最优切分特征、最优切分值、最小误差。遍历完成后，返回最优切分特征、最优切分值。&lt;/p&gt;
-&lt;p&gt;其中误差一般使用目标变量的方差来计算，设数据集为 $D$，数据集中的目标变量为 $D.Y$，数据集在执行一次二元切分后被切分成 $D_{left}$ 和 $D_{right}$，则此次切分减小的混乱程度为&lt;/p&gt;
-&lt;p&gt;$$g(D,A_g,v)=var(D.Y)- \left[ var(D_{left}.Y)+var(D_{right}.Y) \right]$$&lt;/p&gt;
-&lt;p&gt;其中 $D_{left}={D \mid D.A_g&amp;gt;v}$，$D_{right}={D \mid D.A_g \leq v}$。&lt;/p&gt;
-&lt;p&gt;(2)、如果该结点不能再分（左右两个子集方差之和比原数据集方差还大，或者大于给定的某个阈值等等），将该结点存为叶结点，把该结点上的数据集&lt;strong&gt;目标变量的平均值&lt;/strong&gt;作为该结点的输出值返回；否则执行二元切分，把数据集以 $v$ 为切分值，按特征 $A_g$ 切分成 $D_{left}$ 和 $D_{right}$ 两个子集，并对应地生成左右两个子树&lt;/p&gt;
-&lt;p&gt;(3)、递归地对左右子树重复执行前面的步骤，直到满足停止条件&lt;/p&gt;
-&lt;p&gt;构造决策树：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;def createTree(dataSet,tolN,tolS):
-    # 寻找最优切分特征、最优切分值
-    feat, value = chooseBestSplit(dataSet,tolN,tolS)
-    
-    # 切分特征为空，说明不能再分，直接返回value作为叶结点的输出值
-    if feat is None:
-        return value
-        
-    # 把最优切分特征、最优切分值记录到树中
-    retTree = {}
-    retTree[&amp;#39;spInd&amp;#39;] = feat
-    retTree[&amp;#39;spVal&amp;#39;] = value
-
-    # 执行二元切分，得到左右子树对应的两个数据集子集
-    leftSet, rightSet = binSplitDataSet(dataSet, feat, value)
-    
-    # 在左右子树继续递归地调用自己，构造决策树
-    retTree[&amp;#39;left&amp;#39;] = createTree(leftSet, leafType, errType, ops)
-    retTree[&amp;#39;right&amp;#39;] = createTree(rightSet, leafType, errType, ops)
-    
-    return retTree
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;选择最优切分特征、最优切分值：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;def chooseBestSplit(dataSet,tolN,tolS):
-    # 如果数据集的目标变量全部属于同一个值，则不用再切分
-    # 此时返回空特征，并把数据集的目标变量（最后一列）的平均值作为返回值
-    if len(set(dataSet[:, -1].T.tolist()[0])) == 1:
-        return None, mean(dataSet[:, -1])
-        
-    # 求数据集的目标变量的总方差
-    m, n = shape(dataSet)
-    S = var(dataSet[:, -1]) * m
-
-    # 初始化最小方差、最优特征、最优切分值
-    bestS = inf
-    bestIndex = 0
-    bestValue = 0
-    
-    # 遍历每个特征的每个取值
-    for featIndex in range(n - 1):
-        for splitVal in set((dataSet[:, featIndex].T.A.tolist())[0]):
-            
-            # 执行一次二元切分尝试
-            mat0, mat1 = binSplitDataSet(dataSet, featIndex, splitVal)
-
-            # 计算两个子集的方差之和
-            newS = var(mat0[:, -1]) * shape(mat0)[0] + var(mat1[:, -1]) * shape(mat1)[0]
-            
-            # 如果误差小于当前记录的最小误差，则记录这次切分
-            if newS &amp;lt; bestS:
-                bestIndex = featIndex
-                bestValue = splitVal
-                bestS = newS
-
-    # 如果误差减小不大，小于给定的阈值 tolS，则不再切分
-    if S - bestS &amp;lt; tolS:
-        return None, mean(dataSet[:, -1])
-
-    # 如果切分的两个子集的大小小于给定的阈值 tolN，则不再切分
-    mat0, mat1 = binSplitDataSet(dataSet, bestIndex, bestValue)
-    if shape(mat0)[0] &amp;lt; tolN or shape(mat1)[1] &amp;lt; tolN:
-        return None, mean(dataSet[:, -1])
-
-    # 返回最优切分特征和最优切分值
-    return bestIndex, bestValue
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;执行一次二元切分：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;def binSplitDataSet(dataSet, feature, value):
-    mat0 = dataSet[nonzero(dataSet[:, feature] &amp;gt; value)[0], :]  # [0]
-    mat1 = dataSet[nonzero(dataSet[:, feature] &amp;lt;= value)[0], :]  # [0]
-    return mat0, mat1
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;2、分类树的生成&lt;/p&gt;
-&lt;p&gt;分类树用基尼指数选择最优特征，同时决定该特征的最优切分值。&lt;/p&gt;
-&lt;p&gt;基尼指数：分类问题中，假设有 $K$ 个类，样本点属于第 $k$ 类的概率为 $p_k$ ，则概率分布的基尼指数为：&lt;/p&gt;
-&lt;p&gt;$$Gini(p)=\sum_{k=1}^{K}p_k(1-p_k)=1-\sum_{k=1}^{K}p_{k}^{2}$$&lt;/p&gt;
-&lt;p&gt;对于给定的样本集合 $D$，其基尼指数为：&lt;/p&gt;
-&lt;p&gt;$$Gini(D)=1-\sum_{k=1}^{K} \left( \frac{|C_k|}{|D|} \right)^2$$&lt;/p&gt;
-&lt;p&gt;这里，$C_k$ 是 $D$ 中属于第 $k$ 类的样本子集，$K$ 是类的个数。&lt;/p&gt;
-&lt;p&gt;设集合 $D$ 被特征 $A_g$ 的某个取值 $v$ 二元切分，得到两个子集 $D_{left}$ 和 $D_{right}$，则在特征 $A_g$ 和切分值 $v$ 的条件下，集合 $D$ 的基尼指数定义为&lt;/p&gt;
-&lt;p&gt;$$
-Gini(D,A_g,v)=
-\frac{|D_{left}|}{|D|}Gini(D_{left})+
-\frac{|D_{right}|}{|D|}Gini(D_{right})
-$$&lt;/p&gt;
-&lt;p&gt;其中 $D_{left}={D \mid D.A_g&amp;gt;v}$，$D_{right}={D \mid D.A_g \leq v}$。&lt;/p&gt;
-&lt;p&gt;基尼指数 $Gini(D)$ 表示集合 $D$ 的不确定性，基尼指数 $Gini(D,A_g,v)$ 表示按特征 $A_g$ 的值 $v$ 二元切分后的不确定性。基尼指数越大，样本集合的不确定性越大，这一点和熵类似。&lt;/p&gt;
-&lt;p&gt;输入：训练数据集 $D$，停止计算的条件
-输出：CART 决策树&lt;/p&gt;
-&lt;p&gt;根据训练数据集，从根节点开始，递归地对每个结点进行一下操作：&lt;/p&gt;
-&lt;p&gt;(1)、设结点的数据集为 $D$，计算 $Gini(D)$。然后遍历每一个特征的每一个取值，尝试二元切分，并计算 $Gini(D,A_g,v)$，找出基尼指数最小的特征及其对应的切分值，作为最优切分特征和最优切分值。&lt;/p&gt;
-&lt;p&gt;(2)、把数据集 $D$ 按照最优切分特征和最优切分值进行二元切分，得到两个子集，并对应地从本结点生成两个子结点，将两个子集分配到对应的结点中去。&lt;/p&gt;
-&lt;p&gt;(3)、对左右子树递归地调用前面步骤，直至满足停止条件。算法的停止条件是结点中的样本个数小于预定阈值，或样本集的基尼指数小于预定阈值，或者没有更多特征。这里需要注意，分类树的叶子结点不是像回归树那样取叶子结点所对应的数据集的目标变量的均值，而是像 ID3 算法那个，选择叶子结点对应的数据集中实例数最大的那个类别作为叶子结点的类别返回。&lt;/p&gt;
-&lt;p&gt;二、CART 剪枝&lt;/p&gt;
-&lt;p&gt;如果一棵决策树的结点过多，表明该模型可能对数据进行了“过拟合”。要分析是否确实发生了过拟合，可以使用交叉验证来判断。另一方面，可以在构造决策树的时候采取一些措施来防止发生过拟合，降低决策树模型的复杂度，此称为决策树的剪枝（pruning）。决策树的剪枝有两种方式，一种是预剪枝（prepruning），另一种是后剪枝（postpruning）。&lt;/p&gt;
-&lt;p&gt;1、预剪枝&lt;/p&gt;
-&lt;p&gt;预剪枝实际上就是在决策树构建过程中加入算法的停止条件。具体来说，就是前面所述的例子中，在选择最优特征最优切分点的函数 $chooseBestSplit()$ 中加入的停止条件： $tolS$ 和 $tolN$ 两个参数。这两个参数所表达的意义是，对某个结点的数据集，如果二元切分之后的两个子集总误差比原数据集误差下降很小，或者子集的大小太小，那么不对这个结点进行切分，直接把它当作一个叶子结点返回，这样就阻止了决策树在这个结点上的过分生长，简化了决策树。实验证明，决策树生成算法对这两个参数非常敏感。但是这样也会有一个缺点，需要不断的人为地调整这两个参数来达到好的结果，这并不是一个好的办法。&lt;/p&gt;
-&lt;p&gt;2、后剪枝&lt;/p&gt;
-&lt;p&gt;后剪枝方法需要将数据分成测试集和训练集。首先用训练集生成长一棵足够大足够复杂的决策树，然后从上而下找到叶子结点，用测试集来判断将这些叶子结点合并是否能降低测试误差。如果是就合并。剪枝算法相关代码如下：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;# 从叶子结点到根结点坍塌树，把每棵子树根结点替换成左右子树的均值
-def getMean(tree):
-    if isTree(tree[&amp;#39;right&amp;#39;]):
-        tree[&amp;#39;right&amp;#39;] = getMean(tree[&amp;#39;right&amp;#39;])
-    if isTree(tree[&amp;#39;left&amp;#39;]):
-        tree[&amp;#39;left&amp;#39;] = getMean(tree[&amp;#39;left&amp;#39;])
-    return (tree[&amp;#39;left&amp;#39;] + tree[&amp;#39;right&amp;#39;]) / 2
-
-# 剪枝算法
-def prune(tree, testData):
-    # 若测试集大小为0，对本子树进行坍塌，收缩到一个值返回
-    if shape(testData)[0] == 0:
-        return getMean(tree)
-
-    # 若本结点有左右子树，则把测试集按本结点进行二元划分得到左右子集
-    if isTree(tree[&amp;#39;right&amp;#39;]) or isTree(tree[&amp;#39;left&amp;#39;]):
-        leftSet, rightSet = binSplitDataSet(testData, tree[&amp;#39;spInd&amp;#39;], tree[&amp;#39;spVal&amp;#39;])
-
-    # 如果本结点有左子树，用测试集的左子集对该子树剪枝
-    if isTree(tree[&amp;#39;left&amp;#39;]):
-        tree[&amp;#39;left&amp;#39;] = prune(tree[&amp;#39;left&amp;#39;], leftSet)
-    
-    # 如果本结点有右子树，用测试集的右子集对该子树剪枝
-    if isTree(tree[&amp;#39;right&amp;#39;]):
-        tree[&amp;#39;right&amp;#39;] = prune(tree[&amp;#39;right&amp;#39;], rightSet)
-
-    # 若本结点既无左子树，也无右子树
-    # 仍然按本结点把测试集进行二元划分
-    if not isTree(tree[&amp;#39;left&amp;#39;]) and not isTree(tree[&amp;#39;right&amp;#39;]):
-        leftSet, rightSet = binSplitDataSet(testData, tree[&amp;#39;spInd&amp;#39;], tree[&amp;#39;spVal&amp;#39;])
-        
-        # 分别计算不合并和合并的误差
-        errorNoMerge = sum(power(leftSet[:, -1] - tree[&amp;#39;left&amp;#39;], 2)) + sum(power(rightSet[:, -1] - tree[&amp;#39;right&amp;#39;], 2))
-        treeMean = (tree[&amp;#39;left&amp;#39;] + tree[&amp;#39;right&amp;#39;]) / 2.0
-        errorMerge = sum(power(testData[:, -1] - treeMean, 2))
-        
-        # 确定是否合并
-        if errorMerge &amp;lt; errorNoMerge:
-            print &amp;#34;merging&amp;#34;
-            return treeMean
-        else:
-            return tree
-    else:
-        return tree
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</description>
-    </item>
-    
-    <item>
-      <title>ID3算法与C4.5算法</title>
-      <link>https://utopizza.github.io/posts/machinelearning/2017-11-15-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-id3%E7%AE%97%E6%B3%95%E4%B8%8Ec4.5%E7%AE%97%E6%B3%95/</link>
-      <pubDate>Wed, 15 Nov 2017 16:34:00 +0000</pubDate>
-      
-      <guid>https://utopizza.github.io/posts/machinelearning/2017-11-15-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-id3%E7%AE%97%E6%B3%95%E4%B8%8Ec4.5%E7%AE%97%E6%B3%95/</guid>
-      <description>&lt;p&gt;一、ID3算法&lt;/p&gt;
-&lt;p&gt;ID3算法的核心是在决策树各个结点上应用“信息增益”准则选择特征，递归地构建决策树。具体方法：从根结点开始，对结点计算所有可能的特征的信息增益，选择信息增益最大的特征作为结点的特征，由该特征的不同取值建立子结点；再对子结点递归地调用以上方法，构建决策树，直到所有特征的信息增益均很小或没有特征可以选择为止。&lt;/p&gt;
-&lt;p&gt;输入：训练数据集 $D$，特征集 $A$，阈值 $\varepsilon$
-输出：决策树 $T$&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;若 $D$ 中所有实例属于同一类 $C_k$，则 $T$ 为单结点树，并将 $C_k$ 作为该结点的类标记，返回 $T$；&lt;/li&gt;
-&lt;li&gt;若 $A=\emptyset$ ，则 $T$ 为单结点树，将 $D$ 中实例数最大的类 $C_k$ 作为该结点的类标记，返回 $T$；&lt;/li&gt;
-&lt;li&gt;遍历 $A$ 中每一个特征，&lt;a href=&#34;https://yushengwxxx.github.io/2017/11/11/2017-11-11-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E4%BF%A1%E6%81%AF%E5%A2%9E%E7%9B%8A/&#34;&gt;计算信息增益&lt;/a&gt; $g(D,A)=H(D)-\sum_{i=1}^{n}\frac{|D_i|}{|D|}H(D_i)$，选择信息增益最大特征 $A_g$。如果 $A_g$ 的信息增益小于阈值 $\varepsilon$，则置 $T$ 为单结点树，并将 $D$ 中实例数最大的类 $C_k$ 作为该结点的类标记，返回 $T$；否则，对 $A_g$ 的每一个可能值 $a_i$，按照 $A_g=a_i$ 将 $D$ 分割为若干非空子集 $D_i$，对每个子集 $D_i$，将其实例数中最大的类作为标记，构建子结点，由结点及其子结点构成树 $T$，返回 $T$；&lt;/li&gt;
-&lt;li&gt;对第 $i$ 个子结点，以 $D_i$ 为训练集，以 $A- { A_g }$ 为特征集，递归地调用前3步，得到子树 $T_i$，返回 $T_i$。&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;以下是部分关键代码，参考《机器学习实战》第三章。这里忽略了上述算法的“信息增益阈值 $\varepsilon$ 这一条件。&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#e5e5e5;background-color:#000;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;def createTree(dataSet, labels):
-    
-    # 1、若所有实例属于同一类，返回该类
-    classList = [example[-1] for example in dataSet]
-    if classList.count(classList[0]) == len(classList):
-        return classList[0]
-    
-    # 2、若特征值集合为空集，则返回样本类别中最多的那个类别
-    if len(dataSet[0]) == 1:
-        return majorityCnt(classList)
-        
-    # 3、遍历特征值集合中的每一个特征，找出信息增益最大的特征
-    bestFeat = chooseBestFeatureToSplit(dataSet)
-    bestFeatLabel = labels[bestFeat]
-    
-    # 4、以该特征的label建立结点，并从特征集合中删去该特征
-    myTree = {bestFeatLabel: {}}
-    del (labels[bestFeat])
-    
-    # 5、收集该特征的所有值，去掉重复值
-    featValues = [example[bestFeat] for example in dataSet]
-    uniqueVals = set(featValues)
-    
-    # 6、对每一种取值，递归调用本函数进行决策树的构建
-    for value in uniqueVals:
-        subLabels = labels[:]
-        myTree[bestFeatLabel][value] = createTree(splitDataSet(dataSet, bestFeat, value), subLabels)
-    
-    return myTree
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;二、C4.5算法&lt;/p&gt;
-&lt;p&gt;C4.5算法与ID3算法基本相同，唯一不同的地方只是在生成决策树的过程中，使用“信息增益比”而不是直接使用“信息增益”来选择特征。&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>信息增益</title>
-      <link>https://utopizza.github.io/posts/machinelearning/2017-11-11-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E4%BF%A1%E6%81%AF%E5%A2%9E%E7%9B%8A/</link>
-      <pubDate>Sat, 11 Nov 2017 23:59:00 +0000</pubDate>
-      
-      <guid>https://utopizza.github.io/posts/machinelearning/2017-11-11-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E4%BF%A1%E6%81%AF%E5%A2%9E%E7%9B%8A/</guid>
-      <description>&lt;p&gt;一、熵（entropy）&lt;/p&gt;
-&lt;p&gt;熵是表示随机变量不确定性的度量。熵越大，随机变量的不确定性越大。设 $X$ 是一个取值为有限个的离散型随机变量，其概率分布为：&lt;/p&gt;
-&lt;p&gt;$$P(X=x_i)=p_i \text{ , } i=1,2,\cdots,n$$&lt;/p&gt;
-&lt;p&gt;则随机变量 $X$ 的熵定义为&lt;/p&gt;
-&lt;p&gt;$$H(X)=-\sum_{i=1}^{n}p_i\log(p_i)$$&lt;/p&gt;
-&lt;p&gt;当式中对数以 $2$ 为底时，熵的单位为比特（bit）；以自然对数 $e$ 为底时，熵的单位为纳特（nat）。&lt;/p&gt;
-&lt;p&gt;二、条件熵（conditional entropy）&lt;/p&gt;
-&lt;p&gt;条件熵 $H(Y \mid X)$ 表示已知随机变量 $X$ 的条件下，随机变量 $Y$ 的不确定性。&lt;/p&gt;
-&lt;p&gt;设有随机变量 $(X,Y)$，联合分布概率为&lt;/p&gt;
-&lt;p&gt;$$P(X=x_i,Y=y_i)=p_{ij} \text{ , } i=1,2,\cdots,n \text{ ; }j=1,2,\cdots,m$$&lt;/p&gt;
-&lt;p&gt;则随机变量 $X$ 给定条件下，随机变量 $Y$ 的条件熵为&lt;/p&gt;
-&lt;p&gt;$$H(Y \mid X)=\sum_{i=1}^{n} p_i H(Y \mid X=x_i)$$&lt;/p&gt;
-&lt;p&gt;这里 $p_i=P(X=x_i) \text{ , } i=1,2,\cdots,n$。&lt;/p&gt;
-&lt;p&gt;当熵和条件熵的概率有数据估计得到时，所对应的熵与条件熵称为经验熵（empirical entropy）和经验条件熵（empirical conditional entropy）。&lt;/p&gt;
-&lt;p&gt;三、信息增益（information gain）&lt;/p&gt;
-&lt;p&gt;信息增益表示得知特征 $X$ 的信息而使得类 $Y$ 的信息的不确定性减少的程度。&lt;/p&gt;
-&lt;p&gt;特征 $A$ 对训练数据集 $D$ 的信息增益 $g(D,A)$ 定义为集合 $D$ 的经验熵 $H(D)$ 与特征 $A$ 给定条件下 $D$ 的经验条件熵 $H(D \mid A)$ 之差&lt;/p&gt;
-&lt;p&gt;$$g(D,A)=H(D)-H(D \mid A)$$&lt;/p&gt;
-&lt;p&gt;进一步，如果 $A$ 的取值把 $D$ 划分成 $D_1,D_2,\cdots,D_n$ 这 $n$ 个子集，那么&lt;/p&gt;
-&lt;p&gt;$$H(D \mid A)=\sum_{i=1}^{n}\frac{|D_i|}{|D|}H(D_i)$$&lt;/p&gt;
-&lt;p&gt;因此&lt;/p&gt;
-&lt;p&gt;$$g(D,A)=H(D)-\sum_{i=1}^{n}\frac{|D_i|}{|D|}H(D_i)$$&lt;/p&gt;
-&lt;p&gt;上述公式可以理解为，选择特征 $A$ 带来的信息增益为：原数据集的熵（混乱程度，也可以理解为不确定性），减去被特征 $A$ 划分成 $n$ 个子集后这 $n$ 个子集的熵的期望，而得到的差值。&lt;/p&gt;
-&lt;p&gt;我们在构建决策树时的目标是：使每次被划分数据集的不确定性尽可能小。由于原数据集的熵已经确定，那么，如果选择某个特征划分数据集后，整个数据集的不确定性减小最多（即信息增益最大），那么该特征就是当前最优的分类特征。&lt;/p&gt;
-&lt;p&gt;找到最优特征后，取该特征下的每一个值构建一个子结点，把数据集划分成 $n$ 个子集合。例如，假设当前最优特征为“年龄”，该特征下一共有“青年”、“中年”、“老年”三种取值，那么在决策树的当前结点下面新建对应的三个孩子结点，把数据集按这三种取值划分为三个子集，传递到对应的三个孩子结点。&lt;/p&gt;
-&lt;p&gt;四、信息增益比（information gain ratio）&lt;/p&gt;
-&lt;p&gt;以信息增益作为划分训练数据集的特征，存在偏向于选择取值较多的特征的问题。用信息增益比可以对这一问题校正。&lt;/p&gt;
-&lt;p&gt;特征 $A$ 对训练数据集 $D$ 的信息增益比 $g_R(D,A)$ 定义为其信息增益 $g(D,A)$ 与训练数据集 $D$ 关于特征 $A$ 的值的熵 $H_A(D)$ 之比，即&lt;/p&gt;
-&lt;p&gt;$$g_R(D,A)=\frac{g(D,A)}{H_A(D)}$$&lt;/p&gt;
-&lt;p&gt;其中&lt;/p&gt;
-&lt;p&gt;$$H_A(D)=-\sum_{i=1}^{n}\frac{|D_i|}{|D|}\log_2\frac{|D_i|}{|D|}$$&lt;/p&gt;
-&lt;p&gt;$n$ 是特征 $A$ 取值的个数。&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>高斯混合模型的EM推导简单版</title>
-      <link>https://utopizza.github.io/posts/machinelearning/2017-08-25-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E9%AB%98%E6%96%AF%E6%B7%B7%E5%90%88%E6%A8%A1%E5%9E%8B%E7%9A%84em%E6%8E%A8%E5%AF%BC%E7%AE%80%E5%8D%95%E7%89%88/</link>
-      <pubDate>Fri, 25 Aug 2017 20:10:09 +0000</pubDate>
-      
-      <guid>https://utopizza.github.io/posts/machinelearning/2017-08-25-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E9%AB%98%E6%96%AF%E6%B7%B7%E5%90%88%E6%A8%A1%E5%9E%8B%E7%9A%84em%E6%8E%A8%E5%AF%BC%E7%AE%80%E5%8D%95%E7%89%88/</guid>
-      <description>&lt;p&gt;一、高斯混合模型&lt;/p&gt;
-&lt;p&gt;为简洁表达，以下把第 $k$ 个高斯模型 $\phi(y\mid\theta_k)$ 简记为 $\phi_k(y)$&lt;/p&gt;
-&lt;p&gt;那么高斯混合模型为：&lt;/p&gt;
-&lt;p&gt;$$
-P(y\mid\theta)=\alpha_1\cdot\phi_1(y) + \alpha_2\cdot\phi_2(y) + \cdots + \alpha_K\cdot\phi_K(y)
-$$&lt;/p&gt;
-&lt;p&gt;二、高斯混合模型参数估计的EM算法&lt;/p&gt;
-&lt;p&gt;输入：观测数据 ($y_1,y_2,\cdots,y_N$)，高斯混合模型
-输出：高斯混合参数模型&lt;/p&gt;
-&lt;p&gt;(1) 取参数的初始值开始迭代&lt;/p&gt;
-&lt;p&gt;(2) E步：依据当前模型参数，计算每个分模型对每个观测数据的响应度&lt;/p&gt;
-&lt;p&gt;以第一个高斯模型 $\phi_1$ 为例：&lt;/p&gt;
-&lt;p&gt;对 $y_1$ 响应度：&lt;/p&gt;
-&lt;p&gt;$$
-\hat{\gamma}_{11}=
-\frac
-{\alpha_1\cdot\phi_1(y_1)}
-{\alpha_1\cdot\phi_1(y_1) + \alpha_2\cdot\phi_2(y_1) + \cdots + \alpha_K\cdot\phi_K(y_1)}
-$$&lt;/p&gt;
-&lt;p&gt;对 $y_2$ 响应度：&lt;/p&gt;
-&lt;p&gt;$$
-\hat{\gamma}_{12}=
-\frac
-{\alpha_1\cdot\phi(y_2\mid\theta_1)}
-{\alpha_1\cdot\phi_1(y_2) + \alpha_2\cdot\phi_2(y_2) + \cdots + \alpha_K\cdot\phi_K(y_2)}
-$$&lt;/p&gt;
-&lt;p&gt;$$\cdots$$&lt;/p&gt;
-&lt;p&gt;对 $y_N$ 响应度：&lt;/p&gt;
-&lt;p&gt;$$
-\hat{\gamma}_{1N}=
-\frac
-{\alpha_1\cdot\phi(y_2\mid\theta_1)}
-{\alpha_1\cdot\phi_1(y_N) + \alpha_2\cdot\phi_2(y_N) + \cdots + \alpha_K\cdot\phi_K(y_N)}
-$$&lt;/p&gt;
-&lt;p&gt;(3) M步：计算新一轮迭代的模型参数&lt;/p&gt;
-&lt;p&gt;$$
-\hat{\mu}&lt;em&gt;1=
-\frac
-{\hat{\gamma}&lt;/em&gt;{11} \cdot y_1 + \hat{\gamma}&lt;em&gt;{12} \cdot y_2 + \cdots + \hat{\gamma}&lt;/em&gt;{1N} \cdot y_N}
-{\hat{\gamma}&lt;em&gt;{11} + \hat{\gamma}&lt;/em&gt;{12} + \cdots + \hat{\gamma}_{1N}}
-$$&lt;/p&gt;
-&lt;p&gt;$$
-\hat{\sigma}&lt;em&gt;1^2=
-\frac
-{\hat{\gamma}&lt;/em&gt;{11} \cdot (y_1-\mu_1)^2 + \hat{\gamma}&lt;em&gt;{12} \cdot (y_2-\mu_1)^2 + \cdots + \hat{\gamma}&lt;/em&gt;{1N} \cdot (y_N-\mu_1)^2}
-{\hat{\gamma}&lt;em&gt;{11} + \hat{\gamma}&lt;/em&gt;{12} + \cdots + \hat{\gamma}_{1N}}
-$$&lt;/p&gt;
-&lt;p&gt;$$
-\hat{\alpha}&lt;em&gt;1=
-\frac
-{\hat{\gamma}&lt;/em&gt;{11} + \hat{\gamma}&lt;em&gt;{12} + \cdots + \hat{\gamma}&lt;/em&gt;{1N}}
-{N}
-$$&lt;/p&gt;
-&lt;p&gt;对每个高斯模型都如此求出每一轮迭代的新参数 $(\hat{\alpha}_k，\hat{\mu}_k，\hat{\sigma}_k^2)$&lt;/p&gt;
-&lt;p&gt;(4) 重复第(2)步和第(3)步，直到收敛。&lt;/p&gt;
-&lt;p&gt;如图：&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;2017-08-25-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E9%AB%98%E6%96%AF%E6%B7%B7%E5%90%88%E6%A8%A1%E5%9E%8B%E7%9A%84EM%E6%8E%A8%E5%AF%BC%E7%AE%80%E5%8D%95%E7%89%88/1.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>机器学习入门资料汇总</title>
-      <link>https://utopizza.github.io/posts/machinelearning/2017-08-20-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%85%A5%E9%97%A8%E8%B5%84%E6%96%99%E6%B1%87%E6%80%BB/</link>
-      <pubDate>Sun, 20 Aug 2017 21:57:00 +0000</pubDate>
-      
-      <guid>https://utopizza.github.io/posts/machinelearning/2017-08-20-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%85%A5%E9%97%A8%E8%B5%84%E6%96%99%E6%B1%87%E6%80%BB/</guid>
-      <description>&lt;p&gt;一、书&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;《统计学习方法》 李航&lt;/li&gt;
-&lt;li&gt;《机器学习》 周志华&lt;/li&gt;
-&lt;li&gt;《机器学习实战》/《MachineLearning in Action》 Peter Harrington&lt;/li&gt;
-&lt;li&gt;《集体编程智慧》/《Programming Collective Intelligence》 Toby Segaran&lt;/li&gt;
-&lt;li&gt;《An Introduction to Optimization》 E. Chong, S. Zak&lt;/li&gt;
-&lt;li&gt;《Convex Optimization》 Stephen Boyd, Lieven Vandenberghe&lt;/li&gt;
-&lt;li&gt;《推荐系统实践》 项亮&lt;/li&gt;
-&lt;li&gt;《MachineLearning》 Tom Mitchell(2008年出版，比较古老)&lt;/li&gt;
-&lt;li&gt;《Neural Networks and Learning Machines》 Simon Haykin(偏数学理论)&lt;/li&gt;
-&lt;li&gt;《The Elements of Statistical Learning》 Trevor Hastie，etc(看完这本就不用看其他机器学习的书了)&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;二、视频(Coursera)&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;《机器学习基石》 台湾大学, 林轩田&lt;/li&gt;
-&lt;li&gt;《MachineLearning》 Standford, Andrew Ng(吴恩达) &lt;a href=&#34;http://cs229.stanford.edu/materials.html&#34;&gt;讲义&lt;/a&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;三、博客&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;&lt;a href=&#34;http://www.cnblogs.com/tornadomeet/tag/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/&#34;&gt;tornadomeet机器学习笔记&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://machinelearningmastery.com/machine-learning-roadmap-your-self-study-guide-to-machine-learning/&#34;&gt;The Missing Roadmap to Self-Study Machine Learning&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://machinelearningmastery.com/a-tour-of-machine-learning-algorithms/&#34;&gt;A Tour of Machine Learning Algorithms&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://ml.memect.com/article/machine-learning-guide.html#%E6%9B%B4%E5%A4%9A%E6%94%BB%E7%95%A5&#34;&gt;Best Machine Learning Resources for Getting Started&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://blog.jobbole.com/56256/&#34;&gt;机器学习的最佳入门学习资源&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://ml.memect.com/article/machine-learning-guide.html#%E6%9B%B4%E5%A4%9A%E6%94%BB%E7%95%A5&#34;&gt;机器学习入门资源不完全汇总&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://www.zhihu.com/question/21714701&#34;&gt;机器学习，数据挖掘在研究生阶段大概要学些什么？-知乎&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://www.zhihu.com/question/37256015&#34;&gt;机器学习、数据挖掘 如何进阶成为大神？-知乎&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://zhuanlan.zhihu.com/p/25197792&#34;&gt;机器学习的数学基础-知乎&lt;/a&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;四、实战&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;kaggle的练习和比赛&lt;/li&gt;
-&lt;li&gt;自己实现算法的公式推导和core code&lt;/li&gt;
-&lt;li&gt;python各种库如pandas等的熟练运用&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;五、总结&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;在学习理论的时候，多注意实践&lt;/li&gt;
-&lt;li&gt;重点是你要学ML干什么：最快最方便的使用一个通用方法做一个分类器或者回归器(例如验证码识别,etc)；从理论上想改进某一种机器学习的学习算法或数据结构(模型)；更好的了解各种机器学习算法的特点，应对不同的问题，选择不同的方法；利用现在的硬件产品(显卡，集群)，更好的实现一套机器学习算法。&lt;/li&gt;
-&lt;li&gt;如果想找这方面的工作，尤其是大企业的工作，主要看你发了哪些论文，开发了哪些系统，而不是看你用XX开源软件多熟练。你懂的，毕竟熟练使用一个软件并不是这个领域的关键问题。&lt;/li&gt;
-&lt;li&gt;一个有用的用于建立知识点图谱的工具&lt;a href=&#34;https://metacademy.org/&#34;&gt;metacademy&lt;/a&gt;，帮助你快速掌握你所需要的知识点，而不用盲目搜索浪费时间。&lt;/li&gt;
-&lt;li&gt;入门分两种级别，第一种是应用级，读几本书跟几门课程，多做实现和编程练习，就可以快速掌握用机器学习解决问题的能力。第二种是科研级，非常难，要做出成绩，需要找一个靠谱的导师。&lt;/li&gt;
-&lt;li&gt;机器学习比较偏向数学问题的推导，所以在顶会上的很多paper更看重idea，不是很看重实验是否来源于真实数据。&lt;/li&gt;
-&lt;/ol&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>高斯混合模型的EM推导</title>
-      <link>https://utopizza.github.io/posts/machinelearning/2017-08-20-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E9%AB%98%E6%96%AF%E6%B7%B7%E5%90%88%E6%A8%A1%E5%9E%8B%E7%9A%84em%E6%8E%A8%E5%AF%BC/</link>
-      <pubDate>Sun, 20 Aug 2017 16:14:10 +0000</pubDate>
-      
-      <guid>https://utopizza.github.io/posts/machinelearning/2017-08-20-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E9%AB%98%E6%96%AF%E6%B7%B7%E5%90%88%E6%A8%A1%E5%9E%8B%E7%9A%84em%E6%8E%A8%E5%AF%BC/</guid>
-      <description>&lt;p&gt;一、高斯混合模型：&lt;/p&gt;
-&lt;p&gt;$$P(y \mid \theta) = \sum_{k=1}^{K} \alpha_k \cdot \phi(y \mid \theta_k)$$&lt;/p&gt;
-&lt;p&gt;其中，$\alpha_k \text{是系数，} \alpha_k \geq0 \text{，且 }
-\sum_{k=1}^{K} \alpha_k=1 \text{；}$&lt;/p&gt;
-&lt;p&gt;$\phi(y \mid \theta_k) = \frac{1}{\sqrt{2\pi}} exp (-\frac{(y-\mu_k)^2}{2\sigma_k^2}) \text{，}\theta_k = (\mu_k ,\sigma_k^2)\text{ 是第k个高斯模型。}$&lt;/p&gt;
-&lt;p&gt;二、高斯混合模型参数估计的EM算法&lt;/p&gt;
-&lt;p&gt;输入：观测数据 ($y_1,y_2,\cdots,y_N$)，高斯混合模型
-输出：高斯混合参数模型&lt;/p&gt;
-&lt;p&gt;(1) 取参数的初始值开始迭代
-(2) E步：依据当前模型参数，计算分模型 k 对观测数据 $y_j$ 的响应度&lt;/p&gt;
-&lt;p&gt;$$\hat{\gamma}&lt;em&gt;{jk} = \frac{\alpha_k \cdot \phi(y_j \mid \theta_k)}{\sum&lt;/em&gt;{k=1}^{K} \alpha_k \cdot \phi(y_j \mid\theta_k)}\text{，}j=1,2,\cdots,N;k=1,2,\cdots,K$$&lt;/p&gt;
-&lt;p&gt;(3) M步：计算新一轮迭代的模型参数&lt;/p&gt;
-&lt;p&gt;$$\hat{\mu}&lt;em&gt;k =\frac{\sum&lt;/em&gt;{j=1}^{N} \hat{\gamma}&lt;em&gt;{jk} \cdot y_j}{\sum&lt;/em&gt;{j=1}^{N} \hat{\gamma}_{jk}}\text{，}k=1,2,\cdots,K$$&lt;/p&gt;
-&lt;p&gt;$$\hat{\sigma}&lt;em&gt;k^2 = \frac{\sum&lt;/em&gt;{j=1}^{N} \hat{\gamma}&lt;em&gt;{jk}\cdot (y_j - \mu_k)^2}{\sum&lt;/em&gt;{j=1}^{N} \hat{\gamma}_{jk}}\text{，}k=1,2,\cdots,K$$&lt;/p&gt;
-&lt;p&gt;$$\hat{\alpha}&lt;em&gt;k =\frac{\sum&lt;/em&gt;{j=1}^{N} \hat{\gamma}_{jk}}{N}\text{，}k=1,2,\cdots,K$$&lt;/p&gt;
-&lt;p&gt;(4) 重复第(2)步和第(3)步，直到收敛。&lt;/p&gt;
-&lt;p&gt;三、上述算法基于似然估计进行推导：&lt;/p&gt;
-&lt;p&gt;(1). 似然函数：&lt;/p&gt;
-&lt;p&gt;$$
-\begin{aligned}
-P(y,\gamma \mid \theta) &amp;amp;=
-\prod_{j=1}^{N} P(y_j, (\gamma_{j1},\cdots,\gamma_{jK}) \mid \theta) \&lt;br&gt;
-&amp;amp;=\prod_{k=1}^{K} \prod_{j=1}^{N} [\alpha_k \cdot \phi(y_j \mid \theta_k)]^{\gamma_{jk}} \&lt;br&gt;
-&amp;amp;=\prod_{k=1}^{K} \alpha_k \prod_{j=1}^{N} [\phi(y_j \mid \theta_k)]^{\gamma_{jk}} \&lt;br&gt;
-&amp;amp;=\prod_{k=1}^{K} \alpha_k \prod_{j=1}^{N}
-[\frac{1}{\sqrt{2\pi}} exp(- \frac{(y-\mu_k)^2}{2\sigma_k^2})]^{\gamma_{jk}} \&lt;br&gt;
-\end{aligned}
-$$&lt;/p&gt;
-&lt;p&gt;式中，$n_k=\sum_{j=1}^{N} \gamma_{jk}$，$\sum_{k=1}^{K} n_k=N$。&lt;/p&gt;
-&lt;p&gt;(2) 在 $E$ 步确定 $Q$ 函数：&lt;/p&gt;
-&lt;p&gt;$$
-\begin{aligned}
-Q(\theta,\theta^{(i)}) &amp;amp;= E[logP(y,\gamma \mid \theta) \mid y, \theta^{(i)}] \&lt;br&gt;
-&amp;amp;= \cdots \&lt;br&gt;
-&amp;amp;= \sum_{k=1}^{K} { n_k \cdot log\alpha_k + \sum_{j=1}^{N} [log(\frac{1}{\sqrt{2\pi}}) - log(\sigma_k)- \frac{1}{2\sigma_k^2}(y_j-\mu_k)^2] }
-\end{aligned}
-$$&lt;/p&gt;
-&lt;p&gt;(3) 在 $M$ 步中，求 $Q(\theta,\theta^{(i)})$ 对 $\theta$ 的极大值，即求新一轮迭代的模型参数：&lt;/p&gt;
-&lt;p&gt;$$
-\theta^{(i)} =
-\underset{\theta}{\operatorname{argmax}} Q(\theta,\theta^{(i)})
-$$&lt;/p&gt;
-&lt;p&gt;求 $\hat{\mu}_k，\hat{\sigma}_k^2$ 只需将上式分别对 $\hat{\mu}_k，\hat{\sigma}_k^2$ 求导并令导数等于0即可，这是常规的求极值的方法。但是对于 $\hat{\alpha}&lt;em&gt;k$，因为存在着 $\sum&lt;/em&gt;{k=1}^{K} \alpha_k = 1$ 这个条件，所以这里要注意对有多个有关系的变量的求偏导问题。&lt;/p&gt;
-&lt;p&gt;(4) 对 $\alpha_k$ 求偏导：&lt;/p&gt;
-&lt;p&gt;$$
-\frac{\partial Q}{\partial \alpha_k} =
-\frac{\partial{\sum_{k=1}^{K} [ n_k \cdot log(\alpha_k) ]} }
-{\partial \alpha_k} \&lt;br&gt;
-s.t. \quad \sum_{k=1}^{K} \alpha_k = 1
-$$&lt;/p&gt;
-&lt;p&gt;由于存在和为1的这个条件，各个变量之间存在联系，所以不能简单的分别对各个 $\alpha_k$ 求偏导。如果忽略这个约束，那么每个概率都可以无限大，目标函数也无限大了。&lt;/p&gt;
-&lt;p&gt;当对其中一个变量如 $\alpha_1$ 求偏导的时候，考虑到总和为1的约束条件，此时应该把剩下的 $K-1$ 个变量看作“另一个”变量(可取其中一个变量如 $\alpha_K$ 作为代表)：&lt;/p&gt;
-&lt;p&gt;$$
-\begin{aligned}
-\frac{\partial Q}{\partial \alpha_1} &amp;amp;= \frac{\partial{ n_1 \cdot log(\alpha_1) + \sum_{k=2}^{K} n_k \cdot log(\alpha_k)}}
-{\partial \alpha_1} \&lt;br&gt;
-&amp;amp;= \frac{n_1}{\alpha_1} + \frac{n_K \cdot \partial log(\alpha_K)}{\alpha_1} \&lt;br&gt;
-&amp;amp;= \frac{n_1}{\alpha_1} + \frac{n_K}{\alpha_K} \cdot \frac{\partial \alpha_K}{\alpha_1} \&lt;br&gt;
-&amp;amp;= \frac{n_1}{\alpha_1} + \frac{n_K}{\alpha_K} \cdot \frac{\partial (1-\sum_{k=1}^{K-1} \alpha_k)}{\alpha_1} \&lt;br&gt;
-&amp;amp;= \frac{n_1}{\alpha_1} + \frac{n_K}{\alpha_K} \cdot \frac{\partial (-\alpha_1)}{\partial \alpha_1} \&lt;br&gt;
-&amp;amp;= \frac{n_1}{\alpha_1} - \frac{n_K}{\alpha_K}
-\end{aligned}
-$$&lt;/p&gt;
-&lt;p&gt;令
-$$\frac{\partial Q}{\partial \alpha_1}=\frac{n_1}{\alpha_1} - \frac{n_K}{\alpha_K}=0$$&lt;/p&gt;
-&lt;p&gt;得
-$$\frac{n_1}{\alpha_1} = \frac{n_K}{\alpha_K}$$&lt;/p&gt;
-&lt;p&gt;同理
-$$\frac{n_1}{\alpha_1}
-=\frac{n_2}{\alpha_2}
-=\cdots
-=\frac{n_{K-1}}{\alpha_{K-1}}
-=\frac{n_K}{\alpha_K}$$&lt;/p&gt;
-&lt;p&gt;因此
-$$\frac{n_1}{\alpha_1}=\frac{n_1+\cdots+n_K}{\alpha_1+\cdots+\alpha_K}=\frac{N}{1}=N$$&lt;/p&gt;
-&lt;p&gt;因此
-$$\alpha_1=\frac{n_1}{N},\cdots,\alpha_K=\frac{n_K}{N}$$&lt;/p&gt;
-&lt;p&gt;即
-$$\alpha_k=\frac{n_k}{N},k=1,2,\cdots,K$$&lt;/p&gt;
-&lt;p&gt;求解完毕。&lt;/p&gt;
-</description>
-    </item>
-    
-  </channel>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>MachineLearning - Category - Utopizza</title>
+        <link>https://utopizza.github.io/categories/machinelearning/</link>
+        <description>MachineLearning - Category - Utopizza</description>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><managingEditor>648847079@qq.com (yusheng)</managingEditor>
+            <webMaster>648847079@qq.com (yusheng)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Sat, 17 Mar 2018 20:37:00 &#43;0000</lastBuildDate><atom:link href="https://utopizza.github.io/categories/machinelearning/" rel="self" type="application/rss+xml" /><item>
+    <title>特征工程</title>
+    <link>https://utopizza.github.io/2018-03-17-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E7%89%B9%E5%BE%81%E5%B7%A5%E7%A8%8B/</link>
+    <pubDate>Sat, 17 Mar 2018 20:37:00 &#43;0000</pubDate>
+    <author>Author</author>
+    <guid>https://utopizza.github.io/2018-03-17-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E7%89%B9%E5%BE%81%E5%B7%A5%E7%A8%8B/</guid>
+    <description><![CDATA[特征工程（Feature Engineering）：利用领域知识和现有数据，构造出需要的特征，用于机器学习算法【参考维基百科：Feature engineering】。
+俗话说，数据与特征工程决定了模型的上限，改进算法只是逼近这个上限。可见特征工程在机器学习领域里的地位之重要。针对数据挖掘以及传统的机器学习，通过人们的总结和归纳，特征工程主要包括以下方面：
+目前比较流行的方案是借助一个强大的 python 类库—— sklearn 来实现特征工程。它的官方文档是教材级别的文档，值得深入学习。言归正传，下面开始总结特征工程的方法。
+一、数据预处理（参考sklearn官方文档 Preprocessing data）
+1、无量纲化：使不同规格的数据转换到同一规格。常用的方法有标准化、缩放化、正则化三种，它们的具体区别参见：归一化/标准化/正则化
+(1)、标准化：减去均值并除以标准差。公式表达为：
+$$x_{new}=\frac{x-\bar{x}}{S}$$
+使用 sklearn 的 StandardScaler 实现：
+1 2 3  from sklearn.preprocessing import StandardScaler data_new = StandardScaler().fit_transform(data)   (2)、缩放化：常用最大最小值进行缩放，把特征缩放到区间 [0，1] 内，公式表达为：
+$$x_{new}=\frac{x-x_{min}}{x_{max}-x_{min}}$$
+使用 skearn 的 MinMaxScaler 实现：
+1 2 3  from sklearn.preprocessing import MinMaxScaler data_new = MinMaxScaler().fit_transform(data)   (3)、正则化：对每个样本计算其 p-范数，然后对该样本中每个元素除以该范数，这样处理的结果是使得每个处理后样本的 p-范数（L1-norm，L2-norm）等于1。其目的在于样本向量在点乘运算或其他核函数计算相似性时，拥有统一的标准，也就是说都转化为“单位向量”。在 L2 范数下正则化公式表达为：
+$$x_{new}=\frac{x}{||x||_{2}}$$
+使用 sklearn 的 Normalizer 实现：
+1 2 3  from sklearn.]]></description>
+</item><item>
+    <title>机器学习类竞赛</title>
+    <link>https://utopizza.github.io/2018-02-04-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%B1%BB%E7%AB%9E%E8%B5%9B/</link>
+    <pubDate>Sun, 04 Feb 2018 22:07:00 &#43;0000</pubDate>
+    <author>Author</author>
+    <guid>https://utopizza.github.io/2018-02-04-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%B1%BB%E7%AB%9E%E8%B5%9B/</guid>
+    <description><![CDATA[一、国外
+ Kaggle：最著名最活跃的大数据竞赛平台，竞赛题目源源不断，种类丰富，而且有不菲的竞赛奖金。特别是上面的论坛大牛众多而且非常 nice，如果英文能力过关的话在上面可以学到最多最好的数据挖掘和机器学习、深度学习的知识。 KDD Cup：SIGKDD 是 Data Mining 领域的顶会。KDD Cup 是其下的一个比赛。含金量很高。每年都会有比较有意思的题目。难度较大，偏学术，因而全世界的DM、ML大牛、小牛都可能在做这个。这个比赛偶尔会在国内的阿里天池平台上出现，有不少清北博士参加。  二、国内
+ 阿里巴巴天池大数据科研平台：由国内科技巨头阿里举办，应该算是国内名气最大的数据挖掘类型的比赛了。由于是阿里举办，所以比赛获得不错名次的可以获得阿里校招直通车的权利。我参加过几个，感觉不少细节问题处理得并不是很好，例如有时候会出现赛题规则混乱，数据集因为各种问题不断更换等等，和 Kaggle 的差距还是不小。 CCF大数据与计算智能大赛（BDCI）：由中国计算机学会 CCF 主办，是目前国内权威的大数据类赛事之一，组织单位都很权威，也有很多院士、专家参与评审。 DataCastle：国内的另一个比较有名气的大数据竞赛平台，不过奖金较少。DC在成都，可能是和电子科大有某些联系，评委多是电子科大的老师。 另外国内一些IT巨头例如百度，腾讯，京东等等会自己举办一些机器学习大数据和算法竞赛，例如京东金融的 京东JData算法大赛 、京东金融全球数据探索者大赛 ，腾讯的 腾讯社交广告赛（TSA），华为的 华为软件精英挑战赛 等等，大概每年一度，因为是企业自己举办的比赛，其目的就是为了招揽人才，所以这种比赛除了奖金外，一般都会发 Special Offer，十分诱人。  三、参考
+ 天池大数据竞赛和Kaggle、DataCastle的比较，哪个比较好？ Kaggle入门，看这一篇就够了 Kaggle 的比赛在 Machine Learning 领域中属于什么地位？ 分分钟带你杀入Kaggle Top 1% 参加天池大数据竞赛对校园招聘有帮助吗？ 国内数据挖掘竞赛哪个好？  ]]></description>
+</item><item>
+    <title>逻辑回归在梯度提升树中损失函数的梯度推导</title>
+    <link>https://utopizza.github.io/2017-12-12-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92%E5%9C%A8%E6%A2%AF%E5%BA%A6%E6%8F%90%E5%8D%87%E6%A0%91%E4%B8%AD%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E7%9A%84%E6%A2%AF%E5%BA%A6%E6%8E%A8%E5%AF%BC/</link>
+    <pubDate>Tue, 12 Dec 2017 16:40:00 &#43;0000</pubDate>
+    <author>Author</author>
+    <guid>https://utopizza.github.io/2017-12-12-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92%E5%9C%A8%E6%A2%AF%E5%BA%A6%E6%8F%90%E5%8D%87%E6%A0%91%E4%B8%AD%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E7%9A%84%E6%A2%AF%E5%BA%A6%E6%8E%A8%E5%AF%BC/</guid>
+    <description><![CDATA[一、梯度提升树
+因为做比赛最近用到了 LightGBM 来实现逻辑回归，并尝试修改 LightGBM 的目标函数，于是顺便温习一下梯度提升树和逻辑回归，并简单推导了一下逻辑回归在梯度提升树中的损失函数的梯度计算。
+前面的博文介绍过，当损失函数是平方损失和指数损失时，前向加法模型的提升树（回归提升树）可以很方便地进行目标函数的优化并构造决策树。但对于一般的损失函数，前向加法提升树就比较难实现优化。这时就需要使用梯度提升模型的提升树，它能适应一般的损失函数。类似最速下降法，梯度提升树利用损失函数的负梯度在当前模型的值
+$$- \left[ \frac{\partial L(y,f(x_i))}{\partial f(x_i)} \right]$$
+作为回归提升树算法中的残差的近似值，来拟合一个回归树。
+二、逻辑回归
+逻辑回归是比较简单而且应用非常广泛的机器学习算法。它主要用于二分类任务，但是与一般的分类器不同，逻辑回归并不直接给出未知样本的预测类别，而是给出属于某个类别的概率。
+对一个二分类任务，每个训练样本都属于且只属于两种类别之中的一种，即要么是正样本，要么是负样本。习惯上，一般用 $0$ 表示负样本，用 $1$ 表示正样本。
+设训练集一共有 $m$ 个样本，每个样本有 $n$ 个属性，第 $i$ 个训练样本表示为 $x_i=(x_{i}^{(1)},x_{i}^{(2)},\cdots,x_{i}^{(n)})$，$1 \leq i \leq m$。对应地，每个样本有一个类别，设为 $Y$，则对第 $i$ 个样本，要么 $Y_i=1$，要么 $Y_i=0$。
+现在的任务是，给定 $m$ 个已知对应类别的样本 ${(x_1,Y_1),(x_2,Y_2),\cdots,(x_m,Y_m)}$，用来作为训练集，学习一个分类器模型 $f(x,Y)$，然后用这个模型来对未知类别的样本如 $(x_{m+1},？)$ 进行预测，预测它的类别 $Y_{m+1}$ 是等于 $1$ 还是等于 $0$。
+逻辑回归使用 $sigmod$ 函数作为预测模型，它不直接判定某个样本是正样本还是负样本，而是给出一个条件概率，即在已知样本的 $n$ 个属性的情况下，该样本属于正样本或负样本的概率。数学描述为
+$$P(Y=1 \mid x)=\frac{1}{1+e^{-w \cdot x}}$$
+$$P(Y=0 \mid x)=1-\frac{1}{1+e^{-w \cdot x}}$$
+其中 $w$ 是 $n$ 维的向量，每一维对应样本 $x$ 的 $n$ 个特征，可以理解为：$w^{(i)}$ 表示训练样本 $x$ 第 $i$ 个特征 $x^{(i)}$ 的权重。$w \cdot x$ 为两个向量的内积，即]]></description>
+</item><item>
+    <title>RandomForest与GBDT</title>
+    <link>https://utopizza.github.io/2017-12-05-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-randomforest%E4%B8%8Egbdt/</link>
+    <pubDate>Tue, 05 Dec 2017 11:40:00 &#43;0000</pubDate>
+    <author>Author</author>
+    <guid>https://utopizza.github.io/2017-12-05-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-randomforest%E4%B8%8Egbdt/</guid>
+    <description><![CDATA[一、随机森林（RandomForest）
+前面学习过了 bagging 方法，我们知道该方法是通过有放回随机抽样来构建 $S$ 个和原数据集大小相等的训练集，然后分别进行训练，得到 $S$ 个分类器，再把这些分类器通过多数表决的方式组合得到最终的分类器。
+随机森林算法正是 bagging 方法的一种扩展。随机森林算法不仅对训练集的样本（行）进行抽样，而且对训练集的特征（列）也进行抽样。具体来说，随机森林分为三个步骤：
+1、随机采样
+对于行采样，使用有放回随机采样，和常规 bagging 方法一致，前面已经介绍过，此处不再赘述。
+对于列采样，假设样本有 $M$ 个特征（即训练集有 $M$ 列），那么该算法在每次决策树的节点要分裂的时候，随机选择其中 $m$ 个特征作为考察的特征子集（即只在这 $m$ 个特征之中选出最优特征作为分裂决策，而不是像传统决策树那样考察全部特征）。满足 $m &laquo; M$ ，即每次随机选择的子特征集的大小应远小于总特征集的大小，一般情况下推荐取 $m=log_2(M)$。
+行采样的目的是 “用有限数据模拟无限数据”，而列采样的目的是使每个决策树专注于一小部分特征的学习，使其成为各自的 “窄领域专家”，当最终把这些 “擅长于不同领域的专家” 组合到一起时，就可以大大减少 “所有专家犯同样错误” 的可能，也即过拟合的可能。
+2、完全分裂
+因为有了上一步采样的过程，最终分类器的过拟合现象基本不可能发生，因此在学习各个决策树的时候就按照完全分裂的方式来构造，无须剪枝。如在执行分类任务时，分裂的决策依据就可以选择常规决策树的生成算法的决策依据，如 ID3 算法的信息增益等。
+3、执行决策
+当学习完成，得到 $S$ 个彼此独立的决策树后，就可以把这些决策树组合在一起，作为最终的分类器。组合的方式是常规 bagging 方式，即在对预测输出进行结合时，让各个分类器分别执行预测，得到 $S$ 个预测结果，如果预测任务是分类任务则使用投票法选择票数最多的那个类别返回，如果是回归任务则使用均值法取这些预测结果的均值返回。
+二、梯度提升树（Gradient boosting decision tree，GBDT）
+梯度提升树是 boosting 提升方法中的一种。它的提出是为了解决 “回归提升树在使用一般损失函数的时候，求解目标函数时每一步的优化比较困难” 这一问题。之前学习的回归提升树在使用前向分步算法求解目标函数时，使用的损失函数是指数函数，每一步的优化很简单。但如果要扩展到一般的损失函数，就不那么容易了。因此 Freidman 提出了梯度提升（gradient boosting）算法，利用最速下降法的近似方法，其关键是利用损失函数的负梯度在当前模型的值作为回归提升树中的残差的近似值，来拟合一个回归树。
+梯度提升算法：
+输入：训练数据集 $T$，输入空间 $X$，输出空间 $Y$，损失函数 $L(y,f(x))$ 输出：回归提升树 $f_M(x)$
+1、初始化
+$$f_0(x)=argmin\sum_{i=1}^{N}L(y_i,c)$$]]></description>
+</item><item>
+    <title>boosting与bagging</title>
+    <link>https://utopizza.github.io/2017-11-30-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-boosting%E4%B8%8Ebagging/</link>
+    <pubDate>Thu, 30 Nov 2017 21:02:00 &#43;0000</pubDate>
+    <author>Author</author>
+    <guid>https://utopizza.github.io/2017-11-30-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-boosting%E4%B8%8Ebagging/</guid>
+    <description><![CDATA[一、boosting
+前面已经学习过，boosting 是一种提升方法，它通过改变训练样本的权重，学习多个分类器，并将这些分类器进行组合，提高分类的性能。
+boosting 方法每一轮学习一个分类器，并根据本次学习的误差，改变整个样本集合中每个样本的权重，被误分类的那些样本的权重将增大。在下一轮学习新的分类器时，这些被误分类的样本将会被赋予更大的关注。
+因此可以看出，boosting 方法是通过串行训练而获得的，下一轮的学习是基于上一轮的误差进行的。另外，每一轮的训练集都是整个原数据集，数据集中的样本不变，变的是各个样本的权重。
+最后，在学习基本分类器时，会同时计算得到每个分类器的权重。boosting 的最终组合分类器是这一系列基本分类器的加权组合。
+目前比较典型的两种 boosting 算法是 Adaboosting （Adaptive Boosting，自适应boosting）算法，和 GBDT（gradient boosting decision tree，梯度提升决策树）算法。
+二、bagging
+自举汇聚法（bootstrap aggregating），也称 bagging 方法。该方法通过从原数据集中随机放回抽样，得到 $S$ 个和原数据集大小相等的数据集，来作为 $S$ 次训练的训练集，从而训练得到 $S$ 个分类器。
+因为是放回抽样，所以新的数据集中可以有重复的样本，原数据集也可以有部分样本不在新数据集中出现。
+得到了 $S$ 个分类器后，就将这些分类器组合成最终的分类器。执行预测时，让这 $S$ 个分类器分别对新数据进行预测，得到 $S$ 个预测结果。如果是分类任务，则采用多数表决的方式，选择这 $S$ 个结果中票数最多的那个类别返回。如果是回归任务，则取均值作为最终结果返回。
+目前比较典型的 bagging 类的方法有随机森林（Random Forest）。
+三、区别
+1、学习方式
+boosting 的每一轮学习是基于前一轮的误差，因此它的一系列基本分类器的训练是串行的。bagging 是随机不放回抽样得到若干个新的训练集进行各自的训练，彼此间没有联系，可并行。
+2、训练样本
+boosting 不改变样本，而是在每一轮根据误差改变每个样本的权重。bagging 不改变权重，而是从原数据集抽选其中一部分样本（可重复）来构成不同的训练集。
+3、分类器组合方式
+boosting 的最终分类器是基本分类器的加权之和，每个分类器有各自的权重，最终的预测结果是每个分类器的预测结果的加权之和。bagging 的分类器没有权重的概念，每个基本分类器都有相等权重的一票，最终的预测结果是票数最多的那一个类（标签）。]]></description>
+</item><item>
+    <title>分类提升树与回归提升树</title>
+    <link>https://utopizza.github.io/2017-11-26-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E5%88%86%E7%B1%BB%E6%8F%90%E5%8D%87%E6%A0%91%E4%B8%8E%E5%9B%9E%E5%BD%92%E6%8F%90%E5%8D%87%E6%A0%91/</link>
+    <pubDate>Sun, 26 Nov 2017 14:40:00 &#43;0000</pubDate>
+    <author>Author</author>
+    <guid>https://utopizza.github.io/2017-11-26-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E5%88%86%E7%B1%BB%E6%8F%90%E5%8D%87%E6%A0%91%E4%B8%8E%E5%9B%9E%E5%BD%92%E6%8F%90%E5%8D%87%E6%A0%91/</guid>
+    <description><![CDATA[一、提升树（boosting tree）
+提升树是以分类树或回归树为基本分类器的提升方法。提升树被认为是统计学习中性能最好的方法之一。提升方法采用加法模型（即基函数的线性组合）与前向分步算法。对分类问题，决策树是二叉分类树；对回归问题，决策树是二叉回归树。
+提升树模型可以表示为决策树的加法模型：
+$$f_M(x)=\sum_{m=1}^{M}T(x;\theta_m)$$
+其中，$T(x;\theta_m)$ 表示决策树，$\theta_m$ 为决策树的参数，$M$ 为决策树的个数。
+二、二分类问题的提升树
+对于二分类问题，提升树算法只需将 Adaboost 算法中的基本分类器限制为二分类树即可。
+目前比较流行的方案是采用一种简单决策树作为基本分类器：单层决策树（decision stump，也称决策树桩）。它仅仅基于单个特征来执行决策，因此对应地只有一个树结点：根节点。它只能执行一次二分类，如 $x &lt; v$ 或 $x &gt; v$。
+三、回归问题的提升树
+回归树的形式化描述：设训练数据集 $T={(x_1,y_1),(x_2,y_2),\cdots,(x_N,y_N)}$，$x_i \in X \subseteq R^n$，$y_i \in Y \subseteq R$，$X$ 是输入空间，$Y$ 是输出空间。如果将输入空间 $X$ 划分为 $J$ 个不相交的区域 $R_1,R_2,\cdots,R_J$，并且在每个区域上有确定的输出常量 $c_j$，那么回归树可以表示为：
+$$T(x;\theta)=\sum_{j=1}^{J}c_j \cdot I(x \in R_j)$$
+其中，参数 $\theta={(R_1,c_1),(R_2,c_2),\cdots,(R_J,c_J)}$ 表示回归树的区域划分和各区域上的输出常量（即输出的回归值），$J$ 是回归树的复杂度（即叶结点个数）。
+回归问题的提升树算法：
+输入：如上，训练数据集 $T$，输入空间 $X$，输出空间 $Y$ 输出：回归提升树 $f_M(x)$
+1、初始化 $f_0(x)=0$
+2、对 $M$ 个分类器，进行对应的第 $m=1,2,\cdots,M$ 轮学习。对第 $m$ 轮学习：
+(1)、计算以前一轮为止，目前学习到的回归提升树 $f_{m-1}(x)$ 的残差
+$$r_{mi}=y_i-f_{m-1}(x_i)，i=1,2,\cdots,N$$]]></description>
+</item><item>
+    <title>Adaboost算法</title>
+    <link>https://utopizza.github.io/2017-11-22-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-adaboost%E7%AE%97%E6%B3%95/</link>
+    <pubDate>Wed, 22 Nov 2017 14:17:00 &#43;0000</pubDate>
+    <author>Author</author>
+    <guid>https://utopizza.github.io/2017-11-22-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-adaboost%E7%AE%97%E6%B3%95/</guid>
+    <description><![CDATA[一、提升方法（boosting）
+提升方法主要用于分类问题，它的基本思想是，通过改变训练样本的权重，学习多个不同的分类器，最后把这些基本分类器（也称弱分类器）通过线性组合，得到最终的强分类器。
+这里所谓的提升，通俗地说其实就是将一个分类问题交给多个分类器来处理，“对于一个复杂任务来说，将多个专家的判断进行适当的综合，得出的最终判断，要比任何一个专家单独的判断要好”。虽然每一个弱分类器都是只是一个窄领域的专家，但是把一系列这样的弱分类组合到一起，得到的分类能力并不比单个强分类器差。而且直接学习一个强分类器远比学习一个弱分类器难。
+目前大多数提升方法是通过不断改变训练数据的概率分布（样本权重分布）来不断学习出一系列弱分类器。那么这样需要确定两个问题：
+ 在每一轮如何改变训练样本的权值或者概率分布 如何将这些弱分类器组合成一个强分类器  提升方法中的代表性算法有 Adaboost 算法，它的做法是：
+ 在每一轮学习后，提高前一轮学习中被错误分类的样本的权值，降低前一轮学习中被正确分类的样本的权值。这样，后面学习的分类器将会专注于前面的分类器不能很好处理的那些样本，弥补了前面的分类器的不足（窄领域）。举个例子，小明和小红在学习分类一堆水果，小明先学习，他在学习分类的时候由于精力和时间有限，在一轮学习后，小明只能很好地对体积大的水果进行分类，对那些体积小的水果经常分错类。然后到小红学习的时候，为了保证两个人最终能够把这堆水果都正确分类，那么聪明的小红应该知道，自己应该专注于对那些小明不擅长的体积小的水果进行学习，因为如果小明能够很好地分类体积大的水果，而自己能够很好地分类体积小的水果，那么两个人组合互补起来得到的分类能力，远比两个人都强行学习对所有水果分类的效果好得多。 对于弱分类器的组合，Adaboost 采取加权多数表决的方法，即加大分类误差小的弱分类器的权值，使其在最终表决的时候起较大作用，减小分类误差较大的弱分类器的权值，使其在最终表决中起较小作用。这个很容易理解，谁分类的误差小、准确度高，当然谁在最终的表决里就有更大的话语权了。  二、Adaboost 算法
+算法目标：给定一个二分类的训练数据集 $T={(x_1,y_1),(x_2,y_2),\cdots,(x_N,y_N)}$，其中 $x_i \in R^n$ 是样本实例，$y_i \in {-1,+1}$ 是样本类别标记。本算法目标是从该训练数据集中，学习出 $M$ 个弱分类器，最后将这些弱分类器通过线性组合，得到最终的一个强分类器。
+输入：训练数据集 $T$，弱学习算法 输出：最终分类器 $G(x)$
+1、初始化训练集 $N$ 个样本的权重分布
+$$D_1=(w_{1,1},\cdots,w_{1,i},\cdots,w_{1,N})$$
+$$w_{1,i}=\frac{1}{N}，i=1,2,\cdots,N$$
+2、对 $M$ 个分类器，开展对应的 $m=1,2,\cdots,M$ 轮学习。对第 $m$ 轮学习：
+(1)、用训练数据集 $T$、第 $m$ 轮的样本权重 $D_m$、和弱分类器学习算法，学习得到第 $m$ 个弱分类器
+$$G_m(x):X \to {-1,+1}$$
+(2)、计算 $G_m(x)$ 在训练集上的分类误差率
+$$e_m=P(G_m(x_i) \neq y_i)=\sum_{i=1}^{N}w_{m,i}I(G_m(x_i) \neq y_i)$$
+(3)、计算 $G_m(x)$ 的权重
+$$\alpha_m=\frac{1}{2}\ln(\frac{1}{e_m}-1)$$
+(4)、计算下一轮学习的样本权重分布
+$$D_{m+1}=(w_{m+1,1},\cdots,w_{m+1,i},\cdots,w_{m+1,N})$$
+$$ w_{m+1,i}=\frac {w_{m,i} \cdot e^{-\alpha_m y_i G_m(x_i)}} {\sum_{i=1}^{N} w_{m,i} \cdot e^{-\alpha_m y_i G_m(x_i)}} ，i=1,2,\cdots,N $$]]></description>
+</item><item>
+    <title>训练误差与测试误差</title>
+    <link>https://utopizza.github.io/2017-11-20-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E8%AE%AD%E7%BB%83%E8%AF%AF%E5%B7%AE%E4%B8%8E%E6%B5%8B%E8%AF%95%E8%AF%AF%E5%B7%AE/</link>
+    <pubDate>Mon, 20 Nov 2017 13:57:00 &#43;0000</pubDate>
+    <author>Author</author>
+    <guid>https://utopizza.github.io/2017-11-20-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E8%AE%AD%E7%BB%83%E8%AF%AF%E5%B7%AE%E4%B8%8E%E6%B5%8B%E8%AF%95%E8%AF%AF%E5%B7%AE/</guid>
+    <description><![CDATA[今天和队友讨论好准备做交叉验证的时候，我们竟然都搞错了对交叉验证的理解，回过头来看书的时候发现是竟然因为搞错了一些最基本的但十分重要的知识，特此记录一下。
+一、交叉验证（cross validation）
+机器学习中的交叉验证是一种常用的模型选择的方法。交叉验证的基本思想是重复地使用数据，把给定的数据集进行切分，分成训练集和测试集，在此基础上反复地进行训练、测试，并选择最好的模型。
+1、简单交叉验证
+随机地将已给数据集分为两部分，约 70% 作为训练集，剩下 30% 作为测试集。然后用训练集在不同的参数条件下训练模型，得到各个参数不同的模型，接着在测试集上评价模型的测试误差，选出测试集误差最小的模型。 这种方法只把训练集和测试集做一次划分。
+2、$S$ 折交叉验证
+目前应用最多的是 $S$ 折交叉验证，首先随机地将已给数据切分成 $S$ 个互不相交的大小相同的子集，然后利用其中任意 $S-1$ 个子集作为训练集训练得到一个模型，把剩下的那一个子集作为测试集测试模型得到一个测试误差。如此重复 $S$ 次，直到每一个子集都作为一次测试集，一共得出 $S$ 个不同的模型，和 $S$ 个对应的测试误差。最后，选择出这 $S$ 个测试误差中最小的那个模型，作为最终确定的最优模型。
+到这里，我就不明白，为什么这样做可以避免过拟合？选择测试误差最小的那个模型，不就又过拟合了吗？后来查了一下书，其实是我把训练误差和测试误差搞混了，而且过拟合的定义没理解好。
+二、过拟合（over-fitting）
+所谓过拟合，是指在学习时选择的模型包含参数过多，以致于出现这一模型对已知数据预测得很好，但是对未知数据预测很差的现象。也就是说，在训练集上训练误差已经非常小，但在测试集上测试误差却非常大。
+出现这个问题往往是因为在设定训练的目标函数时，只片面地追求对训练数据的预测能力。例如，假设现在有一个任务是用训练集（点集）去拟合一个多项式函数，然后用这个多项式函数去预测一些未知的样本。如果在设定训练的目标函数时，只考虑多项式函数与训练样本总误差的最小化，那么在学习的时候为了找到这个最小误差，模型会不断地提高自己的多项式次数（也即模型的复杂度），尝试用三次，四次，或者更高次的多项式，去逼近所有训练样本，达到最小误差。极端的情况下有可能找到一个极高次的多项式函数，使得所有样本都落在这个函数上，训练样本总误差达到了 $0$。但实际上，数据集中往往包含各种噪音和离群点，而模型却无法分辨，在计算总误差的时候依然包含了这些噪音，为了减小这些误差不得不提高多项式函数的次数。如下图所示，理想的模型其实是一个二次多项式函数，但是由于只考虑了使总误差最小，学习的结果是得到一个高次的多项式函数，那么如果用这个高次多项式来预测本应该是二次多项式的未知数据，那么预测效果将会非常糟糕。
+可以认为，在训练误差已经比较小的情况下（模型训练完成后），测试误差是对过拟合程度的一种衡量。如果模型在测试集上的测试误差越小，说明过拟合程度越小，如果测试误差越大，则说明过拟合程度比较严重了。所以上面交叉验证中，选择测试误差最小的模型，实际上就是过拟合程度最小的模型。
+三、训练误差（training error）与测试误差（test error）
+统计学习的目的是使学习到的模型不仅对已知数据（训练集），而且对未知数据（测试集）都有很好的预测能力。当损失函数给定时，基于损失函数的模型的训练误差和预测误差就成为了模型训练效果评估的标准。
+假设给定训练集为 $Tr={ (x_1,y_1),(x_2,y_2),\cdots,(x_N,y_N) }$，测试集为 $Te={ (x_1,y_1),(x_2,y_2),\cdots,(x_M,y_M) }$，其中 $x_i \in R^n$，$y_i \in R$，选定的损失函数是 $L(Y,f(X))$，学习到的模型是 $Y=\hat{f}(X)$，则输入某个样本到模型得到的预测值为 $\hat{y}_i=\hat{f}(x_i)$，则
+训练误差是模型 $Y=\hat{f}(X)$ 在训练集 $Tr$ 上的平均损失：
+$$R_{emp}(\hat{f})=\frac{1}{N}\sum_{i=1}^{N}L(y_i,\hat{y}_i)$$
+测试误差是模型 $Y=\hat{f}(X)$ 在测试集 $Te$ 上的平均损失：
+$$e_{test}=\frac{1}{M}\sum_{i=1}^{M}L(y_i,\hat{y}_i)$$
+根据前人的经验，训练误差和测试误差与模型有着如下图的关系：当模型的复杂度增大时，训练误差会逐渐减小并趋向于 0，而测试误差会先减小，达到最小值后又增大。
+当选择的模型复杂度过大时，过拟合现象就会发生（训练误差很小，但测试误差很大），这样在训练模型时，就需要防止过拟合，进行最优的模型选择，即选择复杂度适当的模型，目的是找到具有最优泛化能力（最小测试误差）的模型，因为我们训练模型的目的不是让模型完美逼近训练集，而是让模型完美预测未知数据。
+而常用的模型选择方式有两种，一种是上面的交叉验证法，取预测效果最好的众多个模型中的一个，另一个方法就是在目标函数中加入正则项，惩罚模型在学习过程中增大的复杂度。例如在上面所举的例子中，可以在目标函数中加入关于模型复杂度的函数，当模型复杂度越高，这个函数的值就越大。那么这样一来，模型在学习的时候，最小化的目标就不仅仅是训练样本的总误差了，而是训练样本总误差与模型复杂度之和。如此这般就可以因避免片面追求误差最小而提高了复杂度。]]></description>
+</item><item>
+    <title>CART算法</title>
+    <link>https://utopizza.github.io/2017-11-18-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-cart%E7%AE%97%E6%B3%95/</link>
+    <pubDate>Sat, 18 Nov 2017 16:34:00 &#43;0000</pubDate>
+    <author>Author</author>
+    <guid>https://utopizza.github.io/2017-11-18-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-cart%E7%AE%97%E6%B3%95/</guid>
+    <description><![CDATA[分类与回归树（classification and regression tree, CART）模型是应用广泛的决策树学习方法，既可以用于分类，也可以用于回归。
+回顾之前学习的 ID3 算法，它的做法是每次选取当前最佳的特征来分割数据，分割依据是该特征的所有取值。也就是说，如果这个特征有 $n$ 个取值，那么数据将立即被分割成 $n$ 分。一旦被切分之后，该特征在之后将不会再被考虑。这样有两个问题：一是切分过于迅速，如果 $n$ 很大，那么数据将被马上切分成大量的小份，影响后续切分的效果。二是，这样的决策树只能处理离散型的数值，如果特征的取值是连续型数值，则需要将其预处理转化成离散型，但这样就会人为地破坏了连续型变量的内在性质。
+CART 算法解决了上述问题。CART 设定决策树是二叉树，每次切分数据只做二元切分，即把数据集切分成两份。对某个连续型的特征，设定一个切分值，大于此值的数据进入左子树，反之则进入右子树。然后递归地构建子树。
+一、CART 生成
+CART 决策树的生成就是递归地构建二叉决策树的过程。对回归树用平方误差最小化准则，对分类树用基尼指数最小化准则，进行特征选择。
+1、回归树的生成
+输入：训练数据集 $D$，特征集 $A$ 输出：回归树 $T$
+(1)、寻找最佳的切分特征 $A_g$ 和对应的最佳切分值 $v$：遍历特征集中每一个特征，尝试以该特征的每一个取值作为切分值，对数据集执行二元切分，然后计算切分误差，如果当前误差小于记录的最小误差，那么更新最优切分特征、最优切分值、最小误差。遍历完成后，返回最优切分特征、最优切分值。
+其中误差一般使用目标变量的方差来计算，设数据集为 $D$，数据集中的目标变量为 $D.Y$，数据集在执行一次二元切分后被切分成 $D_{left}$ 和 $D_{right}$，则此次切分减小的混乱程度为
+$$g(D,A_g,v)=var(D.Y)- \left[ var(D_{left}.Y)+var(D_{right}.Y) \right]$$
+其中 $D_{left}={D \mid D.A_g&gt;v}$，$D_{right}={D \mid D.A_g \leq v}$。
+(2)、如果该结点不能再分（左右两个子集方差之和比原数据集方差还大，或者大于给定的某个阈值等等），将该结点存为叶结点，把该结点上的数据集目标变量的平均值作为该结点的输出值返回；否则执行二元切分，把数据集以 $v$ 为切分值，按特征 $A_g$ 切分成 $D_{left}$ 和 $D_{right}$ 两个子集，并对应地生成左右两个子树
+(3)、递归地对左右子树重复执行前面的步骤，直到满足停止条件
+构造决策树：
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21  def createTree(dataSet,tolN,tolS): # 寻找最优切分特征、最优切分值 feat, value = chooseBestSplit(dataSet,tolN,tolS) # 切分特征为空，说明不能再分，直接返回value作为叶结点的输出值 if feat is None: return value # 把最优切分特征、最优切分值记录到树中 retTree = {} retTree[&#39;spInd&#39;] = feat retTree[&#39;spVal&#39;] = value # 执行二元切分，得到左右子树对应的两个数据集子集 leftSet, rightSet = binSplitDataSet(dataSet, feat, value) # 在左右子树继续递归地调用自己，构造决策树 retTree[&#39;left&#39;] = createTree(leftSet, leafType, errType, ops) retTree[&#39;right&#39;] = createTree(rightSet, leafType, errType, ops) return retTree   选择最优切分特征、最优切分值：]]></description>
+</item><item>
+    <title>ID3算法与C4.5算法</title>
+    <link>https://utopizza.github.io/2017-11-15-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-id3%E7%AE%97%E6%B3%95%E4%B8%8Ec4.5%E7%AE%97%E6%B3%95/</link>
+    <pubDate>Wed, 15 Nov 2017 16:34:00 &#43;0000</pubDate>
+    <author>Author</author>
+    <guid>https://utopizza.github.io/2017-11-15-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-id3%E7%AE%97%E6%B3%95%E4%B8%8Ec4.5%E7%AE%97%E6%B3%95/</guid>
+    <description><![CDATA[一、ID3算法
+ID3算法的核心是在决策树各个结点上应用“信息增益”准则选择特征，递归地构建决策树。具体方法：从根结点开始，对结点计算所有可能的特征的信息增益，选择信息增益最大的特征作为结点的特征，由该特征的不同取值建立子结点；再对子结点递归地调用以上方法，构建决策树，直到所有特征的信息增益均很小或没有特征可以选择为止。
+输入：训练数据集 $D$，特征集 $A$，阈值 $\varepsilon$ 输出：决策树 $T$
+ 若 $D$ 中所有实例属于同一类 $C_k$，则 $T$ 为单结点树，并将 $C_k$ 作为该结点的类标记，返回 $T$； 若 $A=\emptyset$ ，则 $T$ 为单结点树，将 $D$ 中实例数最大的类 $C_k$ 作为该结点的类标记，返回 $T$； 遍历 $A$ 中每一个特征，计算信息增益 $g(D,A)=H(D)-\sum_{i=1}^{n}\frac{|D_i|}{|D|}H(D_i)$，选择信息增益最大特征 $A_g$。如果 $A_g$ 的信息增益小于阈值 $\varepsilon$，则置 $T$ 为单结点树，并将 $D$ 中实例数最大的类 $C_k$ 作为该结点的类标记，返回 $T$；否则，对 $A_g$ 的每一个可能值 $a_i$，按照 $A_g=a_i$ 将 $D$ 分割为若干非空子集 $D_i$，对每个子集 $D_i$，将其实例数中最大的类作为标记，构建子结点，由结点及其子结点构成树 $T$，返回 $T$； 对第 $i$ 个子结点，以 $D_i$ 为训练集，以 $A- { A_g }$ 为特征集，递归地调用前3步，得到子树 $T_i$，返回 $T_i$。  以下是部分关键代码，参考《机器学习实战》第三章。这里忽略了上述算法的“信息增益阈值 $\varepsilon$ 这一条件。]]></description>
+</item></channel>
 </rss>

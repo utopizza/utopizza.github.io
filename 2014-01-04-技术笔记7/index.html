@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>技术笔记(7)-标记语言、脚本语言、编程语言 - Utopizza</title>
+        <meta name="Description" content="About LoveIt Theme"><meta property="og:title" content="技术笔记(7)-标记语言、脚本语言、编程语言" />
+<meta property="og:description" content="编程语言、标记语言、脚本语言分别有哪些？区别是什么？
+一、标记语言
+是一种将文本（Text）以及文本相关的其他信息结合起来，展现出关于文档结构和数据处理细节的电脑文字编码。与文本相关的其他信息（包括例如文本的结构和表示信息等）与原来的文本结合在一起，但是使用标记（markup）进行标识。
+ 如：HTML、XML
+ 二、脚本语言
+为了缩短传统的编写-编译-链接-运行（edit-compile-link-run）过程而创建的计算机编程语言。它的特点是：程序代码即是最终的执行文件，只是这个过程需要解释器的参与。脚本语言通常是被解释执行的，而且程序是文本文件。
+ 如：JavaScript，Python
+ 三、解析型语言
+指用专门解释器对源程序逐行解释成特定平台的机器码并立即执行的语言；相当于把编译型语言的编译链接过程混到一起同时完成的。 解释型语言执行效率较低，且不能脱离解释器运行，但它的跨平台型比较容易，只需提供特定解释器即可。
+ 如：Python（同时是脚本语言），Java，C#
+ 三、编译型语言
+指用专用的编译器，针对特定的操作平台（操作系统）将某种高级语言源代码一次性翻译成可被硬件平台直接运行的二进制机器码（具有操作数，指令、及相应的格式），这个过程叫做编译；编译好的可执行性文件（.exe），可在相对应的平台上运行（移植性差，但运行效率高）。有些程序编译后，还需要把其他编译好的，可能需要组装两个以上的目标代码生成最终的可执行性文件，称为链接（可实现对低层次代码的复用）。
+ 如：C、C&#43;&#43;、Java
+ 另外，Java语言是一门很特殊的语言，Java程序需要进行编译步骤，但并不会生成特定平台的二进制机器码，它编译后生成的是一种与平台无关的字节码文件（*.class）（移植性好的原因），这种字节码自然不能被平台直接执行，运行时需要由解释器解释成相应平台的二进制机器码文件；大多数人认为Java是一种编译型语言，但我们说Java即是编译型语言，也是解释型语言也并没有错。
+四、区别
+ 标记语言没有逻辑和行为能力，不用于向计算机发出指令，常用于格式化和链接 脚本语言介于标记语言和编程语言之间，脚本语言脚本语言不需要编译，可以直接用，由解释器来负责解释 编译型语言写的程序执行之前，需要一个专门的编译过程，把程序编译成为机器语言的文件，比如exe文件，以后要运行的话就不用重新翻译了，直接使用编译的结果就行了（exe文件），因为翻译只做了一次，运行时不需要翻译，所以编译型语言的程序执行效率高  五、脚本语言与系统语言的区别
+ 抽象的级别：这是最重要也是最明显示的不同。脚本语言对程序员提供了更高级的抽象。这一点明显表现在：在这种语言自身中，存在有高级的数据结构，如列表和字典结构，和对这种结构简单方便的嵌套和操作。这样可以创建非常成功的程序 类型定义：系统语言通常是强类型和静态类型定义。这就意味着所有变量的类型要在程序中指定，在编译时检查。相反地，脚本语言是最松散的类型定义，完全没有类型声明，并且在运行时进行动态类型检查 执行：系统语言的特点是编译的。程序被编译成可执行的二进制。另一方面，脚本语言的特点是解释，也就是，指令被立即执行，不存在一个编译的中间状态。这就意味着脚本语言是交互式的(你可以在提示符下敲入命令，并且看到结果)，这是另一个巨大的胜利。这样完全将编译过程从编辑-编译-运行循环中去掉了。 速度：以上三点是脚本语言一方面在速度与效率，另一方面在易用性与表示式的强大性之间进行折衷的典型例子。这就使得脚本语言的执行速度比系统语言慢一个数量级。这就是对脚本语言诽谤最多的方面。性能的降低不是真正的问题，因为思想是用脚本语言来组合组件，这些组件是用象C 这样的快速系统语言来编写的。所以所有需要运行快速的东西将因为是用快速的语言实现的而运行得快速。脚本语言只用于将东西绑在一起，并且这些通常不是性能的瓶颈(或如果是，你需要重新检查你的设计)  六、本文参考：
+ 编程语言、标记语言、脚本语言分别有哪些？区别是什么？ 编译型语言、解释型语言与脚本语言三大类型详解  " />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://utopizza.github.io/2014-01-04-%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B07/" />
+<meta property="og:image" content="https://utopizza.github.io/logo.png"/>
+<meta property="article:published_time" content="2014-01-04T13:53:00+00:00" />
+<meta property="article:modified_time" content="2014-01-04T13:53:00+00:00" />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://utopizza.github.io/logo.png"/>
+
+<meta name="twitter:title" content="技术笔记(7)-标记语言、脚本语言、编程语言"/>
+<meta name="twitter:description" content="编程语言、标记语言、脚本语言分别有哪些？区别是什么？
+一、标记语言
+是一种将文本（Text）以及文本相关的其他信息结合起来，展现出关于文档结构和数据处理细节的电脑文字编码。与文本相关的其他信息（包括例如文本的结构和表示信息等）与原来的文本结合在一起，但是使用标记（markup）进行标识。
+ 如：HTML、XML
+ 二、脚本语言
+为了缩短传统的编写-编译-链接-运行（edit-compile-link-run）过程而创建的计算机编程语言。它的特点是：程序代码即是最终的执行文件，只是这个过程需要解释器的参与。脚本语言通常是被解释执行的，而且程序是文本文件。
+ 如：JavaScript，Python
+ 三、解析型语言
+指用专门解释器对源程序逐行解释成特定平台的机器码并立即执行的语言；相当于把编译型语言的编译链接过程混到一起同时完成的。 解释型语言执行效率较低，且不能脱离解释器运行，但它的跨平台型比较容易，只需提供特定解释器即可。
+ 如：Python（同时是脚本语言），Java，C#
+ 三、编译型语言
+指用专用的编译器，针对特定的操作平台（操作系统）将某种高级语言源代码一次性翻译成可被硬件平台直接运行的二进制机器码（具有操作数，指令、及相应的格式），这个过程叫做编译；编译好的可执行性文件（.exe），可在相对应的平台上运行（移植性差，但运行效率高）。有些程序编译后，还需要把其他编译好的，可能需要组装两个以上的目标代码生成最终的可执行性文件，称为链接（可实现对低层次代码的复用）。
+ 如：C、C&#43;&#43;、Java
+ 另外，Java语言是一门很特殊的语言，Java程序需要进行编译步骤，但并不会生成特定平台的二进制机器码，它编译后生成的是一种与平台无关的字节码文件（*.class）（移植性好的原因），这种字节码自然不能被平台直接执行，运行时需要由解释器解释成相应平台的二进制机器码文件；大多数人认为Java是一种编译型语言，但我们说Java即是编译型语言，也是解释型语言也并没有错。
+四、区别
+ 标记语言没有逻辑和行为能力，不用于向计算机发出指令，常用于格式化和链接 脚本语言介于标记语言和编程语言之间，脚本语言脚本语言不需要编译，可以直接用，由解释器来负责解释 编译型语言写的程序执行之前，需要一个专门的编译过程，把程序编译成为机器语言的文件，比如exe文件，以后要运行的话就不用重新翻译了，直接使用编译的结果就行了（exe文件），因为翻译只做了一次，运行时不需要翻译，所以编译型语言的程序执行效率高  五、脚本语言与系统语言的区别
+ 抽象的级别：这是最重要也是最明显示的不同。脚本语言对程序员提供了更高级的抽象。这一点明显表现在：在这种语言自身中，存在有高级的数据结构，如列表和字典结构，和对这种结构简单方便的嵌套和操作。这样可以创建非常成功的程序 类型定义：系统语言通常是强类型和静态类型定义。这就意味着所有变量的类型要在程序中指定，在编译时检查。相反地，脚本语言是最松散的类型定义，完全没有类型声明，并且在运行时进行动态类型检查 执行：系统语言的特点是编译的。程序被编译成可执行的二进制。另一方面，脚本语言的特点是解释，也就是，指令被立即执行，不存在一个编译的中间状态。这就意味着脚本语言是交互式的(你可以在提示符下敲入命令，并且看到结果)，这是另一个巨大的胜利。这样完全将编译过程从编辑-编译-运行循环中去掉了。 速度：以上三点是脚本语言一方面在速度与效率，另一方面在易用性与表示式的强大性之间进行折衷的典型例子。这就使得脚本语言的执行速度比系统语言慢一个数量级。这就是对脚本语言诽谤最多的方面。性能的降低不是真正的问题，因为思想是用脚本语言来组合组件，这些组件是用象C 这样的快速系统语言来编写的。所以所有需要运行快速的东西将因为是用快速的语言实现的而运行得快速。脚本语言只用于将东西绑在一起，并且这些通常不是性能的瓶颈(或如果是，你需要重新检查你的设计)  六、本文参考：
+ 编程语言、标记语言、脚本语言分别有哪些？区别是什么？ 编译型语言、解释型语言与脚本语言三大类型详解  "/>
+<meta name="application-name" content="Utopizza">
+<meta name="apple-mobile-web-app-title" content="Utopizza"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://utopizza.github.io/2014-01-04-%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B07/" /><link rel="prev" href="https://utopizza.github.io/2013-12-21-%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B06/" /><link rel="next" href="https://utopizza.github.io/2014-03-06-%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B08/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "技术笔记(7)-标记语言、脚本语言、编程语言",
+        "inLanguage": "en",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https:\/\/utopizza.github.io\/2014-01-04-%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B07\/"
+        },"image": {
+                "@type": "ImageObject",
+                "url": "https:\/\/utopizza.github.io\/cover.png",
+                "width":  800 ,
+                "height":  600 
+            },"genre": "posts","wordcount":  28 ,
+        "url": "https:\/\/utopizza.github.io\/2014-01-04-%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B07\/","datePublished": "2014-01-04T13:53:00+00:00","dateModified": "2014-01-04T13:53:00+00:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+                "@type": "Organization",
+                "name": "",
+                "logo": {
+                "@type": "ImageObject",
+                "url": "https:\/\/utopizza.github.io\/logo.png",
+                "width":  127 ,
+                "height":  40 
+                }
+            },"author": {
+                "@type": "Person",
+                "name": "yusheng"
+            },"description": ""
+    }
+    </script></head>
+    <body><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="Utopizza"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>Utopizza</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> Posts </a><a class="menu-item" href="/categories/"> Categories </a><a class="menu-item" href="https://github.com/utopizza" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i>  </a><span class="menu-item delimiter"></span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="Utopizza"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>Utopizza</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><a class="menu-item" href="/posts/" title="">Posts</a><a class="menu-item" href="/categories/" title="">Categories</a><a class="menu-item" href="https://github.com/utopizza" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i></a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">技术笔记(7)-标记语言、脚本语言、编程语言</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;
+                    <span class="post-category">included in<a href="/categories/technology/">
+                                <i class="far fa-folder fa-fw"></i>Technology
+                            </a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i><time datetime=2014-01-04>2014-01-04</time>&nbsp;
+                <i class="fas fa-pencil-alt fa-fw"></i>about 28 words&nbsp;
+                <i class="far fa-clock fa-fw"></i>1 min&nbsp;</div>
+        </div><div class="details toc" id="toc-static">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents"></nav></div>
+            </div><div class="content" id="content"><p>编程语言、标记语言、脚本语言分别有哪些？区别是什么？</p>
+<p>一、标记语言</p>
+<p>是一种将文本（Text）以及文本相关的其他信息结合起来，展现出关于文档结构和数据处理细节的电脑文字编码。与文本相关的其他信息（包括例如文本的结构和表示信息等）与原来的文本结合在一起，但是使用标记（markup）进行标识。</p>
+<blockquote>
+<p>如：HTML、XML</p>
+</blockquote>
+<p>二、脚本语言</p>
+<p>为了缩短传统的编写-编译-链接-运行（edit-compile-link-run）过程而创建的计算机编程语言。它的特点是：程序代码即是最终的执行文件，只是这个过程需要解释器的参与。脚本语言通常是被解释执行的，而且程序是文本文件。</p>
+<blockquote>
+<p>如：JavaScript，Python</p>
+</blockquote>
+<p>三、解析型语言</p>
+<p>指用专门解释器对源程序逐行解释成特定平台的机器码并立即执行的语言；相当于把编译型语言的编译链接过程混到一起同时完成的。
+解释型语言执行效率较低，且不能脱离解释器运行，但它的跨平台型比较容易，只需提供特定解释器即可。</p>
+<blockquote>
+<p>如：Python（同时是脚本语言），Java，C#</p>
+</blockquote>
+<p>三、编译型语言</p>
+<p>指用专用的编译器，针对特定的操作平台（操作系统）将某种高级语言源代码一次性翻译成可被硬件平台直接运行的二进制机器码（具有操作数，指令、及相应的格式），这个过程叫做编译；编译好的可执行性文件（.exe），可在相对应的平台上运行（移植性差，但运行效率高）。有些程序编译后，还需要把其他编译好的，可能需要组装两个以上的目标代码生成最终的可执行性文件，称为链接（可实现对低层次代码的复用）。</p>
+<blockquote>
+<p>如：C、C++、Java</p>
+</blockquote>
+<p>另外，Java语言是一门很特殊的语言，Java程序需要进行编译步骤，但并不会生成特定平台的二进制机器码，它编译后生成的是一种与平台无关的字节码文件（*.class）（移植性好的原因），这种字节码自然不能被平台直接执行，运行时需要由解释器解释成相应平台的二进制机器码文件；大多数人认为Java是一种编译型语言，但我们说Java即是编译型语言，也是解释型语言也并没有错。</p>
+<p>四、区别</p>
+<ol>
+<li>标记语言没有逻辑和行为能力，不用于向计算机发出指令，常用于格式化和链接</li>
+<li>脚本语言介于标记语言和编程语言之间，脚本语言脚本语言不需要编译，可以直接用，由解释器来负责解释</li>
+<li>编译型语言写的程序执行之前，需要一个专门的编译过程，把程序编译成为机器语言的文件，比如exe文件，以后要运行的话就不用重新翻译了，直接使用编译的结果就行了（exe文件），因为翻译只做了一次，运行时不需要翻译，所以编译型语言的程序执行效率高</li>
+</ol>
+<p>五、脚本语言与系统语言的区别</p>
+<ol>
+<li>抽象的级别：这是最重要也是最明显示的不同。脚本语言对程序员提供了更高级的抽象。这一点明显表现在：在这种语言自身中，存在有高级的数据结构，如列表和字典结构，和对这种结构简单方便的嵌套和操作。这样可以创建非常成功的程序</li>
+<li>类型定义：系统语言通常是强类型和静态类型定义。这就意味着所有变量的类型要在程序中指定，在编译时检查。相反地，脚本语言是最松散的类型定义，完全没有类型声明，并且在运行时进行动态类型检查</li>
+<li>执行：系统语言的特点是编译的。程序被编译成可执行的二进制。另一方面，脚本语言的特点是解释，也就是，指令被立即执行，不存在一个编译的中间状态。这就意味着脚本语言是交互式的(你可以在提示符下敲入命令，并且看到结果)，这是另一个巨大的胜利。这样完全将编译过程从编辑-编译-运行循环中去掉了。</li>
+<li>速度：以上三点是脚本语言一方面在速度与效率，另一方面在易用性与表示式的强大性之间进行折衷的典型例子。这就使得脚本语言的执行速度比系统语言慢一个数量级。这就是对脚本语言诽谤最多的方面。性能的降低不是真正的问题，因为思想是用脚本语言来组合组件，这些组件是用象C  这样的快速系统语言来编写的。所以所有需要运行快速的东西将因为是用快速的语言实现的而运行得快速。脚本语言只用于将东西绑在一起，并且这些通常不是性能的瓶颈(或如果是，你需要重新检查你的设计)</li>
+</ol>
+<p>六、本文参考：</p>
+<ol>
+<li><a href="http://www.cnblogs.com/lsgsanxiao/p/5126170.html" target="_blank" rel="noopener noreffer">编程语言、标记语言、脚本语言分别有哪些？区别是什么？</a></li>
+<li><a href="http://blog.csdn.net/zhangliangzi/article/details/50413727" target="_blank" rel="noopener noreffer">编译型语言、解释型语言与脚本语言三大类型详解</a></li>
+</ol>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>The article was updated on 2014-01-04</span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span>
+                            <a class="link-to-markdown" href="/2014-01-04-%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B07/index.md" target="_blank">Read Markdown</a>
+                        </span></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="https://utopizza.github.io/2014-01-04-%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B07/" data-title="技术笔记(7)-标记语言、脚本语言、编程语言"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://utopizza.github.io/2014-01-04-%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B07/"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="Share on WhatsApp" data-sharer="whatsapp" data-url="https://utopizza.github.io/2014-01-04-%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B07/" data-title="技术笔记(7)-标记语言、脚本语言、编程语言" data-web><i class="fab fa-whatsapp fa-fw"></i></a><a href="javascript:void(0);" title="Share on Line" data-sharer="line" data-url="https://utopizza.github.io/2014-01-04-%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B07/" data-title="技术笔记(7)-标记语言、脚本语言、编程语言"><i class="fab fa-line fa-fw"></i></a><a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="https://utopizza.github.io/2014-01-04-%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B07/" data-title="技术笔记(7)-标记语言、脚本语言、编程语言"><i class="fab fa-weibo fa-fw"></i></a><a href="javascript:void(0);" title="Share on Myspace" data-sharer="myspace" data-url="https://utopizza.github.io/2014-01-04-%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B07/" data-title="技术笔记(7)-标记语言、脚本语言、编程语言" data-description=""><i data-svg-src="/lib/simple-icons/icons/myspace.min.svg"></i></a><a href="javascript:void(0);" title="Share on Blogger" data-sharer="blogger" data-url="https://utopizza.github.io/2014-01-04-%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B07/" data-title="技术笔记(7)-标记语言、脚本语言、编程语言" data-description=""><i class="fab fa-blogger fa-fw"></i></a><a href="javascript:void(0);" title="Share on Evernote" data-sharer="evernote" data-url="https://utopizza.github.io/2014-01-04-%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B07/" data-title="技术笔记(7)-标记语言、脚本语言、编程语言"><i class="fab fa-evernote fa-fw"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/2013-12-21-%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B06/" class="prev" rel="prev" title="技术笔记(6)-SqlHelper"><i class="fas fa-angle-left fa-fw"></i>技术笔记(6)-SqlHelper</a>
+            <a href="/2014-03-06-%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B08/" class="next" rel="next" title="技术笔记(8)-SQL多条件查询字符串拼接问题">技术笔记(8)-SQL多条件查询字符串拼接问题<i class="fas fa-angle-right fa-fw"></i></a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.69.2">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.6"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2020</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">yusheng</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><link rel="stylesheet" href="/lib/katex/katex.min.css"><link rel="stylesheet" href="/lib/katex/copy-tex.min.css"><script type="text/javascript">
+    window.config = {"code":{"copyTitle":"Copy to clipboard","maxShownLines":100},"comment":{},"headerMode":{"desktop":"fixed","mobile":"auto"},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false}};
+</script><script type="text/javascript" src="https://polyfill.io/v3/polyfill.min.js?features=html5shiv%2CElement.prototype.closest%2CrequestAnimationFrame%2CCustomEvent%2CPromise%2CObject.entries%2CObject.assign%2CObject.values%2Cfetch%2CElement.prototype.after%2CArray.prototype.fill%2CIntersectionObserver%2CArray.from%2CArray.prototype.find%2CMath.sign"></script><script type="text/javascript" src="/lib/smooth-scroll/smooth-scroll.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/object-fit-images/ofi.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="/lib/sharer/sharer.min.js"></script><script type="text/javascript" src="/lib/katex/katex.min.js"></script><script type="text/javascript" src="/lib/katex/auto-render.min.js"></script><script type="text/javascript" src="/lib/katex/copy-tex.min.js"></script><script type="text/javascript" src="/lib/katex/mhchem.min.js"></script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>

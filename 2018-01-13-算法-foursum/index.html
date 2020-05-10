@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>FourSum - Utopizza</title>
+        <meta name="Description" content="About LoveIt Theme"><meta property="og:title" content="FourSum" />
+<meta property="og:description" content="一、TwoSum
+给定一个整型数组，和一个 target，返回数组中两个数之和等于 target 的所有组合。不能输出重复组合。例如给定数组 [2,3,1,-4,8,3]，target = 4，则满足条件的非重复组合有 [3,1] 和 [-4,8]。
+思路：因为要求输出的是数组元素而不是数组下标，因此可以对数组进行排序（注意，如果题目要求输出数组下标，就不应使用排序，而是使用 HashMap 来优化）。排序之后，使用两个指针分别从数组两头往中间移动搜索整个数组，为避免重复组合，需跳过重复的元素。当指针相遇时搜索结束，因此搜索的时间复杂度为 $O(n)$。（其实如果算上前面的排序操作那么时间复杂度不止$O(n)$。因为所有基于比较的排序算法的时间复杂度下界为 $O(nlogn)$，所以本算法的总时间复杂度实际上应是 $O(n&#43;nlogn)=O(nlogn)$）
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17  public List&lt;List&lt;Integer&gt;&gt; TwoSum(int[] nums, int target) { List&lt;List&lt;Integer&gt;&gt; list = new ArrayList&lt;List&lt;Integer&gt;&gt;(); Arrays.sort(nums); int lo = 0, hi = nums.length - 1; while (lo &lt; hi) { int sum = nums[lo] &#43; nums[hi]; if (sum == target) { list." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://utopizza.github.io/2018-01-13-%E7%AE%97%E6%B3%95-foursum/" />
+<meta property="og:image" content="https://utopizza.github.io/logo.png"/>
+<meta property="article:published_time" content="2018-01-13T23:20:00+00:00" />
+<meta property="article:modified_time" content="2018-01-13T23:20:00+00:00" />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://utopizza.github.io/logo.png"/>
+
+<meta name="twitter:title" content="FourSum"/>
+<meta name="twitter:description" content="一、TwoSum
+给定一个整型数组，和一个 target，返回数组中两个数之和等于 target 的所有组合。不能输出重复组合。例如给定数组 [2,3,1,-4,8,3]，target = 4，则满足条件的非重复组合有 [3,1] 和 [-4,8]。
+思路：因为要求输出的是数组元素而不是数组下标，因此可以对数组进行排序（注意，如果题目要求输出数组下标，就不应使用排序，而是使用 HashMap 来优化）。排序之后，使用两个指针分别从数组两头往中间移动搜索整个数组，为避免重复组合，需跳过重复的元素。当指针相遇时搜索结束，因此搜索的时间复杂度为 $O(n)$。（其实如果算上前面的排序操作那么时间复杂度不止$O(n)$。因为所有基于比较的排序算法的时间复杂度下界为 $O(nlogn)$，所以本算法的总时间复杂度实际上应是 $O(n&#43;nlogn)=O(nlogn)$）
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17  public List&lt;List&lt;Integer&gt;&gt; TwoSum(int[] nums, int target) { List&lt;List&lt;Integer&gt;&gt; list = new ArrayList&lt;List&lt;Integer&gt;&gt;(); Arrays.sort(nums); int lo = 0, hi = nums.length - 1; while (lo &lt; hi) { int sum = nums[lo] &#43; nums[hi]; if (sum == target) { list."/>
+<meta name="application-name" content="Utopizza">
+<meta name="apple-mobile-web-app-title" content="Utopizza"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://utopizza.github.io/2018-01-13-%E7%AE%97%E6%B3%95-foursum/" /><link rel="prev" href="https://utopizza.github.io/2018-01-06-%E7%AE%97%E6%B3%95-%E4%BD%8D%E8%BF%90%E7%AE%97%E6%8A%80%E5%B7%A7/" /><link rel="next" href="https://utopizza.github.io/2018-01-14-%E7%AE%97%E6%B3%95-%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "FourSum",
+        "inLanguage": "en",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https:\/\/utopizza.github.io\/2018-01-13-%E7%AE%97%E6%B3%95-foursum\/"
+        },"image": {
+                "@type": "ImageObject",
+                "url": "https:\/\/utopizza.github.io\/cover.png",
+                "width":  800 ,
+                "height":  600 
+            },"genre": "posts","wordcount":  484 ,
+        "url": "https:\/\/utopizza.github.io\/2018-01-13-%E7%AE%97%E6%B3%95-foursum\/","datePublished": "2018-01-13T23:20:00+00:00","dateModified": "2018-01-13T23:20:00+00:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+                "@type": "Organization",
+                "name": "",
+                "logo": {
+                "@type": "ImageObject",
+                "url": "https:\/\/utopizza.github.io\/logo.png",
+                "width":  127 ,
+                "height":  40 
+                }
+            },"author": {
+                "@type": "Person",
+                "name": "yusheng"
+            },"description": ""
+    }
+    </script></head>
+    <body><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="Utopizza"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>Utopizza</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> Posts </a><a class="menu-item" href="/categories/"> Categories </a><a class="menu-item" href="https://github.com/utopizza" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i>  </a><span class="menu-item delimiter"></span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="Utopizza"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>Utopizza</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><a class="menu-item" href="/posts/" title="">Posts</a><a class="menu-item" href="/categories/" title="">Categories</a><a class="menu-item" href="https://github.com/utopizza" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i></a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">FourSum</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;
+                    <span class="post-category">included in<a href="/categories/algorithm/">
+                                <i class="far fa-folder fa-fw"></i>Algorithm
+                            </a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i><time datetime=2018-01-13>2018-01-13</time>&nbsp;
+                <i class="fas fa-pencil-alt fa-fw"></i>about 484 words&nbsp;
+                <i class="far fa-clock fa-fw"></i>3 min&nbsp;</div>
+        </div><div class="details toc" id="toc-static">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents"></nav></div>
+            </div><div class="content" id="content"><p>一、TwoSum</p>
+<p>给定一个整型数组，和一个 target，返回数组中两个数之和等于 target 的所有组合。不能输出重复组合。例如给定数组 [2,3,1,-4,8,3]，target = 4，则满足条件的非重复组合有 [3,1] 和 [-4,8]。</p>
+<p>思路：因为要求输出的是数组元素而不是数组下标，因此可以对数组进行排序（注意，如果题目要求输出数组下标，就不应使用排序，而是使用 HashMap 来优化）。排序之后，使用两个指针分别从数组两头往中间移动搜索整个数组，为避免重复组合，需跳过重复的元素。当指针相遇时搜索结束，因此搜索的时间复杂度为 $O(n)$。（其实如果算上前面的排序操作那么时间复杂度不止$O(n)$。因为所有基于比较的排序算法的时间复杂度下界为 $O(nlogn)$，所以本算法的总时间复杂度实际上应是 $O(n+nlogn)=O(nlogn)$）</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">public List&lt;List&lt;Integer&gt;&gt; TwoSum(int[] nums, int target) {
+    List&lt;List&lt;Integer&gt;&gt; list = new ArrayList&lt;List&lt;Integer&gt;&gt;();
+    Arrays.sort(nums);
+    int lo = 0, hi = nums.length - 1;
+    while (lo &lt; hi) {
+        int sum = nums[lo] + nums[hi];
+        if (sum == target) {
+            list.add(Arrays.asList(nums[lo], nums[hi]));
+            while (lo &lt; hi &amp;&amp; nums[lo] == nums[lo + 1]) lo++;
+            while (lo &lt; hi &amp;&amp; nums[hi] == nums[hi - 1]) hi--;
+            lo++;
+            hi--;
+        } else if (sum &gt; target) hi--;
+        else lo++;
+    }
+    return list;
+}
+</code></pre></td></tr></table>
+</div>
+</div><p>二、ThreeSum</p>
+<p>上述题目的改进版，给定整型数组和一个 target，输出数组中三个数之和等于 target 的所有非重复组合。</p>
+<p>思路：可以转化成 TwoSum 问题，即对原数组中第 $i$ 个元素 $nums[i]$，用 target 减去这个元素的差作为剩下的子数组 $nums[i+1,\cdots,n-1]$ 的 TwoSum 问题的 target。相当与对每一个元素调用一次 TwoSum 来找剩下的两个元素，因为 TwoSum 的时间复杂度为 $O(n)$，因此 ThreeSum 的时间复杂度为 $O(n^2)$。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">public List&lt;List&lt;Integer&gt;&gt; ThreeSum(int[] nums, int target) {
+    List&lt;List&lt;Integer&gt;&gt; list = new ArrayList&lt;List&lt;Integer&gt;&gt;();
+    if (nums == null || nums.length &lt; 3) return list;
+
+    Arrays.sort(nums);
+    
+    // ThreeSum
+    for (int i = 0; i &lt; nums.length - 2; i++) {
+        if (i == 0 || nums[i] != nums[i - 1]) {
+
+            // TwoSum
+            int lo = i + 1, hi = nums.length - 1, t = target - nums[i];
+            while (lo &lt; hi) {
+                int sum = nums[lo] + nums[hi];
+                if (sum == t) {
+                    list.add(Arrays.asList(nums[lo], nums[hi], nums[i]));
+                    while (lo &lt; hi &amp;&amp; nums[lo] == nums[lo + 1]) lo++;
+                    while (lo &lt; hi &amp;&amp; nums[hi] == nums[hi - 1]) hi--;
+                    lo++;
+                    hi--;
+                } else if (sum &gt; t) hi--;
+                else lo++;
+            }
+
+        }
+    }
+    return list;
+}
+</code></pre></td></tr></table>
+</div>
+</div><p>三、FourSum</p>
+<p>再次改进版，给定一个整型数组和一个 target，求数组中四个元素之和等于 target 的所有非重复组合。</p>
+<p>思路：类似地，先排序，然后选定一个元素，把剩下的右边子数组看作 ThreeSum 问题。推理同上，时间复杂度为 $O(n^3)$。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">public static List&lt;List&lt;Integer&gt;&gt; FourSum(int[] nums, int target) {
+    List&lt;List&lt;Integer&gt;&gt; ret = new ArrayList&lt;List&lt;Integer&gt;&gt;();
+    Arrays.sort(nums);
+
+    // four sum
+    for (int i = 0; i &lt; nums.length - 3; i++) {
+        if (i == 0 || nums[i] != nums[i - 1]) {
+
+            // three sum
+            for (int j = i + 1; j &lt; nums.length - 2; j++) {
+                if (j == i + 1 || nums[j] != nums[j - 1]) {
+
+                    // two sum
+                    int lo = j + 1, hi = nums.length - 1, t = target - nums[i] - nums[j];
+                    while (lo &lt; hi) {
+                        int sum = nums[lo] + nums[hi];
+                        if (sum == t) {
+                            ret.add(Arrays.asList(nums[i], nums[j], nums[lo], nums[hi]));
+                            while (lo &lt; hi &amp;&amp; nums[lo] == nums[lo + 1]) lo++;
+                            while (lo &lt; hi &amp;&amp; nums[hi] == nums[hi - 1]) hi--;
+                            lo++;
+                            hi--;
+                        } else if (sum &gt; t) hi--;
+                        else lo++;
+                    }
+
+                }
+            }
+
+        }
+    }
+
+    return ret;
+}
+</code></pre></td></tr></table>
+</div>
+</div></div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>The article was updated on 2018-01-13</span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span>
+                            <a class="link-to-markdown" href="/2018-01-13-%E7%AE%97%E6%B3%95-foursum/index.md" target="_blank">Read Markdown</a>
+                        </span></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="https://utopizza.github.io/2018-01-13-%E7%AE%97%E6%B3%95-foursum/" data-title="FourSum"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://utopizza.github.io/2018-01-13-%E7%AE%97%E6%B3%95-foursum/"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="Share on WhatsApp" data-sharer="whatsapp" data-url="https://utopizza.github.io/2018-01-13-%E7%AE%97%E6%B3%95-foursum/" data-title="FourSum" data-web><i class="fab fa-whatsapp fa-fw"></i></a><a href="javascript:void(0);" title="Share on Line" data-sharer="line" data-url="https://utopizza.github.io/2018-01-13-%E7%AE%97%E6%B3%95-foursum/" data-title="FourSum"><i class="fab fa-line fa-fw"></i></a><a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="https://utopizza.github.io/2018-01-13-%E7%AE%97%E6%B3%95-foursum/" data-title="FourSum"><i class="fab fa-weibo fa-fw"></i></a><a href="javascript:void(0);" title="Share on Myspace" data-sharer="myspace" data-url="https://utopizza.github.io/2018-01-13-%E7%AE%97%E6%B3%95-foursum/" data-title="FourSum" data-description=""><i data-svg-src="/lib/simple-icons/icons/myspace.min.svg"></i></a><a href="javascript:void(0);" title="Share on Blogger" data-sharer="blogger" data-url="https://utopizza.github.io/2018-01-13-%E7%AE%97%E6%B3%95-foursum/" data-title="FourSum" data-description=""><i class="fab fa-blogger fa-fw"></i></a><a href="javascript:void(0);" title="Share on Evernote" data-sharer="evernote" data-url="https://utopizza.github.io/2018-01-13-%E7%AE%97%E6%B3%95-foursum/" data-title="FourSum"><i class="fab fa-evernote fa-fw"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/2018-01-06-%E7%AE%97%E6%B3%95-%E4%BD%8D%E8%BF%90%E7%AE%97%E6%8A%80%E5%B7%A7/" class="prev" rel="prev" title="位运算技巧"><i class="fas fa-angle-left fa-fw"></i>位运算技巧</a>
+            <a href="/2018-01-14-%E7%AE%97%E6%B3%95-%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE/" class="next" rel="next" title="二分查找">二分查找<i class="fas fa-angle-right fa-fw"></i></a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.69.2">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.6"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2020</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">yusheng</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><link rel="stylesheet" href="/lib/katex/katex.min.css"><link rel="stylesheet" href="/lib/katex/copy-tex.min.css"><script type="text/javascript">
+    window.config = {"code":{"copyTitle":"Copy to clipboard","maxShownLines":100},"comment":{},"headerMode":{"desktop":"fixed","mobile":"auto"},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false}};
+</script><script type="text/javascript" src="https://polyfill.io/v3/polyfill.min.js?features=html5shiv%2CElement.prototype.closest%2CrequestAnimationFrame%2CCustomEvent%2CPromise%2CObject.entries%2CObject.assign%2CObject.values%2Cfetch%2CElement.prototype.after%2CArray.prototype.fill%2CIntersectionObserver%2CArray.from%2CArray.prototype.find%2CMath.sign"></script><script type="text/javascript" src="/lib/smooth-scroll/smooth-scroll.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/object-fit-images/ofi.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="/lib/sharer/sharer.min.js"></script><script type="text/javascript" src="/lib/katex/katex.min.js"></script><script type="text/javascript" src="/lib/katex/auto-render.min.js"></script><script type="text/javascript" src="/lib/katex/copy-tex.min.js"></script><script type="text/javascript" src="/lib/katex/mhchem.min.js"></script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>

@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>技术笔记(9)-MySql语法小结 - Utopizza</title>
+        <meta name="Description" content="About LoveIt Theme"><meta property="og:title" content="技术笔记(9)-MySql语法小结" />
+<meta property="og:description" content="一、数据库
+1.数据库的选定
+1  use testDB;   2.数据库的创建（后面两个是设置字符集和排序方式）：
+1  create database(if not exist) testDB (character set charset)(collate collation);   3.数据库的删除：
+1  drop database testDB;   4.数据库的更变：
+1  alter database testDB(character set charset)(collate collation);   二、数据表
+1.存储引擎（查看存储引擎：show engines）：
+ ARCHIVE——插入 BLACKHOLE——删除 EXAMPLE——示例 Falcon——事务 FEDERATED——访问远程数据 InnoDB——外键 MEMORY——内存数据表 MERGE——联合 MyISAM——默认 NDB——MySQL Cluster专用 CSV——使用逗号分隔数据项  2.数据表的创建：
+(1).数据表选项（选择存储引擎，否则默认为MyISAM）：
+1  create table testTB( ... ) engine=InnoDB;   (2)." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://utopizza.github.io/2014-12-28-%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B09/" />
+<meta property="og:image" content="https://utopizza.github.io/logo.png"/>
+<meta property="article:published_time" content="2014-12-28T18:44:00+00:00" />
+<meta property="article:modified_time" content="2014-12-28T18:44:00+00:00" />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://utopizza.github.io/logo.png"/>
+
+<meta name="twitter:title" content="技术笔记(9)-MySql语法小结"/>
+<meta name="twitter:description" content="一、数据库
+1.数据库的选定
+1  use testDB;   2.数据库的创建（后面两个是设置字符集和排序方式）：
+1  create database(if not exist) testDB (character set charset)(collate collation);   3.数据库的删除：
+1  drop database testDB;   4.数据库的更变：
+1  alter database testDB(character set charset)(collate collation);   二、数据表
+1.存储引擎（查看存储引擎：show engines）：
+ ARCHIVE——插入 BLACKHOLE——删除 EXAMPLE——示例 Falcon——事务 FEDERATED——访问远程数据 InnoDB——外键 MEMORY——内存数据表 MERGE——联合 MyISAM——默认 NDB——MySQL Cluster专用 CSV——使用逗号分隔数据项  2.数据表的创建：
+(1).数据表选项（选择存储引擎，否则默认为MyISAM）：
+1  create table testTB( ... ) engine=InnoDB;   (2)."/>
+<meta name="application-name" content="Utopizza">
+<meta name="apple-mobile-web-app-title" content="Utopizza"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://utopizza.github.io/2014-12-28-%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B09/" /><link rel="prev" href="https://utopizza.github.io/2014-06-20-%E9%A1%B9%E7%9B%AE-%E5%8D%8E%E5%8C%97%E7%94%B5%E5%8A%9B%E5%A4%A7%E5%AD%A6%E5%9F%BA%E9%87%91%E4%BC%9A%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E6%80%BB%E7%BB%93/" /><link rel="next" href="https://utopizza.github.io/2015-01-20-%E9%A1%B9%E7%9B%AE-%E5%85%A8%E5%9B%BD%E9%AB%98%E6%A0%A1%E7%89%A9%E8%81%94%E7%BD%91%E5%BA%94%E7%94%A8%E5%88%9B%E6%96%B0%E5%A4%A7%E8%B5%9B/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "技术笔记(9)-MySql语法小结",
+        "inLanguage": "en",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https:\/\/utopizza.github.io\/2014-12-28-%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B09\/"
+        },"image": {
+                "@type": "ImageObject",
+                "url": "https:\/\/utopizza.github.io\/cover.png",
+                "width":  800 ,
+                "height":  600 
+            },"genre": "posts","wordcount":  879 ,
+        "url": "https:\/\/utopizza.github.io\/2014-12-28-%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B09\/","datePublished": "2014-12-28T18:44:00+00:00","dateModified": "2014-12-28T18:44:00+00:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+                "@type": "Organization",
+                "name": "",
+                "logo": {
+                "@type": "ImageObject",
+                "url": "https:\/\/utopizza.github.io\/logo.png",
+                "width":  127 ,
+                "height":  40 
+                }
+            },"author": {
+                "@type": "Person",
+                "name": "yusheng"
+            },"description": ""
+    }
+    </script></head>
+    <body><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="Utopizza"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>Utopizza</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> Posts </a><a class="menu-item" href="/categories/"> Categories </a><a class="menu-item" href="https://github.com/utopizza" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i>  </a><span class="menu-item delimiter"></span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="Utopizza"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>Utopizza</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><a class="menu-item" href="/posts/" title="">Posts</a><a class="menu-item" href="/categories/" title="">Categories</a><a class="menu-item" href="https://github.com/utopizza" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i></a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">技术笔记(9)-MySql语法小结</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;
+                    <span class="post-category">included in<a href="/categories/technology/">
+                                <i class="far fa-folder fa-fw"></i>Technology
+                            </a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i><time datetime=2014-12-28>2014-12-28</time>&nbsp;
+                <i class="fas fa-pencil-alt fa-fw"></i>about 879 words&nbsp;
+                <i class="far fa-clock fa-fw"></i>5 min&nbsp;</div>
+        </div><div class="details toc" id="toc-static">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents"></nav></div>
+            </div><div class="content" id="content"><p>一、数据库</p>
+<p>1.数据库的选定</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">use testDB;
+</code></pre></td></tr></table>
+</div>
+</div><p>2.数据库的创建（后面两个是设置字符集和排序方式）：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">create database(if not exist) testDB (character set charset)(collate collation);
+</code></pre></td></tr></table>
+</div>
+</div><p>3.数据库的删除：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">drop database testDB;
+</code></pre></td></tr></table>
+</div>
+</div><p>4.数据库的更变：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">alter database testDB(character set charset)(collate collation);
+</code></pre></td></tr></table>
+</div>
+</div><p>二、数据表</p>
+<p>1.存储引擎（查看存储引擎：show engines）：</p>
+<ul>
+<li>ARCHIVE——插入</li>
+<li>BLACKHOLE——删除</li>
+<li>EXAMPLE——示例</li>
+<li>Falcon——事务</li>
+<li>FEDERATED——访问远程数据</li>
+<li>InnoDB——外键</li>
+<li>MEMORY——内存数据表</li>
+<li>MERGE——联合</li>
+<li>MyISAM——默认</li>
+<li>NDB——MySQL</li>
+<li>Cluster专用</li>
+<li>CSV——使用逗号分隔数据项</li>
+</ul>
+<p>2.数据表的创建：</p>
+<p>(1).数据表选项（选择存储引擎，否则默认为MyISAM）：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">create table testTB( ... ) engine=InnoDB;
+</code></pre></td></tr></table>
+</div>
+</div><p>(2).创建全新的数据表：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">create table if not exist testTB( ... ) engine=InnoDB;
+</code></pre></td></tr></table>
+</div>
+</div><p>(3).创建临时数据表：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">create temporary table testTB( ... )
+</code></pre></td></tr></table>
+</div>
+</div><p>(4).使用查询结果或者其它数据表创建数据表：</p>
+<p>i.如果要确保新表和原表的数据列的属性、索引都完全一致：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">create table testTB like exampleTB;
+insert into testTB select * from exampleTB;
+</code></pre></td></tr></table>
+</div>
+</div><p>ii.如果只要保证列名和数据一致，不需复制数据列的属性和索引：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">create table testTB select * from exampleTB;
+</code></pre></td></tr></table>
+</div>
+</div><p>iii.为了弥补上一点，可以使用cast()函数强制使用特定的属性：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">create table ... select cast(... as int) as ... , cast(... as char) as ... ;
+</code></pre></td></tr></table>
+</div>
+</div><p>(5).使用MERGE数据表，设置插入方式（要联合的表必须是结构完全一致的MyISAM数据表）：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">create table test_4( ... )  engine=MERGE union=(test_1,test_2,test_3)  insert_method=last;
+</code></pre></td></tr></table>
+</div>
+</div><p>(6).使用分区数据表：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">create table testTB
+(
+   id int not null,
+   name varchar(20) null
+)
+partition by range(id)
+(
+   partition p1 values less than 10,
+   partition p2 values less than 20,
+   partition p3 values less than 30,
+   partition p4 values less than 40,
+   partition p5 values less than MAXVALUE,
+);
+</code></pre></td></tr></table>
+</div>
+</div><p>(7).使用federated数据表：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">create table federated_testDB( ... )  
+engine=FEDERATED  
+connection=&#39;mysql://wys:79135QW@hostname/testDB/testTB&#39;;
+</code></pre></td></tr></table>
+</div>
+</div><p>为了避免暴露连接字符串中的信息，可以：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">create server testDB_server
+foreign data wrapper mysql
+options
+(
+  user &#39;wys&#39;
+  password &#39;79135qw&#39;
+  host &#39;...&#39;
+  database &#39;testDB&#39;
+);
+
+create table federated_testTB( ... ) 
+engine=FEDERATED
+connection=&#39;testDB_server/testTB&#39;
+</code></pre></td></tr></table>
+</div>
+</div><p>3.数据表的删除：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">drop table if exist testTB;
+</code></pre></td></tr></table>
+</div>
+</div><p>4.数据表的索引：</p>
+<p>(1).创建索引：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">// 在create内部
+create table testTB( 
+id int auto_increment primary key not null,
+...
+index index_name(id),...auto 
+);
+
+// 或者在create外部
+create table testTB(...);
+alter table testTB add index_name(id);
+</code></pre></td></tr></table>
+</div>
+</div><p>(2).删除索引：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">drop index index_name on testTB; 
+//或者 
+alter table testTB drop index index_name;
+</code></pre></td></tr></table>
+</div>
+</div><p>5.改变数据表的结构：</p>
+<p>(1).改变数据列的类型：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">alter table testTB modify id varchar(100); 
+// 或者 
+alter table testTB change id id_newname varchar(100);
+</code></pre></td></tr></table>
+</div>
+</div><p>(2).改变存储引擎：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">alter table testTB engine=InnoDB;
+</code></pre></td></tr></table>
+</div>
+</div><p>(3).重新命名数据表：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">alter table testTB RENAME TO new_testTB;
+</code></pre></td></tr></table>
+</div>
+</div><p>(4).把一个数据表从一个数据库移动到另一个数据库：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">rename table testDB.testTB to testDB_2.testDB
+</code></pre></td></tr></table>
+</div>
+</div><p>三、数据检索</p>
+<p>1.获取数据库的元数据（各种show）：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">show database;
+show tables from ...;
+show colums from ... like ...;
+</code></pre></td></tr></table>
+</div>
+</div><p>2.利用联结操作对多表进行检索：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">select ... from ...
+inner/left/right/cross join ... on ...=...
+where ...
+group by ...
+order by ...
+having ...
+limit ...
+</code></pre></td></tr></table>
+</div>
+</div><p>3.使用子查询对多表进行检索：</p>
+<p>(1).in和not in：是否存在或者不存在子查询中
+(2).all和any和some：all所有；any任何一个；some和any等价
+(3).exist和not exist：判断子查询是否有结果集</p>
+<p>4.使用union对多表进行检索：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">(select ... from ...) 
+union 
+(select ... from ...) 
+union 
+(select ... from ...) 
+...
+</code></pre></td></tr></table>
+</div>
+</div><p>5.使用视图（可用视图完成一些必要的数学运算）：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">ctreate view testView as select ... from ...
+</code></pre></td></tr></table>
+</div>
+</div><p>6.涉及多个数据表的删除和更新操作</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">//删除表t1中id与表t2匹配的行
+delete t1 from t1 inner join t2 on t1.id=t2.id;
+
+// 删除表t1中id不与表t2匹配的行
+delete t1 from t1 left join t2 on t1.id=t2.id where t2.id is null;
+
+//同时删除表t1和表t2中id匹配的行
+delete t1,t2 from t1 inner join t2 on t1.id=t2.id;
+
+// 或者使用using
+delete from t1 using t1 inner join t2 on t1.id=t2.id;
+delete from t1 using t1 left join t2 on t1.id=t2.id where t2.id is null;
+delete from t1,t2 using t1 inner join t2 on t1.id=t2.id;
+</code></pre></td></tr></table>
+</div>
+</div><p>四、事务处理（需要使用的存储引擎是InnoDB或者Falcon）</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">start transaction; // 或者set autocommit=0
+insert into ...
+delete from ...
+commit; // set autocommit=1; 对应于上面的括号内的语句
+</code></pre></td></tr></table>
+</div>
+</div><p>1.事务的特点：</p>
+<ul>
+<li>a.原子性，事务内容要么全部成功，要么全部失败</li>
+<li>b.隔离性，事务之间是隔离的，比如在某事务向数据库插入一些数据的时候，如果事务还没结束，即使某些数据已经插入去了，但是这些数据对其他所有用户是不可见的，直到事务完成提交</li>
+<li>c.稳定性，数据在事务开始和结束后都是稳定的状态</li>
+<li>d.可靠性，如果事务执行成功，它的影响将被永久保存到数据库</li>
+</ul>
+<p>2.备注：在默认的情况下，MySQL从自动提交（autocommit）模式运行，这种模式会在每条语句执行完毕后把它当做一个事务进行提交，如果使用了 <code>set autocommit=0</code> 语句后，这个自动提交将被禁止，这样的结果是，除非遇到一些显式提交语句（如：commit，rollback&hellip;），或者隐式提交前一个事务，然后在本语句重新开始事务的DLL语句（如：alter table，create index，drop database，drop index&hellip;），系统会认为接下来的所有的语句都属于一个事务</p>
+<p>3.使用事务保存点：使事务部分回滚</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">create table testTable(id int) engine=InnoDB;
+start transaction;
+insert into testTable(id) values(1);
+SAVEPOINT my_savepoint;
+insert into testTable(id) values(2);
+rollback to SAVEPOINT my_savepoint;
+insert into testTable(id) values(3);
+commit;
+select * from testTable;
+// 此时表中的数据只有1和3，因为2被rollback了
+</code></pre></td></tr></table>
+</div>
+</div><p>4.事务的隔离性：InnoDB存储引擎提供4种隔离级别：</p>
+<ul>
+<li>read uncommited——允许某个事务看到其他事务尚未提交的数据改动 read</li>
+<li>commited——只允许某个事务看到其他事务已经提交的数据改动 repeatable</li>
+<li>read（默认级别）——即使在本事务进行中，有其他事务在同时修改了数据行，本事务每次执行同一个select的结果不变</li>
+<li>serializable——更彻底的隔离，如果某个事务正在读取某些数据行，那么在它完成之前，其他事务对这些数据行不可改动</li>
+</ul>
+<p>修改级别：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">set global transaction isolation level ...;（全局有效）
+set sessoin transaction isolation level ...;（本次会话有效）
+set transaction isolation level ...;（下一次事务有效）
+</code></pre></td></tr></table>
+</div>
+</div><p>5.事务问题的非事务解决方案：</p>
+<p>a.明确的锁定数据表</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">LOCK tables testTable write;
+select ... from ...;
+update ... set ...;
+UNLOCK tables;
+</code></pre></td></tr></table>
+</div>
+</div><p>b.使用相对更新操作，不使用绝对更新操作（即在一个语句中，使用当前值进行差额修改的方法，而不是直接设置为一个绝对值）</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">update ... set ... = ... + ... where ... 
+</code></pre></td></tr></table>
+</div>
+</div><p>五、外键的创建和使用</p>
+<p>1.语法</p>
+<p>2.InnoDB存储引擎目前只能识别和支持以下外键定义语法</p>
+<p>1).constraint：用来给外键约束起一个名字
+2).foreign key：列出子表的被索引数据列
+3).references：列出父表和父表中的被索引数据列
+4).on delete：用来设定父表里的数据行被删除时，子表中对应的数据应该发生什么事件，其子句可选择如下：</p>
+<ul>
+<li>on delete (no action) restrict：拒绝在父表里删除那些与子表仍有数据关联的数据行（默认）</li>
+<li>on delete cascade：删除父表数据行时，子表里相关的数据行也被删除</li>
+<li>on delete set null：删除父表数据行时，子表里相关的数据行的索引列将被设置为NULL（隐含着外键不能定义为主键的意思，因为主键不能为NULL）</li>
+</ul>
+<p>5).on update：同delete</p>
+<p>六、使用FULLTEXT索引</p>
+<p>七、存储过程</p>
+<p>1.复合语句和语句分隔符：使用复合语句的时候，必须先使用delimiter命令把mysql程序的语句分隔符重定义为另一个字符或字符串，它必须是存储例程里没有定义过的。在定义完了存储过程之后，切记把mysql程序的语句终止符重定义为分号</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">delimiter $（或者字符串asdfs，erer等等都可以）
+create procedure test()
+begin
+   select ... from ... ;
+end $
+delimiter ;
+call test();
+</code></pre></td></tr></table>
+</div>
+</div><p>2.存储函数（只能有一个返回值）</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">delimiter $
+create function test_function(id int)
+returns int
+reads sql data
+begin
+    return (select ... from ... where ...=id);
+end $
+delimiter ;
+</code></pre></td></tr></table>
+</div>
+</div><p>3.存储过程（返回结果集）。和存储函数不同，存储过程不能使用在表达式里，只能通过CALL语句来调用：call test_procedure(100);
+另外，存储函数不允许对调用本函数的语句正在读或写的数据表进行修改，存储过程没有这个限制，但是如果它们是从存储函数里被调用，就也需要遵守这个规则</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">delimiter $
+create procedure test_procedure(id int)
+begin
+    select ... from ... where ...&gt;=id;
+end $
+delimiter ;
+</code></pre></td></tr></table>
+</div>
+</div><p>4.存储过程的参数类型（在参数名前说明）</p>
+<ul>
+<li>in参数：输入的参数（默认）</li>
+<li>out参数：输出的参数（需在过程中设置变量）</li>
+<li>inout参数：输入一个值然后再输入一个值（需在过程中设置变量）</li>
+</ul>
+<p>八、触发器（触发器是与特定数据表相关联的存储过程，当相应的数据表被insert，delete，或者update语句修改时就会自动执行）</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">delimiter $
+create trigger test_trigger before(after) insert on testTable
+    for each row begin
+        if NEW.col_name(OLD.col_name) then ... ;
+        end if;
+    end $
+delimiter ;
+</code></pre></td></tr></table>
+</div>
+</div><p>九、事件（定时执行预设好的数据库操作，和SQL SERVER中的作业相当）</p>
+<p>1.启用（停止）事件调度器：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">set event_scheduler=on（off）
+</code></pre></td></tr></table>
+</div>
+</div><p>2.查看：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">show variables like &#39;event_scheduler&#39; ;
+</code></pre></td></tr></table>
+</div>
+</div><p>3.创建：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">create event test_event  on schedule every 4 hour
+do 
+delete from testTable where ...
+</code></pre></td></tr></table>
+</div>
+</div><p>4.禁用或者开启某个事件</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">alter event test_Event disable;
+alter event test_Event enable;
+</code></pre></td></tr></table>
+</div>
+</div><p>十、关于建表：</p>
+<ul>
+<li>enum(&lsquo;F&rsquo;,&lsquo;M&rsquo;)：该字段只能是F或M的枚举类型</li>
+<li>unsigned：不允许出现负数</li>
+<li>auto_increment：自增</li>
+<li>primary key(student_id)：指定主键</li>
+<li>foreign key(score_id) references - - ScoreTable(score_id)：指定外键（一般外键是其他某个表的主键）</li>
+<li>index(student_id)：指定索引</li>
+<li>engine=InnoDB：选择数据引擎为InnoDB，该引擎允许外键的使用</li>
+</ul>
+<p>十一、语法：</p>
+<p>1.NULL是无数据，或未知数据，不能使用=，&lt;&gt;，！=来进行比较，只能用 is null 或者 is not null</p>
+<p>2.升序排列asc，降序排列desc</p>
+<p>3.设置查询显示的行数：order by &hellip; desc limit 5;</p>
+<p>4.随机抽取3条数据：order by RAND() limit 3</p>
+<p>十二、模式匹配：
+like，not like，%，_</p>
+<p>十三、设置和使用SQL变量：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">select @studentName:=name from studentTable where id=1
+set @studentName=&#39;abc&#39;
+</code></pre></td></tr></table>
+</div>
+</div></div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>The article was updated on 2014-12-28</span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span>
+                            <a class="link-to-markdown" href="/2014-12-28-%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B09/index.md" target="_blank">Read Markdown</a>
+                        </span></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="https://utopizza.github.io/2014-12-28-%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B09/" data-title="技术笔记(9)-MySql语法小结"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://utopizza.github.io/2014-12-28-%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B09/"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="Share on WhatsApp" data-sharer="whatsapp" data-url="https://utopizza.github.io/2014-12-28-%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B09/" data-title="技术笔记(9)-MySql语法小结" data-web><i class="fab fa-whatsapp fa-fw"></i></a><a href="javascript:void(0);" title="Share on Line" data-sharer="line" data-url="https://utopizza.github.io/2014-12-28-%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B09/" data-title="技术笔记(9)-MySql语法小结"><i class="fab fa-line fa-fw"></i></a><a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="https://utopizza.github.io/2014-12-28-%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B09/" data-title="技术笔记(9)-MySql语法小结"><i class="fab fa-weibo fa-fw"></i></a><a href="javascript:void(0);" title="Share on Myspace" data-sharer="myspace" data-url="https://utopizza.github.io/2014-12-28-%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B09/" data-title="技术笔记(9)-MySql语法小结" data-description=""><i data-svg-src="/lib/simple-icons/icons/myspace.min.svg"></i></a><a href="javascript:void(0);" title="Share on Blogger" data-sharer="blogger" data-url="https://utopizza.github.io/2014-12-28-%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B09/" data-title="技术笔记(9)-MySql语法小结" data-description=""><i class="fab fa-blogger fa-fw"></i></a><a href="javascript:void(0);" title="Share on Evernote" data-sharer="evernote" data-url="https://utopizza.github.io/2014-12-28-%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B09/" data-title="技术笔记(9)-MySql语法小结"><i class="fab fa-evernote fa-fw"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/2014-06-20-%E9%A1%B9%E7%9B%AE-%E5%8D%8E%E5%8C%97%E7%94%B5%E5%8A%9B%E5%A4%A7%E5%AD%A6%E5%9F%BA%E9%87%91%E4%BC%9A%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E6%80%BB%E7%BB%93/" class="prev" rel="prev" title="华北电力大学基金会管理系统开发总结"><i class="fas fa-angle-left fa-fw"></i>华北电力大学基金会管理系统开发总结</a>
+            <a href="/2015-01-20-%E9%A1%B9%E7%9B%AE-%E5%85%A8%E5%9B%BD%E9%AB%98%E6%A0%A1%E7%89%A9%E8%81%94%E7%BD%91%E5%BA%94%E7%94%A8%E5%88%9B%E6%96%B0%E5%A4%A7%E8%B5%9B/" class="next" rel="next" title="全国高校物联网应用创新大赛">全国高校物联网应用创新大赛<i class="fas fa-angle-right fa-fw"></i></a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.69.2">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.6"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2020</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">yusheng</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><link rel="stylesheet" href="/lib/katex/katex.min.css"><link rel="stylesheet" href="/lib/katex/copy-tex.min.css"><script type="text/javascript">
+    window.config = {"code":{"copyTitle":"Copy to clipboard","maxShownLines":100},"comment":{},"headerMode":{"desktop":"fixed","mobile":"auto"},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false}};
+</script><script type="text/javascript" src="https://polyfill.io/v3/polyfill.min.js?features=html5shiv%2CElement.prototype.closest%2CrequestAnimationFrame%2CCustomEvent%2CPromise%2CObject.entries%2CObject.assign%2CObject.values%2Cfetch%2CElement.prototype.after%2CArray.prototype.fill%2CIntersectionObserver%2CArray.from%2CArray.prototype.find%2CMath.sign"></script><script type="text/javascript" src="/lib/smooth-scroll/smooth-scroll.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/object-fit-images/ofi.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="/lib/sharer/sharer.min.js"></script><script type="text/javascript" src="/lib/katex/katex.min.js"></script><script type="text/javascript" src="/lib/katex/auto-render.min.js"></script><script type="text/javascript" src="/lib/katex/copy-tex.min.js"></script><script type="text/javascript" src="/lib/katex/mhchem.min.js"></script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>

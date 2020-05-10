@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>阶段总结(6) - Utopizza</title>
+        <meta name="Description" content="About LoveIt Theme"><meta property="og:title" content="阶段总结(6)" />
+<meta property="og:description" content="从7月底开始，一共面了顺丰、大疆、京东、网易、美团、华为、百度、腾讯这八家公司，也都拿到了offer。阿里、头条没有去面，因为听闻加班太严重而且离家太远了（当时不知道头条在深圳有分公司），就没投。自9月30号面完最后一家腾讯后，就不继续面其他公司了，回家休息了两周（10月1号至14号）。10月15号回到学校，继续做实验室老板安排的项目任务。
+现在回顾一下从5月份到7月份的三个月的复习，已经8月份到9月份两个月的面试。由于春招的时候我完全没有准备，没有投实习，没有拿到实习offer保底，实验室也不放人出去实习，因此5月份开始复习看书的时候，心里没底，很担心秋招找不好工作。同时还感觉有很多书要看，很多知识要补，相当焦虑紧张。但这样也有好处，那就是焦虑和紧张的状态会逼迫自己不敢有一丝松懈，感觉5月份到7月份这三个月我看书复习的效率相当高。现在回过头来看我自己都感到惊讶，仅仅三个月，从接近零基础，到面八家互联网公司就拿八个offer，没有被刷过一次。
+一、算法
+算法没啥好说的，必须把基础算法吃透，其实不多，也就排序、搜索、数据结构、树、图这几大类。我当时是把橙色那本《算法第四版》上面的所有代码手敲了两遍，然后再尝试自己写一遍。因为我觉得那本书上面的代码写得实在太漂亮了，相当的简洁，相当符合我的个人审美，并且那本书的作者是个巨神。
+这样搞了三遍基础的书法和数据结构后，心里就有些底，没那么方了。接下来也没啥好说的，刷题。我当时主要是在leetcode刷，因为讨论区相当活跃，每道题的讨论区有太多让人五体投地的巧妙解法了。刷leetcode之外，配合《剑指offer》和左程云的《程序员面试指南》，应该够了。leetcode前100道我刷了两三遍，100到200题我没时间了，应该是只做了一遍。剑指offer最重要，一定要烂熟，可以去牛客网刷，我刷了3遍左右，时不时要复习，因为面试题几乎全部是从上面出，原题。左程云那本我只看了一遍，手敲了一遍，偶而回过头看看代码。
+二、计算机基础
+这里的计算机基础指的是计算机网络、操作系统、数据库。对于这三科，我当时的复习策略是：
+ 先使用本科学过的课本快速回顾基础知识，因为学过的课本熟悉感最强，这样快速回顾一遍基础知识点可以一定程度的减缓焦虑，稳定情绪。我当时用两周复习了本科学过的计算机网络、数据库、操作系统。 然后开始啃对应的黑皮书，在一些关键点上看深入去，因为单靠本科课本那点深度是完全不够应付面试官的。我当时计算机网络用《计算机网络：自顶向下方法(6th)》，数据库用《数据库系统概念(6th)》，操作系统用《现代操作系统(4th)》。还有其他的一些黑皮书，在我的阶段总结(5)中可以有介绍。 啃完黑皮书后，理论基础应该差不多了，然后就找到对应的实现软件来研究，这个时候看起书来就相当轻松了，并且会经常有一种“哦原来是这样实现的/我靠原来在工业上是这样巧妙实现了那个理论”的感叹。计算机网络就深入看一些博客，或者针对常问的TCP/UDP协议深入去看；数据库我找了MySQL和Redis的书来看，如《Mysql InnoDB》和《Redis开发与运维》；操作系统我找了一些Linux编程的入门书来看，如《精通Linux C编程》。  三、编程语言
+因为我5月份才开始看书，时间很紧张了，考虑到c&#43;&#43;比较难，而java相对简单并且做实验室老板的项目一直在用，熟悉感稍微好些(相比c&#43;&#43;自从大二之后再也没怎么用过了)，周围的同学都是java系，有问题方便交流些，所以综合考虑后就选择了java系。
+ 首先是java语法基础，这个必须吃透，没商量。我当时用的是《java编程思想》，看深入，看仔细。同时要看jdk源码，特别是hashmap那些，面试都要被问到烂了，但还是会问。 当你看深入的时候，会很自然的会追究到底层原理，因此《深入理解java虚拟机》也是要一起吃透的，虚拟机是java系面试的考察重点，重中之重。 基础打好之后，就要往应用方面去扩展，比如并发编程。《java并发编程实战》和《java并发编程的艺术》两本啃下来基本没问题了。 另一个扩展就是恶心的SSM(spring&#43;springMVC&#43;mybatis)那套框架了。不过这个倒不是特别重要，这个我没时间看了，只了解个大概，但是貌似不是很影响，我遇到的都不会问很深甚至很多没问。感觉大概知道一些关键原理就行，例如AOP、IOC等。 还有就是一些开源的项目，例如阿里的fastjson，还有各种知名的插件，工具，等等。这个属于加分项了，不是必备基础，我没有弄。  四、应试重点
+提到重点，不得不感谢某中大巨佬，他在github开源了一个复习用的repo：CyC2018/CS-Notes ，很多人在上面一起总结了很多面试的常问知识点，有针对性地进行复习，可以大大减轻复习压力。
+五、关于简历
+ 越简单干净、布局清晰明确，越好 个人介绍最好尽量写核心的技能点，除了说明自己计算机基础扎实以外，可以在面试公司之前先看对应的岗位要求，然后把自己掌握的技能有针对性地写上去。例如我面试美团网易的时候就突出熟悉JVM、熟悉Java并发编程、熟悉MySQL和Redis；而面试腾讯百度的时候就突出熟悉Linux进程间编程、熟悉TCP/UDP协议等等 实习经历是非常重要的，特别如果有大厂的实习经历一定要写上去，这个是最最加分的。我没有写，因为我实验室不让出去实习，很亏很亏 接下来就是项目经验，这个是第二重要的，把做过的项目按技术含量或者成果大小按从高到低顺序写上去，每个项目按“简介、负责、成果”分3点写，尽可能写简练并且突出亮点就行，不用写太详细。但是自己要不断复盘，把项目的所有细节准备清楚，因为面试官感兴趣的话会问得很细，如果自己做的项目都答不上，那么面试官就可能会怀疑这到底是不是你自己的做的项目，大大扣分 面试之前要想做好自己的职业规划，最好结合目前看的书、掌握的技能点来扩展，这样会显得很有计划并且确实在执行，可以让面试官觉得你的职业规划是靠谱的，而不是凭空说大话。例如，我会跟面试官说，目前在看java并发编程和分布式的书，我打算以后往分布式架构、微服务这个方向发展，因为个人觉得这个是以后发展的大方向和趋势，然后再扯一些证明的例子，或者支撑理论，这样答下来就会让面试官觉得你确实是认真思考过的 心态放好。不用紧张不用担心，就我面试过的互联网公司来说，大部分一二面的面试官其实也就比我大两三岁，都是很好说话的小哥，态度很好的，就算你一时间答不上来也会慢慢提示，一步步引导你。到了三四面，一般是部门leader，虽然有时候会比较严肃高冷，但是一般不会问很细节的像一二面的基础技术问题，而是一般会考察一些思维上的东西，例如智力题啊，场景题啊之类的开放性题目，只要多看面经总结，找到套路后一般都可以轻松应付（我感觉公司都是有自己题库的，每年问来问去都是那么些题，估计也是因为面试官没那么多精力想新题目，所以刷面经是比较有用的）  六、资料汇总
+1、算法
+ 《算法(4th)》/黑皮《数据结构与算法分析(Java语言版)》 《算法导论》（学有余力并且想真正提高水平的，可以像我的大神舍友一样练习推导和证明，不过一般人都坚持不下来，例如我） 《剑指Offer》 《程序员代码面试指南》 leetcode前200，最好前300题 牛客网的《剑指Offer套题》 《编程珠玑》《编程之美》我买了没看，感觉没啥用，层次太高了  2、Java基础
+ 《java编程思想》/《java核心技术(卷1&#43;卷2)》 《深入理解java虚拟机(2th)》 《java并发编程的艺术》 《java并发编程实战》 部分jdk源码（主要是容器类，还有并发包中的锁，CAS，AQS，线程池） Spring&#43;SpringMVC&#43;MyBatis，我当时只是看博客跑个小Demo知道怎么用这套框架就算了，原理的话我只是懂个AOP和IOC的大概就没深入看了  3、计算机基础
+ 本科课本《计算机网络》&#43;黑皮《计算机网络：自顶向下方法(6th)》 本科课本《数据库系统概论》&#43;黑皮《数据库系统概念(6th)》&#43;《MySQL技术内幕：InnoDB存储引擎》&#43;《Redis开发与运维》/《Redis设计与实现》 本科课本《操作系统》&#43;黑皮《现代操作系统(4th)》&#43;《精通Linux C编程》  4、应试重点
+ CyC2018/CS-Notes jwasham/coding-interview-university(这个是进入google的水平，仅供参考，我也没看)  5、技能点扩展
+ 《Head First设计模式》 《大型网站技术架构：核心原理与案例分析》(扫盲用) 《轻量级Java EE企业应用实战》(我只看了讲IOC和AOP的一小部分) 《深入浅出MyBatis技术原理与实战》(扫盲用) 除了后台基础之外，我把我掌握的机器学习和Python当作额外技能点写了上去，感觉效果还可以，应该蛮加分的，不少面试官喜欢和我讨论这些内容  " />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://utopizza.github.io/2018-10-15-%E6%80%BB%E7%BB%93-%E9%98%B6%E6%AE%B5%E6%80%BB%E7%BB%936/" />
+<meta property="og:image" content="https://utopizza.github.io/logo.png"/>
+<meta property="article:published_time" content="2018-10-15T00:00:00+00:00" />
+<meta property="article:modified_time" content="2018-10-15T00:00:00+00:00" />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://utopizza.github.io/logo.png"/>
+
+<meta name="twitter:title" content="阶段总结(6)"/>
+<meta name="twitter:description" content="从7月底开始，一共面了顺丰、大疆、京东、网易、美团、华为、百度、腾讯这八家公司，也都拿到了offer。阿里、头条没有去面，因为听闻加班太严重而且离家太远了（当时不知道头条在深圳有分公司），就没投。自9月30号面完最后一家腾讯后，就不继续面其他公司了，回家休息了两周（10月1号至14号）。10月15号回到学校，继续做实验室老板安排的项目任务。
+现在回顾一下从5月份到7月份的三个月的复习，已经8月份到9月份两个月的面试。由于春招的时候我完全没有准备，没有投实习，没有拿到实习offer保底，实验室也不放人出去实习，因此5月份开始复习看书的时候，心里没底，很担心秋招找不好工作。同时还感觉有很多书要看，很多知识要补，相当焦虑紧张。但这样也有好处，那就是焦虑和紧张的状态会逼迫自己不敢有一丝松懈，感觉5月份到7月份这三个月我看书复习的效率相当高。现在回过头来看我自己都感到惊讶，仅仅三个月，从接近零基础，到面八家互联网公司就拿八个offer，没有被刷过一次。
+一、算法
+算法没啥好说的，必须把基础算法吃透，其实不多，也就排序、搜索、数据结构、树、图这几大类。我当时是把橙色那本《算法第四版》上面的所有代码手敲了两遍，然后再尝试自己写一遍。因为我觉得那本书上面的代码写得实在太漂亮了，相当的简洁，相当符合我的个人审美，并且那本书的作者是个巨神。
+这样搞了三遍基础的书法和数据结构后，心里就有些底，没那么方了。接下来也没啥好说的，刷题。我当时主要是在leetcode刷，因为讨论区相当活跃，每道题的讨论区有太多让人五体投地的巧妙解法了。刷leetcode之外，配合《剑指offer》和左程云的《程序员面试指南》，应该够了。leetcode前100道我刷了两三遍，100到200题我没时间了，应该是只做了一遍。剑指offer最重要，一定要烂熟，可以去牛客网刷，我刷了3遍左右，时不时要复习，因为面试题几乎全部是从上面出，原题。左程云那本我只看了一遍，手敲了一遍，偶而回过头看看代码。
+二、计算机基础
+这里的计算机基础指的是计算机网络、操作系统、数据库。对于这三科，我当时的复习策略是：
+ 先使用本科学过的课本快速回顾基础知识，因为学过的课本熟悉感最强，这样快速回顾一遍基础知识点可以一定程度的减缓焦虑，稳定情绪。我当时用两周复习了本科学过的计算机网络、数据库、操作系统。 然后开始啃对应的黑皮书，在一些关键点上看深入去，因为单靠本科课本那点深度是完全不够应付面试官的。我当时计算机网络用《计算机网络：自顶向下方法(6th)》，数据库用《数据库系统概念(6th)》，操作系统用《现代操作系统(4th)》。还有其他的一些黑皮书，在我的阶段总结(5)中可以有介绍。 啃完黑皮书后，理论基础应该差不多了，然后就找到对应的实现软件来研究，这个时候看起书来就相当轻松了，并且会经常有一种“哦原来是这样实现的/我靠原来在工业上是这样巧妙实现了那个理论”的感叹。计算机网络就深入看一些博客，或者针对常问的TCP/UDP协议深入去看；数据库我找了MySQL和Redis的书来看，如《Mysql InnoDB》和《Redis开发与运维》；操作系统我找了一些Linux编程的入门书来看，如《精通Linux C编程》。  三、编程语言
+因为我5月份才开始看书，时间很紧张了，考虑到c&#43;&#43;比较难，而java相对简单并且做实验室老板的项目一直在用，熟悉感稍微好些(相比c&#43;&#43;自从大二之后再也没怎么用过了)，周围的同学都是java系，有问题方便交流些，所以综合考虑后就选择了java系。
+ 首先是java语法基础，这个必须吃透，没商量。我当时用的是《java编程思想》，看深入，看仔细。同时要看jdk源码，特别是hashmap那些，面试都要被问到烂了，但还是会问。 当你看深入的时候，会很自然的会追究到底层原理，因此《深入理解java虚拟机》也是要一起吃透的，虚拟机是java系面试的考察重点，重中之重。 基础打好之后，就要往应用方面去扩展，比如并发编程。《java并发编程实战》和《java并发编程的艺术》两本啃下来基本没问题了。 另一个扩展就是恶心的SSM(spring&#43;springMVC&#43;mybatis)那套框架了。不过这个倒不是特别重要，这个我没时间看了，只了解个大概，但是貌似不是很影响，我遇到的都不会问很深甚至很多没问。感觉大概知道一些关键原理就行，例如AOP、IOC等。 还有就是一些开源的项目，例如阿里的fastjson，还有各种知名的插件，工具，等等。这个属于加分项了，不是必备基础，我没有弄。  四、应试重点
+提到重点，不得不感谢某中大巨佬，他在github开源了一个复习用的repo：CyC2018/CS-Notes ，很多人在上面一起总结了很多面试的常问知识点，有针对性地进行复习，可以大大减轻复习压力。
+五、关于简历
+ 越简单干净、布局清晰明确，越好 个人介绍最好尽量写核心的技能点，除了说明自己计算机基础扎实以外，可以在面试公司之前先看对应的岗位要求，然后把自己掌握的技能有针对性地写上去。例如我面试美团网易的时候就突出熟悉JVM、熟悉Java并发编程、熟悉MySQL和Redis；而面试腾讯百度的时候就突出熟悉Linux进程间编程、熟悉TCP/UDP协议等等 实习经历是非常重要的，特别如果有大厂的实习经历一定要写上去，这个是最最加分的。我没有写，因为我实验室不让出去实习，很亏很亏 接下来就是项目经验，这个是第二重要的，把做过的项目按技术含量或者成果大小按从高到低顺序写上去，每个项目按“简介、负责、成果”分3点写，尽可能写简练并且突出亮点就行，不用写太详细。但是自己要不断复盘，把项目的所有细节准备清楚，因为面试官感兴趣的话会问得很细，如果自己做的项目都答不上，那么面试官就可能会怀疑这到底是不是你自己的做的项目，大大扣分 面试之前要想做好自己的职业规划，最好结合目前看的书、掌握的技能点来扩展，这样会显得很有计划并且确实在执行，可以让面试官觉得你的职业规划是靠谱的，而不是凭空说大话。例如，我会跟面试官说，目前在看java并发编程和分布式的书，我打算以后往分布式架构、微服务这个方向发展，因为个人觉得这个是以后发展的大方向和趋势，然后再扯一些证明的例子，或者支撑理论，这样答下来就会让面试官觉得你确实是认真思考过的 心态放好。不用紧张不用担心，就我面试过的互联网公司来说，大部分一二面的面试官其实也就比我大两三岁，都是很好说话的小哥，态度很好的，就算你一时间答不上来也会慢慢提示，一步步引导你。到了三四面，一般是部门leader，虽然有时候会比较严肃高冷，但是一般不会问很细节的像一二面的基础技术问题，而是一般会考察一些思维上的东西，例如智力题啊，场景题啊之类的开放性题目，只要多看面经总结，找到套路后一般都可以轻松应付（我感觉公司都是有自己题库的，每年问来问去都是那么些题，估计也是因为面试官没那么多精力想新题目，所以刷面经是比较有用的）  六、资料汇总
+1、算法
+ 《算法(4th)》/黑皮《数据结构与算法分析(Java语言版)》 《算法导论》（学有余力并且想真正提高水平的，可以像我的大神舍友一样练习推导和证明，不过一般人都坚持不下来，例如我） 《剑指Offer》 《程序员代码面试指南》 leetcode前200，最好前300题 牛客网的《剑指Offer套题》 《编程珠玑》《编程之美》我买了没看，感觉没啥用，层次太高了  2、Java基础
+ 《java编程思想》/《java核心技术(卷1&#43;卷2)》 《深入理解java虚拟机(2th)》 《java并发编程的艺术》 《java并发编程实战》 部分jdk源码（主要是容器类，还有并发包中的锁，CAS，AQS，线程池） Spring&#43;SpringMVC&#43;MyBatis，我当时只是看博客跑个小Demo知道怎么用这套框架就算了，原理的话我只是懂个AOP和IOC的大概就没深入看了  3、计算机基础
+ 本科课本《计算机网络》&#43;黑皮《计算机网络：自顶向下方法(6th)》 本科课本《数据库系统概论》&#43;黑皮《数据库系统概念(6th)》&#43;《MySQL技术内幕：InnoDB存储引擎》&#43;《Redis开发与运维》/《Redis设计与实现》 本科课本《操作系统》&#43;黑皮《现代操作系统(4th)》&#43;《精通Linux C编程》  4、应试重点
+ CyC2018/CS-Notes jwasham/coding-interview-university(这个是进入google的水平，仅供参考，我也没看)  5、技能点扩展
+ 《Head First设计模式》 《大型网站技术架构：核心原理与案例分析》(扫盲用) 《轻量级Java EE企业应用实战》(我只看了讲IOC和AOP的一小部分) 《深入浅出MyBatis技术原理与实战》(扫盲用) 除了后台基础之外，我把我掌握的机器学习和Python当作额外技能点写了上去，感觉效果还可以，应该蛮加分的，不少面试官喜欢和我讨论这些内容  "/>
+<meta name="application-name" content="Utopizza">
+<meta name="apple-mobile-web-app-title" content="Utopizza"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://utopizza.github.io/2018-10-15-%E6%80%BB%E7%BB%93-%E9%98%B6%E6%AE%B5%E6%80%BB%E7%BB%936/" /><link rel="prev" href="https://utopizza.github.io/2018-09-29-%E9%9D%A2%E7%BB%8F-%E8%85%BE%E8%AE%AF%E9%9D%A2%E7%BB%8F/" /><link rel="next" href="https://utopizza.github.io/2018-11-24-%E8%AE%BA%E6%96%87-rtag/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "阶段总结(6)",
+        "inLanguage": "en",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https:\/\/utopizza.github.io\/2018-10-15-%E6%80%BB%E7%BB%93-%E9%98%B6%E6%AE%B5%E6%80%BB%E7%BB%936\/"
+        },"image": {
+                "@type": "ImageObject",
+                "url": "https:\/\/utopizza.github.io\/cover.png",
+                "width":  800 ,
+                "height":  600 
+            },"genre": "posts","wordcount":  61 ,
+        "url": "https:\/\/utopizza.github.io\/2018-10-15-%E6%80%BB%E7%BB%93-%E9%98%B6%E6%AE%B5%E6%80%BB%E7%BB%936\/","datePublished": "2018-10-15T00:00:00+00:00","dateModified": "2018-10-15T00:00:00+00:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+                "@type": "Organization",
+                "name": "",
+                "logo": {
+                "@type": "ImageObject",
+                "url": "https:\/\/utopizza.github.io\/logo.png",
+                "width":  127 ,
+                "height":  40 
+                }
+            },"author": {
+                "@type": "Person",
+                "name": "yusheng"
+            },"description": ""
+    }
+    </script></head>
+    <body><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="Utopizza"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>Utopizza</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> Posts </a><a class="menu-item" href="/categories/"> Categories </a><a class="menu-item" href="https://github.com/utopizza" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i>  </a><span class="menu-item delimiter"></span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="Utopizza"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>Utopizza</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><a class="menu-item" href="/posts/" title="">Posts</a><a class="menu-item" href="/categories/" title="">Categories</a><a class="menu-item" href="https://github.com/utopizza" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i></a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">阶段总结(6)</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;
+                    <span class="post-category">included in<a href="/categories/summary/">
+                                <i class="far fa-folder fa-fw"></i>Summary
+                            </a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i><time datetime=2018-10-15>2018-10-15</time>&nbsp;
+                <i class="fas fa-pencil-alt fa-fw"></i>about 61 words&nbsp;
+                <i class="far fa-clock fa-fw"></i>1 min&nbsp;</div>
+        </div><div class="details toc" id="toc-static">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents"></nav></div>
+            </div><div class="content" id="content"><p>从7月底开始，一共面了顺丰、大疆、京东、网易、美团、华为、百度、腾讯这八家公司，也都拿到了offer。阿里、头条没有去面，因为听闻加班太严重而且离家太远了（当时不知道头条在深圳有分公司），就没投。自9月30号面完最后一家腾讯后，就不继续面其他公司了，回家休息了两周（10月1号至14号）。10月15号回到学校，继续做实验室老板安排的项目任务。</p>
+<p>现在回顾一下从5月份到7月份的三个月的复习，已经8月份到9月份两个月的面试。由于春招的时候我完全没有准备，没有投实习，没有拿到实习offer保底，实验室也不放人出去实习，因此5月份开始复习看书的时候，心里没底，很担心秋招找不好工作。同时还感觉有很多书要看，很多知识要补，相当焦虑紧张。但这样也有好处，那就是焦虑和紧张的状态会逼迫自己不敢有一丝松懈，感觉5月份到7月份这三个月我看书复习的效率相当高。现在回过头来看我自己都感到惊讶，仅仅三个月，从接近零基础，到面八家互联网公司就拿八个offer，没有被刷过一次。</p>
+<p>一、算法</p>
+<p>算法没啥好说的，必须把基础算法吃透，其实不多，也就排序、搜索、数据结构、树、图这几大类。我当时是把橙色那本《算法第四版》上面的所有代码手敲了两遍，然后再尝试自己写一遍。因为我觉得那本书上面的代码写得实在太漂亮了，相当的简洁，相当符合我的个人审美，并且那本书的作者是个巨神。</p>
+<p>这样搞了三遍基础的书法和数据结构后，心里就有些底，没那么方了。接下来也没啥好说的，刷题。我当时主要是在leetcode刷，因为讨论区相当活跃，每道题的讨论区有太多让人五体投地的巧妙解法了。刷leetcode之外，配合《剑指offer》和左程云的《程序员面试指南》，应该够了。leetcode前100道我刷了两三遍，100到200题我没时间了，应该是只做了一遍。剑指offer最重要，一定要烂熟，可以去牛客网刷，我刷了3遍左右，时不时要复习，因为面试题几乎全部是从上面出，原题。左程云那本我只看了一遍，手敲了一遍，偶而回过头看看代码。</p>
+<p>二、计算机基础</p>
+<p>这里的计算机基础指的是计算机网络、操作系统、数据库。对于这三科，我当时的复习策略是：</p>
+<ol>
+<li>先使用本科学过的课本快速回顾基础知识，因为学过的课本熟悉感最强，这样快速回顾一遍基础知识点可以一定程度的减缓焦虑，稳定情绪。我当时用两周复习了本科学过的计算机网络、数据库、操作系统。</li>
+<li>然后开始啃对应的黑皮书，在一些关键点上看深入去，因为单靠本科课本那点深度是完全不够应付面试官的。我当时计算机网络用《计算机网络：自顶向下方法(6th)》，数据库用《数据库系统概念(6th)》，操作系统用《现代操作系统(4th)》。还有其他的一些黑皮书，在我的阶段总结(5)中可以有介绍。</li>
+<li>啃完黑皮书后，理论基础应该差不多了，然后就找到对应的实现软件来研究，这个时候看起书来就相当轻松了，并且会经常有一种“哦原来是这样实现的/我靠原来在工业上是这样巧妙实现了那个理论”的感叹。计算机网络就深入看一些博客，或者针对常问的TCP/UDP协议深入去看；数据库我找了MySQL和Redis的书来看，如《Mysql InnoDB》和《Redis开发与运维》；操作系统我找了一些Linux编程的入门书来看，如《精通Linux C编程》。</li>
+</ol>
+<p>三、编程语言</p>
+<p>因为我5月份才开始看书，时间很紧张了，考虑到c++比较难，而java相对简单并且做实验室老板的项目一直在用，熟悉感稍微好些(相比c++自从大二之后再也没怎么用过了)，周围的同学都是java系，有问题方便交流些，所以综合考虑后就选择了java系。</p>
+<ol>
+<li>首先是java语法基础，这个必须吃透，没商量。我当时用的是《java编程思想》，看深入，看仔细。同时要看jdk源码，特别是hashmap那些，面试都要被问到烂了，但还是会问。</li>
+<li>当你看深入的时候，会很自然的会追究到底层原理，因此《深入理解java虚拟机》也是要一起吃透的，虚拟机是java系面试的考察重点，重中之重。</li>
+<li>基础打好之后，就要往应用方面去扩展，比如并发编程。《java并发编程实战》和《java并发编程的艺术》两本啃下来基本没问题了。</li>
+<li>另一个扩展就是恶心的SSM(spring+springMVC+mybatis)那套框架了。不过这个倒不是特别重要，这个我没时间看了，只了解个大概，但是貌似不是很影响，我遇到的都不会问很深甚至很多没问。感觉大概知道一些关键原理就行，例如AOP、IOC等。</li>
+<li>还有就是一些开源的项目，例如阿里的fastjson，还有各种知名的插件，工具，等等。这个属于加分项了，不是必备基础，我没有弄。</li>
+</ol>
+<p>四、应试重点</p>
+<p>提到重点，不得不感谢某中大巨佬，他在github开源了一个复习用的repo：<a href="https://github.com/CyC2018/CS-Notes" target="_blank" rel="noopener noreffer">CyC2018/CS-Notes</a> ，很多人在上面一起总结了很多面试的常问知识点，有针对性地进行复习，可以大大减轻复习压力。</p>
+<p>五、关于简历</p>
+<ol>
+<li>越简单干净、布局清晰明确，越好</li>
+<li>个人介绍最好尽量写核心的技能点，除了说明自己计算机基础扎实以外，可以在面试公司之前先看对应的岗位要求，然后把自己掌握的技能有针对性地写上去。例如我面试美团网易的时候就突出熟悉JVM、熟悉Java并发编程、熟悉MySQL和Redis；而面试腾讯百度的时候就突出熟悉Linux进程间编程、熟悉TCP/UDP协议等等</li>
+<li>实习经历是非常重要的，特别如果有大厂的实习经历一定要写上去，这个是最最加分的。我没有写，因为我实验室不让出去实习，很亏很亏</li>
+<li>接下来就是项目经验，这个是第二重要的，把做过的项目按技术含量或者成果大小按从高到低顺序写上去，每个项目按“简介、负责、成果”分3点写，尽可能写简练并且突出亮点就行，不用写太详细。但是自己要不断复盘，把项目的所有细节准备清楚，因为面试官感兴趣的话会问得很细，如果自己做的项目都答不上，那么面试官就可能会怀疑这到底是不是你自己的做的项目，大大扣分</li>
+<li>面试之前要想做好自己的职业规划，最好结合目前看的书、掌握的技能点来扩展，这样会显得很有计划并且确实在执行，可以让面试官觉得你的职业规划是靠谱的，而不是凭空说大话。例如，我会跟面试官说，目前在看java并发编程和分布式的书，我打算以后往分布式架构、微服务这个方向发展，因为个人觉得这个是以后发展的大方向和趋势，然后再扯一些证明的例子，或者支撑理论，这样答下来就会让面试官觉得你确实是认真思考过的</li>
+<li>心态放好。不用紧张不用担心，就我面试过的互联网公司来说，大部分一二面的面试官其实也就比我大两三岁，都是很好说话的小哥，态度很好的，就算你一时间答不上来也会慢慢提示，一步步引导你。到了三四面，一般是部门leader，虽然有时候会比较严肃高冷，但是一般不会问很细节的像一二面的基础技术问题，而是一般会考察一些思维上的东西，例如智力题啊，场景题啊之类的开放性题目，只要多看面经总结，找到套路后一般都可以轻松应付（我感觉公司都是有自己题库的，每年问来问去都是那么些题，估计也是因为面试官没那么多精力想新题目，所以刷面经是比较有用的）</li>
+</ol>
+<p>六、资料汇总</p>
+<p>1、算法</p>
+<ol>
+<li>《算法(4th)》/黑皮《数据结构与算法分析(Java语言版)》</li>
+<li>《算法导论》（学有余力并且想真正提高水平的，可以像我的大神舍友一样练习推导和证明，不过一般人都坚持不下来，例如我）</li>
+<li>《剑指Offer》</li>
+<li>《程序员代码面试指南》</li>
+<li>leetcode前200，最好前300题</li>
+<li>牛客网的《剑指Offer套题》</li>
+<li>《编程珠玑》《编程之美》我买了没看，感觉没啥用，层次太高了</li>
+</ol>
+<p>2、Java基础</p>
+<ol>
+<li>《java编程思想》/《java核心技术(卷1+卷2)》</li>
+<li>《深入理解java虚拟机(2th)》</li>
+<li>《java并发编程的艺术》</li>
+<li>《java并发编程实战》</li>
+<li>部分jdk源码（主要是容器类，还有并发包中的锁，CAS，AQS，线程池）</li>
+<li>Spring+SpringMVC+MyBatis，我当时只是看博客跑个小Demo知道怎么用这套框架就算了，原理的话我只是懂个AOP和IOC的大概就没深入看了</li>
+</ol>
+<p>3、计算机基础</p>
+<ol>
+<li>本科课本《计算机网络》+黑皮《计算机网络：自顶向下方法(6th)》</li>
+<li>本科课本《数据库系统概论》+黑皮《数据库系统概念(6th)》+《MySQL技术内幕：InnoDB存储引擎》+《Redis开发与运维》/《Redis设计与实现》</li>
+<li>本科课本《操作系统》+黑皮《现代操作系统(4th)》+《精通Linux C编程》</li>
+</ol>
+<p>4、应试重点</p>
+<ol>
+<li><a href="https://github.com/CyC2018/CS-Notes" target="_blank" rel="noopener noreffer">CyC2018/CS-Notes</a></li>
+<li><a href="https://github.com/jwasham/coding-interview-university" target="_blank" rel="noopener noreffer">jwasham/coding-interview-university</a>(这个是进入google的水平，仅供参考，我也没看)</li>
+</ol>
+<p>5、技能点扩展</p>
+<ol>
+<li>《Head First设计模式》</li>
+<li>《大型网站技术架构：核心原理与案例分析》(扫盲用)</li>
+<li>《轻量级Java EE企业应用实战》(我只看了讲IOC和AOP的一小部分)</li>
+<li>《深入浅出MyBatis技术原理与实战》(扫盲用)</li>
+<li>除了后台基础之外，我把我掌握的机器学习和Python当作额外技能点写了上去，感觉效果还可以，应该蛮加分的，不少面试官喜欢和我讨论这些内容</li>
+</ol>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>The article was updated on 2018-10-15</span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span>
+                            <a class="link-to-markdown" href="/2018-10-15-%E6%80%BB%E7%BB%93-%E9%98%B6%E6%AE%B5%E6%80%BB%E7%BB%936/index.md" target="_blank">Read Markdown</a>
+                        </span></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="https://utopizza.github.io/2018-10-15-%E6%80%BB%E7%BB%93-%E9%98%B6%E6%AE%B5%E6%80%BB%E7%BB%936/" data-title="阶段总结(6)"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://utopizza.github.io/2018-10-15-%E6%80%BB%E7%BB%93-%E9%98%B6%E6%AE%B5%E6%80%BB%E7%BB%936/"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="Share on WhatsApp" data-sharer="whatsapp" data-url="https://utopizza.github.io/2018-10-15-%E6%80%BB%E7%BB%93-%E9%98%B6%E6%AE%B5%E6%80%BB%E7%BB%936/" data-title="阶段总结(6)" data-web><i class="fab fa-whatsapp fa-fw"></i></a><a href="javascript:void(0);" title="Share on Line" data-sharer="line" data-url="https://utopizza.github.io/2018-10-15-%E6%80%BB%E7%BB%93-%E9%98%B6%E6%AE%B5%E6%80%BB%E7%BB%936/" data-title="阶段总结(6)"><i class="fab fa-line fa-fw"></i></a><a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="https://utopizza.github.io/2018-10-15-%E6%80%BB%E7%BB%93-%E9%98%B6%E6%AE%B5%E6%80%BB%E7%BB%936/" data-title="阶段总结(6)"><i class="fab fa-weibo fa-fw"></i></a><a href="javascript:void(0);" title="Share on Myspace" data-sharer="myspace" data-url="https://utopizza.github.io/2018-10-15-%E6%80%BB%E7%BB%93-%E9%98%B6%E6%AE%B5%E6%80%BB%E7%BB%936/" data-title="阶段总结(6)" data-description=""><i data-svg-src="/lib/simple-icons/icons/myspace.min.svg"></i></a><a href="javascript:void(0);" title="Share on Blogger" data-sharer="blogger" data-url="https://utopizza.github.io/2018-10-15-%E6%80%BB%E7%BB%93-%E9%98%B6%E6%AE%B5%E6%80%BB%E7%BB%936/" data-title="阶段总结(6)" data-description=""><i class="fab fa-blogger fa-fw"></i></a><a href="javascript:void(0);" title="Share on Evernote" data-sharer="evernote" data-url="https://utopizza.github.io/2018-10-15-%E6%80%BB%E7%BB%93-%E9%98%B6%E6%AE%B5%E6%80%BB%E7%BB%936/" data-title="阶段总结(6)"><i class="fab fa-evernote fa-fw"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/2018-09-29-%E9%9D%A2%E7%BB%8F-%E8%85%BE%E8%AE%AF%E9%9D%A2%E7%BB%8F/" class="prev" rel="prev" title="腾讯面经"><i class="fas fa-angle-left fa-fw"></i>腾讯面经</a>
+            <a href="/2018-11-24-%E8%AE%BA%E6%96%87-rtag/" class="next" rel="next" title="RTAG">RTAG<i class="fas fa-angle-right fa-fw"></i></a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.69.2">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.6"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2020</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">yusheng</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><link rel="stylesheet" href="/lib/katex/katex.min.css"><link rel="stylesheet" href="/lib/katex/copy-tex.min.css"><script type="text/javascript">
+    window.config = {"code":{"copyTitle":"Copy to clipboard","maxShownLines":100},"comment":{},"headerMode":{"desktop":"fixed","mobile":"auto"},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false}};
+</script><script type="text/javascript" src="https://polyfill.io/v3/polyfill.min.js?features=html5shiv%2CElement.prototype.closest%2CrequestAnimationFrame%2CCustomEvent%2CPromise%2CObject.entries%2CObject.assign%2CObject.values%2Cfetch%2CElement.prototype.after%2CArray.prototype.fill%2CIntersectionObserver%2CArray.from%2CArray.prototype.find%2CMath.sign"></script><script type="text/javascript" src="/lib/smooth-scroll/smooth-scroll.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/object-fit-images/ofi.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="/lib/sharer/sharer.min.js"></script><script type="text/javascript" src="/lib/katex/katex.min.js"></script><script type="text/javascript" src="/lib/katex/auto-render.min.js"></script><script type="text/javascript" src="/lib/katex/copy-tex.min.js"></script><script type="text/javascript" src="/lib/katex/mhchem.min.js"></script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>

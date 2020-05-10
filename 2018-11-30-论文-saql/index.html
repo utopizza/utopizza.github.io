@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>SAQL - Utopizza</title>
+        <meta name="Description" content="About LoveIt Theme"><meta property="og:title" content="SAQL" />
+<meta property="og:description" content="一、背景及问题
+目前一些高级的网络攻击如 APT（advanced persistent threats）威胁并损害着很多公司的信息安全。它们利用主机的各种弱点，通过一系列步骤来进行攻击。
+为了应对这些攻击，一些基于系统监控（System Monitoring）的方法被提出，用于快速侦查异常，或者定位存在风险的系统事件（System Event）。这些方法主要通过对主机的系统调用（system calls）进行监控，收集系统事件的信息，来实现系统异常的侦查。然而，目前这些方法存在几点问题和困难：
+ 时间要求严格。要避免主机受到进一步的伤害导致无法修复，该监控系统必须做到实时在线保护主机，实时侦查主机内的异常事件，这就犹如进行实时的“大海捞针” 如何让监控系统实时地结合系统管理员、安全专家、数据分析专家们的领域知识（domain knowledge）？因为这些领域知识对于系统异常的侦查是非常有帮助的，甚至是必要的 实时的系统监控自然会产生海量的日志数据，这就要求分析数据侦查异常的算法必须非常高效，因为是实时的  遗憾的是目前没有任何一个监控系统能够解决以上问题，尤其是第二点——已有的监控系统往往只专注于特定的异常侦查，无法提供足够的支持以便用户可以灵活地引入专家的领域知识。
+二、解决方案
+论文提出了一个基于流的异常查询系统，以及一种基于流的异常查询语言（Streambased Anomaly Query Language，SAQL）。该系统主要面向 4 种异常：
+ Rule-based Anomaly:基于规则的异常，某个进程在短时间内读取大量的命令日志文件，这种异常通常意味着某个非法的用户想要探测合法用户的常用命令或者操作习惯。为了侦查这种异常，SAQL 使用事件模式（event patterns）来表达操作系统中的各种活动：定义一个事件表示为 {subject-operation-object}，例如 {process p1 write file f2}。有了如此统一定义的形式，用户就可以在查询的时间灵活地定义领域知识，甚至可以定制基于特定规则的异常检测 Time-Series Anomaly:时间序列的异常，某个进程在一段时间内不正常地传送了大量的数据。为了探测到这种异常，SAQL 构造带状态的滑动窗口，将数据流进行分段，那么只要通过与历史滑动窗口的状态进行比较，就可以检测到某个时间段对应的数据量是否异常地增大 Invariant-based Anomaly:基于不变的异常？一个进程启动了一个异常的进程，如 apache.exe 本应该启动 httpd.exe，但却启动了一个在训练模型时从来未出现过的进程 java.exe。这种情况同样可以使用上述带状态滑动窗口的模型，只要提前训练学习好正常情况下的系统状态（可用窗口状态表达），便可检测此类异常。 Outlier-based Anomaly:基于异常的异常，通过与同等的进程的比较来确定异常。例如，通过比较发现，某个进程向某个 IP 地址传送的数据量比同等进程向其他 IP 地址传送的数据量大太多，那么这个进程就值得怀疑。SAQL 可以使用聚类算法对事件进行聚类，以便在同类的事件中进行比较并发现异常。  除此之外，系统往往需要同时处理大批量的异常检测查询，而目前一般的检测系统如 Siddhi、Esper、Flink 采取的做法都是为每一个 query 复制一份数据，由于操作系统的日志文件是非常巨大的，这样的复制操作会使得系统非常低效。针对这个问题，论文提出一个名为 master-dependent-query 的查询模式，它把用户提交的各种查询进行兼容性分析，然后将兼容的查询分到同一个组，每个组的查询都共用一份数据，这样避免了大量的数据复制，提高了查询分析的效率。
+三、总结
+总的来说，文章的主要工作是提出了一个用于描述操作系统事件的形式化语言 SAQL，使得用户和系统可以统一地描述各种正常和异常的事件，从而可以灵活地加入专家领域知识并进行异常检测，无需改动系统本身。另外提高为查询效率，文章提出了查询分组的模型，让可以相互兼容的查询共用日志数据，避免了为每个查询复制一次数据的低效模式。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://utopizza.github.io/2018-11-30-%E8%AE%BA%E6%96%87-saql/" />
+<meta property="og:image" content="https://utopizza.github.io/logo.png"/>
+<meta property="article:published_time" content="2018-11-30T00:00:00+00:00" />
+<meta property="article:modified_time" content="2018-11-30T00:00:00+00:00" />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://utopizza.github.io/logo.png"/>
+
+<meta name="twitter:title" content="SAQL"/>
+<meta name="twitter:description" content="一、背景及问题
+目前一些高级的网络攻击如 APT（advanced persistent threats）威胁并损害着很多公司的信息安全。它们利用主机的各种弱点，通过一系列步骤来进行攻击。
+为了应对这些攻击，一些基于系统监控（System Monitoring）的方法被提出，用于快速侦查异常，或者定位存在风险的系统事件（System Event）。这些方法主要通过对主机的系统调用（system calls）进行监控，收集系统事件的信息，来实现系统异常的侦查。然而，目前这些方法存在几点问题和困难：
+ 时间要求严格。要避免主机受到进一步的伤害导致无法修复，该监控系统必须做到实时在线保护主机，实时侦查主机内的异常事件，这就犹如进行实时的“大海捞针” 如何让监控系统实时地结合系统管理员、安全专家、数据分析专家们的领域知识（domain knowledge）？因为这些领域知识对于系统异常的侦查是非常有帮助的，甚至是必要的 实时的系统监控自然会产生海量的日志数据，这就要求分析数据侦查异常的算法必须非常高效，因为是实时的  遗憾的是目前没有任何一个监控系统能够解决以上问题，尤其是第二点——已有的监控系统往往只专注于特定的异常侦查，无法提供足够的支持以便用户可以灵活地引入专家的领域知识。
+二、解决方案
+论文提出了一个基于流的异常查询系统，以及一种基于流的异常查询语言（Streambased Anomaly Query Language，SAQL）。该系统主要面向 4 种异常：
+ Rule-based Anomaly:基于规则的异常，某个进程在短时间内读取大量的命令日志文件，这种异常通常意味着某个非法的用户想要探测合法用户的常用命令或者操作习惯。为了侦查这种异常，SAQL 使用事件模式（event patterns）来表达操作系统中的各种活动：定义一个事件表示为 {subject-operation-object}，例如 {process p1 write file f2}。有了如此统一定义的形式，用户就可以在查询的时间灵活地定义领域知识，甚至可以定制基于特定规则的异常检测 Time-Series Anomaly:时间序列的异常，某个进程在一段时间内不正常地传送了大量的数据。为了探测到这种异常，SAQL 构造带状态的滑动窗口，将数据流进行分段，那么只要通过与历史滑动窗口的状态进行比较，就可以检测到某个时间段对应的数据量是否异常地增大 Invariant-based Anomaly:基于不变的异常？一个进程启动了一个异常的进程，如 apache.exe 本应该启动 httpd.exe，但却启动了一个在训练模型时从来未出现过的进程 java.exe。这种情况同样可以使用上述带状态滑动窗口的模型，只要提前训练学习好正常情况下的系统状态（可用窗口状态表达），便可检测此类异常。 Outlier-based Anomaly:基于异常的异常，通过与同等的进程的比较来确定异常。例如，通过比较发现，某个进程向某个 IP 地址传送的数据量比同等进程向其他 IP 地址传送的数据量大太多，那么这个进程就值得怀疑。SAQL 可以使用聚类算法对事件进行聚类，以便在同类的事件中进行比较并发现异常。  除此之外，系统往往需要同时处理大批量的异常检测查询，而目前一般的检测系统如 Siddhi、Esper、Flink 采取的做法都是为每一个 query 复制一份数据，由于操作系统的日志文件是非常巨大的，这样的复制操作会使得系统非常低效。针对这个问题，论文提出一个名为 master-dependent-query 的查询模式，它把用户提交的各种查询进行兼容性分析，然后将兼容的查询分到同一个组，每个组的查询都共用一份数据，这样避免了大量的数据复制，提高了查询分析的效率。
+三、总结
+总的来说，文章的主要工作是提出了一个用于描述操作系统事件的形式化语言 SAQL，使得用户和系统可以统一地描述各种正常和异常的事件，从而可以灵活地加入专家领域知识并进行异常检测，无需改动系统本身。另外提高为查询效率，文章提出了查询分组的模型，让可以相互兼容的查询共用日志数据，避免了为每个查询复制一次数据的低效模式。"/>
+<meta name="application-name" content="Utopizza">
+<meta name="apple-mobile-web-app-title" content="Utopizza"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://utopizza.github.io/2018-11-30-%E8%AE%BA%E6%96%87-saql/" /><link rel="prev" href="https://utopizza.github.io/2018-11-24-%E8%AE%BA%E6%96%87-rtag/" /><link rel="next" href="https://utopizza.github.io/2018-12-02-%E6%95%B0%E5%AD%A6-%E5%87%BD%E6%95%B0%E4%B8%8E%E6%9E%81%E9%99%90/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "SAQL",
+        "inLanguage": "en",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https:\/\/utopizza.github.io\/2018-11-30-%E8%AE%BA%E6%96%87-saql\/"
+        },"image": {
+                "@type": "ImageObject",
+                "url": "https:\/\/utopizza.github.io\/cover.png",
+                "width":  800 ,
+                "height":  600 
+            },"genre": "posts","wordcount":  57 ,
+        "url": "https:\/\/utopizza.github.io\/2018-11-30-%E8%AE%BA%E6%96%87-saql\/","datePublished": "2018-11-30T00:00:00+00:00","dateModified": "2018-11-30T00:00:00+00:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+                "@type": "Organization",
+                "name": "",
+                "logo": {
+                "@type": "ImageObject",
+                "url": "https:\/\/utopizza.github.io\/logo.png",
+                "width":  127 ,
+                "height":  40 
+                }
+            },"author": {
+                "@type": "Person",
+                "name": "yusheng"
+            },"description": ""
+    }
+    </script></head>
+    <body><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="Utopizza"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>Utopizza</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> Posts </a><a class="menu-item" href="/categories/"> Categories </a><a class="menu-item" href="https://github.com/utopizza" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i>  </a><span class="menu-item delimiter"></span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="Utopizza"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>Utopizza</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><a class="menu-item" href="/posts/" title="">Posts</a><a class="menu-item" href="/categories/" title="">Categories</a><a class="menu-item" href="https://github.com/utopizza" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i></a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">SAQL</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;
+                    <span class="post-category">included in<a href="/categories/thesis/">
+                                <i class="far fa-folder fa-fw"></i>Thesis
+                            </a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i><time datetime=2018-11-30>2018-11-30</time>&nbsp;
+                <i class="fas fa-pencil-alt fa-fw"></i>about 57 words&nbsp;
+                <i class="far fa-clock fa-fw"></i>1 min&nbsp;</div>
+        </div><div class="details toc" id="toc-static">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents"></nav></div>
+            </div><div class="content" id="content"><p>一、背景及问题</p>
+<p>目前一些高级的网络攻击如 APT（advanced persistent threats）威胁并损害着很多公司的信息安全。它们利用主机的各种弱点，通过一系列步骤来进行攻击。</p>
+<p>为了应对这些攻击，一些基于系统监控（System Monitoring）的方法被提出，用于快速侦查异常，或者定位存在风险的系统事件（System Event）。这些方法主要通过对主机的系统调用（system calls）进行监控，收集系统事件的信息，来实现系统异常的侦查。然而，目前这些方法存在几点问题和困难：</p>
+<ol>
+<li>时间要求严格。要避免主机受到进一步的伤害导致无法修复，该监控系统必须做到实时在线保护主机，实时侦查主机内的异常事件，这就犹如进行实时的“大海捞针”</li>
+<li>如何让监控系统实时地结合系统管理员、安全专家、数据分析专家们的领域知识（domain knowledge）？因为这些领域知识对于系统异常的侦查是非常有帮助的，甚至是必要的</li>
+<li>实时的系统监控自然会产生海量的日志数据，这就要求分析数据侦查异常的算法必须非常高效，因为是实时的</li>
+</ol>
+<p>遗憾的是目前没有任何一个监控系统能够解决以上问题，尤其是第二点——已有的监控系统往往只专注于特定的异常侦查，无法提供足够的支持以便用户可以灵活地引入专家的领域知识。</p>
+<p>二、解决方案</p>
+<p>论文提出了一个基于流的异常查询系统，以及一种基于流的异常查询语言（Streambased Anomaly Query Language，SAQL）。该系统主要面向 4 种异常：</p>
+<ol>
+<li>Rule-based Anomaly:基于规则的异常，某个进程在短时间内读取大量的命令日志文件，这种异常通常意味着某个非法的用户想要探测合法用户的常用命令或者操作习惯。为了侦查这种异常，SAQL 使用事件模式（event patterns）来表达操作系统中的各种活动：定义一个事件表示为 {subject-operation-object}，例如 {process p1 write file f2}。有了如此统一定义的形式，用户就可以在查询的时间灵活地定义领域知识，甚至可以定制基于特定规则的异常检测</li>
+<li>Time-Series Anomaly:时间序列的异常，某个进程在一段时间内不正常地传送了大量的数据。为了探测到这种异常，SAQL 构造带状态的滑动窗口，将数据流进行分段，那么只要通过与历史滑动窗口的状态进行比较，就可以检测到某个时间段对应的数据量是否异常地增大</li>
+<li>Invariant-based Anomaly:基于不变的异常？一个进程启动了一个异常的进程，如 apache.exe 本应该启动 httpd.exe，但却启动了一个在训练模型时从来未出现过的进程 java.exe。这种情况同样可以使用上述带状态滑动窗口的模型，只要提前训练学习好正常情况下的系统状态（可用窗口状态表达），便可检测此类异常。</li>
+<li>Outlier-based Anomaly:基于异常的异常，通过与同等的进程的比较来确定异常。例如，通过比较发现，某个进程向某个 IP 地址传送的数据量比同等进程向其他 IP 地址传送的数据量大太多，那么这个进程就值得怀疑。SAQL 可以使用聚类算法对事件进行聚类，以便在同类的事件中进行比较并发现异常。</li>
+</ol>
+<p>除此之外，系统往往需要同时处理大批量的异常检测查询，而目前一般的检测系统如 Siddhi、Esper、Flink 采取的做法都是为每一个 query 复制一份数据，由于操作系统的日志文件是非常巨大的，这样的复制操作会使得系统非常低效。针对这个问题，论文提出一个名为 master-dependent-query 的查询模式，它把用户提交的各种查询进行兼容性分析，然后将兼容的查询分到同一个组，每个组的查询都共用一份数据，这样避免了大量的数据复制，提高了查询分析的效率。</p>
+<p>三、总结</p>
+<p>总的来说，文章的主要工作是提出了一个用于描述操作系统事件的形式化语言 SAQL，使得用户和系统可以统一地描述各种正常和异常的事件，从而可以灵活地加入专家领域知识并进行异常检测，无需改动系统本身。另外提高为查询效率，文章提出了查询分组的模型，让可以相互兼容的查询共用日志数据，避免了为每个查询复制一次数据的低效模式。</p>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>The article was updated on 2018-11-30</span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span>
+                            <a class="link-to-markdown" href="/2018-11-30-%E8%AE%BA%E6%96%87-saql/index.md" target="_blank">Read Markdown</a>
+                        </span></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="https://utopizza.github.io/2018-11-30-%E8%AE%BA%E6%96%87-saql/" data-title="SAQL"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://utopizza.github.io/2018-11-30-%E8%AE%BA%E6%96%87-saql/"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="Share on WhatsApp" data-sharer="whatsapp" data-url="https://utopizza.github.io/2018-11-30-%E8%AE%BA%E6%96%87-saql/" data-title="SAQL" data-web><i class="fab fa-whatsapp fa-fw"></i></a><a href="javascript:void(0);" title="Share on Line" data-sharer="line" data-url="https://utopizza.github.io/2018-11-30-%E8%AE%BA%E6%96%87-saql/" data-title="SAQL"><i class="fab fa-line fa-fw"></i></a><a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="https://utopizza.github.io/2018-11-30-%E8%AE%BA%E6%96%87-saql/" data-title="SAQL"><i class="fab fa-weibo fa-fw"></i></a><a href="javascript:void(0);" title="Share on Myspace" data-sharer="myspace" data-url="https://utopizza.github.io/2018-11-30-%E8%AE%BA%E6%96%87-saql/" data-title="SAQL" data-description=""><i data-svg-src="/lib/simple-icons/icons/myspace.min.svg"></i></a><a href="javascript:void(0);" title="Share on Blogger" data-sharer="blogger" data-url="https://utopizza.github.io/2018-11-30-%E8%AE%BA%E6%96%87-saql/" data-title="SAQL" data-description=""><i class="fab fa-blogger fa-fw"></i></a><a href="javascript:void(0);" title="Share on Evernote" data-sharer="evernote" data-url="https://utopizza.github.io/2018-11-30-%E8%AE%BA%E6%96%87-saql/" data-title="SAQL"><i class="fab fa-evernote fa-fw"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/2018-11-24-%E8%AE%BA%E6%96%87-rtag/" class="prev" rel="prev" title="RTAG"><i class="fas fa-angle-left fa-fw"></i>RTAG</a>
+            <a href="/2018-12-02-%E6%95%B0%E5%AD%A6-%E5%87%BD%E6%95%B0%E4%B8%8E%E6%9E%81%E9%99%90/" class="next" rel="next" title="函数与极限">函数与极限<i class="fas fa-angle-right fa-fw"></i></a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.69.2">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.6"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2020</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">yusheng</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><link rel="stylesheet" href="/lib/katex/katex.min.css"><link rel="stylesheet" href="/lib/katex/copy-tex.min.css"><script type="text/javascript">
+    window.config = {"code":{"copyTitle":"Copy to clipboard","maxShownLines":100},"comment":{},"headerMode":{"desktop":"fixed","mobile":"auto"},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false}};
+</script><script type="text/javascript" src="https://polyfill.io/v3/polyfill.min.js?features=html5shiv%2CElement.prototype.closest%2CrequestAnimationFrame%2CCustomEvent%2CPromise%2CObject.entries%2CObject.assign%2CObject.values%2Cfetch%2CElement.prototype.after%2CArray.prototype.fill%2CIntersectionObserver%2CArray.from%2CArray.prototype.find%2CMath.sign"></script><script type="text/javascript" src="/lib/smooth-scroll/smooth-scroll.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/object-fit-images/ofi.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="/lib/sharer/sharer.min.js"></script><script type="text/javascript" src="/lib/katex/katex.min.js"></script><script type="text/javascript" src="/lib/katex/auto-render.min.js"></script><script type="text/javascript" src="/lib/katex/copy-tex.min.js"></script><script type="text/javascript" src="/lib/katex/mhchem.min.js"></script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>

@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>定积分 - Utopizza</title>
+        <meta name="Description" content="About LoveIt Theme"><meta property="og:title" content="定积分" />
+<meta property="og:description" content="一、定积分的概念与性质 1、定义：设函数 $f(x)$ 在 $[a,b]$ 上有界，在 $[a,b]$ 中任意插入若干分点 $a=x_0 &lt; x_1 &lt; x_2 &lt; \cdots &lt; x_{n-1} &lt; x_n=b$，把区间 $[a,b]$ 分成 $n$ 个小区 $[x_0, x_1]$，$[x_1,x_2]$，$\cdots$，$[x_{n-1},x_n]$，各个小区间的长度依次为 $\Delta x_1=x_1-x_0$, $\Delta x_2=x_2-x_1$, $\cdots$, $\Delta x_n=x_n-x_{n-1}$。在每个小区间 $[x_{i-1},x_i]$ 上任取一点 $\xi_i (x_{i-1} \leq \xi \leq x_i)$，作函数值 $f(\xi)$ 与小区间长度 $\Delta x_i$ 的乘积 $f(\xi_i) \cdot \Delta x_i$，并作和
+$$S=\sum_{i=1}^{n}f(\xi)\Delta x_i$$
+记 $\lambda=\max { \Delta x_1, \Delta x_2, \cdots, \Delta x_n }$，如果当 $\lambda \to 0$ 时，$S$ 的极限总存在，且与闭区间 $[a,b]$ 的分法及点 $\xi_i$ 的取法无关，那么称这个极限 $I$ 为函数 $f(x)$ 在区间 $[a,b]$ 上的定积分，记作 $\int_{a}^{b} f(x) dx$，即" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://utopizza.github.io/2018-12-18-%E6%95%B0%E5%AD%A6-%E5%AE%9A%E7%A7%AF%E5%88%86/" />
+<meta property="og:image" content="https://utopizza.github.io/logo.png"/>
+<meta property="article:published_time" content="2018-12-18T00:00:00+00:00" />
+<meta property="article:modified_time" content="2018-12-18T00:00:00+00:00" />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://utopizza.github.io/logo.png"/>
+
+<meta name="twitter:title" content="定积分"/>
+<meta name="twitter:description" content="一、定积分的概念与性质 1、定义：设函数 $f(x)$ 在 $[a,b]$ 上有界，在 $[a,b]$ 中任意插入若干分点 $a=x_0 &lt; x_1 &lt; x_2 &lt; \cdots &lt; x_{n-1} &lt; x_n=b$，把区间 $[a,b]$ 分成 $n$ 个小区 $[x_0, x_1]$，$[x_1,x_2]$，$\cdots$，$[x_{n-1},x_n]$，各个小区间的长度依次为 $\Delta x_1=x_1-x_0$, $\Delta x_2=x_2-x_1$, $\cdots$, $\Delta x_n=x_n-x_{n-1}$。在每个小区间 $[x_{i-1},x_i]$ 上任取一点 $\xi_i (x_{i-1} \leq \xi \leq x_i)$，作函数值 $f(\xi)$ 与小区间长度 $\Delta x_i$ 的乘积 $f(\xi_i) \cdot \Delta x_i$，并作和
+$$S=\sum_{i=1}^{n}f(\xi)\Delta x_i$$
+记 $\lambda=\max { \Delta x_1, \Delta x_2, \cdots, \Delta x_n }$，如果当 $\lambda \to 0$ 时，$S$ 的极限总存在，且与闭区间 $[a,b]$ 的分法及点 $\xi_i$ 的取法无关，那么称这个极限 $I$ 为函数 $f(x)$ 在区间 $[a,b]$ 上的定积分，记作 $\int_{a}^{b} f(x) dx$，即"/>
+<meta name="application-name" content="Utopizza">
+<meta name="apple-mobile-web-app-title" content="Utopizza"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://utopizza.github.io/2018-12-18-%E6%95%B0%E5%AD%A6-%E5%AE%9A%E7%A7%AF%E5%88%86/" /><link rel="prev" href="https://utopizza.github.io/2018-12-15-%E8%AE%BA%E6%96%87-enclavedb/" /><link rel="next" href="https://utopizza.github.io/2018-12-22-%E8%AE%BA%E6%96%87-svim/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "定积分",
+        "inLanguage": "en",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https:\/\/utopizza.github.io\/2018-12-18-%E6%95%B0%E5%AD%A6-%E5%AE%9A%E7%A7%AF%E5%88%86\/"
+        },"image": {
+                "@type": "ImageObject",
+                "url": "https:\/\/utopizza.github.io\/cover.png",
+                "width":  800 ,
+                "height":  600 
+            },"genre": "posts","wordcount":  306 ,
+        "url": "https:\/\/utopizza.github.io\/2018-12-18-%E6%95%B0%E5%AD%A6-%E5%AE%9A%E7%A7%AF%E5%88%86\/","datePublished": "2018-12-18T00:00:00+00:00","dateModified": "2018-12-18T00:00:00+00:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+                "@type": "Organization",
+                "name": "",
+                "logo": {
+                "@type": "ImageObject",
+                "url": "https:\/\/utopizza.github.io\/logo.png",
+                "width":  127 ,
+                "height":  40 
+                }
+            },"author": {
+                "@type": "Person",
+                "name": "yusheng"
+            },"description": ""
+    }
+    </script></head>
+    <body><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="Utopizza"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>Utopizza</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> Posts </a><a class="menu-item" href="/categories/"> Categories </a><a class="menu-item" href="https://github.com/utopizza" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i>  </a><span class="menu-item delimiter"></span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="Utopizza"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>Utopizza</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><a class="menu-item" href="/posts/" title="">Posts</a><a class="menu-item" href="/categories/" title="">Categories</a><a class="menu-item" href="https://github.com/utopizza" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i></a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">定积分</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;
+                    <span class="post-category">included in<a href="/categories/math/">
+                                <i class="far fa-folder fa-fw"></i>Math
+                            </a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i><time datetime=2018-12-18>2018-12-18</time>&nbsp;
+                <i class="fas fa-pencil-alt fa-fw"></i>about 306 words&nbsp;
+                <i class="far fa-clock fa-fw"></i>2 min&nbsp;</div>
+        </div><div class="details toc" id="toc-static">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#一定积分的概念与性质">一、定积分的概念与性质</a></li>
+        <li><a href="#二微积分基本公式">二、微积分基本公式</a></li>
+        <li><a href="#三定积分的换元法和分部积分法">三、定积分的换元法和分部积分法</a></li>
+        <li><a href="#四反常积分">四、反常积分</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><h3 id="一定积分的概念与性质">一、定积分的概念与性质</h3>
+<p>1、定义：设函数 $f(x)$ 在 $[a,b]$ 上有界，在 $[a,b]$ 中任意插入若干分点 $a=x_0 &lt; x_1 &lt; x_2 &lt; \cdots &lt; x_{n-1} &lt; x_n=b$，把区间 $[a,b]$ 分成 $n$ 个小区 $[x_0, x_1]$，$[x_1,x_2]$，$\cdots$，$[x_{n-1},x_n]$，各个小区间的长度依次为 $\Delta x_1=x_1-x_0$, $\Delta x_2=x_2-x_1$, $\cdots$, $\Delta x_n=x_n-x_{n-1}$。在每个小区间 $[x_{i-1},x_i]$ 上任取一点 $\xi_i (x_{i-1} \leq \xi \leq x_i)$，作函数值 $f(\xi)$ 与小区间长度 $\Delta x_i$ 的乘积 $f(\xi_i) \cdot \Delta x_i$，并作和</p>
+<p>$$S=\sum_{i=1}^{n}f(\xi)\Delta x_i$$</p>
+<p>记 $\lambda=\max { \Delta x_1, \Delta x_2, \cdots, \Delta x_n }$，如果当 $\lambda \to 0$ 时，$S$ 的极限总存在，且与闭区间 $[a,b]$ 的分法及点 $\xi_i$ 的取法无关，那么称这个极限 $I$ 为函数  $f(x)$ 在区间 $[a,b]$ 上的定积分，记作 $\int_{a}^{b} f(x) dx$，即</p>
+<p>$$\int_{a}^{b} f(x) dx=I=\lim_{\lambda \to 0} \sum_{i=1}^{n} f(\xi_i) \Delta x_i$$</p>
+<p>其中 $f(x)$ 叫做被积函数，$f(x)dx$ 叫做被积表达式，$x$ 叫做积分变量，$a$ 叫做积分下限，$b$ 叫做积分上限，$[a,b]$ 叫做积分区间</p>
+<p>2、定理：设 $f(x)$ 在区间 $[a,b]$ 上连续，则 $f(x)$ 在 $[a,b]$ 上可积</p>
+<p>3、定理：设 $f(x)$ 在区间 $[a,b]$ 上有界，且只有有限个间断点，则 $f(x)$ 在 $[a,b]$ 上可积</p>
+<p>4、性质</p>
+<p>(1) 设 $\alpha$ 与 $\beta$ 均为常数，则</p>
+<p>$$\int_{a}^{b}[\alpha f(x) + \beta g(x)]dx=\alpha \int_{a}^{b} f(x)dx+ \beta \int_{a}^{b} g(x) dx$$</p>
+<p>(2) 设 $a &lt; c &lt; b$，则</p>
+<p>$$\int_{a}^{b} f(x) dx=\int_{a}^{c}f(x)dx+\int_{c}^{b}f(x)dx$$</p>
+<p>(3) 如果在区间 $[a,b]$ 上 $f(x) \equiv 1$，那么</p>
+<p>$$\int_{a}^{b} 1 dx=\int_{a}^{b}dx=b-a$$</p>
+<p>(4) 如果在区间 $[a,b]$ 上 $f(x) \geq 0$，那么</p>
+<p>$$\int_{a}^{b} f(x) dx \geq 0$$</p>
+<p>(5) 设 $M$ 及 $m$ 分别是函数 $f(x)$ 在区间 $[a,b]$ 上的最大值及最小值，则</p>
+<p>$$m(b-a) \leq \int_{a}^{b} f(x) dx \leq M(b-a)$$</p>
+<p>(6) 定积分中值定理：如果函数 f(x) 在积分区间 $[a,b]$ 上连续，那么在 $[a,b]$ 上至少存在一个点 $\xi$，使用下式成立：</p>
+<p>$$\int_{a}^{b} f(x)dx=f(\xi)(b-a)$$</p>
+<h3 id="二微积分基本公式">二、微积分基本公式</h3>
+<p>1、定理：如果函数 $f(x)$ 在区间 $[a,b]$ 上连续，那么积分上限的函数</p>
+<p>$$\Phi(x)=\int_{a}^{x}f(t)dt$$</p>
+<p>在 $[a,b]$ 上可导，并且它的导数</p>
+<p>$$\Phi&rsquo;(x)=\frac{d}{dx} \int_{a}^{b} f(t)dt=f(x)$$</p>
+<p>2、定理：如果函数 $f(x)$ 在区间 $[a,b]$ 上连续，那么函数</p>
+<p>$$\Phi(x)=\int_{a}^{x} f(t)dt$$</p>
+<p>就是 $f(x)$ 在 $[a,b]$ 上的一个原函数</p>
+<p>3、定理（牛顿莱布尼茨公式、微积分基本定理）：如果函数 $F(x)$ 是连续函数 $f(x)$ 在区间 $[a,b]$ 上的一个原函数，那么</p>
+<p>$$\int_{a}^{b} f(x) dx=F(b)-F(a)=[F(x)]_{a}^{b}$$</p>
+<p>这个公式表明：一个连续函数在区间 $[a,b]$ 上的定积分等于它的任一个原函数在区间 $[a,b]$ 上的增量</p>
+<h3 id="三定积分的换元法和分部积分法">三、定积分的换元法和分部积分法</h3>
+<p>1、定理（换元公式）：假设函数 $f(x)$ 在区间 $[a,b]$ 上连续，函数 $x=\varphi(t)$ 满足条件：
+(1) $\varphi(\alpha)=a, \varphi(\beta)=b$
+(2) $\varphi(t)$ 在 $[\alpha,\beta]$（ 或 $[\beta,\alpha]$ ） 上具有连续导数，且其值域 $R_{\varphi}=[a,b]$，则有</p>
+<p>$$\int_{a}^{b}f(x)dx=\int_{\alpha}^{beta}f[\varphi(t)] \cdot \varphi &lsquo;(t) dt$$</p>
+<p>应用换元公式时有两点值得注意：(1) 用 $x=\varphi(x)$ 把原来变量 $x$ 代换成新变量 $t$ 时，积分限也要换成相应于新变量 $t$ 的积分限；(2) 求出 $f[\varphi(t)] \cdot \varphi&rsquo;(t)$ 的一个原函数 $\Phi(t)$ 后，不必像计算不定积分那样再要把 $\Phi(t)$ 变换成原来变量 $x$ 的函数，而只要把新变量 $t$ 的上、下限分别代入 $\Phi(t)$ 中然后相减即可</p>
+<p>换元公式也可以反过来使用。为使用方便起见，把换元公式中左右两边对调位置，同时把 $t$ 改记为 $x$，而 $x$ 改记为 $t$， 得</p>
+<p>$$\int_{a}^{b}f[\varphi(x)] \cdot \varphi&rsquo;(x) dx=\int_{\alpha}^{\beta} f(t) dt$$</p>
+<p>其中 $t=\varphi(x)$，$\alpha=\varphi(a)$，$\beta=\varphi(b)$</p>
+<p>2、分部积分：</p>
+<p>$$\int_{a}^{b} uv&rsquo;dx=[uv]_{a}^{b}-\int_{a}^{b}vu&rsquo;dx$$</p>
+<p>简记为</p>
+<p>$$\int_{a}^{b} udv=[uv]_{a}^{b}-\int_{a}^{b}vdu$$</p>
+<h3 id="四反常积分">四、反常积分</h3>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>The article was updated on 2018-12-18</span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span>
+                            <a class="link-to-markdown" href="/2018-12-18-%E6%95%B0%E5%AD%A6-%E5%AE%9A%E7%A7%AF%E5%88%86/index.md" target="_blank">Read Markdown</a>
+                        </span></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="https://utopizza.github.io/2018-12-18-%E6%95%B0%E5%AD%A6-%E5%AE%9A%E7%A7%AF%E5%88%86/" data-title="定积分"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://utopizza.github.io/2018-12-18-%E6%95%B0%E5%AD%A6-%E5%AE%9A%E7%A7%AF%E5%88%86/"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="Share on WhatsApp" data-sharer="whatsapp" data-url="https://utopizza.github.io/2018-12-18-%E6%95%B0%E5%AD%A6-%E5%AE%9A%E7%A7%AF%E5%88%86/" data-title="定积分" data-web><i class="fab fa-whatsapp fa-fw"></i></a><a href="javascript:void(0);" title="Share on Line" data-sharer="line" data-url="https://utopizza.github.io/2018-12-18-%E6%95%B0%E5%AD%A6-%E5%AE%9A%E7%A7%AF%E5%88%86/" data-title="定积分"><i class="fab fa-line fa-fw"></i></a><a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="https://utopizza.github.io/2018-12-18-%E6%95%B0%E5%AD%A6-%E5%AE%9A%E7%A7%AF%E5%88%86/" data-title="定积分"><i class="fab fa-weibo fa-fw"></i></a><a href="javascript:void(0);" title="Share on Myspace" data-sharer="myspace" data-url="https://utopizza.github.io/2018-12-18-%E6%95%B0%E5%AD%A6-%E5%AE%9A%E7%A7%AF%E5%88%86/" data-title="定积分" data-description=""><i data-svg-src="/lib/simple-icons/icons/myspace.min.svg"></i></a><a href="javascript:void(0);" title="Share on Blogger" data-sharer="blogger" data-url="https://utopizza.github.io/2018-12-18-%E6%95%B0%E5%AD%A6-%E5%AE%9A%E7%A7%AF%E5%88%86/" data-title="定积分" data-description=""><i class="fab fa-blogger fa-fw"></i></a><a href="javascript:void(0);" title="Share on Evernote" data-sharer="evernote" data-url="https://utopizza.github.io/2018-12-18-%E6%95%B0%E5%AD%A6-%E5%AE%9A%E7%A7%AF%E5%88%86/" data-title="定积分"><i class="fab fa-evernote fa-fw"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/2018-12-15-%E8%AE%BA%E6%96%87-enclavedb/" class="prev" rel="prev" title="EnclaveDB"><i class="fas fa-angle-left fa-fw"></i>EnclaveDB</a>
+            <a href="/2018-12-22-%E8%AE%BA%E6%96%87-svim/" class="next" rel="next" title="SVIM">SVIM<i class="fas fa-angle-right fa-fw"></i></a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.69.2">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.6"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2020</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">yusheng</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><link rel="stylesheet" href="/lib/katex/katex.min.css"><link rel="stylesheet" href="/lib/katex/copy-tex.min.css"><script type="text/javascript">
+    window.config = {"code":{"copyTitle":"Copy to clipboard","maxShownLines":100},"comment":{},"headerMode":{"desktop":"fixed","mobile":"auto"},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false}};
+</script><script type="text/javascript" src="https://polyfill.io/v3/polyfill.min.js?features=html5shiv%2CElement.prototype.closest%2CrequestAnimationFrame%2CCustomEvent%2CPromise%2CObject.entries%2CObject.assign%2CObject.values%2Cfetch%2CElement.prototype.after%2CArray.prototype.fill%2CIntersectionObserver%2CArray.from%2CArray.prototype.find%2CMath.sign"></script><script type="text/javascript" src="/lib/smooth-scroll/smooth-scroll.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/object-fit-images/ofi.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="/lib/sharer/sharer.min.js"></script><script type="text/javascript" src="/lib/katex/katex.min.js"></script><script type="text/javascript" src="/lib/katex/auto-render.min.js"></script><script type="text/javascript" src="/lib/katex/copy-tex.min.js"></script><script type="text/javascript" src="/lib/katex/mhchem.min.js"></script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>

@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>泰勒展开式 - Utopizza</title>
+        <meta name="Description" content="About LoveIt Theme"><meta property="og:title" content="泰勒展开式" />
+<meta property="og:description" content="泰勒公式是怎么被推导出来的，以及为什么可以用多项式来逼近任意函数？
+根据微积分的“以直代曲”的思想，对一个连续可导的函数 $f(x)$，当因变量 $x$ 在某点 $x_0$ 附近的改变值为 $\Delta x$ 时，过该点的切线上对应的纵坐标增量为 $dy=f&rsquo;(x_0) \cdot \Delta x$。虽然 $f(x)$ 实际上的纵坐标增量是 $\Delta y=f(x_0&#43;\Delta x)-f(x_0)$，但是如果 $\Delta x$ 非常小，那么可以近似认为切线的纵坐标增量等于 $f(x)$ 的纵坐标增量。即：
+$$\Delta y=f(x_0&#43;\Delta x)-f(x_0) \approx f&rsquo;(x_0) \cdot \Delta x$$
+那么对于 $x_0$ 附近的任意一点 $x$，有 $\Delta x=x-x_0$，代入上式得：
+$$f(x)-f(x_0) \approx f&rsquo;(x_0) \cdot (x-x_0)$$
+将 $f(x_0)$ 移到右边，凑出关于 $x$ 的函数表达形式：
+$$f(x) \approx f(x_0)&#43;f&rsquo;(x_0) \cdot (x-x_0)$$
+观察这个式子，显然它就是利用已知的一个点 $(x_0,f(x_0))$ 及在该点处的一阶导数 $f&rsquo;(x_0)$ 来近似表达了在 $x_0$ 附近的原函数 $f(x)$，而且它是一个线性的函数，非常便于我们计算和处理，特别是在原函数 $f(x)$ 是一个非常复杂的函数的情况下。
+到了这里，严谨的数学家肯定不满足于如此，因为这只是一个非常粗略的近似。那么如何进一步逼近原函数 $f(x)$？甚至什么时候可以取等号？这就是泰勒以及众多数学家的贡献了。
+既然一阶导数和一次多项式可以用来近似代替函数 $f(x)$，而现在希望能进一步提高近似的精度，那么一个非常自然、直接的想法就是使用更高阶的导数以及更高阶的多项式。因为多项式函数无论是连续求导、变形、还是数值计算，都要比其他一些函数例如三角函数、指数函数、对数函数、幂函数等容易得多，所以自然选择多项式来作为基本构件。这其实在生活中是很常见的思路：
+ 当遇到一个复杂的、无法直接使用的东西时，我们自然想办法用其他一些简单的、方便使用的东西去近似模拟它，得到和它基本相近的功能 当我们要去近似模拟时，要直接一步到位是很难的，一般是先模拟一个大体的近似，然后在这个基础上，一步步去完善细节，一步步提高精度 如第一点所说，我们肯定是使用简单的零部件去构建整体，并且越简单越好，因为越简单则越容易理解和改造、控制。其实大自然亦如此，复杂如人的神经系统、大脑组织，也是由一个个十分简单、有效的神经细胞组建而成  相信上面的陈述应该可以说服你，像数学家那样使用高阶导数和高阶多项式来进行近似代替某个复杂但连续并且可导的函数 $f(x)$。我们知道，最简单的多项式函数表达形式如下：" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://utopizza.github.io/2019-01-11-%E6%95%B0%E5%AD%A6-%E6%B3%B0%E5%8B%92%E5%B1%95%E5%BC%80%E5%BC%8F/" />
+<meta property="og:image" content="https://utopizza.github.io/logo.png"/>
+<meta property="article:published_time" content="2019-01-11T00:00:00+00:00" />
+<meta property="article:modified_time" content="2019-01-11T00:00:00+00:00" />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://utopizza.github.io/logo.png"/>
+
+<meta name="twitter:title" content="泰勒展开式"/>
+<meta name="twitter:description" content="泰勒公式是怎么被推导出来的，以及为什么可以用多项式来逼近任意函数？
+根据微积分的“以直代曲”的思想，对一个连续可导的函数 $f(x)$，当因变量 $x$ 在某点 $x_0$ 附近的改变值为 $\Delta x$ 时，过该点的切线上对应的纵坐标增量为 $dy=f&rsquo;(x_0) \cdot \Delta x$。虽然 $f(x)$ 实际上的纵坐标增量是 $\Delta y=f(x_0&#43;\Delta x)-f(x_0)$，但是如果 $\Delta x$ 非常小，那么可以近似认为切线的纵坐标增量等于 $f(x)$ 的纵坐标增量。即：
+$$\Delta y=f(x_0&#43;\Delta x)-f(x_0) \approx f&rsquo;(x_0) \cdot \Delta x$$
+那么对于 $x_0$ 附近的任意一点 $x$，有 $\Delta x=x-x_0$，代入上式得：
+$$f(x)-f(x_0) \approx f&rsquo;(x_0) \cdot (x-x_0)$$
+将 $f(x_0)$ 移到右边，凑出关于 $x$ 的函数表达形式：
+$$f(x) \approx f(x_0)&#43;f&rsquo;(x_0) \cdot (x-x_0)$$
+观察这个式子，显然它就是利用已知的一个点 $(x_0,f(x_0))$ 及在该点处的一阶导数 $f&rsquo;(x_0)$ 来近似表达了在 $x_0$ 附近的原函数 $f(x)$，而且它是一个线性的函数，非常便于我们计算和处理，特别是在原函数 $f(x)$ 是一个非常复杂的函数的情况下。
+到了这里，严谨的数学家肯定不满足于如此，因为这只是一个非常粗略的近似。那么如何进一步逼近原函数 $f(x)$？甚至什么时候可以取等号？这就是泰勒以及众多数学家的贡献了。
+既然一阶导数和一次多项式可以用来近似代替函数 $f(x)$，而现在希望能进一步提高近似的精度，那么一个非常自然、直接的想法就是使用更高阶的导数以及更高阶的多项式。因为多项式函数无论是连续求导、变形、还是数值计算，都要比其他一些函数例如三角函数、指数函数、对数函数、幂函数等容易得多，所以自然选择多项式来作为基本构件。这其实在生活中是很常见的思路：
+ 当遇到一个复杂的、无法直接使用的东西时，我们自然想办法用其他一些简单的、方便使用的东西去近似模拟它，得到和它基本相近的功能 当我们要去近似模拟时，要直接一步到位是很难的，一般是先模拟一个大体的近似，然后在这个基础上，一步步去完善细节，一步步提高精度 如第一点所说，我们肯定是使用简单的零部件去构建整体，并且越简单越好，因为越简单则越容易理解和改造、控制。其实大自然亦如此，复杂如人的神经系统、大脑组织，也是由一个个十分简单、有效的神经细胞组建而成  相信上面的陈述应该可以说服你，像数学家那样使用高阶导数和高阶多项式来进行近似代替某个复杂但连续并且可导的函数 $f(x)$。我们知道，最简单的多项式函数表达形式如下："/>
+<meta name="application-name" content="Utopizza">
+<meta name="apple-mobile-web-app-title" content="Utopizza"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://utopizza.github.io/2019-01-11-%E6%95%B0%E5%AD%A6-%E6%B3%B0%E5%8B%92%E5%B1%95%E5%BC%80%E5%BC%8F/" /><link rel="prev" href="https://utopizza.github.io/2019-01-09-%E6%A6%82%E7%8E%87-%E4%BA%8B%E4%BB%B6%E4%B8%8E%E6%A6%82%E7%8E%87/" /><link rel="next" href="https://utopizza.github.io/2019-01-12-%E6%95%B0%E5%AD%A6-%E7%BA%BF%E6%80%A7%E5%8F%98%E6%8D%A2%E7%9A%84%E7%9F%A9%E9%98%B5/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "泰勒展开式",
+        "inLanguage": "en",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https:\/\/utopizza.github.io\/2019-01-11-%E6%95%B0%E5%AD%A6-%E6%B3%B0%E5%8B%92%E5%B1%95%E5%BC%80%E5%BC%8F\/"
+        },"image": {
+                "@type": "ImageObject",
+                "url": "https:\/\/utopizza.github.io\/cover.png",
+                "width":  800 ,
+                "height":  600 
+            },"genre": "posts","wordcount":  191 ,
+        "url": "https:\/\/utopizza.github.io\/2019-01-11-%E6%95%B0%E5%AD%A6-%E6%B3%B0%E5%8B%92%E5%B1%95%E5%BC%80%E5%BC%8F\/","datePublished": "2019-01-11T00:00:00+00:00","dateModified": "2019-01-11T00:00:00+00:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+                "@type": "Organization",
+                "name": "",
+                "logo": {
+                "@type": "ImageObject",
+                "url": "https:\/\/utopizza.github.io\/logo.png",
+                "width":  127 ,
+                "height":  40 
+                }
+            },"author": {
+                "@type": "Person",
+                "name": "yusheng"
+            },"description": ""
+    }
+    </script></head>
+    <body><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="Utopizza"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>Utopizza</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> Posts </a><a class="menu-item" href="/categories/"> Categories </a><a class="menu-item" href="https://github.com/utopizza" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i>  </a><span class="menu-item delimiter"></span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="Utopizza"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>Utopizza</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><a class="menu-item" href="/posts/" title="">Posts</a><a class="menu-item" href="/categories/" title="">Categories</a><a class="menu-item" href="https://github.com/utopizza" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i></a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">泰勒展开式</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;
+                    <span class="post-category">included in<a href="/categories/math/">
+                                <i class="far fa-folder fa-fw"></i>Math
+                            </a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i><time datetime=2019-01-11>2019-01-11</time>&nbsp;
+                <i class="fas fa-pencil-alt fa-fw"></i>about 191 words&nbsp;
+                <i class="far fa-clock fa-fw"></i>1 min&nbsp;</div>
+        </div><div class="details toc" id="toc-static">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents"></nav></div>
+            </div><div class="content" id="content"><p>泰勒公式是怎么被推导出来的，以及为什么可以用多项式来逼近任意函数？</p>
+<p>根据微积分的“以直代曲”的思想，对一个连续可导的函数 $f(x)$，当因变量 $x$ 在某点 $x_0$ 附近的改变值为 $\Delta x$ 时，过该点的切线上对应的纵坐标增量为 $dy=f&rsquo;(x_0) \cdot \Delta x$。虽然 $f(x)$ 实际上的纵坐标增量是 $\Delta y=f(x_0+\Delta x)-f(x_0)$，但是如果 $\Delta x$ 非常小，那么可以近似认为切线的纵坐标增量等于 $f(x)$ 的纵坐标增量。即：</p>
+<p>$$\Delta y=f(x_0+\Delta x)-f(x_0) \approx f&rsquo;(x_0) \cdot \Delta x$$</p>
+<p>那么对于 $x_0$ 附近的任意一点 $x$，有 $\Delta x=x-x_0$，代入上式得：</p>
+<p>$$f(x)-f(x_0) \approx f&rsquo;(x_0) \cdot (x-x_0)$$</p>
+<p>将 $f(x_0)$ 移到右边，凑出关于 $x$ 的函数表达形式：</p>
+<p>$$f(x) \approx f(x_0)+f&rsquo;(x_0) \cdot (x-x_0)$$</p>
+<p>观察这个式子，显然它就是利用已知的一个点 $(x_0,f(x_0))$ 及在该点处的一阶导数 $f&rsquo;(x_0)$ 来近似表达了在 $x_0$ 附近的原函数 $f(x)$，而且它是一个线性的函数，非常便于我们计算和处理，特别是在原函数 $f(x)$ 是一个非常复杂的函数的情况下。</p>
+<p>到了这里，严谨的数学家肯定不满足于如此，因为这只是一个非常粗略的近似。那么如何进一步逼近原函数 $f(x)$？甚至什么时候可以取等号？这就是泰勒以及众多数学家的贡献了。</p>
+<p>既然一阶导数和一次多项式可以用来近似代替函数 $f(x)$，而现在希望能进一步提高近似的精度，那么一个非常自然、直接的想法就是使用更高阶的导数以及更高阶的多项式。因为多项式函数无论是连续求导、变形、还是数值计算，都要比其他一些函数例如三角函数、指数函数、对数函数、幂函数等容易得多，所以自然选择多项式来作为基本构件。这其实在生活中是很常见的思路：</p>
+<ol>
+<li>当遇到一个复杂的、无法直接使用的东西时，我们自然想办法用其他一些简单的、方便使用的东西去近似模拟它，得到和它基本相近的功能</li>
+<li>当我们要去近似模拟时，要直接一步到位是很难的，一般是先模拟一个大体的近似，然后在这个基础上，一步步去完善细节，一步步提高精度</li>
+<li>如第一点所说，我们肯定是使用简单的零部件去构建整体，并且越简单越好，因为越简单则越容易理解和改造、控制。其实大自然亦如此，复杂如人的神经系统、大脑组织，也是由一个个十分简单、有效的神经细胞组建而成</li>
+</ol>
+<p>相信上面的陈述应该可以说服你，像数学家那样使用高阶导数和高阶多项式来进行近似代替某个复杂但连续并且可导的函数 $f(x)$。我们知道，最简单的多项式函数表达形式如下：</p>
+<p>$$g(x)=a_0+a_1x+a_2x^2+\cdots+a_nx^n$$</p>
+<p>回顾一阶近似的时候，近似的函数形式是</p>
+<p>$$f(x) \approx f(x_0)+f&rsquo;(x_0) \cdot (x-x_0)$$</p>
+<p>结合两者，我们依样画葫芦地写出：</p>
+<p>$$f(x)=a_0+a_1(x-x_0)+a_2(x-x_0)^2+ \cdots + a_n(x-x_0)^n$$</p>
+<p>至此泰勒展开已经完成了一半了，只剩各项的系数需要确定。对比一阶近似，一次项的系数是 $f&rsquo;(x_0)$，这暗示着各项的系数与函数 $f(x)$ 在 $x_0$ 处的导数存在某种关系，启发我们往这个方向去假设和推测。以下是推导过程。</p>
+<hr>
+<p>对 $f(x)$ 求 $1$ 至 $n$ 阶导：</p>
+<p>$$f&rsquo;(x)=a_1+2a_2(x-x_0)+3a_3(x-x_0)^2+\cdots+na_n(x-x_0)^{n-1}$$</p>
+<p>$$f&rsquo;'(x)=2a_2+6a_3(x-x_0)+\cdots+n(n-1)a_n(x-x_0)^{n-2}$$</p>
+<p>$$f&rsquo;''(x)=6a_3+\cdots+n(n-1)(n-2)a_n(x-x_0)^{n-3}$$</p>
+<p>$$\cdots$$</p>
+<p>$$f^{(n)}(x)=n(n-1)(n-2)\cdots \cdot 2 \cdot 1 \cdot a_n$$</p>
+<p>令 $x=x_0$ 代入以上式子，得</p>
+<p>$$f&rsquo;(x_0)=1 \cdot a_1 = 1! \cdot a_1$$</p>
+<p>$$f&rsquo;'(x_0)=2 \cdot 1 \cdot a_2=2! \cdot a_2$$</p>
+<p>$$f&rsquo;''(x_0)=3 \cdot 2 \cdot 1 \cdot a_3=3! \cdot a_3$$</p>
+<p>$$\cdots$$</p>
+<p>$$f^{(n)}(x_0)= n \cdot (n-1) \cdots \cdot 2 \cdot 1 \cdot a_n=n! \cdot a_n$$</p>
+<p>因此即得</p>
+<p>$$a_i=\frac{f^{(i)}(x_0)}{i!},i \in [1,n]$$</p>
+<p>因此泰勒展开式为</p>
+<div>
+$$
+\begin{aligned}
+f(x) &=f(x_0)+f'(x_0)(x-x_0)+\frac{f''(x_0)}{2!}(x-x_0)+\cdots+\frac{f^{(n)}(x_0)}{n!}(x-x_0) \\
+& =f(x_0)+\sum_{i=1}^{n}\frac{f^{(i)}(x_0)}{i!}(x-x_0)^i \\
+& = \sum_{i=0}^{n}\frac{f^{(i)}(x_0)}{i!}(x-x_0)^i 
+\end{aligned}
+$$
+</div>
+<p>其实严格来说以上都不正确，因此近似始终不是等于，无论 $n$ 有多大，式子右边始终不是 $f(x)$，上述式子应该取约等号。如果要取等号，那么需要把每一项近似的误差也补完整，完整的泰勒展开为</p>
+<p>$$f(x)=\sum_{i=0}^{n}\frac{f^{(i)}(x_0)}{i!}(x-x_0)^i+R_n(x)$$</p>
+<p>其中 $R_n(x)$ 则为近似的总误差。一共有两位数学家先后尝试推导这个误差项 $R_n(x)$，分别为佩亚诺和拉格朗日。其中佩亚诺给出的结果称为佩亚诺余项：</p>
+<p>$$R_n(x)=o((x-x_0)^n)$$</p>
+<p>佩亚诺余项只是定性地说明误差项是 $(x-x_0)^n$ 高阶的无穷小，并不能具体估算误差大小，因此后来拉格朗日进一步给出了具体形式的余项，称为拉格朗日余项：</p>
+<p>$$R_n(x)=\frac{f^{n+1}(\xi)}{(n+1)!}(x-x_0)^{n+1}$$</p>
+<p>其中 $\xi$ 是 $x$ 与 $x_0$ 之间的某个值。要推导这个余项需要用到柯西中值定理，具体推导过程不再详述，可参考资料：</p>
+<ul>
+<li>《高等数学》同济版</li>
+<li><a href="https://www.zhihu.com/question/25627482/answer/32060408" target="_blank" rel="noopener noreffer">怎样更好地理解并记忆泰勒展开式？</a></li>
+<li><a href="https://www.zhihu.com/question/21149770?rf=22001335" target="_blank" rel="noopener noreffer">如何通俗地解释泰勒公式？</a></li>
+<li><a href="https://www.zhihu.com/question/34539650/answer/69556280" target="_blank" rel="noopener noreffer">泰勒公式最初是如何想到的?</a></li>
+</ul>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>The article was updated on 2019-01-11</span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span>
+                            <a class="link-to-markdown" href="/2019-01-11-%E6%95%B0%E5%AD%A6-%E6%B3%B0%E5%8B%92%E5%B1%95%E5%BC%80%E5%BC%8F/index.md" target="_blank">Read Markdown</a>
+                        </span></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="https://utopizza.github.io/2019-01-11-%E6%95%B0%E5%AD%A6-%E6%B3%B0%E5%8B%92%E5%B1%95%E5%BC%80%E5%BC%8F/" data-title="泰勒展开式"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://utopizza.github.io/2019-01-11-%E6%95%B0%E5%AD%A6-%E6%B3%B0%E5%8B%92%E5%B1%95%E5%BC%80%E5%BC%8F/"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="Share on WhatsApp" data-sharer="whatsapp" data-url="https://utopizza.github.io/2019-01-11-%E6%95%B0%E5%AD%A6-%E6%B3%B0%E5%8B%92%E5%B1%95%E5%BC%80%E5%BC%8F/" data-title="泰勒展开式" data-web><i class="fab fa-whatsapp fa-fw"></i></a><a href="javascript:void(0);" title="Share on Line" data-sharer="line" data-url="https://utopizza.github.io/2019-01-11-%E6%95%B0%E5%AD%A6-%E6%B3%B0%E5%8B%92%E5%B1%95%E5%BC%80%E5%BC%8F/" data-title="泰勒展开式"><i class="fab fa-line fa-fw"></i></a><a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="https://utopizza.github.io/2019-01-11-%E6%95%B0%E5%AD%A6-%E6%B3%B0%E5%8B%92%E5%B1%95%E5%BC%80%E5%BC%8F/" data-title="泰勒展开式"><i class="fab fa-weibo fa-fw"></i></a><a href="javascript:void(0);" title="Share on Myspace" data-sharer="myspace" data-url="https://utopizza.github.io/2019-01-11-%E6%95%B0%E5%AD%A6-%E6%B3%B0%E5%8B%92%E5%B1%95%E5%BC%80%E5%BC%8F/" data-title="泰勒展开式" data-description=""><i data-svg-src="/lib/simple-icons/icons/myspace.min.svg"></i></a><a href="javascript:void(0);" title="Share on Blogger" data-sharer="blogger" data-url="https://utopizza.github.io/2019-01-11-%E6%95%B0%E5%AD%A6-%E6%B3%B0%E5%8B%92%E5%B1%95%E5%BC%80%E5%BC%8F/" data-title="泰勒展开式" data-description=""><i class="fab fa-blogger fa-fw"></i></a><a href="javascript:void(0);" title="Share on Evernote" data-sharer="evernote" data-url="https://utopizza.github.io/2019-01-11-%E6%95%B0%E5%AD%A6-%E6%B3%B0%E5%8B%92%E5%B1%95%E5%BC%80%E5%BC%8F/" data-title="泰勒展开式"><i class="fab fa-evernote fa-fw"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/2019-01-09-%E6%A6%82%E7%8E%87-%E4%BA%8B%E4%BB%B6%E4%B8%8E%E6%A6%82%E7%8E%87/" class="prev" rel="prev" title="事件与概率"><i class="fas fa-angle-left fa-fw"></i>事件与概率</a>
+            <a href="/2019-01-12-%E6%95%B0%E5%AD%A6-%E7%BA%BF%E6%80%A7%E5%8F%98%E6%8D%A2%E7%9A%84%E7%9F%A9%E9%98%B5/" class="next" rel="next" title="线性变换的矩阵">线性变换的矩阵<i class="fas fa-angle-right fa-fw"></i></a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.69.2">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.6"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2020</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">yusheng</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><link rel="stylesheet" href="/lib/katex/katex.min.css"><link rel="stylesheet" href="/lib/katex/copy-tex.min.css"><script type="text/javascript">
+    window.config = {"code":{"copyTitle":"Copy to clipboard","maxShownLines":100},"comment":{},"headerMode":{"desktop":"fixed","mobile":"auto"},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false}};
+</script><script type="text/javascript" src="https://polyfill.io/v3/polyfill.min.js?features=html5shiv%2CElement.prototype.closest%2CrequestAnimationFrame%2CCustomEvent%2CPromise%2CObject.entries%2CObject.assign%2CObject.values%2Cfetch%2CElement.prototype.after%2CArray.prototype.fill%2CIntersectionObserver%2CArray.from%2CArray.prototype.find%2CMath.sign"></script><script type="text/javascript" src="/lib/smooth-scroll/smooth-scroll.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/object-fit-images/ofi.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="/lib/sharer/sharer.min.js"></script><script type="text/javascript" src="/lib/katex/katex.min.js"></script><script type="text/javascript" src="/lib/katex/auto-render.min.js"></script><script type="text/javascript" src="/lib/katex/copy-tex.min.js"></script><script type="text/javascript" src="/lib/katex/mhchem.min.js"></script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>

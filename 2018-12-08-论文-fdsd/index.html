@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>FDSD - Utopizza</title>
+        <meta name="Description" content="About LoveIt Theme"><meta property="og:title" content="FDSD" />
+<meta property="og:description" content="一、背景及问题
+目前一些高级的网络攻击例如 APT (Advanced Persistent Threat) 引起了工业界和学术界的广泛关注和研究。这种攻击的特点是隐性、长期、多步骤。当一次攻击被发现后，鉴定分析 (Forensic Analysis) 系统就会开始被执行以确定攻击的入口以及攻击的影响范围。鉴定分析是基于系统日志进行的，它通过分析日志文件（Log）中记录的所有系统操作（例如网络事件、文件读写事件、进程间通信事件）之间的信息流，来追踪攻击源头，以及被攻击所污染的所有实体。由此可知，如果要使的分析结果越精确，那么日志文件则需要越详细地记录系统发生的一切事件，如此一来日志文件就不得不变得更大。再考虑到 APT 的一次攻击可能持续几个月的时间，以及大型企业一般都会有成千上万台主机（Host），在这种情况下日志文件可以轻松达到 PB 级别，不但需要占用巨大的存储空间，而且还会拖慢鉴定分析的速度。
+此问题吸引了众多研究团体的兴趣，他们主要关注于如何在保证不影响鉴定分析的精确率的前提下，减小日志体积，提高鉴定分析的效率。
+二、解决方案
+文章提出了一种基于依赖图（Dependence Graph）的日志压缩技术，在不影响鉴定分析准确性的前提下，可以大幅度减少日志记录。大体思路如下：
+ 系统日志记录的系统事件可以用依赖图表示。系统内的实体（如进程、文件、网络等）用结点表示，系统事件（如系统调用，读写文件、进程间消息通讯、网络数据传输等）用带时间戳的有向边表示，其指向方向与信息/数据流动方向一致 只针对 read、write、load 三类系统事件进行压缩，其他系统事件如 fork、execve、remove、rename、chmod 等等不考虑压缩直接保留。因为根据经验统计，系统中超过 95% 的事件是读写事件，只要这部分的日志减下来即可。并且只对读写事件进行压缩可以降低算法模型的复杂度，提高可读性 根据前向可达性（Forward Reachability）和后向可达性（Backward Reachability），定义两种子图保留方案：全依赖 (Full Dependence FD) 保留，资源依赖（Source Dependence，SD）保留 由于依赖图的边（即系统事件）是带时间戳的，当执行可达性计算时，需要对一个节点按时间戳的先后顺序多次计算，而不能像标准的图算法那样对所有结点一视同仁地一次性计算并进行中间结果缓存。这样显然会提高算法的复杂度，因此文章提出了一个算法，将带时间戳的依赖图转化标准图（边不带时间戳），具体方法是对结点进行多版本化（Versioning） 但是如果只简单地进行结点的多版本化，又会增大图的复杂度，增大日志的体积，因此在多版本化后，文章提出了几种剪枝优化算法来简化依赖图：Redundant edge optimization (REO)、Global Redundant Edge Optimization (REO*)、Redundant node optimization (RNO)、 Redundant node optimization (RNO) 通过以上步骤对依赖图进行简化之后，就可以将依赖图还原成日志文件，此时的日志文件中只保留了关键的信息，体积大大减小。但是文章认为日志文件原来的格式不够节省空间，于是提出了一种新的压缩文件格式 CSR ，可以进一步减少空间占用  三、总结
+文章主要针对鉴定分析需要的日志文件过大问题，提出了一种在保证不影响侦查分析准确性的前提下，优化依赖子图、减少日志文件体积、提高鉴定分析效率的方案，其主要思路是通过前后可达性和后向可达性来保证依赖子图保留了关键的结点和边。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://utopizza.github.io/2018-12-08-%E8%AE%BA%E6%96%87-fdsd/" />
+<meta property="og:image" content="https://utopizza.github.io/logo.png"/>
+<meta property="article:published_time" content="2018-12-08T00:00:00+00:00" />
+<meta property="article:modified_time" content="2018-12-08T00:00:00+00:00" />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://utopizza.github.io/logo.png"/>
+
+<meta name="twitter:title" content="FDSD"/>
+<meta name="twitter:description" content="一、背景及问题
+目前一些高级的网络攻击例如 APT (Advanced Persistent Threat) 引起了工业界和学术界的广泛关注和研究。这种攻击的特点是隐性、长期、多步骤。当一次攻击被发现后，鉴定分析 (Forensic Analysis) 系统就会开始被执行以确定攻击的入口以及攻击的影响范围。鉴定分析是基于系统日志进行的，它通过分析日志文件（Log）中记录的所有系统操作（例如网络事件、文件读写事件、进程间通信事件）之间的信息流，来追踪攻击源头，以及被攻击所污染的所有实体。由此可知，如果要使的分析结果越精确，那么日志文件则需要越详细地记录系统发生的一切事件，如此一来日志文件就不得不变得更大。再考虑到 APT 的一次攻击可能持续几个月的时间，以及大型企业一般都会有成千上万台主机（Host），在这种情况下日志文件可以轻松达到 PB 级别，不但需要占用巨大的存储空间，而且还会拖慢鉴定分析的速度。
+此问题吸引了众多研究团体的兴趣，他们主要关注于如何在保证不影响鉴定分析的精确率的前提下，减小日志体积，提高鉴定分析的效率。
+二、解决方案
+文章提出了一种基于依赖图（Dependence Graph）的日志压缩技术，在不影响鉴定分析准确性的前提下，可以大幅度减少日志记录。大体思路如下：
+ 系统日志记录的系统事件可以用依赖图表示。系统内的实体（如进程、文件、网络等）用结点表示，系统事件（如系统调用，读写文件、进程间消息通讯、网络数据传输等）用带时间戳的有向边表示，其指向方向与信息/数据流动方向一致 只针对 read、write、load 三类系统事件进行压缩，其他系统事件如 fork、execve、remove、rename、chmod 等等不考虑压缩直接保留。因为根据经验统计，系统中超过 95% 的事件是读写事件，只要这部分的日志减下来即可。并且只对读写事件进行压缩可以降低算法模型的复杂度，提高可读性 根据前向可达性（Forward Reachability）和后向可达性（Backward Reachability），定义两种子图保留方案：全依赖 (Full Dependence FD) 保留，资源依赖（Source Dependence，SD）保留 由于依赖图的边（即系统事件）是带时间戳的，当执行可达性计算时，需要对一个节点按时间戳的先后顺序多次计算，而不能像标准的图算法那样对所有结点一视同仁地一次性计算并进行中间结果缓存。这样显然会提高算法的复杂度，因此文章提出了一个算法，将带时间戳的依赖图转化标准图（边不带时间戳），具体方法是对结点进行多版本化（Versioning） 但是如果只简单地进行结点的多版本化，又会增大图的复杂度，增大日志的体积，因此在多版本化后，文章提出了几种剪枝优化算法来简化依赖图：Redundant edge optimization (REO)、Global Redundant Edge Optimization (REO*)、Redundant node optimization (RNO)、 Redundant node optimization (RNO) 通过以上步骤对依赖图进行简化之后，就可以将依赖图还原成日志文件，此时的日志文件中只保留了关键的信息，体积大大减小。但是文章认为日志文件原来的格式不够节省空间，于是提出了一种新的压缩文件格式 CSR ，可以进一步减少空间占用  三、总结
+文章主要针对鉴定分析需要的日志文件过大问题，提出了一种在保证不影响侦查分析准确性的前提下，优化依赖子图、减少日志文件体积、提高鉴定分析效率的方案，其主要思路是通过前后可达性和后向可达性来保证依赖子图保留了关键的结点和边。"/>
+<meta name="application-name" content="Utopizza">
+<meta name="apple-mobile-web-app-title" content="Utopizza"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://utopizza.github.io/2018-12-08-%E8%AE%BA%E6%96%87-fdsd/" /><link rel="prev" href="https://utopizza.github.io/2018-12-06-%E6%95%B0%E5%AD%A6-%E5%AF%BC%E6%95%B0%E4%B8%8E%E5%BE%AE%E5%88%86/" /><link rel="next" href="https://utopizza.github.io/2018-12-11-%E6%95%B0%E5%AD%A6-%E5%BE%AE%E5%88%86%E4%B8%AD%E5%80%BC%E5%AE%9A%E7%90%86%E4%B8%8E%E5%AF%BC%E6%95%B0%E7%9A%84%E5%BA%94%E7%94%A8/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "FDSD",
+        "inLanguage": "en",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https:\/\/utopizza.github.io\/2018-12-08-%E8%AE%BA%E6%96%87-fdsd\/"
+        },"image": {
+                "@type": "ImageObject",
+                "url": "https:\/\/utopizza.github.io\/cover.png",
+                "width":  800 ,
+                "height":  600 
+            },"genre": "posts","wordcount":  55 ,
+        "url": "https:\/\/utopizza.github.io\/2018-12-08-%E8%AE%BA%E6%96%87-fdsd\/","datePublished": "2018-12-08T00:00:00+00:00","dateModified": "2018-12-08T00:00:00+00:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+                "@type": "Organization",
+                "name": "",
+                "logo": {
+                "@type": "ImageObject",
+                "url": "https:\/\/utopizza.github.io\/logo.png",
+                "width":  127 ,
+                "height":  40 
+                }
+            },"author": {
+                "@type": "Person",
+                "name": "yusheng"
+            },"description": ""
+    }
+    </script></head>
+    <body><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="Utopizza"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>Utopizza</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> Posts </a><a class="menu-item" href="/categories/"> Categories </a><a class="menu-item" href="https://github.com/utopizza" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i>  </a><span class="menu-item delimiter"></span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="Utopizza"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>Utopizza</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><a class="menu-item" href="/posts/" title="">Posts</a><a class="menu-item" href="/categories/" title="">Categories</a><a class="menu-item" href="https://github.com/utopizza" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i></a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">FDSD</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;
+                    <span class="post-category">included in<a href="/categories/thesis/">
+                                <i class="far fa-folder fa-fw"></i>Thesis
+                            </a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i><time datetime=2018-12-08>2018-12-08</time>&nbsp;
+                <i class="fas fa-pencil-alt fa-fw"></i>about 55 words&nbsp;
+                <i class="far fa-clock fa-fw"></i>1 min&nbsp;</div>
+        </div><div class="details toc" id="toc-static">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents"></nav></div>
+            </div><div class="content" id="content"><p>一、背景及问题</p>
+<p>目前一些高级的网络攻击例如 APT (Advanced Persistent Threat) 引起了工业界和学术界的广泛关注和研究。这种攻击的特点是隐性、长期、多步骤。当一次攻击被发现后，鉴定分析 (Forensic Analysis) 系统就会开始被执行以确定攻击的入口以及攻击的影响范围。鉴定分析是基于系统日志进行的，它通过分析日志文件（Log）中记录的所有系统操作（例如网络事件、文件读写事件、进程间通信事件）之间的信息流，来追踪攻击源头，以及被攻击所污染的所有实体。由此可知，如果要使的分析结果越精确，那么日志文件则需要越详细地记录系统发生的一切事件，如此一来日志文件就不得不变得更大。再考虑到 APT 的一次攻击可能持续几个月的时间，以及大型企业一般都会有成千上万台主机（Host），在这种情况下日志文件可以轻松达到 PB 级别，不但需要占用巨大的存储空间，而且还会拖慢鉴定分析的速度。</p>
+<p>此问题吸引了众多研究团体的兴趣，他们主要关注于如何在保证不影响鉴定分析的精确率的前提下，减小日志体积，提高鉴定分析的效率。</p>
+<p>二、解决方案</p>
+<p>文章提出了一种基于依赖图（Dependence Graph）的日志压缩技术，在不影响鉴定分析准确性的前提下，可以大幅度减少日志记录。大体思路如下：</p>
+<ol>
+<li>系统日志记录的系统事件可以用依赖图表示。系统内的实体（如进程、文件、网络等）用结点表示，系统事件（如系统调用，读写文件、进程间消息通讯、网络数据传输等）用带时间戳的有向边表示，其指向方向与信息/数据流动方向一致</li>
+<li>只针对 read、write、load 三类系统事件进行压缩，其他系统事件如 fork、execve、remove、rename、chmod 等等不考虑压缩直接保留。因为根据经验统计，系统中超过 95% 的事件是读写事件，只要这部分的日志减下来即可。并且只对读写事件进行压缩可以降低算法模型的复杂度，提高可读性</li>
+<li>根据前向可达性（Forward Reachability）和后向可达性（Backward Reachability），定义两种子图保留方案：全依赖 (Full Dependence FD) 保留，资源依赖（Source Dependence，SD）保留</li>
+<li>由于依赖图的边（即系统事件）是带时间戳的，当执行可达性计算时，需要对一个节点按时间戳的先后顺序多次计算，而不能像标准的图算法那样对所有结点一视同仁地一次性计算并进行中间结果缓存。这样显然会提高算法的复杂度，因此文章提出了一个算法，将带时间戳的依赖图转化标准图（边不带时间戳），具体方法是对结点进行多版本化（Versioning）</li>
+<li>但是如果只简单地进行结点的多版本化，又会增大图的复杂度，增大日志的体积，因此在多版本化后，文章提出了几种剪枝优化算法来简化依赖图：Redundant edge optimization (REO)、Global Redundant Edge Optimization (REO*)、Redundant node optimization (RNO)、 Redundant node optimization (RNO)</li>
+<li>通过以上步骤对依赖图进行简化之后，就可以将依赖图还原成日志文件，此时的日志文件中只保留了关键的信息，体积大大减小。但是文章认为日志文件原来的格式不够节省空间，于是提出了一种新的压缩文件格式 CSR ，可以进一步减少空间占用</li>
+</ol>
+<p>三、总结</p>
+<p>文章主要针对鉴定分析需要的日志文件过大问题，提出了一种在保证不影响侦查分析准确性的前提下，优化依赖子图、减少日志文件体积、提高鉴定分析效率的方案，其主要思路是通过前后可达性和后向可达性来保证依赖子图保留了关键的结点和边。</p>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>The article was updated on 2018-12-08</span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span>
+                            <a class="link-to-markdown" href="/2018-12-08-%E8%AE%BA%E6%96%87-fdsd/index.md" target="_blank">Read Markdown</a>
+                        </span></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="https://utopizza.github.io/2018-12-08-%E8%AE%BA%E6%96%87-fdsd/" data-title="FDSD"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://utopizza.github.io/2018-12-08-%E8%AE%BA%E6%96%87-fdsd/"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="Share on WhatsApp" data-sharer="whatsapp" data-url="https://utopizza.github.io/2018-12-08-%E8%AE%BA%E6%96%87-fdsd/" data-title="FDSD" data-web><i class="fab fa-whatsapp fa-fw"></i></a><a href="javascript:void(0);" title="Share on Line" data-sharer="line" data-url="https://utopizza.github.io/2018-12-08-%E8%AE%BA%E6%96%87-fdsd/" data-title="FDSD"><i class="fab fa-line fa-fw"></i></a><a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="https://utopizza.github.io/2018-12-08-%E8%AE%BA%E6%96%87-fdsd/" data-title="FDSD"><i class="fab fa-weibo fa-fw"></i></a><a href="javascript:void(0);" title="Share on Myspace" data-sharer="myspace" data-url="https://utopizza.github.io/2018-12-08-%E8%AE%BA%E6%96%87-fdsd/" data-title="FDSD" data-description=""><i data-svg-src="/lib/simple-icons/icons/myspace.min.svg"></i></a><a href="javascript:void(0);" title="Share on Blogger" data-sharer="blogger" data-url="https://utopizza.github.io/2018-12-08-%E8%AE%BA%E6%96%87-fdsd/" data-title="FDSD" data-description=""><i class="fab fa-blogger fa-fw"></i></a><a href="javascript:void(0);" title="Share on Evernote" data-sharer="evernote" data-url="https://utopizza.github.io/2018-12-08-%E8%AE%BA%E6%96%87-fdsd/" data-title="FDSD"><i class="fab fa-evernote fa-fw"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/2018-12-06-%E6%95%B0%E5%AD%A6-%E5%AF%BC%E6%95%B0%E4%B8%8E%E5%BE%AE%E5%88%86/" class="prev" rel="prev" title="导数与微分"><i class="fas fa-angle-left fa-fw"></i>导数与微分</a>
+            <a href="/2018-12-11-%E6%95%B0%E5%AD%A6-%E5%BE%AE%E5%88%86%E4%B8%AD%E5%80%BC%E5%AE%9A%E7%90%86%E4%B8%8E%E5%AF%BC%E6%95%B0%E7%9A%84%E5%BA%94%E7%94%A8/" class="next" rel="next" title="微分中值定理与导数的应用">微分中值定理与导数的应用<i class="fas fa-angle-right fa-fw"></i></a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.69.2">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.6"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2020</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">yusheng</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><link rel="stylesheet" href="/lib/katex/katex.min.css"><link rel="stylesheet" href="/lib/katex/copy-tex.min.css"><script type="text/javascript">
+    window.config = {"code":{"copyTitle":"Copy to clipboard","maxShownLines":100},"comment":{},"headerMode":{"desktop":"fixed","mobile":"auto"},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false}};
+</script><script type="text/javascript" src="https://polyfill.io/v3/polyfill.min.js?features=html5shiv%2CElement.prototype.closest%2CrequestAnimationFrame%2CCustomEvent%2CPromise%2CObject.entries%2CObject.assign%2CObject.values%2Cfetch%2CElement.prototype.after%2CArray.prototype.fill%2CIntersectionObserver%2CArray.from%2CArray.prototype.find%2CMath.sign"></script><script type="text/javascript" src="/lib/smooth-scroll/smooth-scroll.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/object-fit-images/ofi.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="/lib/sharer/sharer.min.js"></script><script type="text/javascript" src="/lib/katex/katex.min.js"></script><script type="text/javascript" src="/lib/katex/auto-render.min.js"></script><script type="text/javascript" src="/lib/katex/copy-tex.min.js"></script><script type="text/javascript" src="/lib/katex/mhchem.min.js"></script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>

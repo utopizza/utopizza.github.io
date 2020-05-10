@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>训练误差与测试误差 - Utopizza</title>
+        <meta name="Description" content="About LoveIt Theme"><meta property="og:title" content="训练误差与测试误差" />
+<meta property="og:description" content="今天和队友讨论好准备做交叉验证的时候，我们竟然都搞错了对交叉验证的理解，回过头来看书的时候发现是竟然因为搞错了一些最基本的但十分重要的知识，特此记录一下。
+一、交叉验证（cross validation）
+机器学习中的交叉验证是一种常用的模型选择的方法。交叉验证的基本思想是重复地使用数据，把给定的数据集进行切分，分成训练集和测试集，在此基础上反复地进行训练、测试，并选择最好的模型。
+1、简单交叉验证
+随机地将已给数据集分为两部分，约 70% 作为训练集，剩下 30% 作为测试集。然后用训练集在不同的参数条件下训练模型，得到各个参数不同的模型，接着在测试集上评价模型的测试误差，选出测试集误差最小的模型。 这种方法只把训练集和测试集做一次划分。
+2、$S$ 折交叉验证
+目前应用最多的是 $S$ 折交叉验证，首先随机地将已给数据切分成 $S$ 个互不相交的大小相同的子集，然后利用其中任意 $S-1$ 个子集作为训练集训练得到一个模型，把剩下的那一个子集作为测试集测试模型得到一个测试误差。如此重复 $S$ 次，直到每一个子集都作为一次测试集，一共得出 $S$ 个不同的模型，和 $S$ 个对应的测试误差。最后，选择出这 $S$ 个测试误差中最小的那个模型，作为最终确定的最优模型。
+到这里，我就不明白，为什么这样做可以避免过拟合？选择测试误差最小的那个模型，不就又过拟合了吗？后来查了一下书，其实是我把训练误差和测试误差搞混了，而且过拟合的定义没理解好。
+二、过拟合（over-fitting）
+所谓过拟合，是指在学习时选择的模型包含参数过多，以致于出现这一模型对已知数据预测得很好，但是对未知数据预测很差的现象。也就是说，在训练集上训练误差已经非常小，但在测试集上测试误差却非常大。
+出现这个问题往往是因为在设定训练的目标函数时，只片面地追求对训练数据的预测能力。例如，假设现在有一个任务是用训练集（点集）去拟合一个多项式函数，然后用这个多项式函数去预测一些未知的样本。如果在设定训练的目标函数时，只考虑多项式函数与训练样本总误差的最小化，那么在学习的时候为了找到这个最小误差，模型会不断地提高自己的多项式次数（也即模型的复杂度），尝试用三次，四次，或者更高次的多项式，去逼近所有训练样本，达到最小误差。极端的情况下有可能找到一个极高次的多项式函数，使得所有样本都落在这个函数上，训练样本总误差达到了 $0$。但实际上，数据集中往往包含各种噪音和离群点，而模型却无法分辨，在计算总误差的时候依然包含了这些噪音，为了减小这些误差不得不提高多项式函数的次数。如下图所示，理想的模型其实是一个二次多项式函数，但是由于只考虑了使总误差最小，学习的结果是得到一个高次的多项式函数，那么如果用这个高次多项式来预测本应该是二次多项式的未知数据，那么预测效果将会非常糟糕。
+可以认为，在训练误差已经比较小的情况下（模型训练完成后），测试误差是对过拟合程度的一种衡量。如果模型在测试集上的测试误差越小，说明过拟合程度越小，如果测试误差越大，则说明过拟合程度比较严重了。所以上面交叉验证中，选择测试误差最小的模型，实际上就是过拟合程度最小的模型。
+三、训练误差（training error）与测试误差（test error）
+统计学习的目的是使学习到的模型不仅对已知数据（训练集），而且对未知数据（测试集）都有很好的预测能力。当损失函数给定时，基于损失函数的模型的训练误差和预测误差就成为了模型训练效果评估的标准。
+假设给定训练集为 $Tr={ (x_1,y_1),(x_2,y_2),\cdots,(x_N,y_N) }$，测试集为 $Te={ (x_1,y_1),(x_2,y_2),\cdots,(x_M,y_M) }$，其中 $x_i \in R^n$，$y_i \in R$，选定的损失函数是 $L(Y,f(X))$，学习到的模型是 $Y=\hat{f}(X)$，则输入某个样本到模型得到的预测值为 $\hat{y}_i=\hat{f}(x_i)$，则
+训练误差是模型 $Y=\hat{f}(X)$ 在训练集 $Tr$ 上的平均损失：
+$$R_{emp}(\hat{f})=\frac{1}{N}\sum_{i=1}^{N}L(y_i,\hat{y}_i)$$
+测试误差是模型 $Y=\hat{f}(X)$ 在测试集 $Te$ 上的平均损失：
+$$e_{test}=\frac{1}{M}\sum_{i=1}^{M}L(y_i,\hat{y}_i)$$
+根据前人的经验，训练误差和测试误差与模型有着如下图的关系：当模型的复杂度增大时，训练误差会逐渐减小并趋向于 0，而测试误差会先减小，达到最小值后又增大。
+当选择的模型复杂度过大时，过拟合现象就会发生（训练误差很小，但测试误差很大），这样在训练模型时，就需要防止过拟合，进行最优的模型选择，即选择复杂度适当的模型，目的是找到具有最优泛化能力（最小测试误差）的模型，因为我们训练模型的目的不是让模型完美逼近训练集，而是让模型完美预测未知数据。
+而常用的模型选择方式有两种，一种是上面的交叉验证法，取预测效果最好的众多个模型中的一个，另一个方法就是在目标函数中加入正则项，惩罚模型在学习过程中增大的复杂度。例如在上面所举的例子中，可以在目标函数中加入关于模型复杂度的函数，当模型复杂度越高，这个函数的值就越大。那么这样一来，模型在学习的时候，最小化的目标就不仅仅是训练样本的总误差了，而是训练样本总误差与模型复杂度之和。如此这般就可以因避免片面追求误差最小而提高了复杂度。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://utopizza.github.io/2017-11-20-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E8%AE%AD%E7%BB%83%E8%AF%AF%E5%B7%AE%E4%B8%8E%E6%B5%8B%E8%AF%95%E8%AF%AF%E5%B7%AE/" />
+<meta property="og:image" content="https://utopizza.github.io/logo.png"/>
+<meta property="article:published_time" content="2017-11-20T13:57:00+00:00" />
+<meta property="article:modified_time" content="2017-11-20T13:57:00+00:00" />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://utopizza.github.io/logo.png"/>
+
+<meta name="twitter:title" content="训练误差与测试误差"/>
+<meta name="twitter:description" content="今天和队友讨论好准备做交叉验证的时候，我们竟然都搞错了对交叉验证的理解，回过头来看书的时候发现是竟然因为搞错了一些最基本的但十分重要的知识，特此记录一下。
+一、交叉验证（cross validation）
+机器学习中的交叉验证是一种常用的模型选择的方法。交叉验证的基本思想是重复地使用数据，把给定的数据集进行切分，分成训练集和测试集，在此基础上反复地进行训练、测试，并选择最好的模型。
+1、简单交叉验证
+随机地将已给数据集分为两部分，约 70% 作为训练集，剩下 30% 作为测试集。然后用训练集在不同的参数条件下训练模型，得到各个参数不同的模型，接着在测试集上评价模型的测试误差，选出测试集误差最小的模型。 这种方法只把训练集和测试集做一次划分。
+2、$S$ 折交叉验证
+目前应用最多的是 $S$ 折交叉验证，首先随机地将已给数据切分成 $S$ 个互不相交的大小相同的子集，然后利用其中任意 $S-1$ 个子集作为训练集训练得到一个模型，把剩下的那一个子集作为测试集测试模型得到一个测试误差。如此重复 $S$ 次，直到每一个子集都作为一次测试集，一共得出 $S$ 个不同的模型，和 $S$ 个对应的测试误差。最后，选择出这 $S$ 个测试误差中最小的那个模型，作为最终确定的最优模型。
+到这里，我就不明白，为什么这样做可以避免过拟合？选择测试误差最小的那个模型，不就又过拟合了吗？后来查了一下书，其实是我把训练误差和测试误差搞混了，而且过拟合的定义没理解好。
+二、过拟合（over-fitting）
+所谓过拟合，是指在学习时选择的模型包含参数过多，以致于出现这一模型对已知数据预测得很好，但是对未知数据预测很差的现象。也就是说，在训练集上训练误差已经非常小，但在测试集上测试误差却非常大。
+出现这个问题往往是因为在设定训练的目标函数时，只片面地追求对训练数据的预测能力。例如，假设现在有一个任务是用训练集（点集）去拟合一个多项式函数，然后用这个多项式函数去预测一些未知的样本。如果在设定训练的目标函数时，只考虑多项式函数与训练样本总误差的最小化，那么在学习的时候为了找到这个最小误差，模型会不断地提高自己的多项式次数（也即模型的复杂度），尝试用三次，四次，或者更高次的多项式，去逼近所有训练样本，达到最小误差。极端的情况下有可能找到一个极高次的多项式函数，使得所有样本都落在这个函数上，训练样本总误差达到了 $0$。但实际上，数据集中往往包含各种噪音和离群点，而模型却无法分辨，在计算总误差的时候依然包含了这些噪音，为了减小这些误差不得不提高多项式函数的次数。如下图所示，理想的模型其实是一个二次多项式函数，但是由于只考虑了使总误差最小，学习的结果是得到一个高次的多项式函数，那么如果用这个高次多项式来预测本应该是二次多项式的未知数据，那么预测效果将会非常糟糕。
+可以认为，在训练误差已经比较小的情况下（模型训练完成后），测试误差是对过拟合程度的一种衡量。如果模型在测试集上的测试误差越小，说明过拟合程度越小，如果测试误差越大，则说明过拟合程度比较严重了。所以上面交叉验证中，选择测试误差最小的模型，实际上就是过拟合程度最小的模型。
+三、训练误差（training error）与测试误差（test error）
+统计学习的目的是使学习到的模型不仅对已知数据（训练集），而且对未知数据（测试集）都有很好的预测能力。当损失函数给定时，基于损失函数的模型的训练误差和预测误差就成为了模型训练效果评估的标准。
+假设给定训练集为 $Tr={ (x_1,y_1),(x_2,y_2),\cdots,(x_N,y_N) }$，测试集为 $Te={ (x_1,y_1),(x_2,y_2),\cdots,(x_M,y_M) }$，其中 $x_i \in R^n$，$y_i \in R$，选定的损失函数是 $L(Y,f(X))$，学习到的模型是 $Y=\hat{f}(X)$，则输入某个样本到模型得到的预测值为 $\hat{y}_i=\hat{f}(x_i)$，则
+训练误差是模型 $Y=\hat{f}(X)$ 在训练集 $Tr$ 上的平均损失：
+$$R_{emp}(\hat{f})=\frac{1}{N}\sum_{i=1}^{N}L(y_i,\hat{y}_i)$$
+测试误差是模型 $Y=\hat{f}(X)$ 在测试集 $Te$ 上的平均损失：
+$$e_{test}=\frac{1}{M}\sum_{i=1}^{M}L(y_i,\hat{y}_i)$$
+根据前人的经验，训练误差和测试误差与模型有着如下图的关系：当模型的复杂度增大时，训练误差会逐渐减小并趋向于 0，而测试误差会先减小，达到最小值后又增大。
+当选择的模型复杂度过大时，过拟合现象就会发生（训练误差很小，但测试误差很大），这样在训练模型时，就需要防止过拟合，进行最优的模型选择，即选择复杂度适当的模型，目的是找到具有最优泛化能力（最小测试误差）的模型，因为我们训练模型的目的不是让模型完美逼近训练集，而是让模型完美预测未知数据。
+而常用的模型选择方式有两种，一种是上面的交叉验证法，取预测效果最好的众多个模型中的一个，另一个方法就是在目标函数中加入正则项，惩罚模型在学习过程中增大的复杂度。例如在上面所举的例子中，可以在目标函数中加入关于模型复杂度的函数，当模型复杂度越高，这个函数的值就越大。那么这样一来，模型在学习的时候，最小化的目标就不仅仅是训练样本的总误差了，而是训练样本总误差与模型复杂度之和。如此这般就可以因避免片面追求误差最小而提高了复杂度。"/>
+<meta name="application-name" content="Utopizza">
+<meta name="apple-mobile-web-app-title" content="Utopizza"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://utopizza.github.io/2017-11-20-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E8%AE%AD%E7%BB%83%E8%AF%AF%E5%B7%AE%E4%B8%8E%E6%B5%8B%E8%AF%95%E8%AF%AF%E5%B7%AE/" /><link rel="prev" href="https://utopizza.github.io/2017-11-18-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-cart%E7%AE%97%E6%B3%95/" /><link rel="next" href="https://utopizza.github.io/2017-11-22-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-adaboost%E7%AE%97%E6%B3%95/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "训练误差与测试误差",
+        "inLanguage": "en",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https:\/\/utopizza.github.io\/2017-11-20-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E8%AE%AD%E7%BB%83%E8%AF%AF%E5%B7%AE%E4%B8%8E%E6%B5%8B%E8%AF%95%E8%AF%AF%E5%B7%AE\/"
+        },"image": {
+                "@type": "ImageObject",
+                "url": "https:\/\/utopizza.github.io\/cover.png",
+                "width":  800 ,
+                "height":  600 
+            },"genre": "posts","wordcount":  69 ,
+        "url": "https:\/\/utopizza.github.io\/2017-11-20-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E8%AE%AD%E7%BB%83%E8%AF%AF%E5%B7%AE%E4%B8%8E%E6%B5%8B%E8%AF%95%E8%AF%AF%E5%B7%AE\/","datePublished": "2017-11-20T13:57:00+00:00","dateModified": "2017-11-20T13:57:00+00:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+                "@type": "Organization",
+                "name": "",
+                "logo": {
+                "@type": "ImageObject",
+                "url": "https:\/\/utopizza.github.io\/logo.png",
+                "width":  127 ,
+                "height":  40 
+                }
+            },"author": {
+                "@type": "Person",
+                "name": "yusheng"
+            },"description": ""
+    }
+    </script></head>
+    <body><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="Utopizza"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>Utopizza</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> Posts </a><a class="menu-item" href="/categories/"> Categories </a><a class="menu-item" href="https://github.com/utopizza" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i>  </a><span class="menu-item delimiter"></span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="Utopizza"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>Utopizza</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><a class="menu-item" href="/posts/" title="">Posts</a><a class="menu-item" href="/categories/" title="">Categories</a><a class="menu-item" href="https://github.com/utopizza" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i></a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">训练误差与测试误差</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;
+                    <span class="post-category">included in<a href="/categories/machinelearning/">
+                                <i class="far fa-folder fa-fw"></i>MachineLearning
+                            </a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i><time datetime=2017-11-20>2017-11-20</time>&nbsp;
+                <i class="fas fa-pencil-alt fa-fw"></i>about 69 words&nbsp;
+                <i class="far fa-clock fa-fw"></i>1 min&nbsp;</div>
+        </div><div class="details toc" id="toc-static">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents"></nav></div>
+            </div><div class="content" id="content"><p>今天和队友讨论好准备做交叉验证的时候，我们竟然都搞错了对交叉验证的理解，回过头来看书的时候发现是竟然因为搞错了一些最基本的但十分重要的知识，特此记录一下。</p>
+<p>一、交叉验证（cross validation）</p>
+<p>机器学习中的交叉验证是一种常用的模型选择的方法。交叉验证的基本思想是重复地使用数据，把给定的数据集进行切分，分成训练集和测试集，在此基础上反复地进行训练、测试，并选择最好的模型。</p>
+<p>1、简单交叉验证</p>
+<p>随机地将已给数据集分为两部分，约 70% 作为训练集，剩下 30% 作为测试集。然后用训练集在不同的参数条件下训练模型，得到各个参数不同的模型，接着在测试集上评价模型的测试误差，选出测试集误差最小的模型。 这种方法只把训练集和测试集做一次划分。</p>
+<p>2、$S$ 折交叉验证</p>
+<p>目前应用最多的是 $S$ 折交叉验证，首先随机地将已给数据切分成 $S$ 个互不相交的大小相同的子集，然后利用其中任意 $S-1$ 个子集作为训练集训练得到一个模型，把剩下的那一个子集作为测试集测试模型得到一个测试误差。如此重复 $S$ 次，直到每一个子集都作为一次测试集，一共得出 $S$ 个不同的模型，和 $S$ 个对应的测试误差。最后，选择出这 $S$ 个测试误差中最小的那个模型，作为最终确定的最优模型。</p>
+<p>到这里，我就不明白，为什么这样做可以避免过拟合？选择测试误差最小的那个模型，不就又过拟合了吗？后来查了一下书，其实是我把训练误差和测试误差搞混了，而且过拟合的定义没理解好。</p>
+<p>二、过拟合（over-fitting）</p>
+<p>所谓过拟合，是指在学习时选择的模型包含参数过多，以致于出现这一模型对已知数据预测得很好，但是对未知数据预测很差的现象。也就是说，在训练集上训练误差已经非常小，但在测试集上测试误差却非常大。</p>
+<p>出现这个问题往往是因为在设定训练的目标函数时，只片面地追求对训练数据的预测能力。例如，假设现在有一个任务是用训练集（点集）去拟合一个多项式函数，然后用这个多项式函数去预测一些未知的样本。如果在设定训练的目标函数时，只考虑多项式函数与训练样本总误差的最小化，那么在学习的时候为了找到这个最小误差，模型会不断地提高自己的多项式次数（也即模型的复杂度），尝试用三次，四次，或者更高次的多项式，去逼近所有训练样本，达到最小误差。极端的情况下有可能找到一个极高次的多项式函数，使得所有样本都落在这个函数上，训练样本总误差达到了 $0$。但实际上，数据集中往往包含各种噪音和离群点，而模型却无法分辨，在计算总误差的时候依然包含了这些噪音，为了减小这些误差不得不提高多项式函数的次数。如下图所示，理想的模型其实是一个二次多项式函数，但是由于只考虑了使总误差最小，学习的结果是得到一个高次的多项式函数，那么如果用这个高次多项式来预测本应该是二次多项式的未知数据，那么预测效果将会非常糟糕。</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="/2017-11-20-%e6%9c%ba%e5%99%a8%e5%ad%a6%e4%b9%a0-%e8%ae%ad%e7%bb%83%e8%af%af%e5%b7%ae%e4%b8%8e%e6%b5%8b%e8%af%95%e8%af%af%e5%b7%ae/%e8%bf%87%e6%8b%9f%e5%90%88.jpg"
+        data-srcset="/2017-11-20-%e6%9c%ba%e5%99%a8%e5%ad%a6%e4%b9%a0-%e8%ae%ad%e7%bb%83%e8%af%af%e5%b7%ae%e4%b8%8e%e6%b5%8b%e8%af%95%e8%af%af%e5%b7%ae/%e8%bf%87%e6%8b%9f%e5%90%88.jpg, /2017-11-20-%e6%9c%ba%e5%99%a8%e5%ad%a6%e4%b9%a0-%e8%ae%ad%e7%bb%83%e8%af%af%e5%b7%ae%e4%b8%8e%e6%b5%8b%e8%af%95%e8%af%af%e5%b7%ae/%e8%bf%87%e6%8b%9f%e5%90%88.jpg 1.5x, /2017-11-20-%e6%9c%ba%e5%99%a8%e5%ad%a6%e4%b9%a0-%e8%ae%ad%e7%bb%83%e8%af%af%e5%b7%ae%e4%b8%8e%e6%b5%8b%e8%af%95%e8%af%af%e5%b7%ae/%e8%bf%87%e6%8b%9f%e5%90%88.jpg 2x"
+        data-sizes="auto"
+        alt="/2017-11-20-机器学习-训练误差与测试误差/过拟合.jpg"
+        title="/2017-11-20-机器学习-训练误差与测试误差/过拟合.jpg" /></p>
+<p>可以认为，在训练误差已经比较小的情况下（模型训练完成后），测试误差是对过拟合程度的一种衡量。如果模型在测试集上的测试误差越小，说明过拟合程度越小，如果测试误差越大，则说明过拟合程度比较严重了。所以上面交叉验证中，选择测试误差最小的模型，实际上就是过拟合程度最小的模型。</p>
+<p>三、训练误差（training error）与测试误差（test error）</p>
+<p>统计学习的目的是使学习到的模型不仅对已知数据（训练集），而且对未知数据（测试集）都有很好的预测能力。当损失函数给定时，基于损失函数的模型的训练误差和预测误差就成为了模型训练效果评估的标准。</p>
+<p>假设给定训练集为 $Tr={ (x_1,y_1),(x_2,y_2),\cdots,(x_N,y_N) }$，测试集为 $Te={ (x_1,y_1),(x_2,y_2),\cdots,(x_M,y_M) }$，其中 $x_i \in R^n$，$y_i \in R$，选定的损失函数是 $L(Y,f(X))$，学习到的模型是 $Y=\hat{f}(X)$，则输入某个样本到模型得到的预测值为 $\hat{y}_i=\hat{f}(x_i)$，则</p>
+<p>训练误差是模型 $Y=\hat{f}(X)$ 在训练集 $Tr$ 上的平均损失：</p>
+<p>$$R_{emp}(\hat{f})=\frac{1}{N}\sum_{i=1}^{N}L(y_i,\hat{y}_i)$$</p>
+<p>测试误差是模型 $Y=\hat{f}(X)$ 在测试集 $Te$ 上的平均损失：</p>
+<p>$$e_{test}=\frac{1}{M}\sum_{i=1}^{M}L(y_i,\hat{y}_i)$$</p>
+<p>根据前人的经验，训练误差和测试误差与模型有着如下图的关系：当模型的复杂度增大时，训练误差会逐渐减小并趋向于 0，而测试误差会先减小，达到最小值后又增大。</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="/2017-11-20-%e6%9c%ba%e5%99%a8%e5%ad%a6%e4%b9%a0-%e8%ae%ad%e7%bb%83%e8%af%af%e5%b7%ae%e4%b8%8e%e6%b5%8b%e8%af%95%e8%af%af%e5%b7%ae/%e6%a8%a1%e5%9e%8b%e5%a4%8d%e6%9d%82%e5%ba%a6.png"
+        data-srcset="/2017-11-20-%e6%9c%ba%e5%99%a8%e5%ad%a6%e4%b9%a0-%e8%ae%ad%e7%bb%83%e8%af%af%e5%b7%ae%e4%b8%8e%e6%b5%8b%e8%af%95%e8%af%af%e5%b7%ae/%e6%a8%a1%e5%9e%8b%e5%a4%8d%e6%9d%82%e5%ba%a6.png, /2017-11-20-%e6%9c%ba%e5%99%a8%e5%ad%a6%e4%b9%a0-%e8%ae%ad%e7%bb%83%e8%af%af%e5%b7%ae%e4%b8%8e%e6%b5%8b%e8%af%95%e8%af%af%e5%b7%ae/%e6%a8%a1%e5%9e%8b%e5%a4%8d%e6%9d%82%e5%ba%a6.png 1.5x, /2017-11-20-%e6%9c%ba%e5%99%a8%e5%ad%a6%e4%b9%a0-%e8%ae%ad%e7%bb%83%e8%af%af%e5%b7%ae%e4%b8%8e%e6%b5%8b%e8%af%95%e8%af%af%e5%b7%ae/%e6%a8%a1%e5%9e%8b%e5%a4%8d%e6%9d%82%e5%ba%a6.png 2x"
+        data-sizes="auto"
+        alt="/2017-11-20-机器学习-训练误差与测试误差/模型复杂度.png"
+        title="/2017-11-20-机器学习-训练误差与测试误差/模型复杂度.png" /></p>
+<p>当选择的模型复杂度过大时，过拟合现象就会发生（训练误差很小，但测试误差很大），这样在训练模型时，就需要防止过拟合，进行最优的模型选择，即选择复杂度适当的模型，目的是找到具有最优泛化能力（最小测试误差）的模型，因为我们训练模型的目的不是让模型完美逼近训练集，而是让模型完美预测未知数据。</p>
+<p>而常用的模型选择方式有两种，一种是上面的交叉验证法，取预测效果最好的众多个模型中的一个，另一个方法就是在目标函数中加入正则项，惩罚模型在学习过程中增大的复杂度。例如在上面所举的例子中，可以在目标函数中加入关于模型复杂度的函数，当模型复杂度越高，这个函数的值就越大。那么这样一来，模型在学习的时候，最小化的目标就不仅仅是训练样本的总误差了，而是训练样本总误差与模型复杂度之和。如此这般就可以因避免片面追求误差最小而提高了复杂度。</p>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>The article was updated on 2017-11-20</span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span>
+                            <a class="link-to-markdown" href="/2017-11-20-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E8%AE%AD%E7%BB%83%E8%AF%AF%E5%B7%AE%E4%B8%8E%E6%B5%8B%E8%AF%95%E8%AF%AF%E5%B7%AE/index.md" target="_blank">Read Markdown</a>
+                        </span></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="https://utopizza.github.io/2017-11-20-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E8%AE%AD%E7%BB%83%E8%AF%AF%E5%B7%AE%E4%B8%8E%E6%B5%8B%E8%AF%95%E8%AF%AF%E5%B7%AE/" data-title="训练误差与测试误差"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://utopizza.github.io/2017-11-20-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E8%AE%AD%E7%BB%83%E8%AF%AF%E5%B7%AE%E4%B8%8E%E6%B5%8B%E8%AF%95%E8%AF%AF%E5%B7%AE/"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="Share on WhatsApp" data-sharer="whatsapp" data-url="https://utopizza.github.io/2017-11-20-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E8%AE%AD%E7%BB%83%E8%AF%AF%E5%B7%AE%E4%B8%8E%E6%B5%8B%E8%AF%95%E8%AF%AF%E5%B7%AE/" data-title="训练误差与测试误差" data-web><i class="fab fa-whatsapp fa-fw"></i></a><a href="javascript:void(0);" title="Share on Line" data-sharer="line" data-url="https://utopizza.github.io/2017-11-20-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E8%AE%AD%E7%BB%83%E8%AF%AF%E5%B7%AE%E4%B8%8E%E6%B5%8B%E8%AF%95%E8%AF%AF%E5%B7%AE/" data-title="训练误差与测试误差"><i class="fab fa-line fa-fw"></i></a><a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="https://utopizza.github.io/2017-11-20-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E8%AE%AD%E7%BB%83%E8%AF%AF%E5%B7%AE%E4%B8%8E%E6%B5%8B%E8%AF%95%E8%AF%AF%E5%B7%AE/" data-title="训练误差与测试误差"><i class="fab fa-weibo fa-fw"></i></a><a href="javascript:void(0);" title="Share on Myspace" data-sharer="myspace" data-url="https://utopizza.github.io/2017-11-20-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E8%AE%AD%E7%BB%83%E8%AF%AF%E5%B7%AE%E4%B8%8E%E6%B5%8B%E8%AF%95%E8%AF%AF%E5%B7%AE/" data-title="训练误差与测试误差" data-description=""><i data-svg-src="/lib/simple-icons/icons/myspace.min.svg"></i></a><a href="javascript:void(0);" title="Share on Blogger" data-sharer="blogger" data-url="https://utopizza.github.io/2017-11-20-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E8%AE%AD%E7%BB%83%E8%AF%AF%E5%B7%AE%E4%B8%8E%E6%B5%8B%E8%AF%95%E8%AF%AF%E5%B7%AE/" data-title="训练误差与测试误差" data-description=""><i class="fab fa-blogger fa-fw"></i></a><a href="javascript:void(0);" title="Share on Evernote" data-sharer="evernote" data-url="https://utopizza.github.io/2017-11-20-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E8%AE%AD%E7%BB%83%E8%AF%AF%E5%B7%AE%E4%B8%8E%E6%B5%8B%E8%AF%95%E8%AF%AF%E5%B7%AE/" data-title="训练误差与测试误差"><i class="fab fa-evernote fa-fw"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/2017-11-18-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-cart%E7%AE%97%E6%B3%95/" class="prev" rel="prev" title="CART算法"><i class="fas fa-angle-left fa-fw"></i>CART算法</a>
+            <a href="/2017-11-22-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-adaboost%E7%AE%97%E6%B3%95/" class="next" rel="next" title="Adaboost算法">Adaboost算法<i class="fas fa-angle-right fa-fw"></i></a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.69.2">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.6"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2020</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">yusheng</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><link rel="stylesheet" href="/lib/katex/katex.min.css"><link rel="stylesheet" href="/lib/katex/copy-tex.min.css"><script type="text/javascript">
+    window.config = {"code":{"copyTitle":"Copy to clipboard","maxShownLines":100},"comment":{},"headerMode":{"desktop":"fixed","mobile":"auto"},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false}};
+</script><script type="text/javascript" src="https://polyfill.io/v3/polyfill.min.js?features=html5shiv%2CElement.prototype.closest%2CrequestAnimationFrame%2CCustomEvent%2CPromise%2CObject.entries%2CObject.assign%2CObject.values%2Cfetch%2CElement.prototype.after%2CArray.prototype.fill%2CIntersectionObserver%2CArray.from%2CArray.prototype.find%2CMath.sign"></script><script type="text/javascript" src="/lib/smooth-scroll/smooth-scroll.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/object-fit-images/ofi.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="/lib/sharer/sharer.min.js"></script><script type="text/javascript" src="/lib/katex/katex.min.js"></script><script type="text/javascript" src="/lib/katex/auto-render.min.js"></script><script type="text/javascript" src="/lib/katex/copy-tex.min.js"></script><script type="text/javascript" src="/lib/katex/mhchem.min.js"></script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>

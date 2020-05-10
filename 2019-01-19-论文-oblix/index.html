@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>Oblix - Utopizza</title>
+        <meta name="Description" content="About LoveIt Theme"><meta property="og:title" content="Oblix" />
+<meta property="og:description" content="一、背景及问题
+索引（Index）是很多系统和应用的基础构件。最近，大量的研究专注于如何保护索引这样的敏感数据，例如，如何在对索引进行加密的同时允许客户端在索引上进行查询。这些研究提出的方案一般是这样的：当用户通过客户端发起查询请求时，客户端会先为用户输入的关键词（keyword）生成查询令牌(search token)，然后将令牌发送给服务端而不是直接发送用户的关键词，从而向服务端屏蔽用户输入的关键词（假设攻击者控制了服务端的内存，但不能控制服务端的处理器）。然后，服务器通过令牌去在已经加密的索引上执行检索，最后把匹配成功的加密数据返回给客户端。客户端对数据进行解密，显示给用户。
+虽然加密索引的研究取得了重大进步，但是很多方案都有一个很严重的漏洞，就是泄漏了存取模式（access patterns）：关键词与数据的匹配过程。虽然关键词和索引都是已经加密的，但是它们的匹配过程是在服务端的内存进行的，而服务端的内存是被攻击者掌控的，因此攻击者可以对匹配的过程进行分析，从而从加密的索引中恢复敏感信息。除了存取模式的遗漏，还有如果攻击者可以获得匹配成功的文件数（result size），也可以恢复出敏感信息。
+一种很直接的隐藏存取模式的方法就是使用 ORAM（Oblivious RAM），然而这个方案的成本十分昂贵，因此很少方案采用这个方法。针对这个问题，文章提出了一个称为 Oblix (OBLivious IndeX) 的索引方案，这个方案既不会泄漏任何的存取模式，也不会泄漏匹配文件数。进一步，Oblix 允许索引进行插入和删除、支持多用户。
+二、解决方案
+文章提出的 Oblix 主要针对以下四种问题进行解决：
+1、高复杂度：对于 ORAM 系统，客户端维护一个位置映射数据结构（position map），该数据结构记录了索引与数据库中某个数据的位置的对应关系。由于索引的大小与数据库的数据量成线性关系，因此客户端不能直接存储整个 map。一种标准的方案是使用树形结构将一个数据库分解成多级数据库（类似于多级索引），以减小客户端需要的存储空间。但是如此一来就会需要重复多次查询来确定最终的位置，显然树搜索的时间复杂度是 O(logN)，这样的复杂度会带来查询延迟。文章使用的解决方案是使用飞地技术（enclave），把整个 ORAM 的客户端放进飞地中，这样让客户端和服务端就在同一台机器上进行，不需要通过网络，从而减小网络延迟。
+2、飞地可能会被攻击者利用：有研究发现飞地即使物理上隔离了外界的控制，但是也可能被攻击者通过分析它的物理页级的存取模式（page-level access pattern）来恢复被加密的数据。因为飞地自身的内存空间很小，当飞地处理的数据量较大时，它就会使用二级存储，使用计算机中的内存。而计算机中的内存是会被攻击者控制的，因此攻击者可以通过观察飞地如果使用计算机主存来进行攻击。文章的解决方案：首先，提出一个称为 ODS (oblivious data structure) 的数据结构来取代 position map，这个数据结构保证不可被攻击者利用。其次，提出一个称为 doubly oblivious 的方案，该方案同时保证对服务端的存取、对客户端自己的内存空间的存取模式都是不可被攻击者利用的（oblivious）。
+3、查询结果数的隐藏：前面提到，查询结果数可能也会被攻击者用，因此需要对其进行隐藏。一种最简单的做法是“worst-case upper bound”，但是这种做法代价太昂贵。文章提出的解决方案：对查询结果进行打分排序，只返回得分最高的前 r 条数据。
+4、请求列表、查询效率：客户端可以一次向服务端发送多个请求，也就请求列表。特别地，其中包含插入和删除得操作时，执行效率就尤其重要。文章解决方案：提出一个称为 DOSM (doubly-oblivious sorted multimap) 的数据结构，支持高效的范围查询、插入、删除等操作。它实际上是一个树形的数据结构，插入和删除的复杂度是 O(logN) 而不是 O(n)。另外再结合特定的查询算法来保证范围查询的高效性。
+三、总结
+文章主要针对存取模式的漏洞来进行修复。攻击虽然无法直接攻击飞地，无法直接攻击加密数据，但是可以通过应用对主存的存取模式进行分析从而恢复加密数据。这种存取模式在文章中是指例如索引这样的负责映射数据的数据结构。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://utopizza.github.io/2019-01-19-%E8%AE%BA%E6%96%87-oblix/" />
+<meta property="og:image" content="https://utopizza.github.io/logo.png"/>
+<meta property="article:published_time" content="2019-01-19T00:00:00+00:00" />
+<meta property="article:modified_time" content="2019-01-19T00:00:00+00:00" />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://utopizza.github.io/logo.png"/>
+
+<meta name="twitter:title" content="Oblix"/>
+<meta name="twitter:description" content="一、背景及问题
+索引（Index）是很多系统和应用的基础构件。最近，大量的研究专注于如何保护索引这样的敏感数据，例如，如何在对索引进行加密的同时允许客户端在索引上进行查询。这些研究提出的方案一般是这样的：当用户通过客户端发起查询请求时，客户端会先为用户输入的关键词（keyword）生成查询令牌(search token)，然后将令牌发送给服务端而不是直接发送用户的关键词，从而向服务端屏蔽用户输入的关键词（假设攻击者控制了服务端的内存，但不能控制服务端的处理器）。然后，服务器通过令牌去在已经加密的索引上执行检索，最后把匹配成功的加密数据返回给客户端。客户端对数据进行解密，显示给用户。
+虽然加密索引的研究取得了重大进步，但是很多方案都有一个很严重的漏洞，就是泄漏了存取模式（access patterns）：关键词与数据的匹配过程。虽然关键词和索引都是已经加密的，但是它们的匹配过程是在服务端的内存进行的，而服务端的内存是被攻击者掌控的，因此攻击者可以对匹配的过程进行分析，从而从加密的索引中恢复敏感信息。除了存取模式的遗漏，还有如果攻击者可以获得匹配成功的文件数（result size），也可以恢复出敏感信息。
+一种很直接的隐藏存取模式的方法就是使用 ORAM（Oblivious RAM），然而这个方案的成本十分昂贵，因此很少方案采用这个方法。针对这个问题，文章提出了一个称为 Oblix (OBLivious IndeX) 的索引方案，这个方案既不会泄漏任何的存取模式，也不会泄漏匹配文件数。进一步，Oblix 允许索引进行插入和删除、支持多用户。
+二、解决方案
+文章提出的 Oblix 主要针对以下四种问题进行解决：
+1、高复杂度：对于 ORAM 系统，客户端维护一个位置映射数据结构（position map），该数据结构记录了索引与数据库中某个数据的位置的对应关系。由于索引的大小与数据库的数据量成线性关系，因此客户端不能直接存储整个 map。一种标准的方案是使用树形结构将一个数据库分解成多级数据库（类似于多级索引），以减小客户端需要的存储空间。但是如此一来就会需要重复多次查询来确定最终的位置，显然树搜索的时间复杂度是 O(logN)，这样的复杂度会带来查询延迟。文章使用的解决方案是使用飞地技术（enclave），把整个 ORAM 的客户端放进飞地中，这样让客户端和服务端就在同一台机器上进行，不需要通过网络，从而减小网络延迟。
+2、飞地可能会被攻击者利用：有研究发现飞地即使物理上隔离了外界的控制，但是也可能被攻击者通过分析它的物理页级的存取模式（page-level access pattern）来恢复被加密的数据。因为飞地自身的内存空间很小，当飞地处理的数据量较大时，它就会使用二级存储，使用计算机中的内存。而计算机中的内存是会被攻击者控制的，因此攻击者可以通过观察飞地如果使用计算机主存来进行攻击。文章的解决方案：首先，提出一个称为 ODS (oblivious data structure) 的数据结构来取代 position map，这个数据结构保证不可被攻击者利用。其次，提出一个称为 doubly oblivious 的方案，该方案同时保证对服务端的存取、对客户端自己的内存空间的存取模式都是不可被攻击者利用的（oblivious）。
+3、查询结果数的隐藏：前面提到，查询结果数可能也会被攻击者用，因此需要对其进行隐藏。一种最简单的做法是“worst-case upper bound”，但是这种做法代价太昂贵。文章提出的解决方案：对查询结果进行打分排序，只返回得分最高的前 r 条数据。
+4、请求列表、查询效率：客户端可以一次向服务端发送多个请求，也就请求列表。特别地，其中包含插入和删除得操作时，执行效率就尤其重要。文章解决方案：提出一个称为 DOSM (doubly-oblivious sorted multimap) 的数据结构，支持高效的范围查询、插入、删除等操作。它实际上是一个树形的数据结构，插入和删除的复杂度是 O(logN) 而不是 O(n)。另外再结合特定的查询算法来保证范围查询的高效性。
+三、总结
+文章主要针对存取模式的漏洞来进行修复。攻击虽然无法直接攻击飞地，无法直接攻击加密数据，但是可以通过应用对主存的存取模式进行分析从而恢复加密数据。这种存取模式在文章中是指例如索引这样的负责映射数据的数据结构。"/>
+<meta name="application-name" content="Utopizza">
+<meta name="apple-mobile-web-app-title" content="Utopizza"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://utopizza.github.io/2019-01-19-%E8%AE%BA%E6%96%87-oblix/" /><link rel="prev" href="https://utopizza.github.io/2019-01-16-%E6%A6%82%E7%8E%87-%E4%B8%80%E7%BB%B4%E9%9A%8F%E6%9C%BA%E5%8F%98%E9%87%8F/" /><link rel="next" href="https://utopizza.github.io/2019-01-27-%E8%AE%BA%E6%96%87-mci/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "Oblix",
+        "inLanguage": "en",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https:\/\/utopizza.github.io\/2019-01-19-%E8%AE%BA%E6%96%87-oblix\/"
+        },"image": {
+                "@type": "ImageObject",
+                "url": "https:\/\/utopizza.github.io\/cover.png",
+                "width":  800 ,
+                "height":  600 
+            },"genre": "posts","wordcount":  55 ,
+        "url": "https:\/\/utopizza.github.io\/2019-01-19-%E8%AE%BA%E6%96%87-oblix\/","datePublished": "2019-01-19T00:00:00+00:00","dateModified": "2019-01-19T00:00:00+00:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+                "@type": "Organization",
+                "name": "",
+                "logo": {
+                "@type": "ImageObject",
+                "url": "https:\/\/utopizza.github.io\/logo.png",
+                "width":  127 ,
+                "height":  40 
+                }
+            },"author": {
+                "@type": "Person",
+                "name": "yusheng"
+            },"description": ""
+    }
+    </script></head>
+    <body><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="Utopizza"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>Utopizza</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> Posts </a><a class="menu-item" href="/categories/"> Categories </a><a class="menu-item" href="https://github.com/utopizza" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i>  </a><span class="menu-item delimiter"></span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="Utopizza"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>Utopizza</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><a class="menu-item" href="/posts/" title="">Posts</a><a class="menu-item" href="/categories/" title="">Categories</a><a class="menu-item" href="https://github.com/utopizza" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i></a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">Oblix</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;
+                    <span class="post-category">included in<a href="/categories/thesis/">
+                                <i class="far fa-folder fa-fw"></i>Thesis
+                            </a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i><time datetime=2019-01-19>2019-01-19</time>&nbsp;
+                <i class="fas fa-pencil-alt fa-fw"></i>about 55 words&nbsp;
+                <i class="far fa-clock fa-fw"></i>1 min&nbsp;</div>
+        </div><div class="details toc" id="toc-static">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents"></nav></div>
+            </div><div class="content" id="content"><p>一、背景及问题</p>
+<p>索引（Index）是很多系统和应用的基础构件。最近，大量的研究专注于如何保护索引这样的敏感数据，例如，如何在对索引进行加密的同时允许客户端在索引上进行查询。这些研究提出的方案一般是这样的：当用户通过客户端发起查询请求时，客户端会先为用户输入的关键词（keyword）生成查询令牌(search token)，然后将令牌发送给服务端而不是直接发送用户的关键词，从而向服务端屏蔽用户输入的关键词（假设攻击者控制了服务端的内存，但不能控制服务端的处理器）。然后，服务器通过令牌去在已经加密的索引上执行检索，最后把匹配成功的加密数据返回给客户端。客户端对数据进行解密，显示给用户。</p>
+<p>虽然加密索引的研究取得了重大进步，但是很多方案都有一个很严重的漏洞，就是泄漏了存取模式（access patterns）：关键词与数据的匹配过程。虽然关键词和索引都是已经加密的，但是它们的匹配过程是在服务端的内存进行的，而服务端的内存是被攻击者掌控的，因此攻击者可以对匹配的过程进行分析，从而从加密的索引中恢复敏感信息。除了存取模式的遗漏，还有如果攻击者可以获得匹配成功的文件数（result size），也可以恢复出敏感信息。</p>
+<p>一种很直接的隐藏存取模式的方法就是使用 ORAM（Oblivious RAM），然而这个方案的成本十分昂贵，因此很少方案采用这个方法。针对这个问题，文章提出了一个称为 Oblix (OBLivious IndeX) 的索引方案，这个方案既不会泄漏任何的存取模式，也不会泄漏匹配文件数。进一步，Oblix 允许索引进行插入和删除、支持多用户。</p>
+<p>二、解决方案</p>
+<p>文章提出的 Oblix 主要针对以下四种问题进行解决：</p>
+<p>1、高复杂度：对于 ORAM 系统，客户端维护一个位置映射数据结构（position map），该数据结构记录了索引与数据库中某个数据的位置的对应关系。由于索引的大小与数据库的数据量成线性关系，因此客户端不能直接存储整个 map。一种标准的方案是使用树形结构将一个数据库分解成多级数据库（类似于多级索引），以减小客户端需要的存储空间。但是如此一来就会需要重复多次查询来确定最终的位置，显然树搜索的时间复杂度是 O(logN)，这样的复杂度会带来查询延迟。文章使用的解决方案是使用飞地技术（enclave），把整个 ORAM 的客户端放进飞地中，这样让客户端和服务端就在同一台机器上进行，不需要通过网络，从而减小网络延迟。</p>
+<p>2、飞地可能会被攻击者利用：有研究发现飞地即使物理上隔离了外界的控制，但是也可能被攻击者通过分析它的物理页级的存取模式（page-level access pattern）来恢复被加密的数据。因为飞地自身的内存空间很小，当飞地处理的数据量较大时，它就会使用二级存储，使用计算机中的内存。而计算机中的内存是会被攻击者控制的，因此攻击者可以通过观察飞地如果使用计算机主存来进行攻击。文章的解决方案：首先，提出一个称为 ODS (oblivious data structure) 的数据结构来取代 position map，这个数据结构保证不可被攻击者利用。其次，提出一个称为 doubly oblivious 的方案，该方案同时保证对服务端的存取、对客户端自己的内存空间的存取模式都是不可被攻击者利用的（oblivious）。</p>
+<p>3、查询结果数的隐藏：前面提到，查询结果数可能也会被攻击者用，因此需要对其进行隐藏。一种最简单的做法是“worst-case upper bound”，但是这种做法代价太昂贵。文章提出的解决方案：对查询结果进行打分排序，只返回得分最高的前 r 条数据。</p>
+<p>4、请求列表、查询效率：客户端可以一次向服务端发送多个请求，也就请求列表。特别地，其中包含插入和删除得操作时，执行效率就尤其重要。文章解决方案：提出一个称为 DOSM
+(doubly-oblivious sorted multimap) 的数据结构，支持高效的范围查询、插入、删除等操作。它实际上是一个树形的数据结构，插入和删除的复杂度是 O(logN) 而不是 O(n)。另外再结合特定的查询算法来保证范围查询的高效性。</p>
+<p>三、总结</p>
+<p>文章主要针对存取模式的漏洞来进行修复。攻击虽然无法直接攻击飞地，无法直接攻击加密数据，但是可以通过应用对主存的存取模式进行分析从而恢复加密数据。这种存取模式在文章中是指例如索引这样的负责映射数据的数据结构。</p>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>The article was updated on 2019-01-19</span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span>
+                            <a class="link-to-markdown" href="/2019-01-19-%E8%AE%BA%E6%96%87-oblix/index.md" target="_blank">Read Markdown</a>
+                        </span></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="https://utopizza.github.io/2019-01-19-%E8%AE%BA%E6%96%87-oblix/" data-title="Oblix"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://utopizza.github.io/2019-01-19-%E8%AE%BA%E6%96%87-oblix/"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="Share on WhatsApp" data-sharer="whatsapp" data-url="https://utopizza.github.io/2019-01-19-%E8%AE%BA%E6%96%87-oblix/" data-title="Oblix" data-web><i class="fab fa-whatsapp fa-fw"></i></a><a href="javascript:void(0);" title="Share on Line" data-sharer="line" data-url="https://utopizza.github.io/2019-01-19-%E8%AE%BA%E6%96%87-oblix/" data-title="Oblix"><i class="fab fa-line fa-fw"></i></a><a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="https://utopizza.github.io/2019-01-19-%E8%AE%BA%E6%96%87-oblix/" data-title="Oblix"><i class="fab fa-weibo fa-fw"></i></a><a href="javascript:void(0);" title="Share on Myspace" data-sharer="myspace" data-url="https://utopizza.github.io/2019-01-19-%E8%AE%BA%E6%96%87-oblix/" data-title="Oblix" data-description=""><i data-svg-src="/lib/simple-icons/icons/myspace.min.svg"></i></a><a href="javascript:void(0);" title="Share on Blogger" data-sharer="blogger" data-url="https://utopizza.github.io/2019-01-19-%E8%AE%BA%E6%96%87-oblix/" data-title="Oblix" data-description=""><i class="fab fa-blogger fa-fw"></i></a><a href="javascript:void(0);" title="Share on Evernote" data-sharer="evernote" data-url="https://utopizza.github.io/2019-01-19-%E8%AE%BA%E6%96%87-oblix/" data-title="Oblix"><i class="fab fa-evernote fa-fw"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/2019-01-16-%E6%A6%82%E7%8E%87-%E4%B8%80%E7%BB%B4%E9%9A%8F%E6%9C%BA%E5%8F%98%E9%87%8F/" class="prev" rel="prev" title="一维随机变量"><i class="fas fa-angle-left fa-fw"></i>一维随机变量</a>
+            <a href="/2019-01-27-%E8%AE%BA%E6%96%87-mci/" class="next" rel="next" title="MCI">MCI<i class="fas fa-angle-right fa-fw"></i></a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.69.2">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.6"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2020</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">yusheng</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><link rel="stylesheet" href="/lib/katex/katex.min.css"><link rel="stylesheet" href="/lib/katex/copy-tex.min.css"><script type="text/javascript">
+    window.config = {"code":{"copyTitle":"Copy to clipboard","maxShownLines":100},"comment":{},"headerMode":{"desktop":"fixed","mobile":"auto"},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false}};
+</script><script type="text/javascript" src="https://polyfill.io/v3/polyfill.min.js?features=html5shiv%2CElement.prototype.closest%2CrequestAnimationFrame%2CCustomEvent%2CPromise%2CObject.entries%2CObject.assign%2CObject.values%2Cfetch%2CElement.prototype.after%2CArray.prototype.fill%2CIntersectionObserver%2CArray.from%2CArray.prototype.find%2CMath.sign"></script><script type="text/javascript" src="/lib/smooth-scroll/smooth-scroll.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/object-fit-images/ofi.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="/lib/sharer/sharer.min.js"></script><script type="text/javascript" src="/lib/katex/katex.min.js"></script><script type="text/javascript" src="/lib/katex/auto-render.min.js"></script><script type="text/javascript" src="/lib/katex/copy-tex.min.js"></script><script type="text/javascript" src="/lib/katex/mhchem.min.js"></script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>

@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>一维随机变量 - Utopizza</title>
+        <meta name="Description" content="About LoveIt Theme"><meta property="og:title" content="一维随机变量" />
+<meta property="og:description" content="一、随机变量 随机变量就是“其值随机会而定”的变量。随机变量主要分为两类，一类是离散型随机变量，它有若干个不同的可枚举的取值，这些取值以不同（或相同）的概率出现，例如扔一个骰子可能会出现的点数。另一类是连续型随机变量，它的全部可能取值不仅是无穷多的，并且还不能无遗漏地逐一排列，而是充满一个区间，例如称量一个物体重量的误差。
+二、离散型随机变量 1、离散型随机变量的概率分布：设 $X$ 为离散型随机变量，其全部可能取值 ${a_1,a_2,\cdots}$。则
+$$p_i=P(X=a_i) \quad (i=1,2,\cdots)$$
+称为 $X$ 的概率分布。根据概率的定义，显然有
+$$p_i \geq 0$$
+$$p_1&#43;p_2&#43;\cdots=1$$
+用分布表的形式给出为
+ $$ \begin{array}{c|lcr} \text{可能值} & a_1 & a_2 & \cdots & a_i \cdots \\ \hline \text{概率} & p_1 & p_2 & \cdots &p_i \cdots \end{array} $$  2、离散型随机变量的分布函数：设 $X$ 为一离散型随机变量，则函数
+$$F(x)=P(X \leq x)=\sum_{{i|a_i \leq x}}p_i \quad (-\infty &lt; x &lt; &#43;\infty)$$
+称为 $X$ 的分布函数。实质上就是随机变量 $X$ 的部分可能取值的概率之和。分布函数有下面的一般性质：
+ 当 $x_1 &lt; x_2$ 时，有 $F(x_1) \leq F(x_2)$ 当 $x \to &#43;\infty$ 时，$F(x) \to 1$；当 $x \to -\infty$ 时，$F(x) \to 0$  3、常见的离散型随机变量" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://utopizza.github.io/2019-01-16-%E6%A6%82%E7%8E%87-%E4%B8%80%E7%BB%B4%E9%9A%8F%E6%9C%BA%E5%8F%98%E9%87%8F/" />
+<meta property="og:image" content="https://utopizza.github.io/logo.png"/>
+<meta property="article:published_time" content="2019-01-16T00:00:00+00:00" />
+<meta property="article:modified_time" content="2019-01-16T00:00:00+00:00" />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://utopizza.github.io/logo.png"/>
+
+<meta name="twitter:title" content="一维随机变量"/>
+<meta name="twitter:description" content="一、随机变量 随机变量就是“其值随机会而定”的变量。随机变量主要分为两类，一类是离散型随机变量，它有若干个不同的可枚举的取值，这些取值以不同（或相同）的概率出现，例如扔一个骰子可能会出现的点数。另一类是连续型随机变量，它的全部可能取值不仅是无穷多的，并且还不能无遗漏地逐一排列，而是充满一个区间，例如称量一个物体重量的误差。
+二、离散型随机变量 1、离散型随机变量的概率分布：设 $X$ 为离散型随机变量，其全部可能取值 ${a_1,a_2,\cdots}$。则
+$$p_i=P(X=a_i) \quad (i=1,2,\cdots)$$
+称为 $X$ 的概率分布。根据概率的定义，显然有
+$$p_i \geq 0$$
+$$p_1&#43;p_2&#43;\cdots=1$$
+用分布表的形式给出为
+ $$ \begin{array}{c|lcr} \text{可能值} & a_1 & a_2 & \cdots & a_i \cdots \\ \hline \text{概率} & p_1 & p_2 & \cdots &p_i \cdots \end{array} $$  2、离散型随机变量的分布函数：设 $X$ 为一离散型随机变量，则函数
+$$F(x)=P(X \leq x)=\sum_{{i|a_i \leq x}}p_i \quad (-\infty &lt; x &lt; &#43;\infty)$$
+称为 $X$ 的分布函数。实质上就是随机变量 $X$ 的部分可能取值的概率之和。分布函数有下面的一般性质：
+ 当 $x_1 &lt; x_2$ 时，有 $F(x_1) \leq F(x_2)$ 当 $x \to &#43;\infty$ 时，$F(x) \to 1$；当 $x \to -\infty$ 时，$F(x) \to 0$  3、常见的离散型随机变量"/>
+<meta name="application-name" content="Utopizza">
+<meta name="apple-mobile-web-app-title" content="Utopizza"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://utopizza.github.io/2019-01-16-%E6%A6%82%E7%8E%87-%E4%B8%80%E7%BB%B4%E9%9A%8F%E6%9C%BA%E5%8F%98%E9%87%8F/" /><link rel="prev" href="https://utopizza.github.io/2019-01-12-%E8%AE%BA%E6%96%87-winnower/" /><link rel="next" href="https://utopizza.github.io/2019-01-19-%E8%AE%BA%E6%96%87-oblix/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "一维随机变量",
+        "inLanguage": "en",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https:\/\/utopizza.github.io\/2019-01-16-%E6%A6%82%E7%8E%87-%E4%B8%80%E7%BB%B4%E9%9A%8F%E6%9C%BA%E5%8F%98%E9%87%8F\/"
+        },"image": {
+                "@type": "ImageObject",
+                "url": "https:\/\/utopizza.github.io\/cover.png",
+                "width":  800 ,
+                "height":  600 
+            },"genre": "posts","wordcount":  390 ,
+        "url": "https:\/\/utopizza.github.io\/2019-01-16-%E6%A6%82%E7%8E%87-%E4%B8%80%E7%BB%B4%E9%9A%8F%E6%9C%BA%E5%8F%98%E9%87%8F\/","datePublished": "2019-01-16T00:00:00+00:00","dateModified": "2019-01-16T00:00:00+00:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+                "@type": "Organization",
+                "name": "",
+                "logo": {
+                "@type": "ImageObject",
+                "url": "https:\/\/utopizza.github.io\/logo.png",
+                "width":  127 ,
+                "height":  40 
+                }
+            },"author": {
+                "@type": "Person",
+                "name": "yusheng"
+            },"description": ""
+    }
+    </script></head>
+    <body><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="Utopizza"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>Utopizza</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> Posts </a><a class="menu-item" href="/categories/"> Categories </a><a class="menu-item" href="https://github.com/utopizza" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i>  </a><span class="menu-item delimiter"></span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="Utopizza"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>Utopizza</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><a class="menu-item" href="/posts/" title="">Posts</a><a class="menu-item" href="/categories/" title="">Categories</a><a class="menu-item" href="https://github.com/utopizza" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i></a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">一维随机变量</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;
+                    <span class="post-category">included in<a href="/categories/math/">
+                                <i class="far fa-folder fa-fw"></i>Math
+                            </a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i><time datetime=2019-01-16>2019-01-16</time>&nbsp;
+                <i class="fas fa-pencil-alt fa-fw"></i>about 390 words&nbsp;
+                <i class="far fa-clock fa-fw"></i>2 min&nbsp;</div>
+        </div><div class="details toc" id="toc-static">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#一随机变量">一、随机变量</a></li>
+        <li><a href="#二离散型随机变量">二、离散型随机变量</a></li>
+        <li><a href="#三连续型随机变量">三、连续型随机变量</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><h3 id="一随机变量">一、随机变量</h3>
+<p>随机变量就是“其值随机会而定”的变量。随机变量主要分为两类，一类是离散型随机变量，它有若干个不同的可枚举的取值，这些取值以不同（或相同）的概率出现，例如扔一个骰子可能会出现的点数。另一类是连续型随机变量，它的全部可能取值不仅是无穷多的，并且还不能无遗漏地逐一排列，而是充满一个区间，例如称量一个物体重量的误差。</p>
+<h3 id="二离散型随机变量">二、离散型随机变量</h3>
+<p>1、离散型随机变量的概率分布：设 $X$ 为离散型随机变量，其全部可能取值 ${a_1,a_2,\cdots}$。则</p>
+<p>$$p_i=P(X=a_i) \quad (i=1,2,\cdots)$$</p>
+<p>称为 $X$ 的概率分布。根据概率的定义，显然有</p>
+<p>$$p_i \geq 0$$</p>
+<p>$$p_1+p_2+\cdots=1$$</p>
+<p>用分布表的形式给出为</p>
+<div>
+$$
+\begin{array}{c|lcr} 
+\text{可能值} & a_1 & a_2 & \cdots & a_i \cdots \\
+\hline
+\text{概率} & p_1 & p_2 & \cdots &p_i \cdots 
+\end{array}
+$$
+</div>
+<p>2、离散型随机变量的分布函数：设 $X$ 为一离散型随机变量，则函数</p>
+<p>$$F(x)=P(X \leq x)=\sum_{{i|a_i \leq x}}p_i \quad (-\infty &lt; x &lt; +\infty)$$</p>
+<p>称为 $X$ 的分布函数。实质上就是随机变量 $X$ 的部分可能取值的概率之和。分布函数有下面的一般性质：</p>
+<ul>
+<li>当 $x_1 &lt; x_2$ 时，有 $F(x_1) \leq F(x_2)$</li>
+<li>当 $x \to +\infty$ 时，$F(x) \to 1$；当 $x \to -\infty$ 时，$F(x) \to 0$</li>
+</ul>
+<p>3、常见的离散型随机变量</p>
+<p>(1)、二项分布：设在某一个试验中，有且仅有两种可能结果：事件 $A$ 发生，或者 $A$ 不发生。其中 $A$ 发生的概率记为 $p$，则 $A$ 不发生的概率显然为 $1-p$。现把这个试验独立地重复 $n$ 次，记 $A$ 发生的次数为 $X$ ，则显然 $X$ 的可能取值为 $0,1,2,\cdots,n$。显然这是一个组合问题，$n$ 个试验结果中设有 $i$ 次为 $A$，那么必定 $n-i$ 次为 $\bar{A}$。因此 $X=i$ 的概率即为从 $n$ 个试验中取 $i$ 个 $p$，$n-i$ 个 $1-p$，即</p>
+<p>$$P(X=i)=C_{n}^{i} p^i (1-p)^{n-i} \quad (i=0,1,\cdots,n)$$</p>
+<p>此时 $X$ 所遵从的概率分布称为二项分布，记为 $B(n,p)$。而 $X$ 服从二项分布记为 $X \sim B(n,p)$</p>
+<p>(2)、泊松分布：若随机变量 $X$ 的可能取值为 $0,1,2,\cdots$，且概率分布为</p>
+<p>$$P(X=i)=\frac{e^{-\lambda}\lambda^i}{i!}$$</p>
+<p>则称 $X$ 服从泊松分布，记为 $X \sim P(\lambda)$。此处，$\lambda &gt; 0$ 是某一常数。该分布是最重要的离散型分布之一，它多出现在当 $X$ 表示某时间或空间内出现的事件个数或者事件的频率分布。该分布可以看做是二项分布的极限形式，即若取 $\lambda$ 为二项分布 $B(n,p)$ 的期望，即 $\lambda=pn$，则当二项分布的试验次数 $n \to +\infty$ 时，</p>
+<div>
+$$
+\begin{aligned}
+P(X=i) &=C_{n}^{i} (\frac{\lambda}{n})^i (1-\frac{\lambda}{n})^{n-i}\\
+&=\frac{C_n^i}{n^i} \cdot \lambda^i \cdot (1-\frac{\lambda}{n})^n \\
+&=\frac{1}{i!} \cdot \lambda^i \cdot e^{-\lambda} \\
+&=\frac{e^{-\lambda}\lambda^i}{i!}
+\end{aligned}
+$$
+</div>
+<p>在实际应用中， $\lambda$ 往往就取随机变量的期望，例如某用户在某段时间内重复购买某件商品的次数的期望，例如 2 次。确定了 $\lambda$ 后，该用户重复购买商品次数的泊松分布模型就可以完全确定，从而可以计算用户在同样的时间段内重复购买 0 次、1 次、3 次、5次等次数的概率。</p>
+<h3 id="三连续型随机变量">三、连续型随机变量</h3>
+<p>1、连续型随机变量的概率分布：对于连续型随机变量的概率分布，不能用像离散型随机变量那种方法去描述，因为连续型变量的取值是充满一个区间的，无法一一枚举，并且要研究连续型变量恰好取某个精确的值意义也不大，例如“射击靶面恰好精准命中某一个点”是几乎不可能也毫无意义的事，一般认为这样概率为 0。对于连续型随机变量，我们研究的要点是“该变量的取值落在某个区间内的概率多大”，而不是“该变量的取值恰好等于某个无限精确的值的概率有多大”。</p>
+<p>2、连续型随机变量的分布函数：设 $X$ 为一连续型随机变量，则函数</p>
+<p>$$F(x)=P(X \leq x)=\int_{-\infty}^{x} f(t) dt$$</p>
+<p>称为 $X$ 的分布函数。其中 $f(x)=F’(x)$ 称为 $X$ 的概率密度函数。引用陈希孺教授《概率论与数理统计》中对“概率密度”的解释：</p>
+<blockquote>
+<p>“概率密度”这个名词的来由可以解释如下：取定一个点 $x$，则按分布函数的定义，事件 ${x &lt; X \leq  x+\Delta x}$ 的概率应为 $F(x+\Delta x)-F(x)$，所以比值 $\frac{F(x+\Delta x)-F(x)}{\Delta x}$ 可解释为在 $x$ 点附近 $\Delta x$ 长度的区间内，单位长度占有的概率。当 $\Delta x \to 0$ 时，这个比值的极限就是 $F&rsquo;(x)=f(x)$，也就是在 $x$ 点处无穷小区段内单位长度的概率，它反映了概率在 $x$ 点处的“密集程度”。可以设想一条极细的无穷长的金属杆，总质量为 1，概率密度相当于杆上各点的质量密度。</p>
+</blockquote>
+<p>连续型随机变量 $X$ 的概率密度函数 $f(x)$ 有以下基本性质：</p>
+<ul>
+<li>$f(x) \geq 0$</li>
+<li>$\int_{-\infty}^{+\infty} f(x)dx=1$</li>
+<li>对任何常数 $a &lt; b$，有 $P(a \leq X \leq b)=F(b)-F(a)=\int_{a}^{b}f(x)dx$</li>
+</ul>
+<p>3、常见的连续型随机变量：</p>
+<p>(1)、正态分布：若随机变量 $X$ 具有概率密度函数</p>
+<p>$$f(x)=\frac{1}{\sqrt{2\pi}\delta}e^{-\frac{(x-\mu)^2}{2\delta^2}} \quad (-\infty &lt; x &lt; +\infty)$$</p>
+<p>则称 $X$ 为正态随机变量，记为 $X \sim N(\mu, \delta)$。该密度函数没有显式的原函数，也即正态分布没有显式的分布函数。但是正态分布有一个重要的性质，就是任何正态分布可以转化成标准正态分布 $N(0,1)$，然后通过查标准正态分布概率表来计算原正态分布的概率。即</p>
+<p>$$\text{ 若 } X \sim N(\mu, \delta), \text{ 则 } Y=\frac{X-\mu}{\delta} \sim N(0,1)$$</p>
+<p>正态分布具有非常重要的意义，它的图形是关于 $x=\mu$ 对称，并在该点取得最大概率值，然后向两端逐渐降低。自然界大部分的数据都是呈现这样的分布：接近均值的概率大，接近极端值的概率小。例如一个学校的身高分布、随机采样得到的样本的误差分布等等。而更重要的是，根据中心极限定理，当随机变量的数量趋向无穷的时候，它们的和的极限分布就是正态分布。另外多维的高斯分布也是对各种真实世界中的事件进行建模的良好工具。</p>
+<p>(2)、指数分布：若随机变量 $X$ 具有概率密度函数</p>
+<div>
+$$f(x)=
+\begin{cases}
+\lambda e^{-\lambda x}, & x>0 \\
+0, & x \leq 0
+\end{cases}
+$$
+</div>
+<p>则称 $X$ 服从指数分布，其中 $\lambda&gt;0$ 为参数。利用微积分知识易求得其分布函数为</p>
+<div>
+$$F(x)=\int_{-\infty}^{x}f(t)dt=
+\begin{cases}
+1-e^{-\lambda x}, & x > 0 \\
+0, & x \leq 0
+\end{cases}
+$$
+</div>
+<p>指数分布最常见的一个场合就是寿命分布，寿命越长概率越小。</p>
+<p>(3)、均匀分布：若随机变量 $X$ 具有概率密度函数</p>
+<div>
+$$f(x)=
+\begin{cases}
+\frac{1}{b-a}, & a\leq x\leq b \\
+0, & \text{otherwise}
+\end{cases}
+$$
+</div>
+<p>则称 $X$ 服从区间 $[a,b]$ 上的均匀分布，记为 $X \sim R(a,b)$。这里 $a,b$ 都是常数且 $-\infty &lt; a &lt; b &lt; +\infty$。易求其分布函数为</p>
+<div>
+$$F(x)=
+\begin{cases}
+0, & x \leq a \\
+\frac{x-a}{b-a}, & a \leq x \leq b \\
+1, & x \geq b
+\end{cases}
+$$
+</div>
+<p>因为均匀分布的特点是区间中各点的概率密度都是相同的，因此一般用来产生均匀的随机数。</p>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>The article was updated on 2019-01-16</span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span>
+                            <a class="link-to-markdown" href="/2019-01-16-%E6%A6%82%E7%8E%87-%E4%B8%80%E7%BB%B4%E9%9A%8F%E6%9C%BA%E5%8F%98%E9%87%8F/index.md" target="_blank">Read Markdown</a>
+                        </span></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="https://utopizza.github.io/2019-01-16-%E6%A6%82%E7%8E%87-%E4%B8%80%E7%BB%B4%E9%9A%8F%E6%9C%BA%E5%8F%98%E9%87%8F/" data-title="一维随机变量"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://utopizza.github.io/2019-01-16-%E6%A6%82%E7%8E%87-%E4%B8%80%E7%BB%B4%E9%9A%8F%E6%9C%BA%E5%8F%98%E9%87%8F/"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="Share on WhatsApp" data-sharer="whatsapp" data-url="https://utopizza.github.io/2019-01-16-%E6%A6%82%E7%8E%87-%E4%B8%80%E7%BB%B4%E9%9A%8F%E6%9C%BA%E5%8F%98%E9%87%8F/" data-title="一维随机变量" data-web><i class="fab fa-whatsapp fa-fw"></i></a><a href="javascript:void(0);" title="Share on Line" data-sharer="line" data-url="https://utopizza.github.io/2019-01-16-%E6%A6%82%E7%8E%87-%E4%B8%80%E7%BB%B4%E9%9A%8F%E6%9C%BA%E5%8F%98%E9%87%8F/" data-title="一维随机变量"><i class="fab fa-line fa-fw"></i></a><a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="https://utopizza.github.io/2019-01-16-%E6%A6%82%E7%8E%87-%E4%B8%80%E7%BB%B4%E9%9A%8F%E6%9C%BA%E5%8F%98%E9%87%8F/" data-title="一维随机变量"><i class="fab fa-weibo fa-fw"></i></a><a href="javascript:void(0);" title="Share on Myspace" data-sharer="myspace" data-url="https://utopizza.github.io/2019-01-16-%E6%A6%82%E7%8E%87-%E4%B8%80%E7%BB%B4%E9%9A%8F%E6%9C%BA%E5%8F%98%E9%87%8F/" data-title="一维随机变量" data-description=""><i data-svg-src="/lib/simple-icons/icons/myspace.min.svg"></i></a><a href="javascript:void(0);" title="Share on Blogger" data-sharer="blogger" data-url="https://utopizza.github.io/2019-01-16-%E6%A6%82%E7%8E%87-%E4%B8%80%E7%BB%B4%E9%9A%8F%E6%9C%BA%E5%8F%98%E9%87%8F/" data-title="一维随机变量" data-description=""><i class="fab fa-blogger fa-fw"></i></a><a href="javascript:void(0);" title="Share on Evernote" data-sharer="evernote" data-url="https://utopizza.github.io/2019-01-16-%E6%A6%82%E7%8E%87-%E4%B8%80%E7%BB%B4%E9%9A%8F%E6%9C%BA%E5%8F%98%E9%87%8F/" data-title="一维随机变量"><i class="fab fa-evernote fa-fw"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/2019-01-12-%E8%AE%BA%E6%96%87-winnower/" class="prev" rel="prev" title="Winnower"><i class="fas fa-angle-left fa-fw"></i>Winnower</a>
+            <a href="/2019-01-19-%E8%AE%BA%E6%96%87-oblix/" class="next" rel="next" title="Oblix">Oblix<i class="fas fa-angle-right fa-fw"></i></a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.69.2">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.6"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2020</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">yusheng</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><link rel="stylesheet" href="/lib/katex/katex.min.css"><link rel="stylesheet" href="/lib/katex/copy-tex.min.css"><script type="text/javascript">
+    window.config = {"code":{"copyTitle":"Copy to clipboard","maxShownLines":100},"comment":{},"headerMode":{"desktop":"fixed","mobile":"auto"},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false}};
+</script><script type="text/javascript" src="https://polyfill.io/v3/polyfill.min.js?features=html5shiv%2CElement.prototype.closest%2CrequestAnimationFrame%2CCustomEvent%2CPromise%2CObject.entries%2CObject.assign%2CObject.values%2Cfetch%2CElement.prototype.after%2CArray.prototype.fill%2CIntersectionObserver%2CArray.from%2CArray.prototype.find%2CMath.sign"></script><script type="text/javascript" src="/lib/smooth-scroll/smooth-scroll.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/object-fit-images/ofi.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="/lib/sharer/sharer.min.js"></script><script type="text/javascript" src="/lib/katex/katex.min.js"></script><script type="text/javascript" src="/lib/katex/auto-render.min.js"></script><script type="text/javascript" src="/lib/katex/copy-tex.min.js"></script><script type="text/javascript" src="/lib/katex/mhchem.min.js"></script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>

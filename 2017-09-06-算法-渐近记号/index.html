@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>渐近记号 - Utopizza</title>
+        <meta name="Description" content="About LoveIt Theme"><meta property="og:title" content="渐近记号" />
+<meta property="og:description" content="一、算法分析
+1、RAM 模型
+分析算法的结果意味着预测算法需要的资源。虽然有时候需要关心像内存、通信宽带或计算机硬件这类资源，但是对算法进行分析时，我们一般主要关注算法的计算时间。在能够分析一个算法之前，我们需要有一个实现技术的模型，在《算法导论》一书中，假定了一种通用的单处理器计算模型——随机访问机 (RAM) 来作为实现技术，算法可以用计算机程序来实现。在 RAM 模型中，指令一条一条地执行，没有并发操作。严格来说，我们应该精确定义 RAM 模型的指令以及代价。但是这样即乏味又对算法的设计与分析没有太多意义。因此，在 RAM 模型中，我们不对计算机的内层次如高速缓存、虚拟内存等进行建模，把精力集中于算法的数学上的复杂度分析。
+2、运行时间
+一个算法在特定输入上的运行时间是指执行的基本操作数或者步数。我们认为计算机执行每一行代码需要的时间为常量（这个观点与 RAM 模型是一致的）。因此，我们核心关注的问题是：在给定输入规模 n 条件下，算法代码执行完成并输出正确结果所需要的总步数（次数）。如插入排序算法在 n 个值的输入上的最坏运行时间为 $T(n)=an^2&#43;bn&#43;c$
+3、增长量级
+现在我们做出一种更简化的抽象：我们更感兴趣的是运行时间的增长率或增长量级。所以我们只考虑公式中最重要的项（例如，$an^2$），因为当 n 很大时，低阶项相对来说不太重要。同时我们也忽略最重要的项的系数，因为对大的输入，在确定计算效率时，常量因子不如增长率重要。在忽略了低阶项和最重要的项的系数后，只剩下最重要的项的因子。我们记某算法最坏情况下运行时间为 $\Theta(g(n))$，如插入排序的的最坏运行时间为 $\Theta(n^2)$。如果一个算法的最坏情况运行时间比另一个算法具有更低的增量级，那么我们认为前者比后者更有效。例如，一个 $\Theta(n^2)$ 的算法，在足够大的输入规模 n 下，比一个 $\Theta(n^3)$ 的算法要快。
+二、渐近记号
+1、$\Theta$ 记号
+对一个给定的函数 $g(n)$，用 $\Theta(g(n))$ 来表示以下函数的集合： $\Theta(g(n))={ f(n):存在正常量c_1,c_2和n_0,对所有n \geq n_0,有 0 \leq c_1g(n) \leq f(n) \leq c_2g(n) } $
+字面上来说：若存在正常量 $c_1,c_2和n_0$，使得对足够大的 n ，函数 $f(n)$ 能被夹入 $c_1g(n)与c_2g(n)$ 之间，则 $f(n)$ 属于集合 $\Theta(g(n))$ 。我们记 $f(n)=\Theta(g(n))$ 以表示 $f(n)$ 是函数集合 $\Theta(g(n))$ 的成员。换句话说，对所有 $n \geq n_0$，函数 $f(n)$ 在一个常量因子内等于 $g(n)$ 。我们也称 $g(n)$ 是 $f(n)$ 的一个渐近确界。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://utopizza.github.io/2017-09-06-%E7%AE%97%E6%B3%95-%E6%B8%90%E8%BF%91%E8%AE%B0%E5%8F%B7/" />
+<meta property="og:image" content="https://utopizza.github.io/logo.png"/>
+<meta property="article:published_time" content="2017-09-06T15:20:10+00:00" />
+<meta property="article:modified_time" content="2017-09-06T15:20:10+00:00" />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://utopizza.github.io/logo.png"/>
+
+<meta name="twitter:title" content="渐近记号"/>
+<meta name="twitter:description" content="一、算法分析
+1、RAM 模型
+分析算法的结果意味着预测算法需要的资源。虽然有时候需要关心像内存、通信宽带或计算机硬件这类资源，但是对算法进行分析时，我们一般主要关注算法的计算时间。在能够分析一个算法之前，我们需要有一个实现技术的模型，在《算法导论》一书中，假定了一种通用的单处理器计算模型——随机访问机 (RAM) 来作为实现技术，算法可以用计算机程序来实现。在 RAM 模型中，指令一条一条地执行，没有并发操作。严格来说，我们应该精确定义 RAM 模型的指令以及代价。但是这样即乏味又对算法的设计与分析没有太多意义。因此，在 RAM 模型中，我们不对计算机的内层次如高速缓存、虚拟内存等进行建模，把精力集中于算法的数学上的复杂度分析。
+2、运行时间
+一个算法在特定输入上的运行时间是指执行的基本操作数或者步数。我们认为计算机执行每一行代码需要的时间为常量（这个观点与 RAM 模型是一致的）。因此，我们核心关注的问题是：在给定输入规模 n 条件下，算法代码执行完成并输出正确结果所需要的总步数（次数）。如插入排序算法在 n 个值的输入上的最坏运行时间为 $T(n)=an^2&#43;bn&#43;c$
+3、增长量级
+现在我们做出一种更简化的抽象：我们更感兴趣的是运行时间的增长率或增长量级。所以我们只考虑公式中最重要的项（例如，$an^2$），因为当 n 很大时，低阶项相对来说不太重要。同时我们也忽略最重要的项的系数，因为对大的输入，在确定计算效率时，常量因子不如增长率重要。在忽略了低阶项和最重要的项的系数后，只剩下最重要的项的因子。我们记某算法最坏情况下运行时间为 $\Theta(g(n))$，如插入排序的的最坏运行时间为 $\Theta(n^2)$。如果一个算法的最坏情况运行时间比另一个算法具有更低的增量级，那么我们认为前者比后者更有效。例如，一个 $\Theta(n^2)$ 的算法，在足够大的输入规模 n 下，比一个 $\Theta(n^3)$ 的算法要快。
+二、渐近记号
+1、$\Theta$ 记号
+对一个给定的函数 $g(n)$，用 $\Theta(g(n))$ 来表示以下函数的集合： $\Theta(g(n))={ f(n):存在正常量c_1,c_2和n_0,对所有n \geq n_0,有 0 \leq c_1g(n) \leq f(n) \leq c_2g(n) } $
+字面上来说：若存在正常量 $c_1,c_2和n_0$，使得对足够大的 n ，函数 $f(n)$ 能被夹入 $c_1g(n)与c_2g(n)$ 之间，则 $f(n)$ 属于集合 $\Theta(g(n))$ 。我们记 $f(n)=\Theta(g(n))$ 以表示 $f(n)$ 是函数集合 $\Theta(g(n))$ 的成员。换句话说，对所有 $n \geq n_0$，函数 $f(n)$ 在一个常量因子内等于 $g(n)$ 。我们也称 $g(n)$ 是 $f(n)$ 的一个渐近确界。"/>
+<meta name="application-name" content="Utopizza">
+<meta name="apple-mobile-web-app-title" content="Utopizza"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://utopizza.github.io/2017-09-06-%E7%AE%97%E6%B3%95-%E6%B8%90%E8%BF%91%E8%AE%B0%E5%8F%B7/" /><link rel="prev" href="https://utopizza.github.io/2017-08-25-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E9%AB%98%E6%96%AF%E6%B7%B7%E5%90%88%E6%A8%A1%E5%9E%8B%E7%9A%84em%E6%8E%A8%E5%AF%BC%E7%AE%80%E5%8D%95%E7%89%88/" /><link rel="next" href="https://utopizza.github.io/2017-09-13-%E7%AE%97%E6%B3%95-%E4%BB%85%E7%94%A8%E9%80%92%E5%BD%92%E9%80%86%E5%BA%8F%E4%B8%80%E4%B8%AA%E6%A0%88/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "渐近记号",
+        "inLanguage": "en",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https:\/\/utopizza.github.io\/2017-09-06-%E7%AE%97%E6%B3%95-%E6%B8%90%E8%BF%91%E8%AE%B0%E5%8F%B7\/"
+        },"image": {
+                "@type": "ImageObject",
+                "url": "https:\/\/utopizza.github.io\/cover.png",
+                "width":  800 ,
+                "height":  600 
+            },"genre": "posts","wordcount":  200 ,
+        "url": "https:\/\/utopizza.github.io\/2017-09-06-%E7%AE%97%E6%B3%95-%E6%B8%90%E8%BF%91%E8%AE%B0%E5%8F%B7\/","datePublished": "2017-09-06T15:20:10+00:00","dateModified": "2017-09-06T15:20:10+00:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+                "@type": "Organization",
+                "name": "",
+                "logo": {
+                "@type": "ImageObject",
+                "url": "https:\/\/utopizza.github.io\/logo.png",
+                "width":  127 ,
+                "height":  40 
+                }
+            },"author": {
+                "@type": "Person",
+                "name": "yusheng"
+            },"description": ""
+    }
+    </script></head>
+    <body><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="Utopizza"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>Utopizza</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> Posts </a><a class="menu-item" href="/categories/"> Categories </a><a class="menu-item" href="https://github.com/utopizza" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i>  </a><span class="menu-item delimiter"></span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="Utopizza"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>Utopizza</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><a class="menu-item" href="/posts/" title="">Posts</a><a class="menu-item" href="/categories/" title="">Categories</a><a class="menu-item" href="https://github.com/utopizza" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i></a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">渐近记号</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;
+                    <span class="post-category">included in<a href="/categories/algorithm/">
+                                <i class="far fa-folder fa-fw"></i>Algorithm
+                            </a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i><time datetime=2017-09-06>2017-09-06</time>&nbsp;
+                <i class="fas fa-pencil-alt fa-fw"></i>about 200 words&nbsp;
+                <i class="far fa-clock fa-fw"></i>1 min&nbsp;</div>
+        </div><div class="details toc" id="toc-static">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents"></nav></div>
+            </div><div class="content" id="content"><p>一、算法分析</p>
+<p>1、RAM 模型</p>
+<p>分析算法的结果意味着预测算法需要的资源。虽然有时候需要关心像内存、通信宽带或计算机硬件这类资源，但是对算法进行分析时，我们一般主要关注算法的计算时间。在能够分析一个算法之前，我们需要有一个实现技术的模型，在《算法导论》一书中，假定了一种通用的单处理器计算模型——随机访问机 (RAM) 来作为实现技术，算法可以用计算机程序来实现。在 RAM 模型中，指令一条一条地执行，没有并发操作。严格来说，我们应该精确定义 RAM 模型的指令以及代价。但是这样即乏味又对算法的设计与分析没有太多意义。因此，在 RAM 模型中，我们不对计算机的内层次如高速缓存、虚拟内存等进行建模，把精力集中于算法的数学上的复杂度分析。</p>
+<p>2、运行时间</p>
+<p>一个算法在特定输入上的<strong>运行时间</strong>是指执行的基本操作数或者步数。我们认为计算机执行每一行代码需要的时间为常量（这个观点与 RAM 模型是一致的）。因此，我们核心关注的问题是：在给定<strong>输入规模 n</strong> 条件下，算法代码执行完成并输出正确结果所需要的总步数（次数）。如插入排序算法在 n 个值的输入上的最坏运行时间为 $T(n)=an^2+bn+c$</p>
+<p>3、增长量级</p>
+<p>现在我们做出一种更简化的抽象：我们更感兴趣的是运行时间的增长率或增长量级。所以我们只考虑公式中最重要的项（例如，$an^2$），因为当 n 很大时，低阶项相对来说不太重要。同时我们也忽略最重要的项的系数，因为对大的输入，在确定计算效率时，常量因子不如增长率重要。在忽略了低阶项和最重要的项的系数后，只剩下最重要的项的因子。我们记某算法最坏情况下运行时间为 $\Theta(g(n))$，如插入排序的的最坏运行时间为 $\Theta(n^2)$。如果一个算法的最坏情况运行时间比另一个算法具有更低的增量级，那么我们认为前者比后者更有效。例如，一个 $\Theta(n^2)$ 的算法，在足够大的输入规模 n 下，比一个 $\Theta(n^3)$ 的算法要快。</p>
+<p>二、渐近记号</p>
+<p>1、$\Theta$ 记号</p>
+<p>对一个给定的函数 $g(n)$，用 $\Theta(g(n))$ 来表示以下函数的集合：
+$\Theta(g(n))={ f(n):存在正常量c_1,c_2和n_0,对所有n \geq n_0,有 0  \leq c_1g(n) \leq f(n) \leq c_2g(n) } $</p>
+<p>字面上来说：若存在正常量 $c_1,c_2和n_0$，使得对足够大的 n ，函数 $f(n)$ 能被夹入 $c_1g(n)与c_2g(n)$ 之间，则 $f(n)$ 属于集合 $\Theta(g(n))$ 。我们记 $f(n)=\Theta(g(n))$ 以表示 $f(n)$ 是函数集合 $\Theta(g(n))$ 的成员。换句话说，对所有 $n \geq n_0$，函数 $f(n)$ 在一个常量因子内等于 $g(n)$ 。我们也称 $g(n)$ 是 $f(n)$ 的一个渐近确界。</p>
+<p>直觉上来说，我们可以通过忽略低阶项和最高阶项系数来直接求出 $\Theta(g(n))$ , 如 $\frac{1}{2}n^2 - 3n = \Theta(n^2)$。（只需证明存在正数 $c_1和c_2$ 使 $c_1n^2 \leq \frac{1}{2}n^2 - 3n \leq c_2n^2$ 即可。）</p>
+<p>2、$O$ 记号</p>
+<p>$\Theta$ 记号渐近地给出一个函数的上界和下界。对于给定函数 $f(n)$，当只有一个渐近上界时，使用 $O$ 记号，表示以下函数的集合：
+$O(g(n))={ f(n):存在正常量c和n_0，使得对所有n \geq n_0，有0 \leq f(n) \leq cg(n) }$</p>
+<p>3、$\Omega$ 记号</p>
+<p>正如 $O$ 记号提供了一个函数的渐近上界，$\Omega$ 记号提供了渐近下界。对于给定函数 $f(n)$，用 $\Omega$ 表示以下函数的集合：
+$\Omega(g(n))={ f(n):存在正常量c和n_0，使得对所有n \geq n_0，有0 \leq cg(n) \leq f(n) }$</p>
+<p>4、$o$ 记号</p>
+<p>由 $O$ 记号提供的渐近上界可能是也可能不是渐近紧确的。我们使用 $o$ 记号来表示一个非渐近紧确的上界：
+$o(g(n))={ f(n):存在正常量c和n_0，使得对所有n \geq n_0，有0 \leq f(n) &lt; cg(n) }$
+例如，$2n^2=O(n^2)$，$2n=o(n^2)$，但 $2n^2 \neq o(n^2)$。</p>
+<p>5、$\omega$ 记号</p>
+<p>类似地，我们使用 $\omega$ 记号来表示一个非渐近紧确的下界：
+$\omega(g(n))={ f(n):存在正常量c和n_0，使得对所有n \geq n_0，有0 \leq cg(n) &lt; f(n) }$
+例如，$\frac{n^2}{2}=\Omega(n^2)$，$\frac{n^2}{2}=\omega(n)$，但 $\frac{n^2}{2} \neq \Omega(n^2)$。</p>
+<p>三、类比总结</p>
+<p>$f(n)=O(g(n))$ 类似于 $a \leq b$
+$f(n)=\Omega(g(n))$ 类似于 $a \geq b$
+$f(n)=\Theta(g(n))$ 类似于 $a = b$
+$f(n)=o(g(n))$ 类似于 $a &lt; b$
+$f(n)=\omega(g(n))$ 类似于 $a &gt; b$</p>
+<p>另，实数的三分性不能携带到渐近记号。</p>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>The article was updated on 2017-09-06</span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span>
+                            <a class="link-to-markdown" href="/2017-09-06-%E7%AE%97%E6%B3%95-%E6%B8%90%E8%BF%91%E8%AE%B0%E5%8F%B7/index.md" target="_blank">Read Markdown</a>
+                        </span></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="https://utopizza.github.io/2017-09-06-%E7%AE%97%E6%B3%95-%E6%B8%90%E8%BF%91%E8%AE%B0%E5%8F%B7/" data-title="渐近记号"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://utopizza.github.io/2017-09-06-%E7%AE%97%E6%B3%95-%E6%B8%90%E8%BF%91%E8%AE%B0%E5%8F%B7/"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="Share on WhatsApp" data-sharer="whatsapp" data-url="https://utopizza.github.io/2017-09-06-%E7%AE%97%E6%B3%95-%E6%B8%90%E8%BF%91%E8%AE%B0%E5%8F%B7/" data-title="渐近记号" data-web><i class="fab fa-whatsapp fa-fw"></i></a><a href="javascript:void(0);" title="Share on Line" data-sharer="line" data-url="https://utopizza.github.io/2017-09-06-%E7%AE%97%E6%B3%95-%E6%B8%90%E8%BF%91%E8%AE%B0%E5%8F%B7/" data-title="渐近记号"><i class="fab fa-line fa-fw"></i></a><a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="https://utopizza.github.io/2017-09-06-%E7%AE%97%E6%B3%95-%E6%B8%90%E8%BF%91%E8%AE%B0%E5%8F%B7/" data-title="渐近记号"><i class="fab fa-weibo fa-fw"></i></a><a href="javascript:void(0);" title="Share on Myspace" data-sharer="myspace" data-url="https://utopizza.github.io/2017-09-06-%E7%AE%97%E6%B3%95-%E6%B8%90%E8%BF%91%E8%AE%B0%E5%8F%B7/" data-title="渐近记号" data-description=""><i data-svg-src="/lib/simple-icons/icons/myspace.min.svg"></i></a><a href="javascript:void(0);" title="Share on Blogger" data-sharer="blogger" data-url="https://utopizza.github.io/2017-09-06-%E7%AE%97%E6%B3%95-%E6%B8%90%E8%BF%91%E8%AE%B0%E5%8F%B7/" data-title="渐近记号" data-description=""><i class="fab fa-blogger fa-fw"></i></a><a href="javascript:void(0);" title="Share on Evernote" data-sharer="evernote" data-url="https://utopizza.github.io/2017-09-06-%E7%AE%97%E6%B3%95-%E6%B8%90%E8%BF%91%E8%AE%B0%E5%8F%B7/" data-title="渐近记号"><i class="fab fa-evernote fa-fw"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/2017-08-25-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E9%AB%98%E6%96%AF%E6%B7%B7%E5%90%88%E6%A8%A1%E5%9E%8B%E7%9A%84em%E6%8E%A8%E5%AF%BC%E7%AE%80%E5%8D%95%E7%89%88/" class="prev" rel="prev" title="高斯混合模型的EM推导简单版"><i class="fas fa-angle-left fa-fw"></i>高斯混合模型的EM推导简单版</a>
+            <a href="/2017-09-13-%E7%AE%97%E6%B3%95-%E4%BB%85%E7%94%A8%E9%80%92%E5%BD%92%E9%80%86%E5%BA%8F%E4%B8%80%E4%B8%AA%E6%A0%88/" class="next" rel="next" title="仅用递归逆序一个栈">仅用递归逆序一个栈<i class="fas fa-angle-right fa-fw"></i></a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.69.2">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.6"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2020</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">yusheng</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><link rel="stylesheet" href="/lib/katex/katex.min.css"><link rel="stylesheet" href="/lib/katex/copy-tex.min.css"><script type="text/javascript">
+    window.config = {"code":{"copyTitle":"Copy to clipboard","maxShownLines":100},"comment":{},"headerMode":{"desktop":"fixed","mobile":"auto"},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false}};
+</script><script type="text/javascript" src="https://polyfill.io/v3/polyfill.min.js?features=html5shiv%2CElement.prototype.closest%2CrequestAnimationFrame%2CCustomEvent%2CPromise%2CObject.entries%2CObject.assign%2CObject.values%2Cfetch%2CElement.prototype.after%2CArray.prototype.fill%2CIntersectionObserver%2CArray.from%2CArray.prototype.find%2CMath.sign"></script><script type="text/javascript" src="/lib/smooth-scroll/smooth-scroll.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/object-fit-images/ofi.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="/lib/sharer/sharer.min.js"></script><script type="text/javascript" src="/lib/katex/katex.min.js"></script><script type="text/javascript" src="/lib/katex/auto-render.min.js"></script><script type="text/javascript" src="/lib/katex/copy-tex.min.js"></script><script type="text/javascript" src="/lib/katex/mhchem.min.js"></script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>
