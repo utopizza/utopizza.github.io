@@ -6,10 +6,10 @@
         <generator>Hugo -- gohugo.io</generator><language>en</language><managingEditor>648847079@qq.com (yusheng)</managingEditor>
             <webMaster>648847079@qq.com (yusheng)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Thu, 09 May 2019 00:00:00 &#43;0000</lastBuildDate><atom:link href="https://utopizza.github.io/categories/thesis/" rel="self" type="application/rss+xml" /><item>
     <title>Spark</title>
-    <link>https://utopizza.github.io/2019-05-09-%E8%AE%BA%E6%96%87-spark/</link>
+    <link>https://utopizza.github.io/2019-05-09-thesis-spark/</link>
     <pubDate>Thu, 09 May 2019 00:00:00 &#43;0000</pubDate>
     <author>Author</author>
-    <guid>https://utopizza.github.io/2019-05-09-%E8%AE%BA%E6%96%87-spark/</guid>
+    <guid>https://utopizza.github.io/2019-05-09-thesis-spark/</guid>
     <description><![CDATA[一、背景及问题
 在谷歌提出了 MapReduce 编程模型之后，UC Berkeley 在此基础上提出了一个更加高效的模型，称为 Spark。其核心思想是将 MapReduce 的中间结果缓存到内存中，使得 Workers 可以快速读取数据而无需启动延迟极大的磁盘读取操作。这种编程模型针对一些迭代次数高、需要反复使用或者修改数据的计算任务尤其有效。根据论文的实验，Spark 在一些高迭代次数的算法实验中处理速度是 MapReduce 的 10 倍以上。
 然而因为没有了将中间结果写磁盘的操作来保证容灾和恢复，因此 Spark 设计了一套别的方案来达到该目的，那就是 RDD + Lineage。RDD(Resilient Distribute Datasets)称为弹性数据集，它是一种对被操作数据的抽象，而 Lineage 称为“血统”，顾名思义它记录了每一个 RDD 演变过程中的上下文信息。当故障出现时，可以根据丢失的 RDD 的 Lineage 来追寻它的祖先 RDD ，然后重新执行演化即可恢复出丢失的 RDD。

@@ -112,7 +112,7 @@ PageRank 算法的详细介绍见 维基百科。总而言之，该算法的主�
         <a href="/2019-05-19-%E7%AE%97%E6%B3%95-pagerank%E5%9C%A8spark%E7%9A%84%E5%88%86%E5%B8%83%E5%BC%8F%E5%AE%9E%E7%8E%B0/">Read More</a></div>
 </article>
 <article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
-        <a href="/2019-05-09-%E8%AE%BA%E6%96%87-spark/">Spark</a>
+        <a href="/2019-05-09-thesis-spark/">Spark</a>
     </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
             published on&nbsp;<time datetime=2019-05-09>2019-05-09</time>
         </span>&nbsp;
@@ -124,7 +124,7 @@ PageRank 算法的详细介绍见 维基百科。总而言之，该算法的主�
 二、Spark 编程模型
 使用 Spark 的用户通过编写一个称为 Driver Program 的程序来实现自己的计算任务。Spark 为用户的并行化编程提供了三个组件：resilient distribution dataset、 parallel operations、 parallel operations。
 (1) Resilient Distribution Datasets(RDDs)：一个 RDD 是一个可恢复的只读对象集合，它无须存储在磁盘中。每次对一个 RDD 的操作都会被记录下来，从而每个 RDD 可以沿着它的演化过程一直追寻它的祖先 RDD，甚至可以追寻到最开始的第一次从磁盘读取初始数据。因此这个机制保证了任何一个 RDD 都可以被恢复。具体在 Spark 系统中，RDD 由 Scala 对象来表达。论文中规定了 RDD 仅可以从四种方式构造：</div><div class="post-footer">
-        <a href="/2019-05-09-%E8%AE%BA%E6%96%87-spark/">Read More</a></div>
+        <a href="/2019-05-09-thesis-spark/">Read More</a></div>
 </article>
 <article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
         <a href="/2019-05-08-%E8%AE%BA%E6%96%87-mapreduce/">MapReduce</a>
