@@ -77,6 +77,21 @@
         alt="Posts"
         title="Posts" /></a></div><h1 class="home-title">CODE FOR FOOD :)</h1><h2 class="home-subtitle"><div id="id-1" class="typeit"></div></h2><div class="social-links"><a href="https://github.com/utopizza" title="GitHub" target="_blank" rel="noopener noreffer me"><i class="fab fa-github-alt fa-fw"></i></a><a href="mailto:648847079@qq.com" title="Email" rel=" me"><i class="far fa-envelope fa-fw"></i></a></div></div>
 <article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+        <a href="/2017-09-20-%E7%AE%97%E6%B3%95-%E6%9C%80%E4%BC%98%E4%BA%8C%E5%8F%89%E6%90%9C%E7%B4%A2%E6%A0%91/">最优二叉搜索树</a>
+    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
+            published on&nbsp;<time datetime=2017-09-20>2017-09-20</time>
+        </span>&nbsp;
+            <span class="post-category">included in<a href="/categories/algorithm/">
+                        <i class="far fa-folder fa-fw"></i>Algorithm
+                    </a></span></div><div class="content">一、问题
+给定一个包含 $n$ 个不同关键字的已经排序的序列 $K=&lt; k_1,k_2, \cdots , k_n&gt;$ $(k_1 &lt; k_2 &lt; \cdots &lt; k_n)$，我们希望用这些关键字构造一颗二叉搜索树。
+对每个关键字 $k_i$，都有一个概率 $p_i$ 表示其搜索频率。有些要搜索的值可能不在 $K$ 中，因此我们还有 $n+1$ 个“伪关键字”：$&lt; d_0,d_1,d_2,\cdots,d_n &gt;$ 表示不在 $K$ 中的值。其中，$d_0$ 表示所有小于 $k_1$ 的值，$d_n$ 表示所有大于 $k_n$ 的值，对 $i=1,2,\cdots,n-1$，伪关键字 $d_i$ 表示所有在 $k_i$ 和 $k_{i+1}$ 之间的值。对每个伪关键字 $d_i$，也都有一个概率 $q_i$ 表示对应的搜索频率。
+由这 $n$ 个关键字和 $n+1$ 个 伪关键字构成的二叉搜索树，每个关键字 $k_i$ $(1 \leq i \leq n)$ 是一个内部结点，而每个伪关键字 $d_i$ $(0 \leq i \leq n)$ 是一个叶结点。
+由于每次搜索要么成功（找到某个关键字 $k_i$）要么失败（找到某个伪关键字 $d_i$），因此这棵树所有结点的概率之和为1：
+$$\sum_{i=1}^{n}p_i + \sum_{i=0}^{n}q_i = 1$$</div><div class="post-footer">
+        <a href="/2017-09-20-%E7%AE%97%E6%B3%95-%E6%9C%80%E4%BC%98%E4%BA%8C%E5%8F%89%E6%90%9C%E7%B4%A2%E6%A0%91/">Read More</a></div>
+</article>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
         <a href="/2017-09-18-%E7%AE%97%E6%B3%95-%E6%9C%80%E9%95%BF%E5%85%AC%E5%85%B1%E5%AD%90%E5%BA%8F%E5%88%97/">最长公共子序列</a>
     </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
             published on&nbsp;<time datetime=2017-09-18>2017-09-18</time>
@@ -149,31 +164,6 @@
 对一个给定的函数 $g(n)$，用 $\Theta(g(n))$ 来表示以下函数的集合： $\Theta(g(n))={ f(n):存在正常量c_1,c_2和n_0,对所有n \geq n_0,有 0 \leq c_1g(n) \leq f(n) \leq c_2g(n) } $
 字面上来说：若存在正常量 $c_1,c_2和n_0$，使得对足够大的 n ，函数 $f(n)$ 能被夹入 $c_1g(n)与c_2g(n)$ 之间，则 $f(n)$ 属于集合 $\Theta(g(n))$ 。我们记 $f(n)=\Theta(g(n))$ 以表示 $f(n)$ 是函数集合 $\Theta(g(n))$ 的成员。换句话说，对所有 $n \geq n_0$，函数 $f(n)$ 在一个常量因子内等于 $g(n)$ 。我们也称 $g(n)$ 是 $f(n)$ 的一个渐近确界。</div><div class="post-footer">
         <a href="/2017-09-06-%E7%AE%97%E6%B3%95-%E6%B8%90%E8%BF%91%E8%AE%B0%E5%8F%B7/">Read More</a></div>
-</article>
-<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
-        <a href="/2017-08-25-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E9%AB%98%E6%96%AF%E6%B7%B7%E5%90%88%E6%A8%A1%E5%9E%8B%E7%9A%84em%E6%8E%A8%E5%AF%BC%E7%AE%80%E5%8D%95%E7%89%88/">高斯混合模型的EM推导简单版</a>
-    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
-            published on&nbsp;<time datetime=2017-08-25>2017-08-25</time>
-        </span>&nbsp;
-            <span class="post-category">included in<a href="/categories/machinelearning/">
-                        <i class="far fa-folder fa-fw"></i>MachineLearning
-                    </a></span></div><div class="content">一、高斯混合模型
-为简洁表达，以下把第 $k$ 个高斯模型 $\phi(y\mid\theta_k)$ 简记为 $\phi_k(y)$
-那么高斯混合模型为：
-$$ P(y\mid\theta)=\alpha_1\cdot\phi_1(y) + \alpha_2\cdot\phi_2(y) + \cdots + \alpha_K\cdot\phi_K(y) $$
-二、高斯混合模型参数估计的EM算法
-输入：观测数据 ($y_1,y_2,\cdots,y_N$)，高斯混合模型 输出：高斯混合参数模型
-(1) 取参数的初始值开始迭代
-(2) E步：依据当前模型参数，计算每个分模型对每个观测数据的响应度
-以第一个高斯模型 $\phi_1$ 为例：
-对 $y_1$ 响应度：
-$$ \hat{\gamma}_{11}= \frac {\alpha_1\cdot\phi_1(y_1)} {\alpha_1\cdot\phi_1(y_1) + \alpha_2\cdot\phi_2(y_1) + \cdots + \alpha_K\cdot\phi_K(y_1)} $$
-对 $y_2$ 响应度：
-$$ \hat{\gamma}_{12}= \frac {\alpha_1\cdot\phi(y_2\mid\theta_1)} {\alpha_1\cdot\phi_1(y_2) + \alpha_2\cdot\phi_2(y_2) + \cdots + \alpha_K\cdot\phi_K(y_2)} $$
-$$\cdots$$
-对 $y_N$ 响应度：
-$$ \hat{\gamma}_{1N}= \frac {\alpha_1\cdot\phi(y_2\mid\theta_1)} {\alpha_1\cdot\phi_1(y_N) + \alpha_2\cdot\phi_2(y_N) + \cdots + \alpha_K\cdot\phi_K(y_N)} $$</div><div class="post-footer">
-        <a href="/2017-08-25-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E9%AB%98%E6%96%AF%E6%B7%B7%E5%90%88%E6%A8%A1%E5%9E%8B%E7%9A%84em%E6%8E%A8%E5%AF%BC%E7%AE%80%E5%8D%95%E7%89%88/">Read More</a></div>
 </article>
 <ul class="pagination"><li class="page-item ">
                     <span class="page-link">

@@ -77,6 +77,23 @@
         alt="Posts"
         title="Posts" /></a></div><h1 class="home-title">CODE FOR FOOD :)</h1><h2 class="home-subtitle"><div id="id-1" class="typeit"></div></h2><div class="social-links"><a href="https://github.com/utopizza" title="GitHub" target="_blank" rel="noopener noreffer me"><i class="fab fa-github-alt fa-fw"></i></a><a href="mailto:648847079@qq.com" title="Email" rel=" me"><i class="far fa-envelope fa-fw"></i></a></div></div>
 <article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+        <a href="/2017-10-26-%E7%AE%97%E6%B3%95-java%E4%BD%8D%E8%BF%90%E7%AE%97%E7%AC%A6%E4%BC%98%E5%85%88%E7%BA%A7%E9%97%AE%E9%A2%98/">java位运算符优先级</a>
+    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
+            published on&nbsp;<time datetime=2017-10-26>2017-10-26</time>
+        </span>&nbsp;
+            <span class="post-category">included in<a href="/categories/algorithm/">
+                        <i class="far fa-folder fa-fw"></i>Algorithm
+                    </a></span></div><div class="content">一、问题
+leetcode第190题，逆序所输入的整数的32位bit，构成一个新的整数并输出：190. Reverse Bits
+二、解决
+思路不难，对输入的整数$n$，不断右移（带符号）并取其最低位（与上1），加到返回的整数上；返回的整数每次接收$n$的1位后，左移1位腾出最低位给下一次接收。如此循环32次即可。
+1 2 3 4 5 6 7 8 9 10 11  public class Solution { public int reverseBits(int n) { int result=0; for(int i=0;i&lt;32;i++){ result=result&lt;&lt;1; result=result+(n&amp;1); n=n&gt;&gt;&gt;1; } return result; } }   我一开始没有注意四则运算符和位运算符的优先级，默认了位运算是高于加减乘除的，所以上面第6行处我一开始写成：
+1  result = result + n&amp;1;   然后一直AC失败。我反复检查了我的思路也找不到出错的原因。无奈之下查看了discuss，发现我的思路和高票答案是一模一样的。不过别人的写法是：
+1  result += n&amp;1;   此时我才醒悟难道是运算符优先级的问题？我立马尝试加上括号，发现AC成功。后来查了资料才知道加减运算符的优先级是比按位与运算符的优先级高的：
+1 2 3 4 5  int a = 2; int b = 0; int c = a + b &amp; 1; int d = a + (b &amp; 1); System.</div><div class="post-footer">
+        <a href="/2017-10-26-%E7%AE%97%E6%B3%95-java%E4%BD%8D%E8%BF%90%E7%AE%97%E7%AC%A6%E4%BC%98%E5%85%88%E7%BA%A7%E9%97%AE%E9%A2%98/">Read More</a></div>
+</article>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
         <a href="/2017-10-18-%E7%AE%97%E6%B3%95-%E6%9C%80%E5%A4%A7%E5%AD%90%E6%95%B0%E7%BB%84%E5%92%8C/">最大子数组和</a>
     </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
             published on&nbsp;<time datetime=2017-10-18>2017-10-18</time>
@@ -164,21 +181,6 @@ $$s.t. \quad \sum_{i=1}^{n} w[i] \cdot x_i \leq W , \quad x_i \in { 0,1 }$$
  CCF评级：A类 全称：Association for the Advancement of Artificial Intelligence 出版社：AAAI 网址：https://www.aaai.org/ DBLP：http://dblp.uni-trier.de/db/conf/aaai/ 时间：2014年之前每年7月到8月，2015年开始改到了每年1月到2月  5、TKDE
  CCF评级：A类 全称：IEEE Transactions on Knowledge and Data Engineering 出版社：IEEE 网址：https://www.</div><div class="post-footer">
         <a href="/2017-09-21-%E8%AE%BA%E6%96%87-%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E7%9B%B8%E5%85%B3%E5%AD%A6%E6%9C%AF%E4%BC%9A%E8%AE%AE/">Read More</a></div>
-</article>
-<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
-        <a href="/2017-09-20-%E7%AE%97%E6%B3%95-%E6%9C%80%E4%BC%98%E4%BA%8C%E5%8F%89%E6%90%9C%E7%B4%A2%E6%A0%91/">最优二叉搜索树</a>
-    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
-            published on&nbsp;<time datetime=2017-09-20>2017-09-20</time>
-        </span>&nbsp;
-            <span class="post-category">included in<a href="/categories/algorithm/">
-                        <i class="far fa-folder fa-fw"></i>Algorithm
-                    </a></span></div><div class="content">一、问题
-给定一个包含 $n$ 个不同关键字的已经排序的序列 $K=&lt; k_1,k_2, \cdots , k_n&gt;$ $(k_1 &lt; k_2 &lt; \cdots &lt; k_n)$，我们希望用这些关键字构造一颗二叉搜索树。
-对每个关键字 $k_i$，都有一个概率 $p_i$ 表示其搜索频率。有些要搜索的值可能不在 $K$ 中，因此我们还有 $n+1$ 个“伪关键字”：$&lt; d_0,d_1,d_2,\cdots,d_n &gt;$ 表示不在 $K$ 中的值。其中，$d_0$ 表示所有小于 $k_1$ 的值，$d_n$ 表示所有大于 $k_n$ 的值，对 $i=1,2,\cdots,n-1$，伪关键字 $d_i$ 表示所有在 $k_i$ 和 $k_{i+1}$ 之间的值。对每个伪关键字 $d_i$，也都有一个概率 $q_i$ 表示对应的搜索频率。
-由这 $n$ 个关键字和 $n+1$ 个 伪关键字构成的二叉搜索树，每个关键字 $k_i$ $(1 \leq i \leq n)$ 是一个内部结点，而每个伪关键字 $d_i$ $(0 \leq i \leq n)$ 是一个叶结点。
-由于每次搜索要么成功（找到某个关键字 $k_i$）要么失败（找到某个伪关键字 $d_i$），因此这棵树所有结点的概率之和为1：
-$$\sum_{i=1}^{n}p_i + \sum_{i=0}^{n}q_i = 1$$</div><div class="post-footer">
-        <a href="/2017-09-20-%E7%AE%97%E6%B3%95-%E6%9C%80%E4%BC%98%E4%BA%8C%E5%8F%89%E6%90%9C%E7%B4%A2%E6%A0%91/">Read More</a></div>
 </article>
 <ul class="pagination"><li class="page-item ">
                     <span class="page-link">

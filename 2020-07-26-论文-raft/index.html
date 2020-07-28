@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>Spark - Utopizza</title>
+        <meta name="Description" content="About LoveIt Theme"><meta property="og:title" content="Spark" />
+<meta property="og:description" content="一、背景及问题
+共识算法（consensus algorithm）在实现大型分布式系统的可靠性方面扮演了十分关键的角色，因为它允许集群在部分机器故障的情况下保持任务正常运行。在过去十年中，主流的共识算法叫Paxos，大部分系统都使用了这个算法，并且该算法一度成为标准的教材。然而，该算法有一个缺陷就是过于复杂，想要完全理解或者完美实现都十分困难。因此，斯坦福的Diego Ongaro和John Ousterhout便提出了一个相对容易理解、容易实现的共识算法，命名为Raft。
+二、相关概念
+Replicated state machine：复制状态机，是共识算法的起源之处。像GFS、HDFS等的大规模分布式系统，其leader节点都只有一个，存在单点故障问题。要保证集群即使出现该故障的情况下自动恢复正常运行，如集群配置信息、leader选举心跳信息等数据必须克服单点故障的问题，这就要求这些重要的数据有可靠的方式来进行备份。一种可靠的方式就是使用复制状态机，如下图所示，复制状态机一般是通过复制日志（replicated log）来实现。每个机器上都会维护一份复制日志，日志的内容是一系列的command，机器会按日志的顺序来执行这些command，来修改自己的状态。只要保证每个机器上的复制日志是完全一致，那么就可以保证每个机器的操作结果是一致的。其中，共识算法的主要作用就是通过一些通信手段，来保持集群中每个机器的复制日志完全一致。目前比较有名的复制状态机的实现是Zookeeper和Chubby。
+三、Raft算法
+总的来说，Raft首先会从集群中选举一个leader，整个集群的复制日志完全由leader来维护：leader节点接收client端发送过来的日志实体（log entry），然后把日志实体分发给集群中其他节点，并告诉其他节点什么时候可以安全地执行这些日志，从而修改他们的状态。当leader宕机故障时，集群会自动发起选举，选出一个新的leader继续保持集群运行。为了便于理解和实践，Raft把共识问题拆分成三个彼此独立的子问题，从而逐一解决：（1）leader选举（2）日志复制（3）安全
+1、Raft基础
+Raft集群（一般规模为5台机器）中的节点在任何时刻（可以运行的情况下）必为以下三种状态之一：（1）leader（2）follower（3）candidate。在正常情况下，集群中只有一个leader，其余均为follower。follower不响应任何client端请求，它只会把这些请求重定向给leader，并且只响应leader的请求。
+Raft把时间分割成任意长度的周期（term），这些周期用连续的整数来唯一地标识，可以理解为周期id。每个周期都由leader选举开始，在这个周期内如果一个节点当选为leader，它会一直作为leader直到这个周期结束。集群中每个节点自身都会维护一个周期id作为自己看到的当前周期。当节点之间进行通信时会带上自己的当前周期，如果节点发现对方周期id比自己大，则更新自己的当前周期；如果节点发现自己的当前周期已经过期，则马上把自己转为follower状态；如果节点发现对方的周期已经过期，则直接拒绝对方的请求。
+2、leader选举
+Raft使用心跳机制（heartbeat）来触发leader选举。当Raft集群刚启动时，所有节点都是follower状态。follower节点一段时间内发现没有收到来自leader的心跳，认为leader节点已经失效（election timeout），则马上把自己转变为candidate状态，并将自己的当前周期增大。它会先为自己投票，然后向集群中其他节点发起拉票请求（RequestVote RPC）。candidate节点会一直持续这个状态直到（1）它获得多数票从而赢得选举成为新leader（2）其他节点胜出成为新leader（3）选举超时，没有选出新leader。
+Raft投票规则：（1）每个节点每次选举周期内最多投出一票（2）先到先得原则，给先请求的节点投票（2）candidate只给自己投一票，然后并发地向其他节点拉票（4）特殊情况下，可能会进入僵持状态——例如所有节点同时进入candidate状态，只给自己投票，然后等等其他人给自己投票，此时的集群状态称为“split”。该论文解决这个问题使用了一种简单的方法，就是随机话选举超时时间，避免多个节点同时开启选举周期，使得先开启选举的节点有先发优势成为新leader，减少集群不可用时间。
+当一个candidate成为新leader后，马上开始向其他节点发送心跳宣告自己的leader身份。其他节点确认该新leader的当前周期是有效周期后，认可新leader的身份，把自己转变为follower；否则无视该leader，继续保持选举。
+3、日志复制
+当节点成为leader后，开始负责响应client的请求。client的请求会包含一个需要整个集群都执行的command。leader首先会把该command追加到自己的日志中，然后通过RPC（AppendEntries RPCs）把日志分发到其他节点。若某个follower宕机或者网络丢包没有复制成功，leader会无限地重新尝试，直到复制成功。分发完成后，leader执行该command，修改自己的状态，然后把执行结果返回给client。具体关于日志的组织形式、压缩方法，详见原论文。
+4、安全性
+这部分较为繁琐，详见原论文。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://utopizza.github.io/2020-07-26-%E8%AE%BA%E6%96%87-raft/" />
+<meta property="og:image" content="https://utopizza.github.io/logo.png"/>
+<meta property="article:published_time" content="2019-07-26T00:00:00+00:00" />
+<meta property="article:modified_time" content="2019-07-26T00:00:00+00:00" />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://utopizza.github.io/logo.png"/>
+
+<meta name="twitter:title" content="Spark"/>
+<meta name="twitter:description" content="一、背景及问题
+共识算法（consensus algorithm）在实现大型分布式系统的可靠性方面扮演了十分关键的角色，因为它允许集群在部分机器故障的情况下保持任务正常运行。在过去十年中，主流的共识算法叫Paxos，大部分系统都使用了这个算法，并且该算法一度成为标准的教材。然而，该算法有一个缺陷就是过于复杂，想要完全理解或者完美实现都十分困难。因此，斯坦福的Diego Ongaro和John Ousterhout便提出了一个相对容易理解、容易实现的共识算法，命名为Raft。
+二、相关概念
+Replicated state machine：复制状态机，是共识算法的起源之处。像GFS、HDFS等的大规模分布式系统，其leader节点都只有一个，存在单点故障问题。要保证集群即使出现该故障的情况下自动恢复正常运行，如集群配置信息、leader选举心跳信息等数据必须克服单点故障的问题，这就要求这些重要的数据有可靠的方式来进行备份。一种可靠的方式就是使用复制状态机，如下图所示，复制状态机一般是通过复制日志（replicated log）来实现。每个机器上都会维护一份复制日志，日志的内容是一系列的command，机器会按日志的顺序来执行这些command，来修改自己的状态。只要保证每个机器上的复制日志是完全一致，那么就可以保证每个机器的操作结果是一致的。其中，共识算法的主要作用就是通过一些通信手段，来保持集群中每个机器的复制日志完全一致。目前比较有名的复制状态机的实现是Zookeeper和Chubby。
+三、Raft算法
+总的来说，Raft首先会从集群中选举一个leader，整个集群的复制日志完全由leader来维护：leader节点接收client端发送过来的日志实体（log entry），然后把日志实体分发给集群中其他节点，并告诉其他节点什么时候可以安全地执行这些日志，从而修改他们的状态。当leader宕机故障时，集群会自动发起选举，选出一个新的leader继续保持集群运行。为了便于理解和实践，Raft把共识问题拆分成三个彼此独立的子问题，从而逐一解决：（1）leader选举（2）日志复制（3）安全
+1、Raft基础
+Raft集群（一般规模为5台机器）中的节点在任何时刻（可以运行的情况下）必为以下三种状态之一：（1）leader（2）follower（3）candidate。在正常情况下，集群中只有一个leader，其余均为follower。follower不响应任何client端请求，它只会把这些请求重定向给leader，并且只响应leader的请求。
+Raft把时间分割成任意长度的周期（term），这些周期用连续的整数来唯一地标识，可以理解为周期id。每个周期都由leader选举开始，在这个周期内如果一个节点当选为leader，它会一直作为leader直到这个周期结束。集群中每个节点自身都会维护一个周期id作为自己看到的当前周期。当节点之间进行通信时会带上自己的当前周期，如果节点发现对方周期id比自己大，则更新自己的当前周期；如果节点发现自己的当前周期已经过期，则马上把自己转为follower状态；如果节点发现对方的周期已经过期，则直接拒绝对方的请求。
+2、leader选举
+Raft使用心跳机制（heartbeat）来触发leader选举。当Raft集群刚启动时，所有节点都是follower状态。follower节点一段时间内发现没有收到来自leader的心跳，认为leader节点已经失效（election timeout），则马上把自己转变为candidate状态，并将自己的当前周期增大。它会先为自己投票，然后向集群中其他节点发起拉票请求（RequestVote RPC）。candidate节点会一直持续这个状态直到（1）它获得多数票从而赢得选举成为新leader（2）其他节点胜出成为新leader（3）选举超时，没有选出新leader。
+Raft投票规则：（1）每个节点每次选举周期内最多投出一票（2）先到先得原则，给先请求的节点投票（2）candidate只给自己投一票，然后并发地向其他节点拉票（4）特殊情况下，可能会进入僵持状态——例如所有节点同时进入candidate状态，只给自己投票，然后等等其他人给自己投票，此时的集群状态称为“split”。该论文解决这个问题使用了一种简单的方法，就是随机话选举超时时间，避免多个节点同时开启选举周期，使得先开启选举的节点有先发优势成为新leader，减少集群不可用时间。
+当一个candidate成为新leader后，马上开始向其他节点发送心跳宣告自己的leader身份。其他节点确认该新leader的当前周期是有效周期后，认可新leader的身份，把自己转变为follower；否则无视该leader，继续保持选举。
+3、日志复制
+当节点成为leader后，开始负责响应client的请求。client的请求会包含一个需要整个集群都执行的command。leader首先会把该command追加到自己的日志中，然后通过RPC（AppendEntries RPCs）把日志分发到其他节点。若某个follower宕机或者网络丢包没有复制成功，leader会无限地重新尝试，直到复制成功。分发完成后，leader执行该command，修改自己的状态，然后把执行结果返回给client。具体关于日志的组织形式、压缩方法，详见原论文。
+4、安全性
+这部分较为繁琐，详见原论文。"/>
+<meta name="application-name" content="Utopizza">
+<meta name="apple-mobile-web-app-title" content="Utopizza"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://utopizza.github.io/2020-07-26-%E8%AE%BA%E6%96%87-raft/" /><link rel="prev" href="https://utopizza.github.io/2019-05-19-%E7%AE%97%E6%B3%95-pagerank%E5%9C%A8spark%E7%9A%84%E5%88%86%E5%B8%83%E5%BC%8F%E5%AE%9E%E7%8E%B0/" /><link rel="next" href="https://utopizza.github.io/2019-09-16-%E6%80%BB%E7%BB%93-%E9%98%B6%E6%AE%B5%E6%80%BB%E7%BB%938/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "Spark",
+        "inLanguage": "en",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https:\/\/utopizza.github.io\/2020-07-26-%E8%AE%BA%E6%96%87-raft\/"
+        },"image": {
+                "@type": "ImageObject",
+                "url": "https:\/\/utopizza.github.io\/cover.png",
+                "width":  800 ,
+                "height":  600 
+            },"genre": "posts","wordcount":  27 ,
+        "url": "https:\/\/utopizza.github.io\/2020-07-26-%E8%AE%BA%E6%96%87-raft\/","datePublished": "2019-07-26T00:00:00+00:00","dateModified": "2019-07-26T00:00:00+00:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+                "@type": "Organization",
+                "name": "",
+                "logo": {
+                "@type": "ImageObject",
+                "url": "https:\/\/utopizza.github.io\/logo.png",
+                "width":  127 ,
+                "height":  40 
+                }
+            },"author": {
+                "@type": "Person",
+                "name": "yusheng"
+            },"description": ""
+    }
+    </script></head>
+    <body><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="Utopizza"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>Utopizza</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> Posts </a><a class="menu-item" href="/categories/"> Categories </a><a class="menu-item" href="https://github.com/utopizza" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i>  </a><span class="menu-item delimiter"></span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="Utopizza"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw'></i></span>Utopizza</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><a class="menu-item" href="/posts/" title="">Posts</a><a class="menu-item" href="/categories/" title="">Categories</a><a class="menu-item" href="https://github.com/utopizza" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw'></i></a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">Spark</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;
+                    <span class="post-category">included in<a href="/categories/thesis/">
+                                <i class="far fa-folder fa-fw"></i>Thesis
+                            </a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i><time datetime=2019-07-26>2019-07-26</time>&nbsp;
+                <i class="fas fa-pencil-alt fa-fw"></i>about 27 words&nbsp;
+                <i class="far fa-clock fa-fw"></i>1 min&nbsp;</div>
+        </div><div class="details toc" id="toc-static">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents"></nav></div>
+            </div><div class="content" id="content"><p>一、背景及问题</p>
+<p>共识算法（consensus algorithm）在实现大型分布式系统的可靠性方面扮演了十分关键的角色，因为它允许集群在部分机器故障的情况下保持任务正常运行。在过去十年中，主流的共识算法叫Paxos，大部分系统都使用了这个算法，并且该算法一度成为标准的教材。然而，该算法有一个缺陷就是过于复杂，想要完全理解或者完美实现都十分困难。因此，斯坦福的Diego Ongaro和John Ousterhout便提出了一个相对容易理解、容易实现的共识算法，命名为Raft。</p>
+<p>二、相关概念</p>
+<p>Replicated state machine：复制状态机，是共识算法的起源之处。像GFS、HDFS等的大规模分布式系统，其leader节点都只有一个，存在单点故障问题。要保证集群即使出现该故障的情况下自动恢复正常运行，如集群配置信息、leader选举心跳信息等数据必须克服单点故障的问题，这就要求这些重要的数据有可靠的方式来进行备份。一种可靠的方式就是使用复制状态机，如下图所示，复制状态机一般是通过复制日志（replicated log）来实现。每个机器上都会维护一份复制日志，日志的内容是一系列的command，机器会按日志的顺序来执行这些command，来修改自己的状态。只要保证每个机器上的复制日志是完全一致，那么就可以保证每个机器的操作结果是一致的。其中，共识算法的主要作用就是通过一些通信手段，来保持集群中每个机器的复制日志完全一致。目前比较有名的复制状态机的实现是Zookeeper和Chubby。</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="/2020-07-26-%e8%ae%ba%e6%96%87-raft/replicated_state_machine.png"
+        data-srcset="/2020-07-26-%e8%ae%ba%e6%96%87-raft/replicated_state_machine.png, /2020-07-26-%e8%ae%ba%e6%96%87-raft/replicated_state_machine.png 1.5x, /2020-07-26-%e8%ae%ba%e6%96%87-raft/replicated_state_machine.png 2x"
+        data-sizes="auto"
+        alt="/2020-07-26-论文-raft/replicated_state_machine.png"
+        title="/2020-07-26-论文-raft/replicated_state_machine.png" /></p>
+<p>三、Raft算法</p>
+<p>总的来说，Raft首先会从集群中选举一个leader，整个集群的复制日志完全由leader来维护：leader节点接收client端发送过来的日志实体（log entry），然后把日志实体分发给集群中其他节点，并告诉其他节点什么时候可以安全地执行这些日志，从而修改他们的状态。当leader宕机故障时，集群会自动发起选举，选出一个新的leader继续保持集群运行。为了便于理解和实践，Raft把共识问题拆分成三个彼此独立的子问题，从而逐一解决：（1）leader选举（2）日志复制（3）安全</p>
+<p>1、Raft基础</p>
+<p>Raft集群（一般规模为5台机器）中的节点在任何时刻（可以运行的情况下）必为以下三种状态之一：（1）leader（2）follower（3）candidate。在正常情况下，集群中只有一个leader，其余均为follower。follower不响应任何client端请求，它只会把这些请求重定向给leader，并且只响应leader的请求。</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="/2020-07-26-%e8%ae%ba%e6%96%87-raft/server_state.png"
+        data-srcset="/2020-07-26-%e8%ae%ba%e6%96%87-raft/server_state.png, /2020-07-26-%e8%ae%ba%e6%96%87-raft/server_state.png 1.5x, /2020-07-26-%e8%ae%ba%e6%96%87-raft/server_state.png 2x"
+        data-sizes="auto"
+        alt="/2020-07-26-论文-raft/server_state.png"
+        title="/2020-07-26-论文-raft/server_state.png" /></p>
+<p>Raft把时间分割成任意长度的周期（term），这些周期用连续的整数来唯一地标识，可以理解为周期id。每个周期都由leader选举开始，在这个周期内如果一个节点当选为leader，它会一直作为leader直到这个周期结束。集群中每个节点自身都会维护一个周期id作为自己看到的当前周期。当节点之间进行通信时会带上自己的当前周期，如果节点发现对方周期id比自己大，则更新自己的当前周期；如果节点发现自己的当前周期已经过期，则马上把自己转为follower状态；如果节点发现对方的周期已经过期，则直接拒绝对方的请求。</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading/small.min.svg"
+        data-src="/2020-07-26-%e8%ae%ba%e6%96%87-raft/term.png"
+        data-srcset="/2020-07-26-%e8%ae%ba%e6%96%87-raft/term.png, /2020-07-26-%e8%ae%ba%e6%96%87-raft/term.png 1.5x, /2020-07-26-%e8%ae%ba%e6%96%87-raft/term.png 2x"
+        data-sizes="auto"
+        alt="/2020-07-26-论文-raft/term.png"
+        title="/2020-07-26-论文-raft/term.png" /></p>
+<p>2、leader选举</p>
+<p>Raft使用心跳机制（heartbeat）来触发leader选举。当Raft集群刚启动时，所有节点都是follower状态。follower节点一段时间内发现没有收到来自leader的心跳，认为leader节点已经失效（election timeout），则马上把自己转变为candidate状态，并将自己的当前周期增大。它会先为自己投票，然后向集群中其他节点发起拉票请求（RequestVote RPC）。candidate节点会一直持续这个状态直到（1）它获得多数票从而赢得选举成为新leader（2）其他节点胜出成为新leader（3）选举超时，没有选出新leader。</p>
+<p>Raft投票规则：（1）每个节点每次选举周期内最多投出一票（2）先到先得原则，给先请求的节点投票（2）candidate只给自己投一票，然后并发地向其他节点拉票（4）特殊情况下，可能会进入僵持状态——例如所有节点同时进入candidate状态，只给自己投票，然后等等其他人给自己投票，此时的集群状态称为“split”。该论文解决这个问题使用了一种简单的方法，就是随机话选举超时时间，避免多个节点同时开启选举周期，使得先开启选举的节点有先发优势成为新leader，减少集群不可用时间。</p>
+<p>当一个candidate成为新leader后，马上开始向其他节点发送心跳宣告自己的leader身份。其他节点确认该新leader的当前周期是有效周期后，认可新leader的身份，把自己转变为follower；否则无视该leader，继续保持选举。</p>
+<p>3、日志复制</p>
+<p>当节点成为leader后，开始负责响应client的请求。client的请求会包含一个需要整个集群都执行的command。leader首先会把该command追加到自己的日志中，然后通过RPC（AppendEntries RPCs）把日志分发到其他节点。若某个follower宕机或者网络丢包没有复制成功，leader会无限地重新尝试，直到复制成功。分发完成后，leader执行该command，修改自己的状态，然后把执行结果返回给client。具体关于日志的组织形式、压缩方法，详见原论文。</p>
+<p>4、安全性</p>
+<p>这部分较为繁琐，详见原论文。</p>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>The article was updated on 2019-07-26</span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span>
+                            <a class="link-to-markdown" href="/2020-07-26-%E8%AE%BA%E6%96%87-raft/index.md" target="_blank">Read Markdown</a>
+                        </span></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="https://utopizza.github.io/2020-07-26-%E8%AE%BA%E6%96%87-raft/" data-title="Spark"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://utopizza.github.io/2020-07-26-%E8%AE%BA%E6%96%87-raft/"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="Share on WhatsApp" data-sharer="whatsapp" data-url="https://utopizza.github.io/2020-07-26-%E8%AE%BA%E6%96%87-raft/" data-title="Spark" data-web><i class="fab fa-whatsapp fa-fw"></i></a><a href="javascript:void(0);" title="Share on Line" data-sharer="line" data-url="https://utopizza.github.io/2020-07-26-%E8%AE%BA%E6%96%87-raft/" data-title="Spark"><i class="fab fa-line fa-fw"></i></a><a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="https://utopizza.github.io/2020-07-26-%E8%AE%BA%E6%96%87-raft/" data-title="Spark"><i class="fab fa-weibo fa-fw"></i></a><a href="javascript:void(0);" title="Share on Myspace" data-sharer="myspace" data-url="https://utopizza.github.io/2020-07-26-%E8%AE%BA%E6%96%87-raft/" data-title="Spark" data-description=""><i data-svg-src="/lib/simple-icons/icons/myspace.min.svg"></i></a><a href="javascript:void(0);" title="Share on Blogger" data-sharer="blogger" data-url="https://utopizza.github.io/2020-07-26-%E8%AE%BA%E6%96%87-raft/" data-title="Spark" data-description=""><i class="fab fa-blogger fa-fw"></i></a><a href="javascript:void(0);" title="Share on Evernote" data-sharer="evernote" data-url="https://utopizza.github.io/2020-07-26-%E8%AE%BA%E6%96%87-raft/" data-title="Spark"><i class="fab fa-evernote fa-fw"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/2019-05-19-%E7%AE%97%E6%B3%95-pagerank%E5%9C%A8spark%E7%9A%84%E5%88%86%E5%B8%83%E5%BC%8F%E5%AE%9E%E7%8E%B0/" class="prev" rel="prev" title="PageRank在Spark的分布式实现"><i class="fas fa-angle-left fa-fw"></i>PageRank在Spark的分布式实现</a>
+            <a href="/2019-09-16-%E6%80%BB%E7%BB%93-%E9%98%B6%E6%AE%B5%E6%80%BB%E7%BB%938/" class="next" rel="next" title="阶段总结(8)">阶段总结(8)<i class="fas fa-angle-right fa-fw"></i></a></div>
+</div>
+</article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.69.2">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.6"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2020</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">yusheng</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><link rel="stylesheet" href="/lib/katex/katex.min.css"><link rel="stylesheet" href="/lib/katex/copy-tex.min.css"><script type="text/javascript">
+    window.config = {"code":{"copyTitle":"Copy to clipboard","maxShownLines":100},"comment":{},"headerMode":{"desktop":"fixed","mobile":"auto"},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false}};
+</script><script type="text/javascript" src="https://polyfill.io/v3/polyfill.min.js?features=html5shiv%2CElement.prototype.closest%2CrequestAnimationFrame%2CCustomEvent%2CPromise%2CObject.entries%2CObject.assign%2CObject.values%2Cfetch%2CElement.prototype.after%2CArray.prototype.fill%2CIntersectionObserver%2CArray.from%2CArray.prototype.find%2CMath.sign"></script><script type="text/javascript" src="/lib/smooth-scroll/smooth-scroll.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/object-fit-images/ofi.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="/lib/sharer/sharer.min.js"></script><script type="text/javascript" src="/lib/katex/katex.min.js"></script><script type="text/javascript" src="/lib/katex/auto-render.min.js"></script><script type="text/javascript" src="/lib/katex/copy-tex.min.js"></script><script type="text/javascript" src="/lib/katex/mhchem.min.js"></script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>

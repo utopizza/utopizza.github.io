@@ -77,6 +77,22 @@
         alt="Posts"
         title="Posts" /></a></div><h1 class="home-title">CODE FOR FOOD :)</h1><h2 class="home-subtitle"><div id="id-1" class="typeit"></div></h2><div class="social-links"><a href="https://github.com/utopizza" title="GitHub" target="_blank" rel="noopener noreffer me"><i class="fab fa-github-alt fa-fw"></i></a><a href="mailto:648847079@qq.com" title="Email" rel=" me"><i class="far fa-envelope fa-fw"></i></a></div></div>
 <article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+        <a href="/2015-08-27-%E9%A1%B9%E7%9B%AE-%E5%85%A8%E5%9B%BD%E5%A4%A7%E5%AD%A6%E7%94%9F%E8%8A%82%E8%83%BD%E5%87%8F%E6%8E%92%E7%A4%BE%E4%BC%9A%E5%AE%9E%E8%B7%B5%E4%B8%8E%E7%A7%91%E6%8A%80%E7%AB%9E%E8%B5%9B/">全国大学生节能减排社会实践与科技竞赛</a>
+    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
+            published on&nbsp;<time datetime=2015-08-27>2015-08-27</time>
+        </span>&nbsp;
+            <span class="post-category">included in<a href="/categories/projects/">
+                        <i class="far fa-folder fa-fw"></i>Projects
+                    </a></span></div><div class="content">一、简介
+参赛作品是《面向物联网的无线无源风速仪》，设计一种面向物联网的无线无源小型三杯式风速仪，其工作原理是： (1) 无源：在有风时通过一个内置的小型发电装置，捕获风能，转化为电能供应自身工作，在无风时使用后备电源。为节省电源，大部分时间处于休眠状态，除非被上位机唤醒进行数据交互； (2) 无线：使用zigbee无线通讯模块，与上位机进行通信。
+其中我实现的部分是上位机软件，主要功能：定时向串口发送数据采集命令，然后从串口读取风速仪返回的风速值，显示到屏幕上。
+二、上位机软件的实现
+我用 WinForm + MS.Chart 的方式来实现，用 WinForm 来制作窗体，用 MS.Chart 来实现风速值的实时显示。上位机的采集数据的过程包括：定时、读写串口、CRC校验、字符串和十六进制等的数值转换、更新图形界面、监控报警最大风速值等。关键代码：
+初始化
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16  //用于更新图形化界面的事件委托 delegate void UpdateTextEventHandler_experimental(List&lt;double&gt; experimentalWSList); UpdateTextEventHandler_experimental updateTextEventHandler_experimental; delegate void UpdateChartEventHandler_experimental(string experimentalWSstr); UpdateChartEventHandler_experimental updateChartEventHandler_experimental; //初始化串口 public void InitCOM_experimental(string PortName) { experimentalPort = new SerialPort(PortName); experimentalPort.BaudRate = 9600;//波特率 experimentalPort.Parity = Parity.None;//无奇偶校验位 experimentalPort.StopBits = StopBits.One;//一个停止位 experimentalPort.DataBits = 8;//8位数据位 experimentalPort.</div><div class="post-footer">
+        <a href="/2015-08-27-%E9%A1%B9%E7%9B%AE-%E5%85%A8%E5%9B%BD%E5%A4%A7%E5%AD%A6%E7%94%9F%E8%8A%82%E8%83%BD%E5%87%8F%E6%8E%92%E7%A4%BE%E4%BC%9A%E5%AE%9E%E8%B7%B5%E4%B8%8E%E7%A7%91%E6%8A%80%E7%AB%9E%E8%B5%9B/">Read More</a></div>
+</article>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
         <a href="/2015-05-28-%E9%A1%B9%E7%9B%AE-%E6%8C%91%E6%88%98%E6%9D%AF%E6%B2%B3%E5%8C%97%E7%9C%81%E5%A4%A7%E5%AD%A6%E7%94%9F%E8%AF%BE%E5%A4%96%E5%AD%A6%E6%9C%AF%E7%A7%91%E6%8A%80%E4%BD%9C%E5%93%81%E7%AB%9E%E8%B5%9B/">挑战杯河北省大学生课外学术科技作品竞赛</a>
     </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
             published on&nbsp;<time datetime=2015-05-28>2015-05-28</time>
@@ -203,18 +219,6 @@ Server 端主要的两个文件是：网站主页 TICSystemDefault.aspx 和 WebS
 4、在前台控件取值，封装成Model层的对象并传递到后台时，一定要注意对空的判断，特别是传递到多条件选择的存储过程的参数时，不能把NULL传进去，所有对每一个参数必须进行非空判断，到底是传空字符串，还是某个默认值，还是什么什么，这个是必须要注意的问题
 5、关于修改：有时候客户需要修改需求，这时系统不得不做一些硬性修改。比如增加表里某个字段的长度。这时一定要细心，一定要从数据库改起，先改表的字段长度，然后是相关的增删改的存储过程中的那些临时表的字段的长度，然后是Model层，然后是DAL层的函数，接着是BLL层的函数，最后是最关键的UI层，要仔细检查每个用户输入控件的获取数据情况，修改截取函数的截取长度。另外还要留意一下控件的最大输入长度，是否需要修改</div><div class="post-footer">
         <a href="/2014-06-20-%E9%A1%B9%E7%9B%AE-%E5%8D%8E%E5%8C%97%E7%94%B5%E5%8A%9B%E5%A4%A7%E5%AD%A6%E5%9F%BA%E9%87%91%E4%BC%9A%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E6%80%BB%E7%BB%93/">Read More</a></div>
-</article>
-<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
-        <a href="/2014-03-06-%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B08/">技术笔记(8)-SQL多条件查询字符串拼接问题</a>
-    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
-            published on&nbsp;<time datetime=2014-03-06>2014-03-06</time>
-        </span>&nbsp;
-            <span class="post-category">included in<a href="/categories/technology/">
-                        <i class="far fa-folder fa-fw"></i>Technology
-                    </a></span></div><div class="content">一、SQL多条件查询
-在实现SQL的多条件查询时，一般采用的实现方法是根据传入的参数是否有效来判读是否拼接该项查询条件，如
-1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20  // 传入参数：@ProjectName=&#39;rrrr&#39;，@ProjectNumber=&#39;123&#39; // 先写好基本查询句子 declare @sqlString varchar(100) set @sqlString = &#39;select * from Project_Info where 1=1&#39; // 拼接查询条件1 if (@ProjectName IS NOT NULL) AND (@ProjectName &lt;&gt; &#39;&#39;) begin set @sqlString = @sqlString + &#39; and ProjectName like &#39;&#39;%&#39; + @ProjectName + &#39;%&#39;&#39;&#39; end // 拼接查询条件2 if (@ProjectNumber IS NOT NULL) AND (@ProjectNumber &lt;&gt; &#39;&#39;) begin set @sqlString = @sqlString + &#39; and ProjectNumber =&#39;&#39;&#39; + @ProjectNumber + &#39;&#39;&#39;&#39; end // 执行最终结果 exec @sqlString   二、问题</div><div class="post-footer">
-        <a href="/2014-03-06-%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B08/">Read More</a></div>
 </article>
 <ul class="pagination"><li class="page-item ">
                     <span class="page-link">

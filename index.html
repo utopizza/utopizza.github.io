@@ -94,6 +94,32 @@
         <a href="/2019-09-16-%E6%80%BB%E7%BB%93-%E9%98%B6%E6%AE%B5%E6%80%BB%E7%BB%938/">Read More</a></div>
 </article>
 <article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+        <a href="/2020-07-26-%E8%AE%BA%E6%96%87-raft/">Spark</a>
+    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
+            published on&nbsp;<time datetime=2019-07-26>2019-07-26</time>
+        </span>&nbsp;
+            <span class="post-category">included in<a href="/categories/thesis/">
+                        <i class="far fa-folder fa-fw"></i>Thesis
+                    </a></span></div><div class="content">一、背景及问题
+共识算法（consensus algorithm）在实现大型分布式系统的可靠性方面扮演了十分关键的角色，因为它允许集群在部分机器故障的情况下保持任务正常运行。在过去十年中，主流的共识算法叫Paxos，大部分系统都使用了这个算法，并且该算法一度成为标准的教材。然而，该算法有一个缺陷就是过于复杂，想要完全理解或者完美实现都十分困难。因此，斯坦福的Diego Ongaro和John Ousterhout便提出了一个相对容易理解、容易实现的共识算法，命名为Raft。
+二、相关概念
+Replicated state machine：复制状态机，是共识算法的起源之处。像GFS、HDFS等的大规模分布式系统，其leader节点都只有一个，存在单点故障问题。要保证集群即使出现该故障的情况下自动恢复正常运行，如集群配置信息、leader选举心跳信息等数据必须克服单点故障的问题，这就要求这些重要的数据有可靠的方式来进行备份。一种可靠的方式就是使用复制状态机，如下图所示，复制状态机一般是通过复制日志（replicated log）来实现。每个机器上都会维护一份复制日志，日志的内容是一系列的command，机器会按日志的顺序来执行这些command，来修改自己的状态。只要保证每个机器上的复制日志是完全一致，那么就可以保证每个机器的操作结果是一致的。其中，共识算法的主要作用就是通过一些通信手段，来保持集群中每个机器的复制日志完全一致。目前比较有名的复制状态机的实现是Zookeeper和Chubby。
+三、Raft算法
+总的来说，Raft首先会从集群中选举一个leader，整个集群的复制日志完全由leader来维护：leader节点接收client端发送过来的日志实体（log entry），然后把日志实体分发给集群中其他节点，并告诉其他节点什么时候可以安全地执行这些日志，从而修改他们的状态。当leader宕机故障时，集群会自动发起选举，选出一个新的leader继续保持集群运行。为了便于理解和实践，Raft把共识问题拆分成三个彼此独立的子问题，从而逐一解决：（1）leader选举（2）日志复制（3）安全
+1、Raft基础
+Raft集群（一般规模为5台机器）中的节点在任何时刻（可以运行的情况下）必为以下三种状态之一：（1）leader（2）follower（3）candidate。在正常情况下，集群中只有一个leader，其余均为follower。follower不响应任何client端请求，它只会把这些请求重定向给leader，并且只响应leader的请求。
+Raft把时间分割成任意长度的周期（term），这些周期用连续的整数来唯一地标识，可以理解为周期id。每个周期都由leader选举开始，在这个周期内如果一个节点当选为leader，它会一直作为leader直到这个周期结束。集群中每个节点自身都会维护一个周期id作为自己看到的当前周期。当节点之间进行通信时会带上自己的当前周期，如果节点发现对方周期id比自己大，则更新自己的当前周期；如果节点发现自己的当前周期已经过期，则马上把自己转为follower状态；如果节点发现对方的周期已经过期，则直接拒绝对方的请求。
+2、leader选举
+Raft使用心跳机制（heartbeat）来触发leader选举。当Raft集群刚启动时，所有节点都是follower状态。follower节点一段时间内发现没有收到来自leader的心跳，认为leader节点已经失效（election timeout），则马上把自己转变为candidate状态，并将自己的当前周期增大。它会先为自己投票，然后向集群中其他节点发起拉票请求（RequestVote RPC）。candidate节点会一直持续这个状态直到（1）它获得多数票从而赢得选举成为新leader（2）其他节点胜出成为新leader（3）选举超时，没有选出新leader。
+Raft投票规则：（1）每个节点每次选举周期内最多投出一票（2）先到先得原则，给先请求的节点投票（2）candidate只给自己投一票，然后并发地向其他节点拉票（4）特殊情况下，可能会进入僵持状态——例如所有节点同时进入candidate状态，只给自己投票，然后等等其他人给自己投票，此时的集群状态称为“split”。该论文解决这个问题使用了一种简单的方法，就是随机话选举超时时间，避免多个节点同时开启选举周期，使得先开启选举的节点有先发优势成为新leader，减少集群不可用时间。
+当一个candidate成为新leader后，马上开始向其他节点发送心跳宣告自己的leader身份。其他节点确认该新leader的当前周期是有效周期后，认可新leader的身份，把自己转变为follower；否则无视该leader，继续保持选举。
+3、日志复制
+当节点成为leader后，开始负责响应client的请求。client的请求会包含一个需要整个集群都执行的command。leader首先会把该command追加到自己的日志中，然后通过RPC（AppendEntries RPCs）把日志分发到其他节点。若某个follower宕机或者网络丢包没有复制成功，leader会无限地重新尝试，直到复制成功。分发完成后，leader执行该command，修改自己的状态，然后把执行结果返回给client。具体关于日志的组织形式、压缩方法，详见原论文。
+4、安全性
+这部分较为繁琐，详见原论文。</div><div class="post-footer">
+        <a href="/2020-07-26-%E8%AE%BA%E6%96%87-raft/">Read More</a></div>
+</article>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
         <a href="/2019-05-19-%E7%AE%97%E6%B3%95-pagerank%E5%9C%A8spark%E7%9A%84%E5%88%86%E5%B8%83%E5%BC%8F%E5%AE%9E%E7%8E%B0/">PageRank在Spark的分布式实现</a>
     </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
             published on&nbsp;<time datetime=2019-05-19>2019-05-19</time>
@@ -112,7 +138,7 @@ PageRank 算法的详细介绍见 维基百科。总而言之，该算法的主�
         <a href="/2019-05-19-%E7%AE%97%E6%B3%95-pagerank%E5%9C%A8spark%E7%9A%84%E5%88%86%E5%B8%83%E5%BC%8F%E5%AE%9E%E7%8E%B0/">Read More</a></div>
 </article>
 <article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
-        <a href="/2019-05-09-thesis-spark/">Spark</a>
+        <a href="/2019-05-09-%E8%AE%BA%E6%96%87-spark/">Spark</a>
     </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
             published on&nbsp;<time datetime=2019-05-09>2019-05-09</time>
         </span>&nbsp;
@@ -124,7 +150,7 @@ PageRank 算法的详细介绍见 维基百科。总而言之，该算法的主�
 二、Spark 编程模型
 使用 Spark 的用户通过编写一个称为 Driver Program 的程序来实现自己的计算任务。Spark 为用户的并行化编程提供了三个组件：resilient distribution dataset、 parallel operations、 parallel operations。
 (1) Resilient Distribution Datasets(RDDs)：一个 RDD 是一个可恢复的只读对象集合，它无须存储在磁盘中。每次对一个 RDD 的操作都会被记录下来，从而每个 RDD 可以沿着它的演化过程一直追寻它的祖先 RDD，甚至可以追寻到最开始的第一次从磁盘读取初始数据。因此这个机制保证了任何一个 RDD 都可以被恢复。具体在 Spark 系统中，RDD 由 Scala 对象来表达。论文中规定了 RDD 仅可以从四种方式构造：</div><div class="post-footer">
-        <a href="/2019-05-09-thesis-spark/">Read More</a></div>
+        <a href="/2019-05-09-%E8%AE%BA%E6%96%87-spark/">Read More</a></div>
 </article>
 <article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
         <a href="/2019-05-08-%E8%AE%BA%E6%96%87-mapreduce/">MapReduce</a>
@@ -163,16 +189,6 @@ $$key_{2}/value_{2}(s) \implies key_{2}/value_{3} $$
 除了复习数学之外，也把英语提上了日程。除了平时看看美剧和google查资料之外，高考之后都几乎没碰过英语了。定了个考雅思的目标，因此开始找了一些资料，也问同学朋友找了些资料。从10月到12月三个月基本上都是在背四六级词汇，新东方的红书。因为习惯了这个系列的排版，索性就又买了这个系列的雅思词汇。背单词的同时也注意听力和写作。针对听力，主要就是直接听真题听力，把MP3下载到音乐播放软件，整天整夜没完没了地放。至于写作，买了本写作的书和一本笔记本，每天抄一篇范文，然后读几遍。从3月份搬回学校之后，因为每天去图书馆，就很少读英语范文了。该成用百词斩背单词。另外网上找到一个可以在线测试雅思水平的网站，虽然蛮多BUG。下面贴出资料。
  《新东方雅思词汇》 《顾家北手把手教你雅思写作》 雅思在线 词汇量测试  总的来说，这几个月基本把四六级背得比较熟了，雅思那本过了两三遍，词汇量在上面的网上测是9000个左右，百词斩测是一万个左右。搬回学校前主要以背单词书、抄写范文为主。搬回学校后以刷百词斩复习、在网上做雅思题为主。因为回学校后做论文实验花了很多时间，分配给英语的时间不是很多，练的比较少，目前效果不太理想。现在论文定了稿，后面重新把英语提上日程。</div><div class="post-footer">
         <a href="/2019-04-30-%E6%80%BB%E7%BB%93-%E9%98%B6%E6%AE%B5%E6%80%BB%E7%BB%937/">Read More</a></div>
-</article>
-<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
-        <a href="/2019-01-27-%E8%AE%BA%E6%96%87-mci/">MCI</a>
-    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
-            published on&nbsp;<time datetime=2019-01-27>2019-01-27</time>
-        </span>&nbsp;
-            <span class="post-category">included in<a href="/categories/thesis/">
-                        <i class="far fa-folder fa-fw"></i>Thesis
-                    </a></span></div><div class="content">该文章依然是针对 APT 攻击而提出的一种基于模型推断的攻击因果分析。该方法比以往方法的优势在于不需要在系统中做任何修改，只需要启动日志，对系统事件进行记录即可。该方法的核心技术是使用一种称为 LDX 的动态分析方案，可以在系统调用之间进行因果推断。</div><div class="post-footer">
-        <a href="/2019-01-27-%E8%AE%BA%E6%96%87-mci/">Read More</a></div>
 </article>
 <ul class="pagination"><li class="page-item active">
                     <span class="page-link">

@@ -77,6 +77,21 @@
         alt="Posts"
         title="Posts" /></a></div><h1 class="home-title">CODE FOR FOOD :)</h1><h2 class="home-subtitle"><div id="id-1" class="typeit"></div></h2><div class="social-links"><a href="https://github.com/utopizza" title="GitHub" target="_blank" rel="noopener noreffer me"><i class="fab fa-github-alt fa-fw"></i></a><a href="mailto:648847079@qq.com" title="Email" rel=" me"><i class="far fa-envelope fa-fw"></i></a></div></div>
 <article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+        <a href="/2018-01-29-%E7%AE%97%E6%B3%95-%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%A4%A7%E6%95%B4%E6%95%B0%E7%9B%B8%E4%B9%98/">字符串大整数相乘</a>
+    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
+            published on&nbsp;<time datetime=2018-01-29>2018-01-29</time>
+        </span>&nbsp;
+            <span class="post-category">included in<a href="/categories/algorithm/">
+                        <i class="far fa-folder fa-fw"></i>Algorithm
+                    </a></span></div><div class="content">在 leetcode 上看到一个巨强的解法，记录一下以加深记忆。原文参见：Easiest JAVA Solution with Graph Explanation
+题目：Multiply Strings
+题目大意为，给定两个字符串形式的非负整数，求它的乘积，以字符串形式返回。并且：
+ 两个字符串的长度小于 110. 两个字符串只包含 0 到 9 的数字. 两个字符串不以任何 ‘0’ 开头. 不能使用编程语言内置的大整数库函数，也不能直接转换成整数求解.  leetcode 上某大神给出的思路：
+ 位数分别为 $m$ 和 $n$ 的两个整数相乘，乘积的位数最大不超过 $m+n$ 从左至右地，乘数的第 $[i]$ 位与被乘数的第 $[j]$ 位相乘的积，将被加到最终结果的第 $[i+j]$ 位和第 $[i+j+1]$ 位  因此，整个计算过程就可以直接模拟我们小学就学的竖式乘法计算过程。这也是令我惊讶的地方，小学就学会了的竖式乘法计算，但是十几年来（我）都没有发现这两个十分有用的规律
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24  public static String multiply(String num1, String num2) { int m = num1.</div><div class="post-footer">
+        <a href="/2018-01-29-%E7%AE%97%E6%B3%95-%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%A4%A7%E6%95%B4%E6%95%B0%E7%9B%B8%E4%B9%98/">Read More</a></div>
+</article>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
         <a href="/2018-01-24-%E7%AE%97%E6%B3%95-%E5%9B%9E%E6%BA%AF%E6%B3%95/">回溯法</a>
     </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
             published on&nbsp;<time datetime=2018-01-24>2018-01-24</time>
@@ -149,24 +164,6 @@ $$[-3]_{原}=1000 , 0011$$
 $$[+3]_{反}=0000 , 0011$$
 $$[-3]_{反}=1111 , 1100$$</div><div class="post-footer">
         <a href="/2017-12-31-%E7%AE%97%E6%B3%95-%E6%9C%BA%E5%99%A8%E6%95%B0%E7%9A%84%E4%B8%89%E7%A7%8D%E7%BC%96%E7%A0%81%E7%AD%96%E7%95%A5/">Read More</a></div>
-</article>
-<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
-        <a href="/2017-12-23-%E6%80%BB%E7%BB%93-%E9%98%B6%E6%AE%B5%E6%80%BB%E7%BB%932/">阶段总结(2)</a>
-    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
-            published on&nbsp;<time datetime=2017-12-23>2017-12-23</time>
-        </span>&nbsp;
-            <span class="post-category">included in<a href="/categories/summary/">
-                        <i class="far fa-folder fa-fw"></i>Summary
-                    </a></span></div><div class="content">上一次总结是8月17日，到现在刚好过去了4个月。2018元旦快到了，研二上学期也接近尾声，稍微总结一下这四个月的工作。
-9月份先花了了半个月左右的时候整理了本科期间的大部分技术文档和比赛经验，补了些博客。后半个月开始看《算法导论》，主要精力集中于动态规划那一章，自己用 Java 实现了书上的几个算法并按照自己的理解写了几篇博客。之后感觉做题还是太少，理解和熟练程度都不够，便开始在网上搜一些动态规划的经典题目进行补充。这个月基本以补博客为主
-10月份中秋国庆假回了趟家，到10月9日左右才回学校。这个月过的比较混乱，同时在尝试做论文和算法，写博客。但因为论文的数据问题进度被卡住了，所以主要精力貌似集中于刷 leetcode 的算法题了，那段时间刷了大概有100多道，大部分是 Easy 难度。19号左右，同届的专硕同学和上一届的学硕学长找完工作回来了，请教了不少经验，要了个书单，不过帮助不大，他们找的都是前后台研发岗，不是机器学习和算法岗。这个月可以说主要以刷 leetcode 为主
-11月份，大神舍友带我打天池比赛。11月8日左右弄到了服务器，选好题，选好了 baseline 模型 LightGBM，我就完全停止了论文和算法的学习，全部精力放在了比赛上面。第一次正式使用 Python 的 pandas，numpy，sklearn 这些工具库来实现机器学习，花了不少精力，学习到了很多非常实用的知识。因为 lgb 的本质是梯度提升树，所以我回头去看书，复习了一遍决策树，提升算法，集成学习，提升树与回归树，推导了一些细节，写了一系列博客。
-12月份，当然是继续以比赛为主要工作内容。不断尝试新的想法，代码更新并整理了一遍又一遍，成绩排名还行，一直在前20。另外由于题目比较坑，官方的数据有问题，重新发布了两次数据集，导致我们之前的大量调试工作都白费了。同时也逐渐感到遇到提高的瓶颈了，需要继续深入学习新的知识，我们又尝试了模型融合，但是效果并不是很理想。这个月主要精力在调试参数和补决策树的理论知识为主。另外向舍友大神要了个书单和coursera的视频单，但是感觉难度较大，也没太多时间去看了，主要看了吴恩达的《Machine Learning》，并完成作业。
-总的来说，这四个月来完成的主要工作：
- 整理出了本科时的部分技术博客 读《算法导论》，研究并练习动态规划算法 刷了100多道 leetcode 题，从 Easy 难度开始入手 参加天池大数据比赛，初步学习正规使用 Python 看吴恩达《Machine Learning》视频，做课后作业 看了一些 Kaggle 的资料，初步了解 Kaggle   接下来计划：
- 继续弄好天池，争取拿个拿得出手的成绩 继续完成吴恩达《Machine Learning》的后半部分课程 开始刷 leetcode 的 medium 难度的题，适时总结 论文希望能有时间推进进度吧   推荐资料：
- 《程序员的数学》（日）结成浩等 《概率论与数理统计》 陈希孺（中科大版） 《具体数学：计算机学科基础》 Knuth等 《Python for Data Analysis》 《Hands-On Machine Learning with Scikit-Learn and TensorFlow》 Coursera:《Machine Learning Specialization》 Coursera:《Neural Networks and Deep Learning》 Coursera:《Neural Networks for Machine Learning》  </div><div class="post-footer">
-        <a href="/2017-12-23-%E6%80%BB%E7%BB%93-%E9%98%B6%E6%AE%B5%E6%80%BB%E7%BB%932/">Read More</a></div>
 </article>
 <ul class="pagination"><li class="page-item ">
                     <span class="page-link">
