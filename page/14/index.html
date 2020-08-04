@@ -12,7 +12,7 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://utopizza.github.io/" />
 <meta property="og:image" content="https://utopizza.github.io/logo.png"/>
-<meta property="og:updated_time" content="2020-07-26T00:00:00+00:00" />
+<meta property="og:updated_time" content="2020-08-04T00:00:00+00:00" />
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://utopizza.github.io/logo.png"/>
 
@@ -76,6 +76,34 @@
         data-sizes="auto"
         alt="Posts"
         title="Posts" /></a></div><h1 class="home-title">CODE FOR FOOD :)</h1><h2 class="home-subtitle"><div id="id-1" class="typeit"></div></h2><div class="social-links"><a href="https://github.com/utopizza" title="GitHub" target="_blank" rel="noopener noreffer me"><i class="fab fa-github-alt fa-fw"></i></a><a href="mailto:648847079@qq.com" title="Email" rel=" me"><i class="far fa-envelope fa-fw"></i></a></div></div>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+        <a href="/2016-07-05-spark-spark%E5%AE%8C%E5%85%A8%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%AD%E5%BB%BA%E4%B8%8E%E4%BD%BF%E7%94%A8-6/">Spark完全分布式搭建与使用(6)</a>
+    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
+            published on&nbsp;<time datetime=2016-07-05>2016-07-05</time>
+        </span>&nbsp;
+            <span class="post-category">included in<a href="/categories/spark/">
+                        <i class="far fa-folder fa-fw"></i>Spark
+                    </a></span></div><div class="content">十二、运行Spark分布式程序
+按照前面博客设置好Library后，选择Modules，可以看到导入的包列表如图（注意，这里包的顺序是会对项目的编译造成影响的，好像要把spark的包放在scala的包之前，否则编译的时候会报一些找不到某些函数的错误，具体问题忘了记录了，这个可以自己慢慢试试，百度上也有解决方案）
+到这里，就可以运行单机/本地模式的spark程序了。要跑本地程序，命令如下（scala）：
+1  val conf=new SparkConf().setAppName(“XXXX”).setMaster(“local”)   但是如果要运行集群模式的spark程序，必须还要将程序项目打包，并将这个程序分发到集群各个节点运行。要使程序分布式运行，命令如下：
+1  val conf=new SparkConf().setAppName(“XXXX”).setMaster(“spark://master:8070”).setJars(List(“XXX”))   其中的setMaster()里面的主机名和端口号需要根据你自己的实际配置进行设定，见第十节。而setJars()是本项目经过编译打包后的jar包的路径，要运行分布式程序必须添加这个包，否则会报错说workers找不到各种类
+项目打包步骤如下：
+(1) 进入 Artifacts-&gt;JAR-&gt;From modules with …
+(2) 填入所建立的scala class的名字
+(3) 选择Build on make，并记下项目打包输出的位置（重要！！）
+设置完后，编译本项目。第一次编译的时候先不要在源码使用.setJars()这个函数。让编译通过。编译通过后，打开控制台，通过刚才的目录找到生成的Jar包。修改源码，加入这个包。在这里可以删除 “output root” 下的scala和spark的包，因为这两个包的导出没有什么意义。
+(4) 根据路径找到与项目同名的JAR包：
+(5) 运行Spark的分布式程序
+(6) 正确运行结果
+注意，如果程序运行一半，没有打印结果直接结束，有可能是内存不足导致程序直接死亡。这种情况下，可能不会报任何错误，在 WEB UI 上也只是显示 Finished 。我当时给master分配的内存从2G扩展到4G，才解决了这个问题，正确运行出结果。
+参考：
+ 使用IDEA开发SPARK提交remote cluster执行 Windows下IntelliJ IDEA中调试Spark Standalone Spark入门实战系列&ndash;3.Spark编程模型（下）&ndash;IDEA搭建及实战  十三、使用Spark的机器学习库MLlib
+我运行了其中的k-means算法，比较简单这里不再赘述，可参考：
+  使用 Spark MLlib 做 K-means 聚类分析
+  Scala Standard Library</div><div class="post-footer">
+        <a href="/2016-07-05-spark-spark%E5%AE%8C%E5%85%A8%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%AD%E5%BB%BA%E4%B8%8E%E4%BD%BF%E7%94%A8-6/">Read More</a></div>
+</article>
 <article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
         <a href="/2016-07-05-spark-spark%E5%AE%8C%E5%85%A8%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%AD%E5%BB%BA%E4%B8%8E%E4%BD%BF%E7%94%A8-5/">Spark完全分布式搭建与使用(5)</a>
     </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
@@ -168,29 +196,6 @@ spark默认是运行本地模式，例如：$ spark-shell 要运行集群模式�
 2、设置JAVA_HOME环境变量（使用 ls –lrt /etc/alternatives/java 来定位jdk的安装路径，参考：Linux如何查看JDK的安装路径）
 1 2 3 4 5 6 7 8 9 10 11 12  // 使用vim编辑器进入配置文件 [root@master ~]# vim /etc/profile // 修改配置文件 export JAVA_HOME=&#34;/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.101.x86_64&#34; （加入） export JRE_HOME=${JAVA_HOME}/jre export CLASS_PATH=.:${JAVA_HOME}/lib: ${JRE_HOME}/lib // 保存并退出编辑器 // 在terminal中输入命令使其生效 [root@master ~]# source /etc/profile   （注意：我这里安装的是openjdk，与常见的sun jdk存放的位置目录不同，参见：CentOS中JAVA_HOME的环境变量设置）</div><div class="post-footer">
         <a href="/2016-05-29-spark-spark%E5%AE%8C%E5%85%A8%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%AD%E5%BB%BA%E4%B8%8E%E4%BD%BF%E7%94%A8-1/">Read More</a></div>
-</article>
-<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
-        <a href="/2015-10-14-%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B010/">技术笔记(10)-CentOS7部署</a>
-    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
-            published on&nbsp;<time datetime=2015-10-14>2015-10-14</time>
-        </span>&nbsp;
-            <span class="post-category">included in<a href="/categories/technology/">
-                        <i class="far fa-folder fa-fw"></i>Technology
-                    </a></span></div><div class="content">0、准备：centos7镜像文件刻录成U盘系统盘
-Download CentOS
-1、服务器是PowerEdge R720，安装系统前要做radis磁盘阵列
-Dell R720上的系统安装问题的解决办法（关于RAID建立磁盘阵列的技术）
-2、服务器插上U盘，重启，进入BIOS设置U盘启动，安装centos7(尽量安装英文版否则路径是中文会出现乱码，可以选择安装GNOME桌面版，适用于新手)
-centos7.0安装教程
-3、配置IP,DNS,GATEWAY,NETMASK,成功之后可以上网
-centos下网络配置方法(网关、dns、ip地址配置)
-4、下载并安装LAMP(apache2/httpd，mysql/mariadb，PHP以及PHP相关组件一堆)
-Install Apache, PHP And MySQL On CentOS 7 (LAMP)
-5、部署web网站，记得要从防火墙firewall或者iptables开放网站端口，还要留意SELinux这个东西，有可能在阻止你的网站写缓存文件，导致网站故障
-CentOS 7 开放端口 redhat7 centos7 关闭SELinux和防火墙的办法
-6、部署ftp网站，如果想用浏览器访问的话，需要设置允许被动模式，并且开发3000-4000端口，否则只能用ftp命令访问
-CentOS配置VSFTP服务器 为何客户端软件可以而浏览器则不能连接FTP服务器</div><div class="post-footer">
-        <a href="/2015-10-14-%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B010/">Read More</a></div>
 </article>
 <ul class="pagination"><li class="page-item ">
                     <span class="page-link">

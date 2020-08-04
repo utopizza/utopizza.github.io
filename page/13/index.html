@@ -12,7 +12,7 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://utopizza.github.io/" />
 <meta property="og:image" content="https://utopizza.github.io/logo.png"/>
-<meta property="og:updated_time" content="2020-07-26T00:00:00+00:00" />
+<meta property="og:updated_time" content="2020-08-04T00:00:00+00:00" />
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://utopizza.github.io/logo.png"/>
 
@@ -76,6 +76,26 @@
         data-sizes="auto"
         alt="Posts"
         title="Posts" /></a></div><h1 class="home-title">CODE FOR FOOD :)</h1><h2 class="home-subtitle"><div id="id-1" class="typeit"></div></h2><div class="social-links"><a href="https://github.com/utopizza" title="GitHub" target="_blank" rel="noopener noreffer me"><i class="fab fa-github-alt fa-fw"></i></a><a href="mailto:648847079@qq.com" title="Email" rel=" me"><i class="far fa-envelope fa-fw"></i></a></div></div>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+        <a href="/2017-09-06-%E7%AE%97%E6%B3%95-%E6%B8%90%E8%BF%91%E8%AE%B0%E5%8F%B7/">渐近记号</a>
+    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
+            published on&nbsp;<time datetime=2017-09-06>2017-09-06</time>
+        </span>&nbsp;
+            <span class="post-category">included in<a href="/categories/algorithm/">
+                        <i class="far fa-folder fa-fw"></i>Algorithm
+                    </a></span></div><div class="content">一、算法分析
+1、RAM 模型
+分析算法的结果意味着预测算法需要的资源。虽然有时候需要关心像内存、通信宽带或计算机硬件这类资源，但是对算法进行分析时，我们一般主要关注算法的计算时间。在能够分析一个算法之前，我们需要有一个实现技术的模型，在《算法导论》一书中，假定了一种通用的单处理器计算模型——随机访问机 (RAM) 来作为实现技术，算法可以用计算机程序来实现。在 RAM 模型中，指令一条一条地执行，没有并发操作。严格来说，我们应该精确定义 RAM 模型的指令以及代价。但是这样即乏味又对算法的设计与分析没有太多意义。因此，在 RAM 模型中，我们不对计算机的内层次如高速缓存、虚拟内存等进行建模，把精力集中于算法的数学上的复杂度分析。
+2、运行时间
+一个算法在特定输入上的运行时间是指执行的基本操作数或者步数。我们认为计算机执行每一行代码需要的时间为常量（这个观点与 RAM 模型是一致的）。因此，我们核心关注的问题是：在给定输入规模 n 条件下，算法代码执行完成并输出正确结果所需要的总步数（次数）。如插入排序算法在 n 个值的输入上的最坏运行时间为 $T(n)=an^2+bn+c$
+3、增长量级
+现在我们做出一种更简化的抽象：我们更感兴趣的是运行时间的增长率或增长量级。所以我们只考虑公式中最重要的项（例如，$an^2$），因为当 n 很大时，低阶项相对来说不太重要。同时我们也忽略最重要的项的系数，因为对大的输入，在确定计算效率时，常量因子不如增长率重要。在忽略了低阶项和最重要的项的系数后，只剩下最重要的项的因子。我们记某算法最坏情况下运行时间为 $\Theta(g(n))$，如插入排序的的最坏运行时间为 $\Theta(n^2)$。如果一个算法的最坏情况运行时间比另一个算法具有更低的增量级，那么我们认为前者比后者更有效。例如，一个 $\Theta(n^2)$ 的算法，在足够大的输入规模 n 下，比一个 $\Theta(n^3)$ 的算法要快。
+二、渐近记号
+1、$\Theta$ 记号
+对一个给定的函数 $g(n)$，用 $\Theta(g(n))$ 来表示以下函数的集合： $\Theta(g(n))={ f(n):存在正常量c_1,c_2和n_0,对所有n \geq n_0,有 0 \leq c_1g(n) \leq f(n) \leq c_2g(n) } $
+字面上来说：若存在正常量 $c_1,c_2和n_0$，使得对足够大的 n ，函数 $f(n)$ 能被夹入 $c_1g(n)与c_2g(n)$ 之间，则 $f(n)$ 属于集合 $\Theta(g(n))$ 。我们记 $f(n)=\Theta(g(n))$ 以表示 $f(n)$ 是函数集合 $\Theta(g(n))$ 的成员。换句话说，对所有 $n \geq n_0$，函数 $f(n)$ 在一个常量因子内等于 $g(n)$ 。我们也称 $g(n)$ 是 $f(n)$ 的一个渐近确界。</div><div class="post-footer">
+        <a href="/2017-09-06-%E7%AE%97%E6%B3%95-%E6%B8%90%E8%BF%91%E8%AE%B0%E5%8F%B7/">Read More</a></div>
+</article>
 <article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
         <a href="/2017-08-25-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E9%AB%98%E6%96%AF%E6%B7%B7%E5%90%88%E6%A8%A1%E5%9E%8B%E7%9A%84em%E6%8E%A8%E5%AF%BC%E7%AE%80%E5%8D%95%E7%89%88/">高斯混合模型的EM推导简单版</a>
     </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
@@ -161,34 +181,6 @@ $\phi(y \mid \theta_k) = \frac{1}{\sqrt{2\pi}} exp (-\frac{(y-\mu_k)^2}{2\sigma_
 相比之下，我就差太多了。本科四年，除了成绩还好、利用课余时间加入一个编程俱乐部dreamtech做过不少.net和android的项目，我基本没有意识到要注重过编程功底和算法、数学功底的修炼，没有系统的训练，没有规划，不知道自己要干什么，就是跟着大浪潮瞎学新技术，一会儿学.net，一会儿学android，一会儿做mvc，一会儿学点php，sqlserver，MySQL，html，JavaScript，一会儿又跑去搞数学建模，虽然拿了一点儿奖，看起来好像很厉害，什么都会，但其实都是浅尝则止，没有学通，更没有学精。
 这学期通过对身边的牛人（包括导师、同学，还有社区一些技术大牛）的观察，我深刻认识到，作为计算机专业的学生，最核心的竞争力就是算法功底和数学功底，还有最重要的逻辑思维能力。尤其是看了牛人刘未鹏先生的《暗时间》后，眼界大开，深深为之震撼。我终于明白，必须从现在开始恶补算法和数学功底，还要培养好逻辑思维能力。另外，还要开始记录和积累，养成写博客记录技术和心得的习惯。最后，希望这三年研究生，好好努力，让自己的技术水平和思维能力，有个质的飞跃。</div><div class="post-footer">
         <a href="/2017-01-26-%E6%80%BB%E7%BB%93-%E4%BB%8E%E7%8E%B0%E5%9C%A8%E5%BC%80%E5%A7%8B%E5%86%99%E5%8D%9A%E5%AE%A2/">Read More</a></div>
-</article>
-<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
-        <a href="/2016-07-05-spark-spark%E5%AE%8C%E5%85%A8%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%AD%E5%BB%BA%E4%B8%8E%E4%BD%BF%E7%94%A8-6/">Spark完全分布式搭建与使用(6)</a>
-    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
-            published on&nbsp;<time datetime=2016-07-05>2016-07-05</time>
-        </span>&nbsp;
-            <span class="post-category">included in<a href="/categories/spark/">
-                        <i class="far fa-folder fa-fw"></i>Spark
-                    </a></span></div><div class="content">十二、运行Spark分布式程序
-按照前面博客设置好Library后，选择Modules，可以看到导入的包列表如图（注意，这里包的顺序是会对项目的编译造成影响的，好像要把spark的包放在scala的包之前，否则编译的时候会报一些找不到某些函数的错误，具体问题忘了记录了，这个可以自己慢慢试试，百度上也有解决方案）
-到这里，就可以运行单机/本地模式的spark程序了。要跑本地程序，命令如下（scala）：
-1  val conf=new SparkConf().setAppName(“XXXX”).setMaster(“local”)   但是如果要运行集群模式的spark程序，必须还要将程序项目打包，并将这个程序分发到集群各个节点运行。要使程序分布式运行，命令如下：
-1  val conf=new SparkConf().setAppName(“XXXX”).setMaster(“spark://master:8070”).setJars(List(“XXX”))   其中的setMaster()里面的主机名和端口号需要根据你自己的实际配置进行设定，见第十节。而setJars()是本项目经过编译打包后的jar包的路径，要运行分布式程序必须添加这个包，否则会报错说workers找不到各种类
-项目打包步骤如下：
-(1) 进入 Artifacts-&gt;JAR-&gt;From modules with …
-(2) 填入所建立的scala class的名字
-(3) 选择Build on make，并记下项目打包输出的位置（重要！！）
-设置完后，编译本项目。第一次编译的时候先不要在源码使用.setJars()这个函数。让编译通过。编译通过后，打开控制台，通过刚才的目录找到生成的Jar包。修改源码，加入这个包。在这里可以删除 “output root” 下的scala和spark的包，因为这两个包的导出没有什么意义。
-(4) 根据路径找到与项目同名的JAR包：
-(5) 运行Spark的分布式程序
-(6) 正确运行结果
-注意，如果程序运行一半，没有打印结果直接结束，有可能是内存不足导致程序直接死亡。这种情况下，可能不会报任何错误，在 WEB UI 上也只是显示 Finished 。我当时给master分配的内存从2G扩展到4G，才解决了这个问题，正确运行出结果。
-参考：
- 使用IDEA开发SPARK提交remote cluster执行 Windows下IntelliJ IDEA中调试Spark Standalone Spark入门实战系列&ndash;3.Spark编程模型（下）&ndash;IDEA搭建及实战  十三、使用Spark的机器学习库MLlib
-我运行了其中的k-means算法，比较简单这里不再赘述，可参考：
-  使用 Spark MLlib 做 K-means 聚类分析
-  Scala Standard Library</div><div class="post-footer">
-        <a href="/2016-07-05-spark-spark%E5%AE%8C%E5%85%A8%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%AD%E5%BB%BA%E4%B8%8E%E4%BD%BF%E7%94%A8-6/">Read More</a></div>
 </article>
 <ul class="pagination"><li class="page-item ">
                     <span class="page-link">

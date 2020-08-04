@@ -12,7 +12,7 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://utopizza.github.io/" />
 <meta property="og:image" content="https://utopizza.github.io/logo.png"/>
-<meta property="og:updated_time" content="2020-07-26T00:00:00+00:00" />
+<meta property="og:updated_time" content="2020-08-04T00:00:00+00:00" />
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://utopizza.github.io/logo.png"/>
 
@@ -76,6 +76,19 @@
         data-sizes="auto"
         alt="Posts"
         title="Posts" /></a></div><h1 class="home-title">CODE FOR FOOD :)</h1><h2 class="home-subtitle"><div id="id-1" class="typeit"></div></h2><div class="social-links"><a href="https://github.com/utopizza" title="GitHub" target="_blank" rel="noopener noreffer me"><i class="fab fa-github-alt fa-fw"></i></a><a href="mailto:648847079@qq.com" title="Email" rel=" me"><i class="far fa-envelope fa-fw"></i></a></div></div>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+        <a href="/2017-11-04-%E7%AE%97%E6%B3%95-%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95/">排序算法</a>
+    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
+            published on&nbsp;<time datetime=2017-11-04>2017-11-04</time>
+        </span>&nbsp;
+            <span class="post-category">included in<a href="/categories/algorithm/">
+                        <i class="far fa-folder fa-fw"></i>Algorithm
+                    </a></span></div><div class="content">一、选择排序
+输入长度为 $n$ 的数组，依次选择数组第 $i$ 小的元素，交换到数组第 $i$ 个位置。使用内外两个循环，外循环负责定位到数组第 $i$ 个位置，内循环负责从数组第 $i+1$ 个位置 遍历到数组末端，记录最小的元素，交换到数组第 $i$ 个位置上。
+无论输入数组元素的初始序列如何，内循环都需要迭代 $n-i$ 次，所以选择排序的总比较次数始终为 $(n-1)+(n-2)+ \cdots +2+1=\frac{n(n-1)}{2} \approx \frac{n^2}{2}$ ，时间复杂度为 $O(n^2)$。
+1 2 3 4 5 6 7 8 9 10 11 12 13  public class SortSelection extends Sort { public static void sort(Comparable[] a) { for (int i = 0; i &lt; a.length; i++) { int minIndex = i; for (int j = i + 1; j &lt; a.</div><div class="post-footer">
+        <a href="/2017-11-04-%E7%AE%97%E6%B3%95-%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95/">Read More</a></div>
+</article>
 <article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
         <a href="/2017-10-26-%E7%AE%97%E6%B3%95-java%E4%BD%8D%E8%BF%90%E7%AE%97%E7%AC%A6%E4%BC%98%E5%85%88%E7%BA%A7%E9%97%AE%E9%A2%98/">java位运算符优先级</a>
     </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
@@ -165,22 +178,6 @@ $$s.t. \quad \sum_{i=1}^{n} w[i] \cdot x_i \leq W , \quad x_i \in { 0,1 }$$
 现在我们来分析每一步并试图划分出子问题。假设我们扫描了前 $i$ 个物品，并得到了当前的最大总价值，设为 $P_i$。那么倒回去看，这一步的最优解是怎么得到的？因为对每个物品，只能选择装入0个或者1个，因此这一步的最优解就是：在扫描并处理了前 $i-1$ 个物品后，选择装入第 $i$ 个物品后得到的最大总价值，或者放弃第 $i$ 个物品后的最大总价值。如果是通过选择物品 $i$ 而得到这一步的最优解 $P_i$，那么前 $i-1$ 个物品的最大总价值为 $P_i-p[i]$；如果是通过放弃物品 $i$ 而得到这一步的最优解，那么前 $i-1$ 个物品的最大总价值仍为 $P_i$。
 考虑最优解的对应的背包容量的递推关系。设前 $i$ 物品恰好能装入容量为 $W_i$ 的背包得到最大总价值。如果是通过选择物品 $i$ 而得到的最优解，那么前 $i-1$ 个物品恰好能装入的背包的容量为 $W_i-w[i]$；反之，则前 $i-1$ 个物品恰好能装入的背包的容量为 $W_i$。</div><div class="post-footer">
         <a href="/2017-09-22-%E7%AE%97%E6%B3%95-01%E8%83%8C%E5%8C%85/">Read More</a></div>
-</article>
-<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
-        <a href="/2017-09-21-%E8%AE%BA%E6%96%87-%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E7%9B%B8%E5%85%B3%E5%AD%A6%E6%9C%AF%E4%BC%9A%E8%AE%AE/">推荐系统相关学术会议</a>
-    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
-            published on&nbsp;<time datetime=2017-09-21>2017-09-21</time>
-        </span>&nbsp;
-            <span class="post-category">included in<a href="/categories/thesis/">
-                        <i class="far fa-folder fa-fw"></i>Thesis
-                    </a></span></div><div class="content">一、学术会议
-1、SIGKDD
- CCF评级：A类 全称：Special Interest Group on Knowledge Discovery and Data Mining 出版社：ACM 网址：http://www.kdd.org/ DBLP：http://dblp.uni-trier.de/db/conf/kdd/ 时间：每年8月  2、SIGIR
- CCF评级：A类 全称：Special Interest Group on Information Retrieval 出版社：ACM 网址：http://sigir.org/ DBLP：http://dblp.uni-trier.de/db/conf/sigir/ 时间：每年7月至8月  3、ICDE
- CCF评级：A类 全称：International Conference on Data Engineering 出版社：IEEE 网址：https://www.icde.org/ DBLP：http://dblp.uni-trier.de/db/conf/icde/ 时间：每年4月至5月  4、AAAI
- CCF评级：A类 全称：Association for the Advancement of Artificial Intelligence 出版社：AAAI 网址：https://www.aaai.org/ DBLP：http://dblp.uni-trier.de/db/conf/aaai/ 时间：2014年之前每年7月到8月，2015年开始改到了每年1月到2月  5、TKDE
- CCF评级：A类 全称：IEEE Transactions on Knowledge and Data Engineering 出版社：IEEE 网址：https://www.</div><div class="post-footer">
-        <a href="/2017-09-21-%E8%AE%BA%E6%96%87-%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E7%9B%B8%E5%85%B3%E5%AD%A6%E6%9C%AF%E4%BC%9A%E8%AE%AE/">Read More</a></div>
 </article>
 <ul class="pagination"><li class="page-item ">
                     <span class="page-link">

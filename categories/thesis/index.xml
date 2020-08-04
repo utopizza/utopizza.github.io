@@ -4,7 +4,34 @@
         <link>https://utopizza.github.io/categories/thesis/</link>
         <description>Thesis - Category - Utopizza</description>
         <generator>Hugo -- gohugo.io</generator><language>en</language><managingEditor>648847079@qq.com (yusheng)</managingEditor>
-            <webMaster>648847079@qq.com (yusheng)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Sun, 26 Jul 2020 00:00:00 &#43;0000</lastBuildDate><atom:link href="https://utopizza.github.io/categories/thesis/" rel="self" type="application/rss+xml" /><item>
+            <webMaster>648847079@qq.com (yusheng)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Tue, 04 Aug 2020 00:00:00 &#43;0000</lastBuildDate><atom:link href="https://utopizza.github.io/categories/thesis/" rel="self" type="application/rss+xml" /><item>
+    <title>Kafka</title>
+    <link>https://utopizza.github.io/2020-08-04-%E8%AE%BA%E6%96%87-kafka/</link>
+    <pubDate>Tue, 04 Aug 2020 00:00:00 &#43;0000</pubDate>
+    <author>Author</author>
+    <guid>https://utopizza.github.io/2020-08-04-%E8%AE%BA%E6%96%87-kafka/</guid>
+    <description><![CDATA[一、背景问题
+在互联网公司中往往会产生大量的日志数据（log data），例如（1）用户事件如用户的登录、网页访问、点击、收藏、分享、评论、搜索；（2）内部系统产生的事件例如服务调用、错误日志、网络事件、系统调用等等。这些日志数据十分重要，可用于分析用户喜好、系统使用情况等等。以往这些日志数据一般用于离线的数据分析，然而随着互联网业务蓬勃的发展，越来越需要更加实时地利用这些日志数据来进行在线分析，例如（1）根据用户搜索历史进行实时更新的个性化推荐、相关推荐、广告投放（2）系统实时识别垃圾邮件、非法数据并自动进行过滤等等。因此，一些早期的系统，例如Facebook的Scribe，Yahoo的Data Highway，Cloudera的Flume等等，都是被设计成把日志数据进行收集并写入Hadoop这样的数据仓库然后进行离线的分析，不能满足进行实时大规模日志在线分析的需求。业界需要一个能支持延迟秒级的实时（real-time）日志收集系统。
+二、Kafka
+1、基本概念&amp;架构
+ 一个message流被称为一个topic，每个topic下有多个partition分区（分区数量十分重要，因为它决定了可以并行消费的并行度，见下文） 存储message的kafka节点称为broker。Kafka是一个分布式系统，有多个broker节点，每个broker节点存储一个或者多个partition分区 每个producer可以推送message到一个topic 每个consumer可以订阅一个或者多个topic，从对应的broker中拉取message  2、Efficiency
+（1）简单的存储结构
+每个topic的每个partition分区对应一个逻辑日志，该日志物理上其实是由一系列的文件片（segment file）构成，每个文件片大约1GB。每当producer推送一个message到某个partition时，broker只是简单地把该message追加到最后一个片文件的末尾。考虑到写磁盘的性能问题，kafka只有在指定数量的message到达、或者指定时间周期结束才执行一次flush把文件片写入磁盘。
+至于message的数据结构，与传统message系统不同，kafka中的message并没有所谓的“messageId”，每个message只根据它在日志中的offset来定位：下一条message在日志中的位置等于当前message的位置+message的长度。
+consumer从一个partition消费message时，它只能从某个offset开始连续地消费，并且该offset之前的message已经完成消费。consumer在向broker提交每个的pull请求中都会带上所请求的message的offset以及请求的字节数。broker根据offset找到对应的文件片（会在内存中维护一个“文件片首部offset”与“文件片”的映射关系），定位message，然后发送被请求的数据返回给consumer。consumer收到数据后，计算出下一个message的offset然后再继续发送请求。
+（2）高效的传输方式
+producer可以在单个send请求中一次性提交多个message；同样，consumer也可以在单个pull请求中一次性拉取多个message。
+另外，kafka为了防止数据在机器上被缓冲两次（double buffering），它不在内存中缓存任何数据，所有数据只利用了操作系统的页缓冲（page cache，应该就是操作系统底层为写磁盘提供的内核缓冲区）。这样做的好处，文中解析是基本不用考虑内存的垃圾回收，并且在kafka进程重启的时候可以很方便的从页缓冲中重新加载数据（如果是维护在内存中，进程吃消失后分配的内存会被回收释放）
+更进一步，kafka对网络传输也做了优化。传统的程序把文件数据发送到网络中一般需要以下几个步骤：
+ 从磁盘或者其他存储媒体把文件数据读到操作系统内核的缓冲区（page cache） 从内核缓冲区把数据拷贝到应用程序中的buffer 把数据从应用程序中的buffer又重新拷贝到内核中的另一个缓冲区（可能是为网卡分配的缓冲） 把内核缓冲区中的数据发送到socket套接字层，进行网络传输  可见上述过程经历了4次拷贝：文件-》内核缓冲-》应用程序缓冲-》内核缓冲-》socket。然而在Linux或者Unix类的操作系统中，其实有一个名为“sendfile”的API可以直接把文件读到一个内核缓冲后直接发送到socket，kafka利用了该API进行高效的文件数据发送：文件-》内核缓冲-》socket。
+（3）无状态broker
+在kafka中，每个consumer消费到哪个offset位置并不会被kafka记录，而是由consumer自己进行记录。这样设计的好处是极大了简化了kafka系统的复杂度。但是这样会引入另一个问题：kafka无法知道一个message是否已经被所有的consumer消费过，是否可以进行删除。kafka使用了一个简单解决方案——每个message保留7天，超过该时间的message会被删除。这样设计的好处一是简洁，二是有一定的容灾能力，例如consumer崩溃或者出现一些故障后，可以减小offset从头消费，重新获取消费错误或丢失的数据。
+3、分布式协作
+在kafka中，可以定义一个consumer组（consumer group），每个这样的组消费一个指定的topic，该topic下的每个partition只能被组中的一个consumer消费，该consumer可以是一个线程或者进程。这样设计的好处是足够简单，因为如果有多个consumer同时消费一个partition，势必需要进行同步来保证message不会被一个组重复消费，可能需要引入锁，这样会使得消费效率大打折扣。因为规定了组内一个consumer只能消费一个partition，因此组内的consumer同步只会出现在进行rebalance的时候，而这是一个出现频率很低的场景。
+对于kafka节点结构，它并没有设计成master-slave结构，而是每个broker均为同等地位的数据节点，但是会把一些重要的集群信息存放到Zookeeper中。Zookeeper在kafka中负责的任务主要有：
+ 监测broker、consumer的加入和离开 触发一次rebalance，当上一点发生的时候 记录consumer与partition对应关系，追踪每个partition的offset  4、交付保证
+kafka只保证“至少一次”的数据交付（at-least-once）。如果外部应用程序不能引入重复数据，则它需要自行实现去重逻辑（deduplicated logic）。kafka只保证单个partition内的message会被按顺序交付给consumer，并不会保证不同partition之间的message的交付顺序。]]></description>
+</item><item>
     <title>Raft</title>
     <link>https://utopizza.github.io/2020-07-26-%E8%AE%BA%E6%96%87-raft/</link>
     <pubDate>Sun, 26 Jul 2020 00:00:00 &#43;0000</pubDate>
@@ -129,21 +156,5 @@ $$PriorityScore(e)=\alpha \cdot RarenessScore(e) + \beta \cdot FanoutScore(e)$$
 该论文主要提出了一个称为 Set-Value Item Mining (SVIM) 的协议，用于在隐私保护约束条件下提高本地差分隐私数据的精确度。由于差分隐私主要是纯理论的模型，没有具体的实现和应用，限于篇幅此文不展开论述。此处主要了解差分隐私的一些背景即可。
 相关资料：
  差分隐私学习总结 苹果的 Differential Privacy 差分隐私技术是什么原理？ 大数据下的信息安全-差分隐私保护技术  ]]></description>
-</item><item>
-    <title>EnclaveDB</title>
-    <link>https://utopizza.github.io/2018-12-15-%E8%AE%BA%E6%96%87-enclavedb/</link>
-    <pubDate>Sat, 15 Dec 2018 00:00:00 &#43;0000</pubDate>
-    <author>Author</author>
-    <guid>https://utopizza.github.io/2018-12-15-%E8%AE%BA%E6%96%87-enclavedb/</guid>
-    <description><![CDATA[一、背景及问题
-目前一些云端的数据处理服务经常受到可能来自数据库管理员、服务器管理员、利用操作系统漏洞的黑客等的攻击。虽然一般意义上的数据加密可以为静态数据和数据传输提供强力高效的保护，但是却无法为数据处理系统提供足够的保护，因为数据处理系统在处理查询的时会在内存解密敏感数据。而内存是容易被攻击者入侵并掌控的区域，因此这会导致数据的不安全。
-一种实现安全查询（secure query）的方法是，一些系统如 CryptDB，Monomi 以及 Seabed 等通过使用 property-preserving encryption 技术来进行在已加密数据上的安全查询。然而这种方法只能处理十分有限的查询请求，并且有信息泄漏的风险。
-另一种实现安全查询的方法是在受信任的执行环境（trusted execution environment）或者内飞地（enclaves） 中执行查询。系统的内飞地如 Intel Software Guard Extensions (SGX) 可以保护敏感数据和代码，即使攻击者控制了整个操作系统或者主机。虽然如此，使用内飞地存在几个问题：
- 为了实现安全保护，需要仔细地对应用程序进行重构，分解出可信任部分和不可信任部分 为了实现高层次的安全特性如机密性（confidentiality）、完整性（integrity）、时新性（freshness），需要增加额外的逻辑和机制来确保机密信息在进入和离开内飞地的时候不会被泄漏  这些问题对于一些简单的应用程序来说并不困难，但是对于一些大型复杂系统如数据库系统来说则非常不容易。先前的一些研究例如 CipherBase、TrustedDB 等采取的方式是将查询引擎（query engine）的一小部分放置于受信任的硬件之上，这种方式的问题是无法提供上述的机密性、完整性、时新性。另一种选择是将整个数据库放置于内飞地之中，但这显然会导致大量的 trusted computing base (TCB) 以及服务性能的下降，并且无法阻止来自数据库管理员的攻击。
- 【根据维基百科，飞地指在某个地理区划境内有一块隶属于他地的区域。根据地区与国家之间的相对关系，飞地又可以分为“外飞地”（Exclave）与“内飞地”（Enclave）两种概念，其关系如下：内飞地（enclave）：意指某个国家境内有块土地，其主权属于另外一个国家，则该地区称为此国家的内飞地。外飞地（exclave）：某国家拥有一块与本国分离开来的领土，该领土被其他国家包围，则该领土称为某国的外飞地。】
- 二、解决方案
-文章提出了一个称为 EnclaveDB 的数据库，它可以为查询和数据提供机密性、完整性、时新性。它与传统关系型数据库一样提供了数据处理、SQL查询、存储过程等基本功能。与传统数据库不同的是：
- EnclaveDB 通过把所有敏感数据（tables, indexes, queries and other intermediate state）维护在内飞地的内存中来保护数据库状态 EnclaveDB 使用可信任的 EnclaveDB 客户端来预编译查询代码，并进行加密 预编译代码后，受信任的 EnclaveDB 客户端与不受信任的服务器上的内飞地直接建立一个安全的加密通道，然后将已加密的查询和参数发送过去 不受信任的服务器上的内飞地收到查询请求后，对请求进行验证、解密、执行查询、对查询结果进行加密、返回给客户端 EnclaveDB 重新设计了数据库的日志与恢复机制，以确保服务器无法对数据库的日志进行攻击 EnclaveDB 采取了一些优化手段，减少线程上下文切换，减少服务器开销  三、总结
-文章提出了一个通过使用内飞地来实现不信任服务器上的安全数据库。通过可信任客户端的预编译、加密安全通道的通信、内飞地的隔离保护、重新设计数据库的日志与恢复机制等一系列措施，实现了机密性、完整性、时新性这三个重要的安全特性。]]></description>
 </item></channel>
 </rss>

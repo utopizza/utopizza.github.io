@@ -12,7 +12,7 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://utopizza.github.io/" />
 <meta property="og:image" content="https://utopizza.github.io/logo.png"/>
-<meta property="og:updated_time" content="2020-07-26T00:00:00+00:00" />
+<meta property="og:updated_time" content="2020-08-04T00:00:00+00:00" />
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://utopizza.github.io/logo.png"/>
 
@@ -76,6 +76,36 @@
         data-sizes="auto"
         alt="Posts"
         title="Posts" /></a></div><h1 class="home-title">CODE FOR FOOD :)</h1><h2 class="home-subtitle"><div id="id-1" class="typeit"></div></h2><div class="social-links"><a href="https://github.com/utopizza" title="GitHub" target="_blank" rel="noopener noreffer me"><i class="fab fa-github-alt fa-fw"></i></a><a href="mailto:648847079@qq.com" title="Email" rel=" me"><i class="far fa-envelope fa-fw"></i></a></div></div>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+        <a href="/2020-08-04-%E8%AE%BA%E6%96%87-kafka/">Kafka</a>
+    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
+            published on&nbsp;<time datetime=2020-08-04>2020-08-04</time>
+        </span>&nbsp;
+            <span class="post-category">included in<a href="/categories/thesis/">
+                        <i class="far fa-folder fa-fw"></i>Thesis
+                    </a></span></div><div class="content">一、背景问题
+在互联网公司中往往会产生大量的日志数据（log data），例如（1）用户事件如用户的登录、网页访问、点击、收藏、分享、评论、搜索；（2）内部系统产生的事件例如服务调用、错误日志、网络事件、系统调用等等。这些日志数据十分重要，可用于分析用户喜好、系统使用情况等等。以往这些日志数据一般用于离线的数据分析，然而随着互联网业务蓬勃的发展，越来越需要更加实时地利用这些日志数据来进行在线分析，例如（1）根据用户搜索历史进行实时更新的个性化推荐、相关推荐、广告投放（2）系统实时识别垃圾邮件、非法数据并自动进行过滤等等。因此，一些早期的系统，例如Facebook的Scribe，Yahoo的Data Highway，Cloudera的Flume等等，都是被设计成把日志数据进行收集并写入Hadoop这样的数据仓库然后进行离线的分析，不能满足进行实时大规模日志在线分析的需求。业界需要一个能支持延迟秒级的实时（real-time）日志收集系统。
+二、Kafka
+1、基本概念&amp;架构
+ 一个message流被称为一个topic，每个topic下有多个partition分区（分区数量十分重要，因为它决定了可以并行消费的并行度，见下文） 存储message的kafka节点称为broker。Kafka是一个分布式系统，有多个broker节点，每个broker节点存储一个或者多个partition分区 每个producer可以推送message到一个topic 每个consumer可以订阅一个或者多个topic，从对应的broker中拉取message  2、Efficiency
+（1）简单的存储结构
+每个topic的每个partition分区对应一个逻辑日志，该日志物理上其实是由一系列的文件片（segment file）构成，每个文件片大约1GB。每当producer推送一个message到某个partition时，broker只是简单地把该message追加到最后一个片文件的末尾。考虑到写磁盘的性能问题，kafka只有在指定数量的message到达、或者指定时间周期结束才执行一次flush把文件片写入磁盘。
+至于message的数据结构，与传统message系统不同，kafka中的message并没有所谓的“messageId”，每个message只根据它在日志中的offset来定位：下一条message在日志中的位置等于当前message的位置+message的长度。
+consumer从一个partition消费message时，它只能从某个offset开始连续地消费，并且该offset之前的message已经完成消费。consumer在向broker提交每个的pull请求中都会带上所请求的message的offset以及请求的字节数。broker根据offset找到对应的文件片（会在内存中维护一个“文件片首部offset”与“文件片”的映射关系），定位message，然后发送被请求的数据返回给consumer。consumer收到数据后，计算出下一个message的offset然后再继续发送请求。
+（2）高效的传输方式
+producer可以在单个send请求中一次性提交多个message；同样，consumer也可以在单个pull请求中一次性拉取多个message。
+另外，kafka为了防止数据在机器上被缓冲两次（double buffering），它不在内存中缓存任何数据，所有数据只利用了操作系统的页缓冲（page cache，应该就是操作系统底层为写磁盘提供的内核缓冲区）。这样做的好处，文中解析是基本不用考虑内存的垃圾回收，并且在kafka进程重启的时候可以很方便的从页缓冲中重新加载数据（如果是维护在内存中，进程吃消失后分配的内存会被回收释放）
+更进一步，kafka对网络传输也做了优化。传统的程序把文件数据发送到网络中一般需要以下几个步骤：
+ 从磁盘或者其他存储媒体把文件数据读到操作系统内核的缓冲区（page cache） 从内核缓冲区把数据拷贝到应用程序中的buffer 把数据从应用程序中的buffer又重新拷贝到内核中的另一个缓冲区（可能是为网卡分配的缓冲） 把内核缓冲区中的数据发送到socket套接字层，进行网络传输  可见上述过程经历了4次拷贝：文件-》内核缓冲-》应用程序缓冲-》内核缓冲-》socket。然而在Linux或者Unix类的操作系统中，其实有一个名为“sendfile”的API可以直接把文件读到一个内核缓冲后直接发送到socket，kafka利用了该API进行高效的文件数据发送：文件-》内核缓冲-》socket。
+（3）无状态broker
+在kafka中，每个consumer消费到哪个offset位置并不会被kafka记录，而是由consumer自己进行记录。这样设计的好处是极大了简化了kafka系统的复杂度。但是这样会引入另一个问题：kafka无法知道一个message是否已经被所有的consumer消费过，是否可以进行删除。kafka使用了一个简单解决方案——每个message保留7天，超过该时间的message会被删除。这样设计的好处一是简洁，二是有一定的容灾能力，例如consumer崩溃或者出现一些故障后，可以减小offset从头消费，重新获取消费错误或丢失的数据。
+3、分布式协作
+在kafka中，可以定义一个consumer组（consumer group），每个这样的组消费一个指定的topic，该topic下的每个partition只能被组中的一个consumer消费，该consumer可以是一个线程或者进程。这样设计的好处是足够简单，因为如果有多个consumer同时消费一个partition，势必需要进行同步来保证message不会被一个组重复消费，可能需要引入锁，这样会使得消费效率大打折扣。因为规定了组内一个consumer只能消费一个partition，因此组内的consumer同步只会出现在进行rebalance的时候，而这是一个出现频率很低的场景。
+对于kafka节点结构，它并没有设计成master-slave结构，而是每个broker均为同等地位的数据节点，但是会把一些重要的集群信息存放到Zookeeper中。Zookeeper在kafka中负责的任务主要有：
+ 监测broker、consumer的加入和离开 触发一次rebalance，当上一点发生的时候 记录consumer与partition对应关系，追踪每个partition的offset  4、交付保证
+kafka只保证“至少一次”的数据交付（at-least-once）。如果外部应用程序不能引入重复数据，则它需要自行实现去重逻辑（deduplicated logic）。kafka只保证单个partition内的message会被按顺序交付给consumer，并不会保证不同partition之间的message的交付顺序。</div><div class="post-footer">
+        <a href="/2020-08-04-%E8%AE%BA%E6%96%87-kafka/">Read More</a></div>
+</article>
 <article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
         <a href="/2020-07-26-%E8%AE%BA%E6%96%87-raft/">Raft</a>
     </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
@@ -169,26 +199,6 @@ Reduce 函数：由用户实现该接口，其功能是使从 Map 函数接收�
 $$key_{2}/value_{2}(s) \implies key_{2}/value_{3} $$
 论文中给出了一个具体例子，从一个巨大的文档集中统计每个单词的出现次数。每个单词可以看作 key，它的出现次数就是最终想得到的 value。按照 MapReduce 编程范式，可以分为两步，在 Map 阶段输入文档集合，为每个文档拆解出每个单词，并为每个单词赋值它的 value 为 1，表示这个单词在此出现了一次；在 Reduce 阶段，把每个单词对应的分组进行 value 的求和，即可得到每个单词的总出现次数。</div><div class="post-footer">
         <a href="/2019-05-08-%E8%AE%BA%E6%96%87-mapreduce/">Read More</a></div>
-</article>
-<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
-        <a href="/2019-04-30-%E6%80%BB%E7%BB%93-%E9%98%B6%E6%AE%B5%E6%80%BB%E7%BB%937/">阶段总结(7)</a>
-    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
-            published on&nbsp;<time datetime=2019-04-30>2019-04-30</time>
-        </span>&nbsp;
-            <span class="post-category">included in<a href="/categories/summary/">
-                        <i class="far fa-folder fa-fw"></i>Summary
-                    </a></span></div><div class="content">上一次写阶段总结是2018年10月，转眼过了半年多。自从10月份定了工作后，就转去忙论文、数学、以及英语。
-一、论文
-因为之前看过十来篇兴趣点推荐相关的顶会论文，考虑了下就还是继续做这个方向。从10月份开始，断断续续开始重新看了一遍之前看过的论文，以及做过的笔记和思路。因为之前专注于找工作，从4月份到9月份一直都是在看CS基础以及研发技术相关的书，学术工作放下了半年多，很多细节都忘记了。幸好之前认真做了笔记，复习起来不是太吃力。花了大约一星期的上午完成了复习，感觉还是没啥新灵感，继续用dblp去找了很多新的论文来看。印象中大概一直到快要放寒假的时候才想出了一个基本的雏形，用英文写了个小论文版本。寒假放了13天（2月1日到13日），在家基本都是休息，也没继续弄论文。回来后在公司陆续完成了论文的后半部分。思路基本是定下来了，给这边的老师看了下，确定思路没啥问题后，就差不多搬回学校了（3月3日）。
-搬回学校之后就开始做实验，幸亏舍友给力，提供了他们实验室的服务器，不然我这小破笔记本完全不可能做的出实验。实验基本代码很快就写出来了，大概三天左右，接下来就是无尽的噩梦般的炼丹（调参）了。不知道是代码写错还是啥原因，我发现很有的参数即使是很小的改变，竟然对实验结果的影响很大（大雾）。到了三月中下旬，实验结果调得差不多之后，就感觉开始写大论文（毕业论文）。因为你之前已经写好了英文版的小论文，所以大论文写起来比较轻松，一共只用了6天左右。其中花的时间比较多的是第一章绪论，扯了很多废话，找了一些中文的参考文献。后面的相关理论、自己提出的模型、实验设计等等几章直接从英文小论文翻译下扩充下，雏形就基本出来了。四月份基本都在学校修修补补论文以及继续调参，还有就是考虑优化实验里的SGD。四月底，定了稿，发给了导师，以及回公司找导师签字一些报告。
-总的来说，10月份主要复习以前看过的论文，11、12月看新论文，1月份开始构思自己的模型，以及写出一个基本的英语小论文雏形。2月份中旬寒假回来后继续完善英文小论文，2月底跟导师确认思路没有问题之后，3月初搬回学校。3月份开始做实验。3月中下旬用一周写出了大论文。4月份继续修补大论文以及实验调参。4月底定稿。
-二、数学
-因为比较闲，回头复习了一波微积分、线性代数、概率统计。其中，微积分主要通过复习本科时候学的《高等数学》，线性代数主要通过网上的教学视频以及研究生学的《矩阵论》，概率统计看的是中科大的《概率论与数理统计》。一般是晚上下班回去看书和吃饭的时候看视频，算是一个小复习。下面贴出资料链接。
- 《高等数学》 《概率论与数理统计》 《矩阵论》 MIT公开课：线性代数 MIT公开课：微积分重点 3b1b：线性代数的本质 3b1b：微积分的本质  总的来说，11月、12月、1月这三个月的数学复习主要以晚上回宿舍看书为主，最后整理了大概9篇 博客。
-三、英语
-除了复习数学之外，也把英语提上了日程。除了平时看看美剧和google查资料之外，高考之后都几乎没碰过英语了。定了个考雅思的目标，因此开始找了一些资料，也问同学朋友找了些资料。从10月到12月三个月基本上都是在背四六级词汇，新东方的红书。因为习惯了这个系列的排版，索性就又买了这个系列的雅思词汇。背单词的同时也注意听力和写作。针对听力，主要就是直接听真题听力，把MP3下载到音乐播放软件，整天整夜没完没了地放。至于写作，买了本写作的书和一本笔记本，每天抄一篇范文，然后读几遍。从3月份搬回学校之后，因为每天去图书馆，就很少读英语范文了。该成用百词斩背单词。另外网上找到一个可以在线测试雅思水平的网站，虽然蛮多BUG。下面贴出资料。
- 《新东方雅思词汇》 《顾家北手把手教你雅思写作》 雅思在线 词汇量测试  总的来说，这几个月基本把四六级背得比较熟了，雅思那本过了两三遍，词汇量在上面的网上测是9000个左右，百词斩测是一万个左右。搬回学校前主要以背单词书、抄写范文为主。搬回学校后以刷百词斩复习、在网上做雅思题为主。因为回学校后做论文实验花了很多时间，分配给英语的时间不是很多，练的比较少，目前效果不太理想。现在论文定了稿，后面重新把英语提上日程。</div><div class="post-footer">
-        <a href="/2019-04-30-%E6%80%BB%E7%BB%93-%E9%98%B6%E6%AE%B5%E6%80%BB%E7%BB%937/">Read More</a></div>
 </article>
 <ul class="pagination"><li class="page-item active">
                     <span class="page-link">

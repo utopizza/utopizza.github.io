@@ -12,7 +12,7 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://utopizza.github.io/" />
 <meta property="og:image" content="https://utopizza.github.io/logo.png"/>
-<meta property="og:updated_time" content="2020-07-26T00:00:00+00:00" />
+<meta property="og:updated_time" content="2020-08-04T00:00:00+00:00" />
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://utopizza.github.io/logo.png"/>
 
@@ -76,6 +76,24 @@
         data-sizes="auto"
         alt="Posts"
         title="Posts" /></a></div><h1 class="home-title">CODE FOR FOOD :)</h1><h2 class="home-subtitle"><div id="id-1" class="typeit"></div></h2><div class="social-links"><a href="https://github.com/utopizza" title="GitHub" target="_blank" rel="noopener noreffer me"><i class="fab fa-github-alt fa-fw"></i></a><a href="mailto:648847079@qq.com" title="Email" rel=" me"><i class="far fa-envelope fa-fw"></i></a></div></div>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+        <a href="/2018-11-30-%E8%AE%BA%E6%96%87-saql/">SAQL</a>
+    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
+            published on&nbsp;<time datetime=2018-11-30>2018-11-30</time>
+        </span>&nbsp;
+            <span class="post-category">included in<a href="/categories/thesis/">
+                        <i class="far fa-folder fa-fw"></i>Thesis
+                    </a></span></div><div class="content">一、背景及问题
+目前一些高级的网络攻击如 APT（advanced persistent threats）威胁并损害着很多公司的信息安全。它们利用主机的各种弱点，通过一系列步骤来进行攻击。
+为了应对这些攻击，一些基于系统监控（System Monitoring）的方法被提出，用于快速侦查异常，或者定位存在风险的系统事件（System Event）。这些方法主要通过对主机的系统调用（system calls）进行监控，收集系统事件的信息，来实现系统异常的侦查。然而，目前这些方法存在几点问题和困难：
+ 时间要求严格。要避免主机受到进一步的伤害导致无法修复，该监控系统必须做到实时在线保护主机，实时侦查主机内的异常事件，这就犹如进行实时的“大海捞针” 如何让监控系统实时地结合系统管理员、安全专家、数据分析专家们的领域知识（domain knowledge）？因为这些领域知识对于系统异常的侦查是非常有帮助的，甚至是必要的 实时的系统监控自然会产生海量的日志数据，这就要求分析数据侦查异常的算法必须非常高效，因为是实时的  遗憾的是目前没有任何一个监控系统能够解决以上问题，尤其是第二点——已有的监控系统往往只专注于特定的异常侦查，无法提供足够的支持以便用户可以灵活地引入专家的领域知识。
+二、解决方案
+论文提出了一个基于流的异常查询系统，以及一种基于流的异常查询语言（Streambased Anomaly Query Language，SAQL）。该系统主要面向 4 种异常：
+ Rule-based Anomaly:基于规则的异常，某个进程在短时间内读取大量的命令日志文件，这种异常通常意味着某个非法的用户想要探测合法用户的常用命令或者操作习惯。为了侦查这种异常，SAQL 使用事件模式（event patterns）来表达操作系统中的各种活动：定义一个事件表示为 {subject-operation-object}，例如 {process p1 write file f2}。有了如此统一定义的形式，用户就可以在查询的时间灵活地定义领域知识，甚至可以定制基于特定规则的异常检测 Time-Series Anomaly:时间序列的异常，某个进程在一段时间内不正常地传送了大量的数据。为了探测到这种异常，SAQL 构造带状态的滑动窗口，将数据流进行分段，那么只要通过与历史滑动窗口的状态进行比较，就可以检测到某个时间段对应的数据量是否异常地增大 Invariant-based Anomaly:基于不变的异常？一个进程启动了一个异常的进程，如 apache.exe 本应该启动 httpd.exe，但却启动了一个在训练模型时从来未出现过的进程 java.exe。这种情况同样可以使用上述带状态滑动窗口的模型，只要提前训练学习好正常情况下的系统状态（可用窗口状态表达），便可检测此类异常。 Outlier-based Anomaly:基于异常的异常，通过与同等的进程的比较来确定异常。例如，通过比较发现，某个进程向某个 IP 地址传送的数据量比同等进程向其他 IP 地址传送的数据量大太多，那么这个进程就值得怀疑。SAQL 可以使用聚类算法对事件进行聚类，以便在同类的事件中进行比较并发现异常。  除此之外，系统往往需要同时处理大批量的异常检测查询，而目前一般的检测系统如 Siddhi、Esper、Flink 采取的做法都是为每一个 query 复制一份数据，由于操作系统的日志文件是非常巨大的，这样的复制操作会使得系统非常低效。针对这个问题，论文提出一个名为 master-dependent-query 的查询模式，它把用户提交的各种查询进行兼容性分析，然后将兼容的查询分到同一个组，每个组的查询都共用一份数据，这样避免了大量的数据复制，提高了查询分析的效率。
+三、总结
+总的来说，文章的主要工作是提出了一个用于描述操作系统事件的形式化语言 SAQL，使得用户和系统可以统一地描述各种正常和异常的事件，从而可以灵活地加入专家领域知识并进行异常检测，无需改动系统本身。另外提高为查询效率，文章提出了查询分组的模型，让可以相互兼容的查询共用日志数据，避免了为每个查询复制一次数据的低效模式。</div><div class="post-footer">
+        <a href="/2018-11-30-%E8%AE%BA%E6%96%87-saql/">Read More</a></div>
+</article>
 <article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
         <a href="/2018-11-24-%E8%AE%BA%E6%96%87-rtag/">RTAG</a>
     </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
@@ -191,37 +209,6 @@
   三面总监面（2018-09-18，下午2点，50分钟）
   自我介绍</div><div class="post-footer">
         <a href="/2018-09-18-%E9%9D%A2%E7%BB%8F-%E7%99%BE%E5%BA%A6%E9%9D%A2%E7%BB%8F/">Read More</a></div>
-</article>
-<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
-        <a href="/2018-09-13-%E9%9D%A2%E7%BB%8F-%E7%BE%8E%E5%9B%A2%E9%9D%A2%E7%BB%8F/">美团面经</a>
-    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
-            published on&nbsp;<time datetime=2018-09-13>2018-09-13</time>
-        </span>&nbsp;
-            <span class="post-category">included in<a href="/categories/interview/">
-                        <i class="far fa-folder fa-fw"></i>Interview
-                    </a></span></div><div class="content">一面（2018-09-11上午，学校附近的丽顿酒店，约50分钟）：
-  自我介绍，挑一个最熟悉或者最有亮点的项目讲一下。讲了阿里天池那个，估计面试官不太懂，全程在听。
-  面试官想挑一个后台的项目来问，看来看去挑了我给实验室老板做的那个ERP，我说了一顿后，面试官也抓不住什么点来问，就说问基础吧
-  数据库索引都有哪些。能不能画一下B+索引的结构。很简单，画出来后，我说我再给你画出插入1到10的分裂过程吧。面试官有点懵逼，说也行。然后问了叶子结点的指针指向的是什么地址，答数据行在磁盘的地址。然后追问数据库是怎么通过这个地址去磁盘找数据的，我修正了下，答这个地址是磁盘块的地址，数据库会把整个块以及相邻的块一起读到内存（预读）。然后具体怎么去磁盘寻找块的过程我说不知道，面试官说没关系，他也忘了。
-  问联合索引（a，b，c），where a=? and b&gt;? and c=? 这样的语句为什么会失效
-  讲下JVM内存分块和GC策略那些，我画出来，给他展开很详细讲，他说行了行了
-  熟悉的设计模式有哪些。我配合JDK的具体应用来讲。然后手画观察者模式的UML图，不太记得UML图的细节了，我画了个大概，但是把思路讲清楚了
-  范型的实现原理是什么。类型擦除。用范型来重载方法会怎么样（拒绝编译）
-  手撕两个无环链表的第一公共结点
-  手撕最低公共祖先
-  好像又想回到项目问，但是也没问出个啥，就问了下为啥不投算法，而是研发
-  愿不愿意来北京？他说看到我投的上海，我说北京生活压力太大，有点不敢去
-  有啥要问的。我就问了是不是基础架构部，那个大名鼎鼎的美团技术博客是不是你们部门做的，吹了一波。不过我确实觉得那个博客比较厉害
-  二面（一面结束后的5分钟，约50分钟）
-  自我介绍
-  挑一个认为最有亮点的项目讲，还是讲了阿里天池无人机那个。
-  为什么转后台，职业规划是什么，到目前准备到那一步了，开启吹比模式，扯了很久。
-  JVM分代和GC算法了解吗。我说一面讲过了。然后他说那你可以讲讲觉得比别人深入的地方，然后我详细讲了CMS和G1的四个阶段. 思想. 优缺点。
-  画一下观察者模式的ER图，讲一下。
-  最近都在看哪些书，研究什么，我说并发，然后又扯了很久很久
-  Hadoop和Spark了解到什么程度，我说只搭建过一次，没有看到源码级别，就没问了。
-  看我简历上写了Mysql.</div><div class="post-footer">
-        <a href="/2018-09-13-%E9%9D%A2%E7%BB%8F-%E7%BE%8E%E5%9B%A2%E9%9D%A2%E7%BB%8F/">Read More</a></div>
 </article>
 <ul class="pagination"><li class="page-item ">
                     <span class="page-link">

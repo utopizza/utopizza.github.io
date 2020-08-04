@@ -12,7 +12,7 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://utopizza.github.io/" />
 <meta property="og:image" content="https://utopizza.github.io/logo.png"/>
-<meta property="og:updated_time" content="2020-07-26T00:00:00+00:00" />
+<meta property="og:updated_time" content="2020-08-04T00:00:00+00:00" />
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://utopizza.github.io/logo.png"/>
 
@@ -76,6 +76,21 @@
         data-sizes="auto"
         alt="Posts"
         title="Posts" /></a></div><h1 class="home-title">CODE FOR FOOD :)</h1><h2 class="home-subtitle"><div id="id-1" class="typeit"></div></h2><div class="social-links"><a href="https://github.com/utopizza" title="GitHub" target="_blank" rel="noopener noreffer me"><i class="fab fa-github-alt fa-fw"></i></a><a href="mailto:648847079@qq.com" title="Email" rel=" me"><i class="far fa-envelope fa-fw"></i></a></div></div>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+        <a href="/2018-05-01-%E7%AE%97%E6%B3%95-%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E9%A2%982/">动态规划题(2)</a>
+    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
+            published on&nbsp;<time datetime=2018-05-01>2018-05-01</time>
+        </span>&nbsp;
+            <span class="post-category">included in<a href="/categories/algorithm/">
+                        <i class="far fa-folder fa-fw"></i>Algorithm
+                    </a></span></div><div class="content">1、最长递增子序列（返回长度）
+给定数组 arr，返回它的最长递增子序列的长度。
+思路：显然对于数组的任何一个子序列，它必定以数组的某个元素结尾，因此可用 dp[i] 表示以 arr[i] 结尾的最长递增子序列的长度。那它是如何得来的呢？显然它就是在前面 i-1 个最长递增子序列后面追加或者不追加 arr[i] 而得到的 i-1 个新的递增子序列中，最长的那个。如果 arr[i] 大于 arr[j]，那么 arr[i] 就可以追加到以 arr[j] 结尾的最长递增子序列。
+边界条件：如果 arr[i] 比它前面的 i-1 个元素都小，那么以 arr[i] 结尾的最长递增子序列就是它自己了，此时 dp[i]=1。
+$$ dp[i]=\max{ dp[j]+1 } \text{,} \quad (0 \leq j &lt; i \text{,} arr[j]&lt;arr[i]) $$
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15  private static int LIS(int[] arr) { if (arr == null || arr.</div><div class="post-footer">
+        <a href="/2018-05-01-%E7%AE%97%E6%B3%95-%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E9%A2%982/">Read More</a></div>
+</article>
 <article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
         <a href="/2018-04-29-%E7%AE%97%E6%B3%95-%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E9%A2%981/">动态规划题(1)</a>
     </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
@@ -177,19 +192,6 @@ $$x_{new}=\frac{x}{||x||_{2}}$$
  专业：计算机等相关专业 学历：本科及以上，硕士博士优先 语言：精通 C/C++、Java、Python 等至少一门编程语言，极佳的工程实现能力 算法基本功：熟悉常用机器学习算法，尤其是深度学习、增强学习等相关领域，对模式识别，概率统计、最优化等算法原理及应用，有扎实的基础，深入的理解和浓厚的兴趣 框架与平台：了解目前常见的机器学习或者深度学习框架中的一个或者多个：Spark，XGBoost，Caffe，Tensorflow 等 加分项：在计算机科学学术会议和期刊如 NIPS、ICML、IJCAI、AAAI、UAI、KDD、SIGIR 等发表过论文，或者有相关的开源项目贡献经验，有数理分析方面良好的素养以及数理统计基础，良好的数据敏感能力、较强的逻辑分析能力  三、具体计划
  针对编程语言，选定Java和Python，其中Java用来写算法，Python用来做机器学习。刷一遍**《Java编程思想》**和**《利用Python进行数据分析》**。 针对传统算法基本功，把**《算法第四版》**的所有传统算法代码反复练习回顾，务必做到烂熟于心。为了应对笔试和面试的算法题，需要多刷题，要刷的书有**《程序员面试指南》**、**《剑指Offer》**、**《编程之法》**、**《编程之美》**、**《编程珠玑》**等等，经典的问题的各种解法一定也要非常熟练。除了刷书，还要多动手实践来提高速度和准确性，多刷 **leetcode** 和**牛客网**，目前 leetcode 刷了 100 道 Easy 和 50 道 Medium，但是很多都印象模糊了，要复习一遍也要继续刷新的。总之算法功底非常重要，如果面试的时候算法写不出来就直接 Over 了。 针对机器学习和深度学习算法，同样要熟练写出**《机器学习实战》**的十大机器学习算法的核心代码。其次才是理论，所有概念都要清晰理解熟记，基本的推导要熟练，面试的时候一般都要求**现场推导核心公式**。再有就是要对每个算法模型做**横向比较**，相同点不同点，各自的优缺点，各自的使用场景等等。关于理论的书就两本吧，**《机器学习》**和**《统计方法学》**应该就够了。 针对数理分析能力与数理统计基础，要恶补**《概率论与数理统计》**，在时间允许的情况下可能要再补充一些资料。要做到深刻理解所有原理，并且能够讲清楚。这是机器学习算法工程师的基本功。 针对框架与平台，暂时选定 XGBoost，Sklearn，Spark，Hadoop 与 TensorFlow 吧，找些相关书籍和资料过一遍，掌握相关概率原理，并且跑一些简单demo，然后写个总结帖就差不多了，不用花太多时间。其中，XGBoost 和 SKlearn 是一直常用的，Spark 与 Hadoop 在本科毕业设计中也搭建使用过，问题不是很大，剩下 TensorFlow 这个深度学习的框架还没接触过，估计要花一段时间上手。关于 XGBoost 就直接去官网看文档和找一些论文看；Spark 和 Hadoop 目前还没有开始找书，以后再补充；至于 SkLearn 和 TensorFlow，感觉看现在这个本 《Hands-On Machine Learning with Scikit-Learn and TensorFlow》，再去 github 看看官方文档和源码就差不多了。 针对加分项，论文是没戏了，不用考虑。至于项目，打算再做一个天池的《搜索广告转化预测》，感觉这个和工业界的业务比较接近，如果最后成绩不错，面试时可以拿这个出来讲。  四、一些补充</div><div class="post-footer">
         <a href="/2018-03-15-%E6%80%BB%E7%BB%93-%E9%98%B6%E6%AE%B5%E6%80%BB%E7%BB%933/">Read More</a></div>
-</article>
-<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
-        <a href="/2018-02-04-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%B1%BB%E7%AB%9E%E8%B5%9B/">机器学习类竞赛</a>
-    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
-            published on&nbsp;<time datetime=2018-02-04>2018-02-04</time>
-        </span>&nbsp;
-            <span class="post-category">included in<a href="/categories/machinelearning/">
-                        <i class="far fa-folder fa-fw"></i>MachineLearning
-                    </a></span></div><div class="content">一、国外
- Kaggle：最著名最活跃的大数据竞赛平台，竞赛题目源源不断，种类丰富，而且有不菲的竞赛奖金。特别是上面的论坛大牛众多而且非常 nice，如果英文能力过关的话在上面可以学到最多最好的数据挖掘和机器学习、深度学习的知识。 KDD Cup：SIGKDD 是 Data Mining 领域的顶会。KDD Cup 是其下的一个比赛。含金量很高。每年都会有比较有意思的题目。难度较大，偏学术，因而全世界的DM、ML大牛、小牛都可能在做这个。这个比赛偶尔会在国内的阿里天池平台上出现，有不少清北博士参加。  二、国内
- 阿里巴巴天池大数据科研平台：由国内科技巨头阿里举办，应该算是国内名气最大的数据挖掘类型的比赛了。由于是阿里举办，所以比赛获得不错名次的可以获得阿里校招直通车的权利。我参加过几个，感觉不少细节问题处理得并不是很好，例如有时候会出现赛题规则混乱，数据集因为各种问题不断更换等等，和 Kaggle 的差距还是不小。 CCF大数据与计算智能大赛（BDCI）：由中国计算机学会 CCF 主办，是目前国内权威的大数据类赛事之一，组织单位都很权威，也有很多院士、专家参与评审。 DataCastle：国内的另一个比较有名气的大数据竞赛平台，不过奖金较少。DC在成都，可能是和电子科大有某些联系，评委多是电子科大的老师。 另外国内一些IT巨头例如百度，腾讯，京东等等会自己举办一些机器学习大数据和算法竞赛，例如京东金融的 京东JData算法大赛 、京东金融全球数据探索者大赛 ，腾讯的 腾讯社交广告赛（TSA），华为的 华为软件精英挑战赛 等等，大概每年一度，因为是企业自己举办的比赛，其目的就是为了招揽人才，所以这种比赛除了奖金外，一般都会发 Special Offer，十分诱人。  三、参考
- 天池大数据竞赛和Kaggle、DataCastle的比较，哪个比较好？ Kaggle入门，看这一篇就够了 Kaggle 的比赛在 Machine Learning 领域中属于什么地位？ 分分钟带你杀入Kaggle Top 1% 参加天池大数据竞赛对校园招聘有帮助吗？ 国内数据挖掘竞赛哪个好？  </div><div class="post-footer">
-        <a href="/2018-02-04-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E7%B1%BB%E7%AB%9E%E8%B5%9B/">Read More</a></div>
 </article>
 <ul class="pagination"><li class="page-item ">
                     <span class="page-link">

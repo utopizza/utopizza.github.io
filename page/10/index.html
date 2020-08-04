@@ -12,7 +12,7 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://utopizza.github.io/" />
 <meta property="og:image" content="https://utopizza.github.io/logo.png"/>
-<meta property="og:updated_time" content="2020-07-26T00:00:00+00:00" />
+<meta property="og:updated_time" content="2020-08-04T00:00:00+00:00" />
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://utopizza.github.io/logo.png"/>
 
@@ -76,6 +76,36 @@
         data-sizes="auto"
         alt="Posts"
         title="Posts" /></a></div><h1 class="home-title">CODE FOR FOOD :)</h1><h2 class="home-subtitle"><div id="id-1" class="typeit"></div></h2><div class="social-links"><a href="https://github.com/utopizza" title="GitHub" target="_blank" rel="noopener noreffer me"><i class="fab fa-github-alt fa-fw"></i></a><a href="mailto:648847079@qq.com" title="Email" rel=" me"><i class="far fa-envelope fa-fw"></i></a></div></div>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+        <a href="/2017-11-22-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-adaboost%E7%AE%97%E6%B3%95/">Adaboost算法</a>
+    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
+            published on&nbsp;<time datetime=2017-11-22>2017-11-22</time>
+        </span>&nbsp;
+            <span class="post-category">included in<a href="/categories/machinelearning/">
+                        <i class="far fa-folder fa-fw"></i>MachineLearning
+                    </a></span></div><div class="content">一、提升方法（boosting）
+提升方法主要用于分类问题，它的基本思想是，通过改变训练样本的权重，学习多个不同的分类器，最后把这些基本分类器（也称弱分类器）通过线性组合，得到最终的强分类器。
+这里所谓的提升，通俗地说其实就是将一个分类问题交给多个分类器来处理，“对于一个复杂任务来说，将多个专家的判断进行适当的综合，得出的最终判断，要比任何一个专家单独的判断要好”。虽然每一个弱分类器都是只是一个窄领域的专家，但是把一系列这样的弱分类组合到一起，得到的分类能力并不比单个强分类器差。而且直接学习一个强分类器远比学习一个弱分类器难。
+目前大多数提升方法是通过不断改变训练数据的概率分布（样本权重分布）来不断学习出一系列弱分类器。那么这样需要确定两个问题：
+ 在每一轮如何改变训练样本的权值或者概率分布 如何将这些弱分类器组合成一个强分类器  提升方法中的代表性算法有 Adaboost 算法，它的做法是：
+ 在每一轮学习后，提高前一轮学习中被错误分类的样本的权值，降低前一轮学习中被正确分类的样本的权值。这样，后面学习的分类器将会专注于前面的分类器不能很好处理的那些样本，弥补了前面的分类器的不足（窄领域）。举个例子，小明和小红在学习分类一堆水果，小明先学习，他在学习分类的时候由于精力和时间有限，在一轮学习后，小明只能很好地对体积大的水果进行分类，对那些体积小的水果经常分错类。然后到小红学习的时候，为了保证两个人最终能够把这堆水果都正确分类，那么聪明的小红应该知道，自己应该专注于对那些小明不擅长的体积小的水果进行学习，因为如果小明能够很好地分类体积大的水果，而自己能够很好地分类体积小的水果，那么两个人组合互补起来得到的分类能力，远比两个人都强行学习对所有水果分类的效果好得多。 对于弱分类器的组合，Adaboost 采取加权多数表决的方法，即加大分类误差小的弱分类器的权值，使其在最终表决的时候起较大作用，减小分类误差较大的弱分类器的权值，使其在最终表决中起较小作用。这个很容易理解，谁分类的误差小、准确度高，当然谁在最终的表决里就有更大的话语权了。  二、Adaboost 算法
+算法目标：给定一个二分类的训练数据集 $T={(x_1,y_1),(x_2,y_2),\cdots,(x_N,y_N)}$，其中 $x_i \in R^n$ 是样本实例，$y_i \in {-1,+1}$ 是样本类别标记。本算法目标是从该训练数据集中，学习出 $M$ 个弱分类器，最后将这些弱分类器通过线性组合，得到最终的一个强分类器。
+输入：训练数据集 $T$，弱学习算法 输出：最终分类器 $G(x)$
+1、初始化训练集 $N$ 个样本的权重分布
+$$D_1=(w_{1,1},\cdots,w_{1,i},\cdots,w_{1,N})$$
+$$w_{1,i}=\frac{1}{N}，i=1,2,\cdots,N$$
+2、对 $M$ 个分类器，开展对应的 $m=1,2,\cdots,M$ 轮学习。对第 $m$ 轮学习：
+(1)、用训练数据集 $T$、第 $m$ 轮的样本权重 $D_m$、和弱分类器学习算法，学习得到第 $m$ 个弱分类器
+$$G_m(x):X \to {-1,+1}$$
+(2)、计算 $G_m(x)$ 在训练集上的分类误差率
+$$e_m=P(G_m(x_i) \neq y_i)=\sum_{i=1}^{N}w_{m,i}I(G_m(x_i) \neq y_i)$$
+(3)、计算 $G_m(x)$ 的权重
+$$\alpha_m=\frac{1}{2}\ln(\frac{1}{e_m}-1)$$
+(4)、计算下一轮学习的样本权重分布
+$$D_{m+1}=(w_{m+1,1},\cdots,w_{m+1,i},\cdots,w_{m+1,N})$$
+$$ w_{m+1,i}=\frac {w_{m,i} \cdot e^{-\alpha_m y_i G_m(x_i)}} {\sum_{i=1}^{N} w_{m,i} \cdot e^{-\alpha_m y_i G_m(x_i)}} ，i=1,2,\cdots,N $$</div><div class="post-footer">
+        <a href="/2017-11-22-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-adaboost%E7%AE%97%E6%B3%95/">Read More</a></div>
+</article>
 <article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
         <a href="/2017-11-20-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E8%AE%AD%E7%BB%83%E8%AF%AF%E5%B7%AE%E4%B8%8E%E6%B5%8B%E8%AF%95%E8%AF%AF%E5%B7%AE/">训练误差与测试误差</a>
     </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
@@ -193,19 +223,6 @@ $$2^{x-1}-1+1 \leq n \leq 2^{x-1}-1+2^{x-1}$$
 $$2^{x-1} \leq n \leq 2^x-1$$
 $$x-1 \leq \log_{2}n \leq \log_2(2^x-1) &lt; \log_{2}2^x = x$$</div><div class="post-footer">
         <a href="/2017-11-08-%E7%AE%97%E6%B3%95-%E4%BA%8C%E5%8F%89%E5%A0%86%E5%BB%BA%E5%A0%86%E6%97%B6%E9%97%B4%E5%A4%8D%E6%9D%82%E5%BA%A6/">Read More</a></div>
-</article>
-<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
-        <a href="/2017-11-04-%E7%AE%97%E6%B3%95-%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95/">排序算法</a>
-    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
-            published on&nbsp;<time datetime=2017-11-04>2017-11-04</time>
-        </span>&nbsp;
-            <span class="post-category">included in<a href="/categories/algorithm/">
-                        <i class="far fa-folder fa-fw"></i>Algorithm
-                    </a></span></div><div class="content">一、选择排序
-输入长度为 $n$ 的数组，依次选择数组第 $i$ 小的元素，交换到数组第 $i$ 个位置。使用内外两个循环，外循环负责定位到数组第 $i$ 个位置，内循环负责从数组第 $i+1$ 个位置 遍历到数组末端，记录最小的元素，交换到数组第 $i$ 个位置上。
-无论输入数组元素的初始序列如何，内循环都需要迭代 $n-i$ 次，所以选择排序的总比较次数始终为 $(n-1)+(n-2)+ \cdots +2+1=\frac{n(n-1)}{2} \approx \frac{n^2}{2}$ ，时间复杂度为 $O(n^2)$。
-1 2 3 4 5 6 7 8 9 10 11 12 13  public class SortSelection extends Sort { public static void sort(Comparable[] a) { for (int i = 0; i &lt; a.length; i++) { int minIndex = i; for (int j = i + 1; j &lt; a.</div><div class="post-footer">
-        <a href="/2017-11-04-%E7%AE%97%E6%B3%95-%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95/">Read More</a></div>
 </article>
 <ul class="pagination"><li class="page-item ">
                     <span class="page-link">
