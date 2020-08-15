@@ -77,6 +77,29 @@
         alt="Posts"
         title="Posts" /></a></div><h1 class="home-title">CODE FOR FOOD :)</h1><h2 class="home-subtitle"><div id="id-1" class="typeit"></div></h2><div class="social-links"><a href="https://github.com/utopizza" title="GitHub" target="_blank" rel="noopener noreffer me"><i class="fab fa-github-alt fa-fw"></i></a><a href="mailto:648847079@qq.com" title="Email" rel=" me"><i class="far fa-envelope fa-fw"></i></a></div></div>
 <article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+        <a href="/2013-12-21-%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B04/">技术笔记(4)-ADO.NET</a>
+    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
+            published on&nbsp;<time datetime=2013-12-21>2013-12-21</time>
+        </span>&nbsp;
+            <span class="post-category">included in<a href="/categories/technology/">
+                        <i class="far fa-folder fa-fw"></i>Technology
+                    </a></span></div><div class="content">一、ADO.NET主要用于访问数据，尤其是数据库中的数据，该类被封装在System.Data.dll中。它的两个核心组件：DataSet和.NET数据提供程序
+1、DataSet：记录在内存中的数据，相当于内存中的一个完整的数据集。但它并不与外部的物理数据库直接相连，而是通过DataAdapter间接的完成与外部数据库的交互。该类的主要对象有：
+ DataTable：使用行和列形式来组织的一个矩形数据集 DataColumn：列（规则的集合） DataRow：行（实际的对应于规则的数据存储） Constraint：决定能进入DataTable的数据 DataRelation：不同的DataTable之间的关联  2、.NET数据提供程序：主要有4种对象，分别是：
+ Connection：提供与数据源的连接 Command：执行一系列的数据库命令 DataReader：从数据源中提供高性能的数据流 DataAdapter：提供连接DataSet对象和数据源的桥梁。DataAdapter通过Command对象在数据源中执行SQL命令，并将数据加载到DataSet中，使DataSet中数据的更改与数据源保持一致  二、ADO.NET Connection：Connection类表示一个数据源的单个连接，但并不是单个调用。ADO.NET支持断开式连接，即可在一个Connection对象的使用过程中多次打开或关闭操作，但这些操作并不意味着该对象被创建或者销毁。主要属性有ConnectionString，ConnectionTimeOut，Database，ChangeDatabase，State等。主要的方法有：Open()，Close()。主要的状态属性有：Broken，Closed，Connecting，Executing，Fetching，Open。
+三、ADO.NET Command：从本质上讲，ADO.NET的Command类就是SQL命令或者是对存储过程的引用。
+1、主要属性有：
+ CommandText：执行命令的内容（字符串），或者存储过程的名称 CommandType：告诉Command对象怎样解释CommandText属性的内容，当该属性的值为StoredProcedure时，说明CommandText属性的内容为存储过程名称；当为TableDirect时，说明内容为表名；当为Text时，说明为SQL文本命令（即直接的sql语句） Connection：对Connection对象的引用 Parameters：包含了针对CommandText属性所指定的SQL命令或存储过程的参数集合（通过函数AddRange(paras)向Command对象添加参数集） CommandTimeout：决定了命令出错前等待服务器响应的时间 Transaction： UpdateRowSource:  2、主要的方法有：
+ ExecuteNonQuery()：执行命令并返回受影响的行数（用于返回结果为空的sql命令或存储过程） ExecuteScalar()：执行查询并返回结果集中的第一行的第一列（用于返回单个值的sql命令或存储过程） ExecuteReader()：向Connection发送CommandText并生成DataReader（用于返回多个结果的sql命令或存储过程，该方法创建一个DataReader对象。该方法执行时可以不带参数，或者带一个参数CommandBehavior） ExecuteXmlReader()：向Connection发送CommandText并生成XmlReader  四、DataReader：当Command对象返回结果集时，需要用DataReader来检索数据。DataReader对象返回一个来自Command对象的只读的，只能向前的数据流。DataReader每次只在内存中保留一行，所以开销非常小。
+1、主要属性：
+ Depth：多层结果集中，当前行的嵌套深度 FieldCount：当前行的数目 IsClosed：DataReader是否需要关闭 Item：列值 RecordsAffected：被修改，插入或者删除的行的数目  2、主要方法：
+ Close()：关闭 GetType()：将指定的列的值作为指定类型获取 GetDataTypeName()：获取数据源类型的名称 GetFieldType()：返回指定列的系统类型 GetName()：获得指定列的名称 GetValue()：获得指定列的值 NextResult()：前进到得下一个结果 Read()：前进到下一列  五、DataAdapter：DataAdapter是DataSet和物理数据源之间的桥梁，即DataSet通过DataAdapter与数据库间接交互。DataAdapter类的目的是执行数据库查询并创建包含查询结果的DataTable，该类也可以把对DataTable的更改写回数据库。
+1、主要方法：
+ Fill()：将查询结果填充DataSet Update()：将DataSet中的数据的变动写回数据库  六、应用实例
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21  Sqlconnection conn=new SqlConnection(); conn.</div><div class="post-footer">
+        <a href="/2013-12-21-%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B04/">Read More</a></div>
+</article>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
         <a href="/2013-12-18-%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B03/">技术笔记(3)-C#连接数据库</a>
     </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
             published on&nbsp;<time datetime=2013-12-18>2013-12-18</time>
@@ -127,16 +150,6 @@
 1 2  int[] a=new int[10]; int[] b=new int[3]{2,4,6};   10、 foreach循环：对数组进行只读访问而不能做任何修改，而且不会造成数组下标越界
 1 2 3 4  int[] b=new int[3]{2,4,6}; foreach(int m in b){ Console.</div><div class="post-footer">
         <a href="/2013-09-20-%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B01/">Read More</a></div>
-</article>
-<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
-        <a href="/2019-09-30-%E6%80%BB%E7%BB%93-%E9%98%B6%E6%AE%B5%E6%80%BB%E7%BB%939/"></a>
-    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
-            published on&nbsp;<time datetime=0001-01-01>0001-01-01</time>
-        </span></div><div class="content">2019年7月、8月、9月 系统里定的7月10号报到入职，因此在家里只呆了不到两周就上深圳了。刚入职就遇到团建——东西冲穿越，不知道是暴晒的原因还是过度运动的原因，回来竟然发烧、鼻炎复发。先后看了两次医生，做了鼻镜检查，浪费了不少时间，不过还好没事。从7月10号入职到现在，这两个月的主要工作任务就是看文档和内部的wiki，熟悉团队的产品。还有一些小issue需要写一些简单的代码，难度不大。另外还有一些运维和运营的小任务，就是平时要留意下一些服务的监控任务的报警，根据情况处理下就行，也不太难。总的来说目前主要是以熟悉和了解为主，辅以一些小issue开发任务，还有各种新人培训课程。公司也配备了导师，感觉导师的指导还是非常到位的，尤其一开始就指出要从校园心态过渡到职场心态，我一开始听了没什么感觉，但是到了后来就确实体会到了，确实比较难一下子调整过来。
-二、forward
-最近想了下，工作之余应该有自己的学习计划和安排，否则会浪费很多时间。因此制作个最近的一些学习小目标吧：
- 代码规范：这是工程师的最基本素养（python已看，java未看） 多看代码，总结设计模式：同为最基本素养之一 学习大数据组件：hadoop，spark，storm，kafka，zookeeper，flume，thrift，protobuf 学习虚拟化组件：docker，k8s 学会使用上述组件之后，进行源码学习，尝试在git中进行contribute，争取被accept leetcode要重新开始刷，每天至少一道到两道 学有余力的话，学习新语言：mapreduce，storm topology，golang 英语单词落下一段时间了，要重启百词斩和听力练习了 关注下hk的实验室和团队，还有research方向 坚持锻炼身体  目前只想到这么些。目前学习的方式要转变，万事先看官网，快速了解产品的背景、解决的问题、基本框架、基本使用方法，然后下载到本地安装，跑一些小demo。另外一些零碎时间也应该利用起来，背单词或者思考算法题都行。</div><div class="post-footer">
-        <a href="/2019-09-30-%E6%80%BB%E7%BB%93-%E9%98%B6%E6%AE%B5%E6%80%BB%E7%BB%939/">Read More</a></div>
 </article>
 <ul class="pagination"><li class="page-item ">
                     <span class="page-link">

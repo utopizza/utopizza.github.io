@@ -77,6 +77,17 @@
         alt="Posts"
         title="Posts" /></a></div><h1 class="home-title">CODE FOR FOOD :)</h1><h2 class="home-subtitle"><div id="id-1" class="typeit"></div></h2><div class="social-links"><a href="https://github.com/utopizza" title="GitHub" target="_blank" rel="noopener noreffer me"><i class="fab fa-github-alt fa-fw"></i></a><a href="mailto:648847079@qq.com" title="Email" rel=" me"><i class="far fa-envelope fa-fw"></i></a></div></div>
 <article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+        <a href="/2017-09-13-%E7%AE%97%E6%B3%95-%E4%BB%85%E7%94%A8%E9%80%92%E5%BD%92%E9%80%86%E5%BA%8F%E4%B8%80%E4%B8%AA%E6%A0%88/">仅用递归逆序一个栈</a>
+    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
+            published on&nbsp;<time datetime=2017-09-13>2017-09-13</time>
+        </span>&nbsp;
+            <span class="post-category">included in<a href="/categories/algorithm/">
+                        <i class="far fa-folder fa-fw"></i>Algorithm
+                    </a></span></div><div class="content">递归调用方法时，系统会把方法隐式地存到一个“系统栈”里面，即在方法即将进入下一层（即下一次调用自身）前，把本层内部的变量存储到系统的某些位置（我们不用关心），当递归调用从最底层开始回退，回退到本层的时候，方法会自动重新加载之前存储的数据。我们可以利用这一点来隐式地存储我们逆序目标栈过程中需要存储的数据。另外需要注意的是，在JAVA中按引用传参时，形参和实参指向同一个对象，此时方法内部对形参的操作实际上是对实参的操作。
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37  import java.util.Stack; public void stackReverse(Stack&lt;Integer&gt; stack){ if(stack.isEmpty()) return else{ int botton=getAndRemoveBotton(stack); stackReverse(stack); stack.push(botton); } } public int getAndRemoveBotton(Stack&lt;Integer&gt; stack){ int top=stack.pop(); if(stack.isEmpty()) return top; else{ int t=getAndRemoveBotton(stack); stack.push(top); return t; } } public static void main(String[] args){ Stack&lt;Integer&gt; stack=new Stack&lt;Integer&gt;(); stack.</div><div class="post-footer">
+        <a href="/2017-09-13-%E7%AE%97%E6%B3%95-%E4%BB%85%E7%94%A8%E9%80%92%E5%BD%92%E9%80%86%E5%BA%8F%E4%B8%80%E4%B8%AA%E6%A0%88/">Read More</a></div>
+</article>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
         <a href="/2017-09-06-%E7%AE%97%E6%B3%95-%E6%B8%90%E8%BF%91%E8%AE%B0%E5%8F%B7/">渐近记号</a>
     </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
             published on&nbsp;<time datetime=2017-09-06>2017-09-06</time>
@@ -95,6 +106,21 @@
 对一个给定的函数 $g(n)$，用 $\Theta(g(n))$ 来表示以下函数的集合： $\Theta(g(n))={ f(n):存在正常量c_1,c_2和n_0,对所有n \geq n_0,有 0 \leq c_1g(n) \leq f(n) \leq c_2g(n) } $
 字面上来说：若存在正常量 $c_1,c_2和n_0$，使得对足够大的 n ，函数 $f(n)$ 能被夹入 $c_1g(n)与c_2g(n)$ 之间，则 $f(n)$ 属于集合 $\Theta(g(n))$ 。我们记 $f(n)=\Theta(g(n))$ 以表示 $f(n)$ 是函数集合 $\Theta(g(n))$ 的成员。换句话说，对所有 $n \geq n_0$，函数 $f(n)$ 在一个常量因子内等于 $g(n)$ 。我们也称 $g(n)$ 是 $f(n)$ 的一个渐近确界。</div><div class="post-footer">
         <a href="/2017-09-06-%E7%AE%97%E6%B3%95-%E6%B8%90%E8%BF%91%E8%AE%B0%E5%8F%B7/">Read More</a></div>
+</article>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+        <a href="/2017-08-17-%E6%80%BB%E7%BB%93-%E9%98%B6%E6%AE%B5%E6%80%BB%E7%BB%931/">阶段总结(1)</a>
+    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
+            published on&nbsp;<time datetime=2017-08-30>2017-08-30</time>
+        </span>&nbsp;
+            <span class="post-category">included in<a href="/categories/summary/">
+                        <i class="far fa-folder fa-fw"></i>Summary
+                    </a></span></div><div class="content">从6月和导师说了因为公司加班要求变重，论文进度需要缓一缓，到现在8月已过去两个月。这两个月里没有看论文，而是去看书，打基础。这两个月读完的书有：
+ 《算法》(第四版) Robert Sedgewick 《统计方法学》 李航 《机器学习》 周志华 《机器学习实战》 Peter Harrington 《推荐系统实践》 项亮  其中，《算法》中主要的代码都亲自写了一遍，算是温习了一遍快忘光了的基础算法。然后《统计方法学》、《机器学习》偏理论，《机器学习实战》偏实操，我便把这三本书结合起来一起看。也是亲自手写了一遍《机器学习实战》里面的Python代码，总的来说算是稍微入门了一些最基础的机器学习算法。
+至于《推荐系统实践》这本书，是之前做***“Point of Interest Recommendation”***的论文方向的时候，博士师兄推荐的书，这本书讲的比较全面但是也比较浅，也是一门介绍推荐系统入门的书。
+总而言之，这两个月做的事情：
+ 温习了一遍基础算法和数据结构 初步学习并推导了一遍最基础的机器学习的核心公式 初步学习了用Python来实现一些简单的机器学习算法，进行小规模的数据实验   接下来的计划：
+ 看台湾大学林轩田教授的《机器学习基石》视频 看Coursera上AndrewNg的《机器学习》，完成所有作业，最好能全部拿满分 尝试参加kaggle的练习题 读大量的论文，继续做之前的论文 刷leetcode、牛客算法，保持对数据结构和算法的熟练度 注意看看面经  </div><div class="post-footer">
+        <a href="/2017-08-17-%E6%80%BB%E7%BB%93-%E9%98%B6%E6%AE%B5%E6%80%BB%E7%BB%931/">Read More</a></div>
 </article>
 <article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
         <a href="/2017-08-25-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E9%AB%98%E6%96%AF%E6%B7%B7%E5%90%88%E6%A8%A1%E5%9E%8B%E7%9A%84em%E6%8E%A8%E5%AF%BC%E7%AE%80%E5%8D%95%E7%89%88/">高斯混合模型的EM推导简单版</a>
@@ -152,35 +178,6 @@ $\phi(y \mid \theta_k) = \frac{1}{\sqrt{2\pi}} exp (-\frac{(y-\mu_k)^2}{2\sigma_
  $$\hat{\gamma}_{jk} = \frac{\alpha_k \cdot \phi(y_j \mid \theta_k)}{\sum_{k=1}^{K} \alpha_k \cdot \phi(y_j \mid\theta_k)}\text{，}j=1,2,\cdots,N;k=1,2,\cdots,K$$  (3) M步：计算新一轮迭代的模型参数
  $$\hat{\mu}_k =\frac{\sum_{j=1}^{N} \hat{\gamma}_{jk} \cdot y_j}{\sum_{j=1}^{N} \hat{\gamma}_{jk}}\text{，}k=1,2,\cdots,K$$   $$\hat{\sigma}_k^2 = \frac{\sum_{j=1}^{N} \hat{\gamma}_{jk}\cdot (y_j - \mu_k)^2}{\sum_{j=1}^{N} \hat{\gamma}_{jk}}\text{，}k=1,2,\cdots,K$$   $$\hat{\alpha}_k =\frac{\sum_{j=1}^{N} \hat{\gamma}_{jk}}{N}\text{，}k=1,2,\cdots,K$$  (4) 重复第(2)步和第(3)步，直到收敛。</div><div class="post-footer">
         <a href="/2017-08-20-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E9%AB%98%E6%96%AF%E6%B7%B7%E5%90%88%E6%A8%A1%E5%9E%8B%E7%9A%84em%E6%8E%A8%E5%AF%BC/">Read More</a></div>
-</article>
-<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
-        <a href="/2017-08-17-%E6%80%BB%E7%BB%93-%E9%98%B6%E6%AE%B5%E6%80%BB%E7%BB%931/">阶段总结(1)</a>
-    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
-            published on&nbsp;<time datetime=2017-08-17>2017-08-17</time>
-        </span>&nbsp;
-            <span class="post-category">included in<a href="/categories/summary/">
-                        <i class="far fa-folder fa-fw"></i>Summary
-                    </a></span></div><div class="content">从6月13日和导师说了因为公司加班要求变重，论文进度需要缓一缓，到今天8月17日，刚好过去两个月。这两个月里没有看论文，而是去看书，打基础。这两个月读完的书有：
- 《算法》(第四版) Robert Sedgewick 《统计方法学》 李航 《机器学习》 周志华 《机器学习实战》 Peter Harrington 《推荐系统实践》 项亮  其中，我把《算法》中主要的代码都亲自写了一遍，算是温习了一遍快忘光了的基础算法。然后《统计方法学》、《机器学习》偏理论，《机器学习实战》偏实操，我便把这三本书结合起来一起看。也是亲自手写了一遍《机器学习实战》里面的Python代码，总的来说算是稍微入门了一些最基础的机器学习算法。
-至于《推荐系统实践》这本书，是之前做***“Point of Interest Recommendation”***的论文方向的时候，博士师兄推荐的书，这本书讲的比较全面但是也比较浅，也是一门介绍推荐系统入门的书。
-总的来说，这两个月做的事情：
- 温习了一遍基础算法和数据结构 初步学习并推导了一遍最基础的机器学习的核心公式 初步学习了用Python来实现一些简单的机器学习算法，进行小规模的数据实验   接下来的计划：
- 看台湾大学林轩田教授的《机器学习基石》视频 看Coursera上AndrewNg的《机器学习》，完成所有作业，最好能全部拿满分 尝试参加kaggle的练习题 读大量的论文，继续做之前的论文 刷leetcode、牛客算法，保持对数据结构和算法的熟练度 注意看看面经  </div><div class="post-footer">
-        <a href="/2017-08-17-%E6%80%BB%E7%BB%93-%E9%98%B6%E6%AE%B5%E6%80%BB%E7%BB%931/">Read More</a></div>
-</article>
-<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
-        <a href="/2017-01-26-%E6%80%BB%E7%BB%93-%E4%BB%8E%E7%8E%B0%E5%9C%A8%E5%BC%80%E5%A7%8B%E5%86%99%E5%8D%9A%E5%AE%A2/">从现在开始写博客</a>
-    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
-            published on&nbsp;<time datetime=2017-01-26>2017-01-26</time>
-        </span>&nbsp;
-            <span class="post-category">included in<a href="/categories/summary/">
-                        <i class="far fa-folder fa-fw"></i>Summary
-                    </a></span></div><div class="content">研一上学期已经过去。在这学期里，我接触到了些非常厉害的同学。通过和他们的交流，我发现他们本科时候就到达的对计算机专业的见识和视野，还有技术水平和能力，让我感到震惊。
-就拿我的舍友S来说，他来自厦门大学软件学院，他从大一就加入了他们学校的ACM俱乐部，大一就开始注重算法的学习，经过俱乐部大牛师兄师姐的指导，和高强度的训练，还有本科四年的积累，他的算法水平非常高。另一方面，他的很多老师在学校外面有自己的公司，他经常利用寒暑假去他老师的公司实习，学到了很多工程性应用的技术，例如HTML、PHP、.net、Android等。到了大三大四，他还和他们学校的同学组队刷面试题，在leetcode、poj等各种oj系统刷算法，在牛客网刷面试题，参加各种大大小小公司的招聘笔试面试，最后华为、美团、花旗均给了offer，其中美团更是开出了年薪18万的高薪，对于一个本科生来说，只有非常优秀突出的学生才能有这样待遇。而且我们毕业这年，是互联网的寒潮，很多互联网企业缩招，包括BAT。后来他没有选择工作，而是选择了保研。他拿到了HUST和南京大学的保研offer，但因为南京大学给的offer比较迟，他等不及了就给了HUST确认。
-通过与其交谈，你会发现他的逻辑思维非常严密严谨，这得益于他读过很多讲逻辑思维，讲编程的书。我问他要了一个书单，他看过的基本都是非常著名的牛作，如《编程之美》、《数学之美》、《编程珠玑》、《暗时间》、《时间简史》、《算法导论》、《程序员面试宝典》等等。他还看了很多网易公开课上的、TED上的、coursera上的讲算法和数学的视频。他非常喜欢数学，喜欢思考，和他讨论问题，经常被他的严密论证所折服。
-相比之下，我就差太多了。本科四年，除了成绩还好、利用课余时间加入一个编程俱乐部dreamtech做过不少.net和android的项目，我基本没有意识到要注重过编程功底和算法、数学功底的修炼，没有系统的训练，没有规划，不知道自己要干什么，就是跟着大浪潮瞎学新技术，一会儿学.net，一会儿学android，一会儿做mvc，一会儿学点php，sqlserver，MySQL，html，JavaScript，一会儿又跑去搞数学建模，虽然拿了一点儿奖，看起来好像很厉害，什么都会，但其实都是浅尝则止，没有学通，更没有学精。
-这学期通过对身边的牛人（包括导师、同学，还有社区一些技术大牛）的观察，我深刻认识到，作为计算机专业的学生，最核心的竞争力就是算法功底和数学功底，还有最重要的逻辑思维能力。尤其是看了牛人刘未鹏先生的《暗时间》后，眼界大开，深深为之震撼。我终于明白，必须从现在开始恶补算法和数学功底，还要培养好逻辑思维能力。另外，还要开始记录和积累，养成写博客记录技术和心得的习惯。最后，希望这三年研究生，好好努力，让自己的技术水平和思维能力，有个质的飞跃。</div><div class="post-footer">
-        <a href="/2017-01-26-%E6%80%BB%E7%BB%93-%E4%BB%8E%E7%8E%B0%E5%9C%A8%E5%BC%80%E5%A7%8B%E5%86%99%E5%8D%9A%E5%AE%A2/">Read More</a></div>
 </article>
 <ul class="pagination"><li class="page-item ">
                     <span class="page-link">

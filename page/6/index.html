@@ -77,6 +77,38 @@
         alt="Posts"
         title="Posts" /></a></div><h1 class="home-title">CODE FOR FOOD :)</h1><h2 class="home-subtitle"><div id="id-1" class="typeit"></div></h2><div class="social-links"><a href="https://github.com/utopizza" title="GitHub" target="_blank" rel="noopener noreffer me"><i class="fab fa-github-alt fa-fw"></i></a><a href="mailto:648847079@qq.com" title="Email" rel=" me"><i class="far fa-envelope fa-fw"></i></a></div></div>
 <article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+        <a href="/2018-09-18-%E9%9D%A2%E7%BB%8F-%E7%99%BE%E5%BA%A6%E9%9D%A2%E7%BB%8F/">百度面经</a>
+    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
+            published on&nbsp;<time datetime=2018-09-18>2018-09-18</time>
+        </span>&nbsp;
+            <span class="post-category">included in<a href="/categories/interview/">
+                        <i class="far fa-folder fa-fw"></i>Interview
+                    </a></span></div><div class="content">一面（2018-09-13，下午5点，80分钟）
+  讲无人机项目。巨详细，从没被问这么细，还问了有没有看到前几名的方案，他们做得好的地方是在哪里，如果再让你们做一次会怎么优化
+  O(1) 获取栈中的最大元素。答使用一个辅助栈。追问如何进一步优化，在面试官一步步引导下，想出对相同的元素进行压缩，再申请一个map来对相同的元素计数。最后要我分析了这样申请一个map的开销和原来的不压缩的开销如何权衡，我说如果是对于有大量重复的数据流，那么压缩是值得的，否则没必要，例如连续增大没有重复的数据流
+  对一个字符串中的单词的位置反转，要求是不能开辟新的空间，如要原地反转
+  股票买入卖出一次。两次呢？两次的没答上。
+  如何实现OOM，方法区的呢（CGLIB）
+  i++是原子的吗，并发情况下有什么问题，使用volatile不能保证线程安全？都有哪些方法使他线程安全
+  mysql的常见优化方案
+  让一个线程等待另一个线程怎么实现。join()
+  10亿个数分布在不同的机器上，如何选出 top k。答了最小堆。可能是想问mapreduce。
+  redis的五种基本数据类型，平时张口就来的竟然不记得set和zset了，尴尬
+  为什么想投安全研发工程师，了解安全相关的技术吗，讲下XSS
+  有什么兴趣爱好，怎么带团队，职业规划，对工作城市有什么要求
+  有什么要问的。介绍了部门团队。最后直接说我通过了，有点惊讶，我感觉后面几个问题答得不太好
+  二面（2018-09-14，下午3点，1个小时）
+  自我介绍，讲本科那个美国数学建模大赛，面试官小哥说挺有意思，问得比较细，讲了好久
+  讲排序算法，快排
+  二分查找，以及改进版本
+  最长公共子序列
+  代码量估计有多少，兴趣爱好，其他offer情况等待
+  介绍了下他们部门
+  三面总监面（2018-09-18，下午2点，50分钟）
+  自我介绍</div><div class="post-footer">
+        <a href="/2018-09-18-%E9%9D%A2%E7%BB%8F-%E7%99%BE%E5%BA%A6%E9%9D%A2%E7%BB%8F/">Read More</a></div>
+</article>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
         <a href="/2018-09-13-%E9%9D%A2%E7%BB%8F-%E7%BE%8E%E5%9B%A2%E9%9D%A2%E7%BB%8F/">美团面经</a>
     </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
             published on&nbsp;<time datetime=2018-09-13>2018-09-13</time>
@@ -207,20 +239,6 @@
   自我介绍
   n个已排序队列，选出队列中最大的top k个数。显然先对每个队列取top k，然后再选出其中的top k。说了用小根堆，(nk)logk。面试官问还有没有更快的，没答上。后来和同学讨论了下，最好应该分情况答，如果n远大于k，应该用归并，复杂度是 klog(n)。如果k远大于n，则应该用小根堆。</div><div class="post-footer">
         <a href="/2018-08-10-%E9%9D%A2%E7%BB%8F-%E4%BA%AC%E4%B8%9C%E9%9D%A2%E7%BB%8F/">Read More</a></div>
-</article>
-<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
-        <a href="/2018-05-30-%E6%80%BB%E7%BB%93-%E9%98%B6%E6%AE%B5%E6%80%BB%E7%BB%935/">阶段总结(5)</a>
-    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
-            published on&nbsp;<time datetime=2018-05-30>2018-05-30</time>
-        </span>&nbsp;
-            <span class="post-category">included in<a href="/categories/summary/">
-                        <i class="far fa-folder fa-fw"></i>Summary
-                    </a></span></div><div class="content">5月小结。月初购入了几本黑皮书，正式开始复习计算机基础知识：
- 《计算机网络：自顶向下方法（6th）》：看完了应用层、运输层、网络层、网络安全，有时间再补充无线网络、链路层、物理层 《数据库系统概念（6th）》：看完了基本SQL语法、基本理论（范式）、索引，还需要看查询优化、事务、并发控制（锁） 《现代操作系统（4th）》：看完了进程线程、内存管理、文件管理，还需要看设备管理，特别是I/O 《Java编程思想（4th）》：重点看了多态、泛型、反射、容器、并发，还需要看I/O 《算法导论（3th）》：当作标准风格代码来偶尔复习，重点是栈、队列、排序、查找、堆、树、图  本月对以上几本书的部分重要章节快速温习了一遍，另外粗略过了一遍：
-《深入理解Java虚拟机（2th）》：重点看了GC、类加载、编译优化、内存模型、并发控制，需要补充字节码和类文件结构 《Java并发编程》：重点看了一些常用关键字和API，需要深入理解具体实现细节 《Effective Java（2th）》：粗略看了一遍，看得懂的不多  本月其他时间主要在leetcode练习基本编程功，5月8号重新注册了一个leetcode账号，从第一题开始重新练习，到月底一共做了约120道题，保证平均每天8道题左右的练习量。果然像网上说的那样，第二次做的时候，对一些见过的题目，或者大部分类似的题型，都能很快地有思路，但是目前还有很多细节不能优雅地处理好，另外太过依赖test case来调bug。往后需要争取直接一次性写出bug free的代码。目前能这样做到的比例很低，需要加强。
-接下来的6月份计划：
- 开始看面经，总结常见面试问题 有针对性地回头复习5月份看的内容，加强记忆，处理掉之前理解模糊的知识点 继续加强编程的练习，基础功不用解释 跟着极客时间的老师的课程内容，梳理并构建一个比较完整的JAVA知识体系 有时间再补充一个面试用的小项目、hadoop和spark等大数据相关书籍、redis非关系型数据库、大型分布式系统的架构？&hellip;&hellip;  </div><div class="post-footer">
-        <a href="/2018-05-30-%E6%80%BB%E7%BB%93-%E9%98%B6%E6%AE%B5%E6%80%BB%E7%BB%935/">Read More</a></div>
 </article>
 <ul class="pagination"><li class="page-item ">
                     <span class="page-link">

@@ -77,6 +77,33 @@
         alt="Posts"
         title="Posts" /></a></div><h1 class="home-title">CODE FOR FOOD :)</h1><h2 class="home-subtitle"><div id="id-1" class="typeit"></div></h2><div class="social-links"><a href="https://github.com/utopizza" title="GitHub" target="_blank" rel="noopener noreffer me"><i class="fab fa-github-alt fa-fw"></i></a><a href="mailto:648847079@qq.com" title="Email" rel=" me"><i class="far fa-envelope fa-fw"></i></a></div></div>
 <article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+        <a href="/2017-11-26-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E5%88%86%E7%B1%BB%E6%8F%90%E5%8D%87%E6%A0%91%E4%B8%8E%E5%9B%9E%E5%BD%92%E6%8F%90%E5%8D%87%E6%A0%91/">分类提升树与回归提升树</a>
+    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
+            published on&nbsp;<time datetime=2017-11-26>2017-11-26</time>
+        </span>&nbsp;
+            <span class="post-category">included in<a href="/categories/machinelearning/">
+                        <i class="far fa-folder fa-fw"></i>MachineLearning
+                    </a></span></div><div class="content">一、提升树（boosting tree）
+提升树是以分类树或回归树为基本分类器的提升方法。提升树被认为是统计学习中性能最好的方法之一。提升方法采用加法模型（即基函数的线性组合）与前向分步算法。对分类问题，决策树是二叉分类树；对回归问题，决策树是二叉回归树。
+提升树模型可以表示为决策树的加法模型：
+$$f_M(x)=\sum_{m=1}^{M}T(x;\theta_m)$$
+其中，$T(x;\theta_m)$ 表示决策树，$\theta_m$ 为决策树的参数，$M$ 为决策树的个数。
+二、二分类问题的提升树
+对于二分类问题，提升树算法只需将 Adaboost 算法中的基本分类器限制为二分类树即可。
+目前比较流行的方案是采用一种简单决策树作为基本分类器：单层决策树（decision stump，也称决策树桩）。它仅仅基于单个特征来执行决策，因此对应地只有一个树结点：根节点。它只能执行一次二分类，如 $x &lt; v$ 或 $x &gt; v$。
+三、回归问题的提升树
+回归树的形式化描述：设训练数据集 $T={(x_1,y_1),(x_2,y_2),\cdots,(x_N,y_N)}$，$x_i \in X \subseteq R^n$，$y_i \in Y \subseteq R$，$X$ 是输入空间，$Y$ 是输出空间。如果将输入空间 $X$ 划分为 $J$ 个不相交的区域 $R_1,R_2,\cdots,R_J$，并且在每个区域上有确定的输出常量 $c_j$，那么回归树可以表示为：
+$$T(x;\theta)=\sum_{j=1}^{J}c_j \cdot I(x \in R_j)$$
+其中，参数 $\theta={(R_1,c_1),(R_2,c_2),\cdots,(R_J,c_J)}$ 表示回归树的区域划分和各区域上的输出常量（即输出的回归值），$J$ 是回归树的复杂度（即叶结点个数）。
+回归问题的提升树算法：
+输入：如上，训练数据集 $T$，输入空间 $X$，输出空间 $Y$ 输出：回归提升树 $f_M(x)$
+1、初始化 $f_0(x)=0$
+2、对 $M$ 个分类器，进行对应的第 $m=1,2,\cdots,M$ 轮学习。对第 $m$ 轮学习：
+(1)、计算以前一轮为止，目前学习到的回归提升树 $f_{m-1}(x)$ 的残差
+$$r_{mi}=y_i-f_{m-1}(x_i)，i=1,2,\cdots,N$$</div><div class="post-footer">
+        <a href="/2017-11-26-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E5%88%86%E7%B1%BB%E6%8F%90%E5%8D%87%E6%A0%91%E4%B8%8E%E5%9B%9E%E5%BD%92%E6%8F%90%E5%8D%87%E6%A0%91/">Read More</a></div>
+</article>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
         <a href="/2017-11-22-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-adaboost%E7%AE%97%E6%B3%95/">Adaboost算法</a>
     </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
             published on&nbsp;<time datetime=2017-11-22>2017-11-22</time>
@@ -199,30 +226,6 @@ $$H(Y \mid X)=\sum_{i=1}^{n} p_i H(Y \mid X=x_i)$$
 信息增益表示得知特征 $X$ 的信息而使得类 $Y$ 的信息的不确定性减少的程度。
 特征 $A$ 对训练数据集 $D$ 的信息增益 $g(D,A)$ 定义为集合 $D$ 的经验熵 $H(D)$ 与特征 $A$ 给定条件下 $D$ 的经验条件熵 $H(D \mid A)$ 之差</div><div class="post-footer">
         <a href="/2017-11-11-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E4%BF%A1%E6%81%AF%E5%A2%9E%E7%9B%8A/">Read More</a></div>
-</article>
-<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
-        <a href="/2017-11-08-%E7%AE%97%E6%B3%95-%E4%BA%8C%E5%8F%89%E5%A0%86%E5%BB%BA%E5%A0%86%E6%97%B6%E9%97%B4%E5%A4%8D%E6%9D%82%E5%BA%A6/">二叉堆建堆时间复杂度</a>
-    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
-            published on&nbsp;<time datetime=2017-11-08>2017-11-08</time>
-        </span>&nbsp;
-            <span class="post-category">included in<a href="/categories/algorithm/">
-                        <i class="far fa-folder fa-fw"></i>Algorithm
-                    </a></span></div><div class="content">一、二叉堆建堆过程
-二叉堆的定义、父子结点的相对位置计算公式，还有建堆过程在 排序算法（一） 中已经说明。这里稍微温习一下建堆的过程：
- 从数组的中间位置开始，往左边扫描每个元素，并调用 $sink()$ 方法往下不断调整父子结点的相对位置，如果此堆是最大堆，那么 $sink()$ 方法会使小的结点下沉，大的结点上浮。当扫描完成，则可以保证每个子堆都是父结点大于两个孩子结点，此时堆有序，建堆完成。
- 从树的角度来理解，建堆的总时间成本，就是对于下标小于 $\frac{n}{2}$ 的所有结点，也即所有的非叶子结点（二叉堆是完全二叉树），从原位置下沉到正确的位置的总成本。最好的情况是所有非叶子结点都比它的孩子结点大，即数组本来就是堆有序的。最坏的情况是所有非叶子结点都要从原位置一直向下被交换到叶子结点。现在我们来考虑最坏情况的时间复杂度。
-在此之前，需要先得到推导过程中会用到的两个小结论。
-二、含有 $n$ 个元素的二叉堆的高度为 $\lfloor \log_2{n} \rfloor$
-《算法导论》中给出的关于堆的高度的定义：
- 堆中一个结点的高度为该结点到叶子结点最长简单路径上边的数目；一个堆的高度即为根结点的高度。
- 换句通俗的话说，就是从下往上数，以最深的叶子结点为第一层，高度为 $0$（注意这是《算法导论》给出的堆的高度定义，好像和树的高度的定义不太一样，网上有些博客对于树的高度好像是把最深叶子结点的高度算作 $1$ 而不是 $0$）；它的父结点所在的层为第二层，高度为 $1$，依此类推。因此，一个堆的高度（即根结点的高度）在数值上就等于该堆的总层数减一。这样就可转化成求含 $n$ 个元素的二叉树的总层数的简单问题：
-对于一棵完全二叉树，结点总数为 $n$，设一共有 $x$ 层。根据完全二叉树的定义和性质，它的前 $x-1$ 层是一棵满二叉树。这棵满二叉树的总结点个数可以轻松求出：从根节点往下数，第一层共 $2^0$ 个结点，第二层共 $2^1$ 个结点，第 $k$ 层共 $2^{k-1}$ 个结点，因此满二叉树结点总数为：
-$$2^0+2^1+\cdots+2^{(x-1)-1}=2^{x-1}-1$$
-考虑最后一层，可能是满的也可能不是满的，我们无法确定，但是可以确定这一层必定多于或等于 $1$ 个结点，少于或等于 $2^{x-1}$ 个结点。因此
-$$2^{x-1}-1+1 \leq n \leq 2^{x-1}-1+2^{x-1}$$
-$$2^{x-1} \leq n \leq 2^x-1$$
-$$x-1 \leq \log_{2}n \leq \log_2(2^x-1) &lt; \log_{2}2^x = x$$</div><div class="post-footer">
-        <a href="/2017-11-08-%E7%AE%97%E6%B3%95-%E4%BA%8C%E5%8F%89%E5%A0%86%E5%BB%BA%E5%A0%86%E6%97%B6%E9%97%B4%E5%A4%8D%E6%9D%82%E5%BA%A6/">Read More</a></div>
 </article>
 <ul class="pagination"><li class="page-item ">
                     <span class="page-link">

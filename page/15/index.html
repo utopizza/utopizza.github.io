@@ -77,6 +77,29 @@
         alt="Posts"
         title="Posts" /></a></div><h1 class="home-title">CODE FOR FOOD :)</h1><h2 class="home-subtitle"><div id="id-1" class="typeit"></div></h2><div class="social-links"><a href="https://github.com/utopizza" title="GitHub" target="_blank" rel="noopener noreffer me"><i class="fab fa-github-alt fa-fw"></i></a><a href="mailto:648847079@qq.com" title="Email" rel=" me"><i class="far fa-envelope fa-fw"></i></a></div></div>
 <article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+        <a href="/2016-05-29-spark-spark%E5%AE%8C%E5%85%A8%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%AD%E5%BB%BA%E4%B8%8E%E4%BD%BF%E7%94%A8-1/">Spark完全分布式搭建与使用(1)</a>
+    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
+            published on&nbsp;<time datetime=2016-05-29>2016-05-29</time>
+        </span>&nbsp;
+            <span class="post-category">included in<a href="/categories/spark/">
+                        <i class="far fa-folder fa-fw"></i>Spark
+                    </a></span></div><div class="content">一、实验环境
+  宿主机：winserver 2012 服务器一台
+  目标：在三台虚拟机上搭建Spark完全分布式集群，一台master，两台slaves
+  二、安装虚拟机oracle virtualbox
+下载地址：Download VirtualBox
+三、安装 CentOS-6.7-x86_64.iso 镜像文件
+1、下载地址：CentOS Mirror
+2、导入到virtualbox中进行安装。（因为三台虚拟机将要进行差不多的软件安装，所以先在一台虚拟机上部署好了master，再将这个虚拟机完全复制两份作为slaves，然后再稍微修改配置文件，这样比较省事）
+3、配置：名称为CentOS6_Master，CPU为2个，内存为2G，硬盘等其他参数默认安装。在配置CPU的时候可能无法使用，因为win8 之后的微软操作系统默认安装了Hyper-V虚拟机独占了虚拟资源，可以在：控制面板-&gt;程序和功能-&gt;启用或关闭Windows功能-&gt;启动“删除角色和功能”向导中进行禁用，问题解决。
+4、安装好后从“存储”中删除CentOS镜像文件盘片，否则每次启动虚拟机都是进行镜像安装而不是进入虚拟机。另外，安装好后如果宿主机可以上网，那么虚拟机也是可以立即上网的。
+四、安装 java-1.7.0
+1、下载安装并验证，参考：在CentOS上安装Java环境
+2、设置JAVA_HOME环境变量（使用 ls –lrt /etc/alternatives/java 来定位jdk的安装路径，参考：Linux如何查看JDK的安装路径）
+1 2 3 4 5 6 7 8 9 10 11 12  // 使用vim编辑器进入配置文件 [root@master ~]# vim /etc/profile // 修改配置文件 export JAVA_HOME=&#34;/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.101.x86_64&#34; （加入） export JRE_HOME=${JAVA_HOME}/jre export CLASS_PATH=.:${JAVA_HOME}/lib: ${JRE_HOME}/lib // 保存并退出编辑器 // 在terminal中输入命令使其生效 [root@master ~]# source /etc/profile   （注意：我这里安装的是openjdk，与常见的sun jdk存放的位置目录不同，参见：CentOS中JAVA_HOME的环境变量设置）</div><div class="post-footer">
+        <a href="/2016-05-29-spark-spark%E5%AE%8C%E5%85%A8%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%AD%E5%BB%BA%E4%B8%8E%E4%BD%BF%E7%94%A8-1/">Read More</a></div>
+</article>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
         <a href="/2015-10-14-%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B010/">技术笔记(10)-CentOS7部署</a>
     </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
             published on&nbsp;<time datetime=2015-10-14>2015-10-14</time>
@@ -173,25 +196,6 @@ Server 端主要的两个文件是：网站主页 TICSystemDefault.aspx 和 WebS
 其中提供给安卓端调用的 WebService 方法：
 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25  // webservice方法 [WebMethod] public int AddAccidentInfo(string JasonAccidentInfo) { AccidentInfoModel AccidentInfo = ModelJsonChange&lt;AccidentInfoModel&gt;.</div><div class="post-footer">
         <a href="/2015-01-20-%E9%A1%B9%E7%9B%AE-%E5%85%A8%E5%9B%BD%E9%AB%98%E6%A0%A1%E7%89%A9%E8%81%94%E7%BD%91%E5%BA%94%E7%94%A8%E5%88%9B%E6%96%B0%E5%A4%A7%E8%B5%9B/">Read More</a></div>
-</article>
-<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
-        <a href="/2014-12-28-%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B09/">技术笔记(9)-MySql语法小结</a>
-    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
-            published on&nbsp;<time datetime=2014-12-28>2014-12-28</time>
-        </span>&nbsp;
-            <span class="post-category">included in<a href="/categories/technology/">
-                        <i class="far fa-folder fa-fw"></i>Technology
-                    </a></span></div><div class="content">一、数据库
-1.数据库的选定
-1  use testDB;   2.数据库的创建（后面两个是设置字符集和排序方式）：
-1  create database(if not exist) testDB (character set charset)(collate collation);   3.数据库的删除：
-1  drop database testDB;   4.数据库的更变：
-1  alter database testDB(character set charset)(collate collation);   二、数据表
-1.存储引擎（查看存储引擎：show engines）：
- ARCHIVE——插入 BLACKHOLE——删除 EXAMPLE——示例 Falcon——事务 FEDERATED——访问远程数据 InnoDB——外键 MEMORY——内存数据表 MERGE——联合 MyISAM——默认 NDB——MySQL Cluster专用 CSV——使用逗号分隔数据项  2.数据表的创建：
-(1).数据表选项（选择存储引擎，否则默认为MyISAM）：
-1  create table testTB( ... ) engine=InnoDB;   (2).</div><div class="post-footer">
-        <a href="/2014-12-28-%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B09/">Read More</a></div>
 </article>
 <ul class="pagination"><li class="page-item ">
                     <span class="page-link">

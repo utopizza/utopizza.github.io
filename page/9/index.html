@@ -77,6 +77,18 @@
         alt="Posts"
         title="Posts" /></a></div><h1 class="home-title">CODE FOR FOOD :)</h1><h2 class="home-subtitle"><div id="id-1" class="typeit"></div></h2><div class="social-links"><a href="https://github.com/utopizza" title="GitHub" target="_blank" rel="noopener noreffer me"><i class="fab fa-github-alt fa-fw"></i></a><a href="mailto:648847079@qq.com" title="Email" rel=" me"><i class="far fa-envelope fa-fw"></i></a></div></div>
 <article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+        <a href="/2018-01-06-%E7%AE%97%E6%B3%95-%E4%BD%8D%E8%BF%90%E7%AE%97%E6%8A%80%E5%B7%A7/">位运算技巧</a>
+    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
+            published on&nbsp;<time datetime=2018-01-06>2018-01-06</time>
+        </span>&nbsp;
+            <span class="post-category">included in<a href="/categories/algorithm/">
+                        <i class="far fa-folder fa-fw"></i>Algorithm
+                    </a></span></div><div class="content">一、6种基本位操作
+   符号 描述 运算规则     &amp; And（按位与） 对应位上同时为 1 时，结果才为 1，否则为 0   $\mid$ Or（按位或） 对应位上同时为 0 时，结果才为 0，否则为 1   ~ Not（取反） 1 变 0，0 变 1   ^ Xor（异或） 对应位上相同时输出 0，相异时输出 1   &laquo; Left Shift（左移） 各二进位全部左移若干位，高位丢弃，低位补 0   &gt;&gt; Right Shift（右移） 各二进位全部右移若干位，低位丢弃，高位分情况    注：
+ 计算机内部使用补码作为机器数，正数的补码等于原码，负数的补码等于原码的符号位外取反加一，切记。另外注意机器字长，如果题目没有明确说明，一般默认是32位或64位 这6种操作符中，只有~取反是单目操作符，其它5种都是双目操作符 位操作只能用于整型数据 位操作运算优先级比较低（比加减乘除低），因此一般需要使用括号来保证正确的运算顺序，否则容易出错 右移运算（&gt;&gt;）时，对无符号数，高位补0。对有符号数，各编译器处理方法不一样，有的补符号位（算术右移），有的补0（逻辑右移） Java中的右移（&gt;&gt;）执行的是算术右移，高位补符号位；Java中的无符号（逻辑）右移有单独的运算符号：&gt;&raquo; 另外位操作还有一些复合操作符，如 &amp;=、|=、^=、&laquo;=、&gt;&gt;= 等  二、常用技巧</div><div class="post-footer">
+        <a href="/2018-01-06-%E7%AE%97%E6%B3%95-%E4%BD%8D%E8%BF%90%E7%AE%97%E6%8A%80%E5%B7%A7/">Read More</a></div>
+</article>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
         <a href="/2017-12-31-%E7%AE%97%E6%B3%95-%E6%9C%BA%E5%99%A8%E6%95%B0%E7%9A%84%E4%B8%89%E7%A7%8D%E7%BC%96%E7%A0%81%E7%AD%96%E7%95%A5/">机器数的三种编码策略</a>
     </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
             published on&nbsp;<time datetime=2017-12-31>2017-12-31</time>
@@ -101,14 +113,18 @@ $$[-3]_{反}=1111 , 1100$$</div><div class="post-footer">
 <article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
         <a href="/2017-12-23-%E6%80%BB%E7%BB%93-%E9%98%B6%E6%AE%B5%E6%80%BB%E7%BB%932/">阶段总结(2)</a>
     </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
-            published on&nbsp;<time datetime=2017-12-23>2017-12-23</time>
+            published on&nbsp;<time datetime=2017-12-30>2017-12-30</time>
         </span>&nbsp;
             <span class="post-category">included in<a href="/categories/summary/">
                         <i class="far fa-folder fa-fw"></i>Summary
-                    </a></span></div><div class="content">上一次总结是8月17日，到现在刚好过去了4个月。2018元旦快到了，研二上学期也接近尾声，稍微总结一下这四个月的工作。
+                    </a></span></div><div class="content">上一次总结是8月，到现在过去了4个月。2018元旦快到了，研二上学期也接近尾声，稍微总结一下这四个月的工作。
+2017年9月
 9月份先花了了半个月左右的时候整理了本科期间的大部分技术文档和比赛经验，补了些博客。后半个月开始看《算法导论》，主要精力集中于动态规划那一章，自己用 Java 实现了书上的几个算法并按照自己的理解写了几篇博客。之后感觉做题还是太少，理解和熟练程度都不够，便开始在网上搜一些动态规划的经典题目进行补充。这个月基本以补博客为主
+2017年10月
 10月份中秋国庆假回了趟家，到10月9日左右才回学校。这个月过的比较混乱，同时在尝试做论文和算法，写博客。但因为论文的数据问题进度被卡住了，所以主要精力貌似集中于刷 leetcode 的算法题了，那段时间刷了大概有100多道，大部分是 Easy 难度。19号左右，同届的专硕同学和上一届的学硕学长找完工作回来了，请教了不少经验，要了个书单，不过帮助不大，他们找的都是前后台研发岗，不是机器学习和算法岗。这个月可以说主要以刷 leetcode 为主
+2017年11月
 11月份，大神舍友带我打天池比赛。11月8日左右弄到了服务器，选好题，选好了 baseline 模型 LightGBM，我就完全停止了论文和算法的学习，全部精力放在了比赛上面。第一次正式使用 Python 的 pandas，numpy，sklearn 这些工具库来实现机器学习，花了不少精力，学习到了很多非常实用的知识。因为 lgb 的本质是梯度提升树，所以我回头去看书，复习了一遍决策树，提升算法，集成学习，提升树与回归树，推导了一些细节，写了一系列博客。
+2017年12月
 12月份，当然是继续以比赛为主要工作内容。不断尝试新的想法，代码更新并整理了一遍又一遍，成绩排名还行，一直在前20。另外由于题目比较坑，官方的数据有问题，重新发布了两次数据集，导致我们之前的大量调试工作都白费了。同时也逐渐感到遇到提高的瓶颈了，需要继续深入学习新的知识，我们又尝试了模型融合，但是效果并不是很理想。这个月主要精力在调试参数和补决策树的理论知识为主。另外向舍友大神要了个书单和coursera的视频单，但是感觉难度较大，也没太多时间去看了，主要看了吴恩达的《Machine Learning》，并完成作业。
 总的来说，这四个月来完成的主要工作：
  整理出了本科时的部分技术博客 读《算法导论》，研究并练习动态规划算法 刷了100多道 leetcode 题，从 Easy 难度开始入手 参加天池大数据比赛，初步学习正规使用 Python 看吴恩达《Machine Learning》视频，做课后作业 看了一些 Kaggle 的资料，初步了解 Kaggle   接下来计划：
@@ -191,33 +207,6 @@ boosting 不改变样本，而是在每一轮根据误差改变每个样本的�
 3、分类器组合方式
 boosting 的最终分类器是基本分类器的加权之和，每个分类器有各自的权重，最终的预测结果是每个分类器的预测结果的加权之和。bagging 的分类器没有权重的概念，每个基本分类器都有相等权重的一票，最终的预测结果是票数最多的那一个类（标签）。</div><div class="post-footer">
         <a href="/2017-11-30-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-boosting%E4%B8%8Ebagging/">Read More</a></div>
-</article>
-<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
-        <a href="/2017-11-26-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E5%88%86%E7%B1%BB%E6%8F%90%E5%8D%87%E6%A0%91%E4%B8%8E%E5%9B%9E%E5%BD%92%E6%8F%90%E5%8D%87%E6%A0%91/">分类提升树与回归提升树</a>
-    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
-            published on&nbsp;<time datetime=2017-11-26>2017-11-26</time>
-        </span>&nbsp;
-            <span class="post-category">included in<a href="/categories/machinelearning/">
-                        <i class="far fa-folder fa-fw"></i>MachineLearning
-                    </a></span></div><div class="content">一、提升树（boosting tree）
-提升树是以分类树或回归树为基本分类器的提升方法。提升树被认为是统计学习中性能最好的方法之一。提升方法采用加法模型（即基函数的线性组合）与前向分步算法。对分类问题，决策树是二叉分类树；对回归问题，决策树是二叉回归树。
-提升树模型可以表示为决策树的加法模型：
-$$f_M(x)=\sum_{m=1}^{M}T(x;\theta_m)$$
-其中，$T(x;\theta_m)$ 表示决策树，$\theta_m$ 为决策树的参数，$M$ 为决策树的个数。
-二、二分类问题的提升树
-对于二分类问题，提升树算法只需将 Adaboost 算法中的基本分类器限制为二分类树即可。
-目前比较流行的方案是采用一种简单决策树作为基本分类器：单层决策树（decision stump，也称决策树桩）。它仅仅基于单个特征来执行决策，因此对应地只有一个树结点：根节点。它只能执行一次二分类，如 $x &lt; v$ 或 $x &gt; v$。
-三、回归问题的提升树
-回归树的形式化描述：设训练数据集 $T={(x_1,y_1),(x_2,y_2),\cdots,(x_N,y_N)}$，$x_i \in X \subseteq R^n$，$y_i \in Y \subseteq R$，$X$ 是输入空间，$Y$ 是输出空间。如果将输入空间 $X$ 划分为 $J$ 个不相交的区域 $R_1,R_2,\cdots,R_J$，并且在每个区域上有确定的输出常量 $c_j$，那么回归树可以表示为：
-$$T(x;\theta)=\sum_{j=1}^{J}c_j \cdot I(x \in R_j)$$
-其中，参数 $\theta={(R_1,c_1),(R_2,c_2),\cdots,(R_J,c_J)}$ 表示回归树的区域划分和各区域上的输出常量（即输出的回归值），$J$ 是回归树的复杂度（即叶结点个数）。
-回归问题的提升树算法：
-输入：如上，训练数据集 $T$，输入空间 $X$，输出空间 $Y$ 输出：回归提升树 $f_M(x)$
-1、初始化 $f_0(x)=0$
-2、对 $M$ 个分类器，进行对应的第 $m=1,2,\cdots,M$ 轮学习。对第 $m$ 轮学习：
-(1)、计算以前一轮为止，目前学习到的回归提升树 $f_{m-1}(x)$ 的残差
-$$r_{mi}=y_i-f_{m-1}(x_i)，i=1,2,\cdots,N$$</div><div class="post-footer">
-        <a href="/2017-11-26-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E5%88%86%E7%B1%BB%E6%8F%90%E5%8D%87%E6%A0%91%E4%B8%8E%E5%9B%9E%E5%BD%92%E6%8F%90%E5%8D%87%E6%A0%91/">Read More</a></div>
 </article>
 <ul class="pagination"><li class="page-item ">
                     <span class="page-link">
