@@ -133,7 +133,28 @@ Raft投票规则：（1）每个节点每次选举周期内最多投出一票（
         <a href="/2020-07-26-%E8%AE%BA%E6%96%87-raft/">Read More</a></div>
 </article>
 <article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
-        <a href="/2019-09-16-%E6%80%BB%E7%BB%93-%E9%98%B6%E6%AE%B5%E6%80%BB%E7%BB%938/">阶段总结(8)</a>
+        <a href="/2020-01-20-%E6%80%BB%E7%BB%93-%E9%98%B6%E6%AE%B5%E6%80%BB%E7%BB%939/">阶段总结(9)</a>
+    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
+            published on&nbsp;<time datetime=2020-01-20>2020-01-20</time>
+        </span>&nbsp;
+            <span class="post-category">included in<a href="/categories/summary/">
+                        <i class="far fa-folder fa-fw"></i>Summary
+                    </a></span></div><div class="content">上一次写阶段总结是2019年6月，6月底毕业搬回家后，在家呆了两周不到，7月10日就来深圳入职了。从7月入职到现在2020年1月，已过去了6个月的试用期并且顺利转正。现对这半年试用期做个简要的总结。
+2019年7月 系统里定的7月10号报到入职，因此在家里只呆了不到两周就上深圳了。刚入职就遇到团建——东西冲穿越，不知道是暴晒的原因还是过度运动的原因，回来竟然发烧、鼻炎复发。先后看了两次医生，做了鼻镜检查，浪费了不少时间，不过还好没事。并进行了安全域串讲，没过。这次串讲最大的问题是我没有了解清楚串讲的内容需求，我以为只要讲清楚策略审计模块就行，结果被说没有完整介绍安全域。还要讲清楚数据从页面、采集端、计算、存储、再到页面展示这一整个过程，感觉这两周时间全部弄清楚还是有点难度。总结了几点：
+ 对安全域认识的广度和深度都不够，首先需要弄懂产品定位，从一个俯瞰的角度来看整个产品，有一个全局的认识。例如说，为什么需要安全域，因为公司拥有大量的高价值数据，需要保护这些核心数据不被泄露或盗窃，那么就行需要为数据划定安全的边界，这就是『域』的意义由来。安全域是在公司有了BILS和BAAS这两套基础系统之后为了更进一步保护公司核心数据，然后在其基础上搭建的。还有一个问题就是我今天只讲了安全域的感知和审计功能，漏掉了阻断功能，后面需要补充 应该注重细节。要弄清楚数据从被采集到的那一刻开始，从到被传输、被流式处理、落地到数据库、被分析计算、最后到呈现在Web页面上，每一步是怎么走的。反过来从用户提交一个数据或者在Web的一个操作，到数据是怎么被系统接受，下发给各种agent，对系统产生什么影响，也要讲清楚。而我今天没有做好这一点 在阅读代码的时候应该多思考，为什么这样设计，分别有什么好处和不足之处，为什么要这样tradeoff，等等。同时应该善于总结，抽象出一个个的pattern，为以后面对类似的设计问题时都会非常有帮助 要多考虑工程上的特殊情况，例如服务器宕机了对系统有什么影响，丢失的数据能重现吗，定时任务执行太久导致新来的任务和旧的任务都来不及执行怎么办，什么时候使用反射什么时候使用工厂等等 阅读代码需要理解到可以动手改代码，对代码进行优化或者重构的程度，才能说是真正理解了代码  2019年8月
+8月分主要是在弄入职后第一个研发issue，账单分摊系统GianoBills。第一次进行了详细设计评审，结果不理想。评审后开始研发，到月底都基本就是在进行编码实现，其中被日志模块坑了很久。一直没有弄清楚日志模块，导致错误的设计、错误的编码、卡住了很多进度。总结以下几点：
+ 进行详细设计讲解、技术分享等等之前，最好先自己演练几次，把握一下时间，时间应该多准备几个版本，例如5分钟版本、15分钟版本、30分钟版本等 应该注意抓整体，先讲整体的思路、流程、架构，让大家有一个整体的认识，再根据时间是否允许来一步步展开细节，不要过早陷入太多detail 应该突出主要的一些设计亮点、要点，如果只有平铺直叙是无法吸引大家的注意和兴趣的 在实现一个功能之前，应该先看看目前业界是怎么实现的，有哪些优秀的设计方案，成熟的设计是怎么做的 一定要看官方文档，按照正确的方式来使用API，不要想当然，例如生成多个logger对象这样愚蠢的想法  2019年9月
+9月份主要是在进行docker的虚拟化实现，因为没有接触过docker，学习了好一段时间。把账单分摊系统打包进docker的时候遇到了很多配置环境的坑，拖了很久。9月份还做了把crate接入安全域的工作，以及试写Giano SDK接入、安全域运营后台、flume维护等，都是比较杂的小任务。
+2019年10月
+10月份主要在虚拟化galaxy storm集群，迁移到公司的paas化平台Opera。先是要充分了解storm，所以花了比较多时间看storm的官方文档，在自己笔记本搭建虚拟机集群然后部署storm集群。然后是弄清楚galaxy storm上运行的topology，花了很多时间。加上国庆放假，回来后开始迁移工作。迁移过程实在太多坑太艰辛了，18号周五还莫名其妙弄崩了storm集群，要周围很多同事一起来重新提交所有job，感觉十分愧疚。回来在自己笔记本上想复现那个故障，但是却运行得好好的，完全没有问题，真是郁闷到爆炸。后来查了很多资料发现，故障原因是我搭建线下的storm测试集群时，使用了和线上集群同一个zookeeper，但是因为这个storm版本太老还不支持多个nimbus同时运行，然后两个集群都直接崩。就这样躺了版本过旧的坑（这个坑在高版本的storm中被修复了）。
+2019年11月
+二、后续计划
+最近想了下，工作之余应该有自己的学习计划和安排，否则会浪费很多时间。因此制作个最近的一些学习小目标吧：
+ 代码规范：这是工程师的最基本素养（python已看，java未看） 多看代码，总结设计模式：同为最基本素养之一 学习大数据组件：hadoop，spark，storm，kafka，zookeeper，flume，thrift，protobuf 学习虚拟化组件：docker，k8s 学会使用上述组件之后，进行源码学习，尝试在git中进行contribute，争取被accept leetcode要重新开始刷，每天至少一道到两道 学有余力的话，学习新语言：mapreduce，storm topology，golang 英语单词落下一段时间了，要重启百词斩和听力练习了 关注下hk的实验室和团队，还有research方向 坚持锻炼身体  </div><div class="post-footer">
+        <a href="/2020-01-20-%E6%80%BB%E7%BB%93-%E9%98%B6%E6%AE%B5%E6%80%BB%E7%BB%939/">Read More</a></div>
+</article>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+        <a href="/2019-06-30-%E6%80%BB%E7%BB%93-%E9%98%B6%E6%AE%B5%E6%80%BB%E7%BB%938/">阶段总结(8)</a>
     </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
             published on&nbsp;<time datetime=2019-06-30>2019-06-30</time>
         </span>&nbsp;
@@ -143,7 +164,7 @@ Raft投票规则：（1）每个节点每次选举周期内最多投出一票（
 2019年5月 毕业答辩日期安排在5月26日，因此这个月基本全部精力时间都花在论文上。论文主体在4月份基本已经写完了，5月份基本都是在补一些报告书如开题报告、中期检查报告等等。月初和舍友去木兰天池玩了一天，山上挺凉快的。中间抽时间在宿舍看了一部电视剧《我们离恶有多远》，相当震撼，因为剧中探讨的问题十分有深度。剧情比较虐心，让人看得都郁闷了很久。就这样刷刷剧、写写文档，就浑浑噩噩到了答辩日期。答辩地点就在实验室旁边的一个大会议室，但是评委老师一个都没见过，刚开始还是有点紧张的。由于准备还算较充分，流畅地讲完了PPT，评委老师也没问什么很深入的问题，就问了我在汉口那边呆了多久，什么时候回来的。我说3月回来的，老师还表扬了一波我说这么短时间能弄出这么多公式理论，还不错。。大概就是就这样水过了硕士答辩。硕士阶段的最后一块大石终于落地。答辩完了基本就知道通过了。回去的路上，感觉整个世界都不一样，虽然是下午四点多，但是感觉阳光特别特别的明媚。
 2019年6月 答辩完了之后，回去就是整理各种报告、文档，然后去打印店打印封装论文。然后就是各种浪了，白天蹲在宿舍天天看《bigbang》，下午就约几个小伙伴一起去游泳、密室逃脱、攀岩、射箭、桌游、吃吃喝喝。月初端午节百度寄来了一箱很粽子，16号的时候学校还举办了毕业晚餐会。18号晚上老爸老妈到汉，带他们吃了西餐，然后安顿好酒店。19号带他们逛了武大、省博、楚河汉街。20号上午是毕业典礼，下午弄离校手续，旁晚去拍了毕业照。21号主要是收拾宿舍东西，寄东西，下午带爸妈去逛光谷、拍照。晚上和舍友聚餐。22号早上等爸妈过来吃了早饭，就跟舍友告别，滴滴去高铁站了。
 如此，研究生生涯正式告一段落，顺利毕业。</div><div class="post-footer">
-        <a href="/2019-09-16-%E6%80%BB%E7%BB%93-%E9%98%B6%E6%AE%B5%E6%80%BB%E7%BB%938/">Read More</a></div>
+        <a href="/2019-06-30-%E6%80%BB%E7%BB%93-%E9%98%B6%E6%AE%B5%E6%80%BB%E7%BB%938/">Read More</a></div>
 </article>
 <article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
         <a href="/2019-05-19-%E7%AE%97%E6%B3%95-pagerank%E5%9C%A8spark%E7%9A%84%E5%88%86%E5%B8%83%E5%BC%8F%E5%AE%9E%E7%8E%B0/">PageRank在Spark的分布式实现</a>
@@ -177,24 +198,6 @@ PageRank 算法的详细介绍见 维基百科。总而言之，该算法的主�
 使用 Spark 的用户通过编写一个称为 Driver Program 的程序来实现自己的计算任务。Spark 为用户的并行化编程提供了三个组件：resilient distribution dataset、 parallel operations、 parallel operations。
 (1) Resilient Distribution Datasets(RDDs)：一个 RDD 是一个可恢复的只读对象集合，它无须存储在磁盘中。每次对一个 RDD 的操作都会被记录下来，从而每个 RDD 可以沿着它的演化过程一直追寻它的祖先 RDD，甚至可以追寻到最开始的第一次从磁盘读取初始数据。因此这个机制保证了任何一个 RDD 都可以被恢复。具体在 Spark 系统中，RDD 由 Scala 对象来表达。论文中规定了 RDD 仅可以从四种方式构造：</div><div class="post-footer">
         <a href="/2019-05-09-%E8%AE%BA%E6%96%87-spark/">Read More</a></div>
-</article>
-<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
-        <a href="/2019-05-08-%E8%AE%BA%E6%96%87-mapreduce/">MapReduce</a>
-    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
-            published on&nbsp;<time datetime=2019-05-08>2019-05-08</time>
-        </span>&nbsp;
-            <span class="post-category">included in<a href="/categories/thesis/">
-                        <i class="far fa-folder fa-fw"></i>Thesis
-                    </a></span></div><div class="content">一、背景及问题
-这两天总算把谷歌三大论文之一的 MapReduce 看了。这篇论文的影响力就不多说了，谷歌AI首席科学家 Jeffrey Dean 的代表作之一。该论文主要提出了一个称为 MapReduce 的编程模型，主要是为了解决谷歌公司自身需要处理海量数据的问题。众所周知，谷歌的主要业务是搜索引擎，每天需要处理爬取到的海量文件和网页，以及对这些数据进行索引计算、处理查询请求等等。显然单台机器难以完成这样巨大的计算任务，必须使用机器集群。但如果使用专业的服务器，集群的成本就太高了。为了降低成本，谷歌采用了普通的计算机来搭建这个集群。为了实现这个目的，必须设计一套可以自动并行化计算、自我管理调度、以及拥有良好容错性的集群计算方案，因此 Jeffrey Dean 提出了这套编程模型，只要按照这个编程模型来调用接口实现计算任务，这些计算就可以自动地在一个由普通机器搭建的分布式集群上被并行地执行。
-二、解决方案
-具体来说，MapReduce 这个编程模型可以简单地分为 Map 部分以及 Reduce 部分。
-Map 函数：由用户实现该接口，其功能是使算法输入的初始 key-value 对转化成用户定义的新 key-value 对。接下来系统会自动把它们按新 key 分组，即一个新 key 对应一组 values（key-values），并传递给 Reduce 函数。这一步类似 SQL 中的 Select GroupBy 操作。
-$$key_{1}/value_{1} \implies key_{2}/value_{2} \implies key_{2}/value_{2}(s)$$
-Reduce 函数：由用户实现该接口，其功能是使从 Map 函数接收过来的 key-values 组按用户定义的计算方式进行 Merge，然后输出每个 key 组的最终结果。这一步类似定义 SQL 中对被 GroupBy 的字段的聚合函数。
-$$key_{2}/value_{2}(s) \implies key_{2}/value_{3} $$
-论文中给出了一个具体例子，从一个巨大的文档集中统计每个单词的出现次数。每个单词可以看作 key，它的出现次数就是最终想得到的 value。按照 MapReduce 编程范式，可以分为两步，在 Map 阶段输入文档集合，为每个文档拆解出每个单词，并为每个单词赋值它的 value 为 1，表示这个单词在此出现了一次；在 Reduce 阶段，把每个单词对应的分组进行 value 的求和，即可得到每个单词的总出现次数。</div><div class="post-footer">
-        <a href="/2019-05-08-%E8%AE%BA%E6%96%87-mapreduce/">Read More</a></div>
 </article>
 <ul class="pagination"><li class="page-item active">
                     <span class="page-link">

@@ -77,6 +77,24 @@
         alt="Posts"
         title="Posts" /></a></div><h1 class="home-title">CODE FOR FOOD :)</h1><h2 class="home-subtitle"><div id="id-1" class="typeit"></div></h2><div class="social-links"><a href="https://github.com/utopizza" title="GitHub" target="_blank" rel="noopener noreffer me"><i class="fab fa-github-alt fa-fw"></i></a><a href="mailto:648847079@qq.com" title="Email" rel=" me"><i class="far fa-envelope fa-fw"></i></a></div></div>
 <article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+        <a href="/2019-05-08-%E8%AE%BA%E6%96%87-mapreduce/">MapReduce</a>
+    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
+            published on&nbsp;<time datetime=2019-05-08>2019-05-08</time>
+        </span>&nbsp;
+            <span class="post-category">included in<a href="/categories/thesis/">
+                        <i class="far fa-folder fa-fw"></i>Thesis
+                    </a></span></div><div class="content">一、背景及问题
+这两天总算把谷歌三大论文之一的 MapReduce 看了。这篇论文的影响力就不多说了，谷歌AI首席科学家 Jeffrey Dean 的代表作之一。该论文主要提出了一个称为 MapReduce 的编程模型，主要是为了解决谷歌公司自身需要处理海量数据的问题。众所周知，谷歌的主要业务是搜索引擎，每天需要处理爬取到的海量文件和网页，以及对这些数据进行索引计算、处理查询请求等等。显然单台机器难以完成这样巨大的计算任务，必须使用机器集群。但如果使用专业的服务器，集群的成本就太高了。为了降低成本，谷歌采用了普通的计算机来搭建这个集群。为了实现这个目的，必须设计一套可以自动并行化计算、自我管理调度、以及拥有良好容错性的集群计算方案，因此 Jeffrey Dean 提出了这套编程模型，只要按照这个编程模型来调用接口实现计算任务，这些计算就可以自动地在一个由普通机器搭建的分布式集群上被并行地执行。
+二、解决方案
+具体来说，MapReduce 这个编程模型可以简单地分为 Map 部分以及 Reduce 部分。
+Map 函数：由用户实现该接口，其功能是使算法输入的初始 key-value 对转化成用户定义的新 key-value 对。接下来系统会自动把它们按新 key 分组，即一个新 key 对应一组 values（key-values），并传递给 Reduce 函数。这一步类似 SQL 中的 Select GroupBy 操作。
+$$key_{1}/value_{1} \implies key_{2}/value_{2} \implies key_{2}/value_{2}(s)$$
+Reduce 函数：由用户实现该接口，其功能是使从 Map 函数接收过来的 key-values 组按用户定义的计算方式进行 Merge，然后输出每个 key 组的最终结果。这一步类似定义 SQL 中对被 GroupBy 的字段的聚合函数。
+$$key_{2}/value_{2}(s) \implies key_{2}/value_{3} $$
+论文中给出了一个具体例子，从一个巨大的文档集中统计每个单词的出现次数。每个单词可以看作 key，它的出现次数就是最终想得到的 value。按照 MapReduce 编程范式，可以分为两步，在 Map 阶段输入文档集合，为每个文档拆解出每个单词，并为每个单词赋值它的 value 为 1，表示这个单词在此出现了一次；在 Reduce 阶段，把每个单词对应的分组进行 value 的求和，即可得到每个单词的总出现次数。</div><div class="post-footer">
+        <a href="/2019-05-08-%E8%AE%BA%E6%96%87-mapreduce/">Read More</a></div>
+</article>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
         <a href="/2019-04-30-%E6%80%BB%E7%BB%93-%E9%98%B6%E6%AE%B5%E6%80%BB%E7%BB%937/">阶段总结(7)</a>
     </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
             published on&nbsp;<time datetime=2019-04-30>2019-04-30</time>
@@ -94,20 +112,6 @@
 10月、11月、12月三个月基本上都是在背四六级、雅思词汇。因为定了个考雅思的目标。因为习惯了这个新东方系列的排版，索性就又买了这个系列的雅思词汇。背单词的同时也注意听力和写作。针对听力，主要就是直接听真题听力，把MP3下载到音乐播放软件，整天整夜没完没了地放。至于写作，买了本写作的书和一本笔记本，每天抄一篇范文，然后读几遍。从3月份搬回学校之后，因为每天去图书馆，就很少读英语范文了，改成用百词斩背单词。总的来说，这几个月基本把四六级背得比较熟了，雅思那本过了两三遍，词汇量在上面的网上测是9000个左右，百词斩测是一万个左右。搬回学校前主要以背单词书、抄写范文为主。搬回学校后以刷百词斩复习、在网上做雅思题为主。因为回学校后做论文实验花了很多时间，分配给英语的时间不是很多，练的比较少，目前效果不太理想。现在论文定了稿，后面重新把英语提上日程
  《新东方雅思词汇》 《顾家北手把手教你雅思写作》 雅思在线 词汇量测试  </div><div class="post-footer">
         <a href="/2019-04-30-%E6%80%BB%E7%BB%93-%E9%98%B6%E6%AE%B5%E6%80%BB%E7%BB%937/">Read More</a></div>
-</article>
-<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
-        <a href="/2019-09-30-%E6%80%BB%E7%BB%93-%E9%98%B6%E6%AE%B5%E6%80%BB%E7%BB%939/">阶段总结(9)</a>
-    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
-            published on&nbsp;<time datetime=2019-04-30>2019-04-30</time>
-        </span>&nbsp;
-            <span class="post-category">included in<a href="/categories/summary/">
-                        <i class="far fa-folder fa-fw"></i>Summary
-                    </a></span></div><div class="content">上一次写阶段总结是2019年6月，6月底毕业搬回家后，在家呆了两周不到，7月10日就来深圳入职了。
-2019年7月、8月、9月 系统里定的7月10号报到入职，因此在家里只呆了不到两周就上深圳了。刚入职就遇到团建——东西冲穿越，不知道是暴晒的原因还是过度运动的原因，回来竟然发烧、鼻炎复发。先后看了两次医生，做了鼻镜检查，浪费了不少时间，不过还好没事。从7月10号入职到现在，这两个月的主要工作任务就是看文档和内部的wiki，熟悉团队的产品。还有一些小issue需要写一些简单的代码，难度不大。另外还有一些运维和运营的小任务，就是平时要留意下一些服务的监控任务的报警，根据情况处理下就行，也不太难。总的来说目前主要是以熟悉和了解为主，辅以一些小issue开发任务，还有各种新人培训课程。公司也配备了导师，感觉导师的指导还是非常到位的，尤其一开始就指出要从校园心态过渡到职场心态，我一开始听了没什么感觉，但是到了后来就确实体会到了，确实比较难一下子调整过来。
-二、forward
-最近想了下，工作之余应该有自己的学习计划和安排，否则会浪费很多时间。因此制作个最近的一些学习小目标吧：
- 代码规范：这是工程师的最基本素养（python已看，java未看） 多看代码，总结设计模式：同为最基本素养之一 学习大数据组件：hadoop，spark，storm，kafka，zookeeper，flume，thrift，protobuf 学习虚拟化组件：docker，k8s 学会使用上述组件之后，进行源码学习，尝试在git中进行contribute，争取被accept leetcode要重新开始刷，每天至少一道到两道 学有余力的话，学习新语言：mapreduce，storm topology，golang 英语单词落下一段时间了，要重启百词斩和听力练习了 关注下hk的实验室和团队，还有research方向 坚持锻炼身体  目前只想到这么些。目前学习的方式要转变，万事先看官网，快速了解产品的背景、解决的问题、基本框架、基本使用方法，然后下载到本地安装，跑一些小demo。另外一些零碎时间也应该利用起来，背单词或者思考算法题都行。</div><div class="post-footer">
-        <a href="/2019-09-30-%E6%80%BB%E7%BB%93-%E9%98%B6%E6%AE%B5%E6%80%BB%E7%BB%939/">Read More</a></div>
 </article>
 <article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
         <a href="/2019-01-27-%E8%AE%BA%E6%96%87-mci/">MCI</a>
