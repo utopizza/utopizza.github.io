@@ -77,6 +77,30 @@
         alt="Posts"
         title="Posts" /></a></div><h1 class="home-title">CODE FOR FOOD :)</h1><h2 class="home-subtitle"><div id="id-1" class="typeit"></div></h2><div class="social-links"><a href="https://github.com/utopizza" title="GitHub" target="_blank" rel="noopener noreffer me"><i class="fab fa-github-alt fa-fw"></i></a><a href="mailto:648847079@qq.com" title="Email" rel=" me"><i class="far fa-envelope fa-fw"></i></a></div></div>
 <article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+        <a href="/2018-03-17-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E7%89%B9%E5%BE%81%E5%B7%A5%E7%A8%8B/">特征工程</a>
+    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
+            published on&nbsp;<time datetime=2018-03-17>2018-03-17</time>
+        </span>&nbsp;
+            <span class="post-category">included in<a href="/categories/machinelearning/">
+                        <i class="far fa-folder fa-fw"></i>MachineLearning
+                    </a></span></div><div class="content">特征工程（Feature Engineering）：利用领域知识和现有数据，构造出需要的特征，用于机器学习算法【参考维基百科：Feature engineering】。
+俗话说，数据与特征工程决定了模型的上限，改进算法只是逼近这个上限。可见特征工程在机器学习领域里的地位之重要。针对数据挖掘以及传统的机器学习，通过人们的总结和归纳，特征工程主要包括以下方面：
+目前比较流行的方案是借助一个强大的 python 类库—— sklearn 来实现特征工程。它的官方文档是教材级别的文档，值得深入学习。言归正传，下面开始总结特征工程的方法。
+一、数据预处理（参考sklearn官方文档 Preprocessing data）
+1、无量纲化：使不同规格的数据转换到同一规格。常用的方法有标准化、缩放化、正则化三种，它们的具体区别参见：归一化/标准化/正则化
+(1)、标准化：减去均值并除以标准差。公式表达为：
+$$x_{new}=\frac{x-\bar{x}}{S}$$
+使用 sklearn 的 StandardScaler 实现：
+1 2 3  from sklearn.preprocessing import StandardScaler data_new = StandardScaler().fit_transform(data)   (2)、缩放化：常用最大最小值进行缩放，把特征缩放到区间 [0，1] 内，公式表达为：
+$$x_{new}=\frac{x-x_{min}}{x_{max}-x_{min}}$$
+使用 skearn 的 MinMaxScaler 实现：
+1 2 3  from sklearn.preprocessing import MinMaxScaler data_new = MinMaxScaler().fit_transform(data)   (3)、正则化：对每个样本计算其 p-范数，然后对该样本中每个元素除以该范数，这样处理的结果是使得每个处理后样本的 p-范数（L1-norm，L2-norm）等于1。其目的在于样本向量在点乘运算或其他核函数计算相似性时，拥有统一的标准，也就是说都转化为“单位向量”。在 L2 范数下正则化公式表达为：
+$$x_{new}=\frac{x}{||x||_{2}}$$
+使用 sklearn 的 Normalizer 实现：
+1 2 3  from sklearn.</div><div class="post-footer">
+        <a href="/2018-03-17-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E7%89%B9%E5%BE%81%E5%B7%A5%E7%A8%8B/">Read More</a></div>
+</article>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
         <a href="/2018-03-15-%E6%80%BB%E7%BB%93-%E9%98%B6%E6%AE%B5%E6%80%BB%E7%BB%933/">阶段总结(3)</a>
     </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
             published on&nbsp;<time datetime=2018-03-15>2018-03-15</time>
@@ -152,19 +176,6 @@
 二分查找的思想很简单，就是在一个有序序列里查找一个目标时，先与中位数比较，如果目标等于中位数，则直接返回。如果目标小于中位数，就去前半部分继续查找。如果目标大于中位数，就去后半部分查找，如此重复直至不可再分。如果找到则返回 mid，否则返回 -1 表示序列中不存在改目标。
 1 2 3 4 5 6 7 8 9 10  public int BinarySearch(int[] nums, int target) { int lo = 0, hi = nums.length - 1; while (lo &lt;= hi) { int mid = lo + (hi - lo) / 2; if (nums[mid] == target) return mid; else if (nums[mid] &gt; target) hi = mid - 1; else lo = mid + 1; } return -1; }   二、半有序数组的二分查找</div><div class="post-footer">
         <a href="/2018-01-14-%E7%AE%97%E6%B3%95-%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE/">Read More</a></div>
-</article>
-<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
-        <a href="/2018-01-13-%E7%AE%97%E6%B3%95-foursum/">FourSum</a>
-    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
-            published on&nbsp;<time datetime=2018-01-13>2018-01-13</time>
-        </span>&nbsp;
-            <span class="post-category">included in<a href="/categories/algorithm/">
-                        <i class="far fa-folder fa-fw"></i>Algorithm
-                    </a></span></div><div class="content">一、TwoSum
-给定一个整型数组，和一个 target，返回数组中两个数之和等于 target 的所有组合。不能输出重复组合。例如给定数组 [2,3,1,-4,8,3]，target = 4，则满足条件的非重复组合有 [3,1] 和 [-4,8]。
-思路：因为要求输出的是数组元素而不是数组下标，因此可以对数组进行排序（注意，如果题目要求输出数组下标，就不应使用排序，而是使用 HashMap 来优化）。排序之后，使用两个指针分别从数组两头往中间移动搜索整个数组，为避免重复组合，需跳过重复的元素。当指针相遇时搜索结束，因此搜索的时间复杂度为 $O(n)$。（其实如果算上前面的排序操作那么时间复杂度不止$O(n)$。因为所有基于比较的排序算法的时间复杂度下界为 $O(nlogn)$，所以本算法的总时间复杂度实际上应是 $O(n+nlogn)=O(nlogn)$）
-1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17  public List&lt;List&lt;Integer&gt;&gt; TwoSum(int[] nums, int target) { List&lt;List&lt;Integer&gt;&gt; list = new ArrayList&lt;List&lt;Integer&gt;&gt;(); Arrays.sort(nums); int lo = 0, hi = nums.length - 1; while (lo &lt; hi) { int sum = nums[lo] + nums[hi]; if (sum == target) { list.</div><div class="post-footer">
-        <a href="/2018-01-13-%E7%AE%97%E6%B3%95-foursum/">Read More</a></div>
 </article>
 <ul class="pagination"><li class="page-item ">
                     <span class="page-link">

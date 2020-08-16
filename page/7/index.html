@@ -77,6 +77,39 @@
         alt="Posts"
         title="Posts" /></a></div><h1 class="home-title">CODE FOR FOOD :)</h1><h2 class="home-subtitle"><div id="id-1" class="typeit"></div></h2><div class="social-links"><a href="https://github.com/utopizza" title="GitHub" target="_blank" rel="noopener noreffer me"><i class="fab fa-github-alt fa-fw"></i></a><a href="mailto:648847079@qq.com" title="Email" rel=" me"><i class="far fa-envelope fa-fw"></i></a></div></div>
 <article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+        <a href="/2018-08-10-%E9%9D%A2%E7%BB%8F-%E4%BA%AC%E4%B8%9C%E9%9D%A2%E7%BB%8F/">京东面经</a>
+    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
+            published on&nbsp;<time datetime=2018-08-10>2018-08-10</time>
+        </span>&nbsp;
+            <span class="post-category">included in<a href="/categories/interview/">
+                        <i class="far fa-folder fa-fw"></i>Interview
+                    </a></span></div><div class="content">一面（2018-08-01 晚上8点，50分钟）
+  自我介绍
+  讲一下在导师公司做的项目，有什么技术难点。说了数据库的用版本控制实现一个乐观锁。然后问了下工业AI比赛，简单讲了下思路（分析工序间的联系，筛选数据，然后预测）
+  jvm：内存模型、垃圾回收算法、垃圾收集器（没答好）；有什么类加载器（没答好）、双亲委派模型、有什么优缺点（没答好）；jvm如何调优（不会）
+  java：HashMap的内部机制、初始大小与扩容、为什么选择这个数值（没答好，给了答案是保持2的幂作性能开销小？）、为什么要用拉链法（我答的是为了解决碰撞问题。如果用线性探测开放地址法，每次删除一个元素，后面的所有碰撞的元素全部都要重新散列，代价非常大）、是否线程安全、哪个是线程安全、HashTable和ConcurrentHashMap如何实现线程安全、ConcurrentHashMap的内部机制、分段锁的思想。HashMap1.7之后有什么变化？红黑树。为什么？加快查询速度。
+  分布式了解吗，场景题：假设有100台服务器，争抢一个任务，应该怎么做？不太明白什么意思，反问是什么任务，是不是客户端请求，然后把反向代理和均衡负载说了下，面试官说不是，然后我又讲了paxos协议，他说也不是，实在想不出来，他说是用锁。。？没细说
+  spring：ioc，aop，能有多详细讲多详细
+  springMVC如何分析请求，然后如何交给handler处理，能有多详细讲多详细（不会）
+  mybatis怎么用（没答好），除了mapper还有什么（不会），对比hibernate有什么优点（不会）
+  redis讲一下，有什么应用场景（答得不好，答了说存session，面试官说不是，然后我说缓存？面试官好像没说啥），与mencache对比有什么优缺点
+  场景题，有一些的jvm参数的历史数据（例如gc次数，gc时间等等），如何预测jvm是否会发生故障（特别是往年的京东618时候的jvm参数），说思路。我想了好久，面试官一直降低难度甚至换题目，我实在想不出，就随便后来说了下，先分析出都有哪些jvm的影响因素，然后用历史数据训练得到每个因素的权重，然后就可以使用这些权重来预测是否发生故障。面试官说这不就是我刚开始想问的嘛，笑了笑说让等二面
+  二面（2018-08-02下午五点半，约10分钟）
+  自我介绍
+  简单讲一下项目
+  什么框架使用最熟悉，会不会HQL
+  4、你是如何分配机器学习和java研发的精力
+ 如何利用机器学习预测jvm的故障，和一面的问题差不多，我乱扯了一些
+  说一下你最强势或者突出的技术特长，（我直接承认框架使用比较少，因为接触的项目不多，但是我对jdk、jvm、计算机基础比较扎实，也比较感兴趣，还以为他要开始狂问，但结果没问）
+  能不能来实习（他表示，不能来实习就很难办了）
+  简单介绍了他的部门
+  感觉像是hr？没怎么问技术，听声音好像年纪比一面的面试官应该大不少，还问华科是不是华工。。
+三面（8月8日下午6点，约21分钟）
+  自我介绍
+  n个已排序队列，选出队列中最大的top k个数。显然先对每个队列取top k，然后再选出其中的top k。说了用小根堆，(nk)logk。面试官问还有没有更快的，没答上。后来和同学讨论了下，最好应该分情况答，如果n远大于k，应该用归并，复杂度是 klog(n)。如果k远大于n，则应该用小根堆。</div><div class="post-footer">
+        <a href="/2018-08-10-%E9%9D%A2%E7%BB%8F-%E4%BA%AC%E4%B8%9C%E9%9D%A2%E7%BB%8F/">Read More</a></div>
+</article>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
         <a href="/2018-05-30-%E6%80%BB%E7%BB%93-%E9%98%B6%E6%AE%B5%E6%80%BB%E7%BB%935/">阶段总结(5)</a>
     </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
             published on&nbsp;<time datetime=2018-05-30>2018-05-30</time>
@@ -163,30 +196,6 @@ Merge 的时候要注意列名是否重复，是否需要重命名新拼接的�
 由于二分类效果不理想，于是转向回归，即先通过回归预测未来5天的风速值，通过与危险阈值比较，大于等于危险阈值的判为危险，否则判为安全区域。尝试过的方案：
  随机切分数据集 train、eval、test，按 98%：1%：1% 的比例 去掉特征 date_id 特征标准化（minmax） 删除异常点（就是10个气象特征均值与真值的绝对值之差达到5以上的样本） 每天单独训练，得到5个模型，每个模型对后5天的结果进行预测，再加权平均 对预测结果进行平滑。尝试使用 scipy 的高斯平滑和卷积平滑。具体步骤是先把整个地图某个小时的风速按坐标顺序 reshape 成一个“图像”矩阵，然后调用 scipy.ndimage.filters.gaussian_filter() 和 scipy.ndimage.filters.convolve() 进行平滑处理，再把矩阵平展成原来的数据格式 尝试不同的危险阈值（风速），如 13，13.5，14，14.5，15等 对每个样本，加入周围8个点的10*8共80个风速特征  先回归再按阈值二分类这个方案得到的成绩是比较好的，在线路规划的版本不变的情况下，最好的成绩来自 20000 轮训练的 ligtGBM regression 模型。高斯平滑和卷积平滑方案作用不大，成绩提高在个位数以内，可视为基本无效。</div><div class="post-footer">
         <a href="/2018-03-25-%E9%A1%B9%E7%9B%AE-%E9%98%BF%E9%87%8C%E5%A4%A9%E6%B1%A0%E6%B0%94%E8%B1%A1%E6%97%A0%E4%BA%BA%E6%9C%BA%E7%BA%BF%E8%B7%AF%E4%BC%98%E5%8C%96%E5%A4%A7%E8%B5%9B/">Read More</a></div>
-</article>
-<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
-        <a href="/2018-03-17-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E7%89%B9%E5%BE%81%E5%B7%A5%E7%A8%8B/">特征工程</a>
-    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
-            published on&nbsp;<time datetime=2018-03-17>2018-03-17</time>
-        </span>&nbsp;
-            <span class="post-category">included in<a href="/categories/machinelearning/">
-                        <i class="far fa-folder fa-fw"></i>MachineLearning
-                    </a></span></div><div class="content">特征工程（Feature Engineering）：利用领域知识和现有数据，构造出需要的特征，用于机器学习算法【参考维基百科：Feature engineering】。
-俗话说，数据与特征工程决定了模型的上限，改进算法只是逼近这个上限。可见特征工程在机器学习领域里的地位之重要。针对数据挖掘以及传统的机器学习，通过人们的总结和归纳，特征工程主要包括以下方面：
-目前比较流行的方案是借助一个强大的 python 类库—— sklearn 来实现特征工程。它的官方文档是教材级别的文档，值得深入学习。言归正传，下面开始总结特征工程的方法。
-一、数据预处理（参考sklearn官方文档 Preprocessing data）
-1、无量纲化：使不同规格的数据转换到同一规格。常用的方法有标准化、缩放化、正则化三种，它们的具体区别参见：归一化/标准化/正则化
-(1)、标准化：减去均值并除以标准差。公式表达为：
-$$x_{new}=\frac{x-\bar{x}}{S}$$
-使用 sklearn 的 StandardScaler 实现：
-1 2 3  from sklearn.preprocessing import StandardScaler data_new = StandardScaler().fit_transform(data)   (2)、缩放化：常用最大最小值进行缩放，把特征缩放到区间 [0，1] 内，公式表达为：
-$$x_{new}=\frac{x-x_{min}}{x_{max}-x_{min}}$$
-使用 skearn 的 MinMaxScaler 实现：
-1 2 3  from sklearn.preprocessing import MinMaxScaler data_new = MinMaxScaler().fit_transform(data)   (3)、正则化：对每个样本计算其 p-范数，然后对该样本中每个元素除以该范数，这样处理的结果是使得每个处理后样本的 p-范数（L1-norm，L2-norm）等于1。其目的在于样本向量在点乘运算或其他核函数计算相似性时，拥有统一的标准，也就是说都转化为“单位向量”。在 L2 范数下正则化公式表达为：
-$$x_{new}=\frac{x}{||x||_{2}}$$
-使用 sklearn 的 Normalizer 实现：
-1 2 3  from sklearn.</div><div class="post-footer">
-        <a href="/2018-03-17-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E7%89%B9%E5%BE%81%E5%B7%A5%E7%A8%8B/">Read More</a></div>
 </article>
 <ul class="pagination"><li class="page-item ">
                     <span class="page-link">

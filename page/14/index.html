@@ -77,6 +77,25 @@
         alt="Posts"
         title="Posts" /></a></div><h1 class="home-title">CODE FOR FOOD :)</h1><h2 class="home-subtitle"><div id="id-1" class="typeit"></div></h2><div class="social-links"><a href="https://github.com/utopizza" title="GitHub" target="_blank" rel="noopener noreffer me"><i class="fab fa-github-alt fa-fw"></i></a><a href="mailto:648847079@qq.com" title="Email" rel=" me"><i class="far fa-envelope fa-fw"></i></a></div></div>
 <article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+        <a href="/2017-08-20-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E9%AB%98%E6%96%AF%E6%B7%B7%E5%90%88%E6%A8%A1%E5%9E%8B%E7%9A%84em%E6%8E%A8%E5%AF%BC/">高斯混合模型的EM推导</a>
+    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
+            published on&nbsp;<time datetime=2017-08-20>2017-08-20</time>
+        </span>&nbsp;
+            <span class="post-category">included in<a href="/categories/machinelearning/">
+                        <i class="far fa-folder fa-fw"></i>MachineLearning
+                    </a></span></div><div class="content">一、高斯混合模型：
+$$P(y \mid \theta) = \sum_{k=1}^{K} \alpha_k \cdot \phi(y \mid \theta_k)$$
+其中，$\alpha_k \text{是系数，} \alpha_k \geq0 \text{，且 } \sum_{k=1}^{K} \alpha_k=1 \text{；}$
+$\phi(y \mid \theta_k) = \frac{1}{\sqrt{2\pi}} exp (-\frac{(y-\mu_k)^2}{2\sigma_k^2}) \text{，}\theta_k = (\mu_k ,\sigma_k^2)\text{ 是第k个高斯模型。}$
+二、高斯混合模型参数估计的EM算法
+输入：观测数据 ($y_1,y_2,\cdots,y_N$)，高斯混合模型 输出：高斯混合参数模型
+(1) 取参数的初始值开始迭代
+(2) E步：依据当前模型参数，计算分模型 k 对观测数据 $y_j$ 的响应度
+ $$\hat{\gamma}_{jk} = \frac{\alpha_k \cdot \phi(y_j \mid \theta_k)}{\sum_{k=1}^{K} \alpha_k \cdot \phi(y_j \mid\theta_k)}\text{，}j=1,2,\cdots,N;k=1,2,\cdots,K$$  (3) M步：计算新一轮迭代的模型参数
+ $$\hat{\mu}_k =\frac{\sum_{j=1}^{N} \hat{\gamma}_{jk} \cdot y_j}{\sum_{j=1}^{N} \hat{\gamma}_{jk}}\text{，}k=1,2,\cdots,K$$   $$\hat{\sigma}_k^2 = \frac{\sum_{j=1}^{N} \hat{\gamma}_{jk}\cdot (y_j - \mu_k)^2}{\sum_{j=1}^{N} \hat{\gamma}_{jk}}\text{，}k=1,2,\cdots,K$$   $$\hat{\alpha}_k =\frac{\sum_{j=1}^{N} \hat{\gamma}_{jk}}{N}\text{，}k=1,2,\cdots,K$$  (4) 重复第(2)步和第(3)步，直到收敛。</div><div class="post-footer">
+        <a href="/2017-08-20-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E9%AB%98%E6%96%AF%E6%B7%B7%E5%90%88%E6%A8%A1%E5%9E%8B%E7%9A%84em%E6%8E%A8%E5%AF%BC/">Read More</a></div>
+</article>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
         <a href="/2017-01-26-%E6%80%BB%E7%BB%93-%E4%BB%8E%E7%8E%B0%E5%9C%A8%E5%BC%80%E5%A7%8B%E5%86%99%E5%8D%9A%E5%AE%A2/">从现在开始写博客</a>
     </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
             published on&nbsp;<time datetime=2017-01-26>2017-01-26</time>
@@ -171,22 +190,6 @@ spark默认是运行本地模式，例如：$ spark-shell 要运行集群模式�
 1 2 3 4 5 6 7  export JAVA_HOME=&#34;/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.101.x86_64&#34; export JRE_HOME=${JAVA_HOME}/jre export CLASS_PATH=.:${JAVA_HOME}/lib: ${JRE_HOME}/lib export SCALA_HOME=/usr/lib/scala-2.10.4 export HADOOP_HOME=/usr/local/hadoop-2.7.2 export SPARK_HOME=/usr/local/spark-1.6.1-bin-hadoop2.6 export PATH=$PATH:${JAVA_HOME}/bin:${SCALA_HOME}/bin:${HADOOP_HOME}/bin:${HADOOP_HOME}/sbin:${SPARK_HOME}/bin: ${SPARK_HOME}/sbin   配置完成后
 1  [root@master ~]# source /etc/profile   同步到worker1和worker2</div><div class="post-footer">
         <a href="/2016-06-22-spark-spark%E5%AE%8C%E5%85%A8%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%AD%E5%BB%BA%E4%B8%8E%E4%BD%BF%E7%94%A8-3/">Read More</a></div>
-</article>
-<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
-        <a href="/2016-06-10-spark-spark%E5%AE%8C%E5%85%A8%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%AD%E5%BB%BA%E4%B8%8E%E4%BD%BF%E7%94%A8-2/">Spark完全分布式搭建与使用(2)</a>
-    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
-            published on&nbsp;<time datetime=2016-06-10>2016-06-10</time>
-        </span>&nbsp;
-            <span class="post-category">included in<a href="/categories/spark/">
-                        <i class="far fa-folder fa-fw"></i>Spark
-                    </a></span></div><div class="content">八、安装Hadoop-2.7.2
- 说明：如果是想用 “Spark on Standalon” 模式就不用安装Hadoop，如果想用 “Spark on Yarn” 或者需要去hdfs取数据则应先装Hadoop 参见：  CentOS7 上安装Hadoop 2.7.2 的安装 和 初步使用） Hadoop2.6, Red hat Linux 6.6 x64集群完全分布式安装 CentOS7安装Hadoop2.7完整流程    1、下载地址：Apache Hadoop Releases Download
-这里我选择binary文件进行下载，这种是已经编译好的源码，下载的文件名是hadoop-2.6.4.tar.gz；如果喜欢自己编译，可以选择source文件进行下载，下载的文件名是hadoop-2.7.2-src.tar.gz。（参考：hadoop两个安装包分别是干啥的？）
-2、将安装包移动到到路径：/usr/local/，并解压
-1 2  [root@master ~]# cd /usr/local [root@master ~]# tar -xzvf hadoop-2.7.2.tar.gz   3、判断Hadoop版本
-1  [root@master ~]# /usr/local/hadoop-2.7.2/bin/hadoop version   4、配置环境变量
-1 2 3 4 5 6  [root@master ~]# vim /etc/profile export HADOOP_HOME=/usr/local/hadoop-2.</div><div class="post-footer">
-        <a href="/2016-06-10-spark-spark%E5%AE%8C%E5%85%A8%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%AD%E5%BB%BA%E4%B8%8E%E4%BD%BF%E7%94%A8-2/">Read More</a></div>
 </article>
 <ul class="pagination"><li class="page-item ">
                     <span class="page-link">

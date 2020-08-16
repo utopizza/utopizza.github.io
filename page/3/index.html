@@ -77,6 +77,21 @@
         alt="Posts"
         title="Posts" /></a></div><h1 class="home-title">CODE FOR FOOD :)</h1><h2 class="home-subtitle"><div id="id-1" class="typeit"></div></h2><div class="social-links"><a href="https://github.com/utopizza" title="GitHub" target="_blank" rel="noopener noreffer me"><i class="fab fa-github-alt fa-fw"></i></a><a href="mailto:648847079@qq.com" title="Email" rel=" me"><i class="far fa-envelope fa-fw"></i></a></div></div>
 <article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+        <a href="/2019-01-12-%E8%AE%BA%E6%96%87-winnower/">Winnower</a>
+    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
+            published on&nbsp;<time datetime=2019-01-12>2019-01-12</time>
+        </span>&nbsp;
+            <span class="post-category">included in<a href="/categories/thesis/">
+                        <i class="far fa-folder fa-fw"></i>Thesis
+                    </a></span></div><div class="content">一、背景及问题
+这篇文章针对的问题和前面看过的 《Dependence-Preserving Data Compaction for Scalable Forensic Analysis》和 这篇文章类似，目标都是减小日志文件的体积，以减少存储空间并提高攻击侦查的速度。
+这篇文章主要针对的是分布式服务器集群下的 APT 攻击。在这样的情景中，服务器集群有一个中心监控节点（Monitor node），以及大量的工作节点（Worker nodes）。监控节点与所有的工作节点保持通信。工作节点在生产环境中不断地产生日志记录。当发起监控节点攻击侦查分析时，它需要从多个工作节点上拷贝日志文件到本地，再进行攻击分析。问题就出现在这里，大量的工作节点每天都产生大量的日志记录，监控节点几乎不可能从所有工作节点上拷贝全部的日志记录，因为这样的拷贝任务不但需要消耗大量的网络资源，并且需要消耗大量的存储空间。
+二、解决方案
+这篇文章和上述的那篇文章有点类似，其核心思想都是通过对资源图（Provenance Graph）进行剪枝、压缩、优化，从而减小对应的日志记录体积。不同的只是他们使用的剪枝算法不同而已，这篇文章使用的算法是一个称为 Deterministic Finite Automata (DFA) 的算法，这个算法可以对一个复杂的图中的每一个节点、边（对应系统日志记录中的事件以及信息流向）进行推断，判断出它是不是冗余的，如果是冗余的就可以去掉，从而极大提精简了日志记录。
+文章提出的模型称为 Winnower，具体剪枝算法较复杂，主要分为图抽象（Provenance Graph Abstraction）和图推断（Provenance Graph Induction）两部分，其中涉及一些图语义学习（Graph Grammar Learning）的知识，以前没怎么接触过，感觉不太懂，以后有时间再补一下这方面的学习。</div><div class="post-footer">
+        <a href="/2019-01-12-%E8%AE%BA%E6%96%87-winnower/">Read More</a></div>
+</article>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
         <a href="/2019-01-12-%E6%95%B0%E5%AD%A6-%E7%BA%BF%E6%80%A7%E5%8F%98%E6%8D%A2%E7%9A%84%E7%9F%A9%E9%98%B5/">线性变换的矩阵</a>
     </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
             published on&nbsp;<time datetime=2019-01-12>2019-01-12</time>
@@ -171,19 +186,6 @@ $$PriorityScore(e)=\alpha \cdot RarenessScore(e) + \beta \cdot FanoutScore(e)$$
 具体地说，文章介绍的的攻击手段主要有以下三种：
 1、逆匿名网页浏览用户（De-anonymizing web visitors）：广告投放商可以在一些外部网页上安装一个 Facebook 的 JavaScript 插件，Facebook 可以通过该插件追踪浏览过此网页的用户，然后将这些用户记录下来，作为广告目标用户集合（注意，这些用户对广告投放商来说是透明的，只有 Facebook 知道这些用户）。现在，攻击者（恶意的广告投放商）可以利用上述的漏洞来反推出某个用户 $V$ 是否访问了这个网页。攻击方法是： (1) 先确定 $V$ 是否是 Facebook 平台中的用户：提交一系列不含攻击目标 $V$ 的请求 ${ L_1,L_2,\cdots,L_n }$，每次请求只比上一次请求多一个用户，Facebook 返回的匹配用户总数分别为 ${A_1,A_2,\cdots,A_n }$。先测试出一个舍入阈值下界，例如，假设 $A_1$、$A_2$ 是 810，而 $A_3$ 是 820，那么 $A_2=810$ 是一个舍入下界。然后我们再在 $L_2$ 这个集合中加入攻击目标 $V$ 即 ${L_2 \bigcup V }$ 并提交给 Facebook，如果返回的是 810，那么 $V$ 不是 Facebook 平台中的用户，如果返回的是 820，那么说明 $V$ 是 Facebook 中的一个用户。 (2) 接下来，确定 $V$ 是否在 Facebook 追踪的网页浏览者名单中：同样地，提交一系列包含 $V$ 的请求，每个请求只比前一个请求多一个用户，然后测试出舍入上界，例如 ${L_1 \bigcup V}$、${L_2 \bigcup V}$ 是 930，而 ${L_3 \bigcup V}$ 是 940，那么 $A_3 = 940$ 就是攻击者要找的上界。此时，再提交不含 $V$ 的 ${L_4}$，看返回的结果是否下降到 930，如果下降了，说明 $V$ 就在浏览者名单中，即可以确定攻击目标 $V$ 浏览过了攻击者的网页。</div><div class="post-footer">
         <a href="/2018-12-29-%E8%AE%BA%E6%96%87-pii/">Read More</a></div>
-</article>
-<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
-        <a href="/2018-12-22-%E8%AE%BA%E6%96%87-svim/">SVIM</a>
-    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
-            published on&nbsp;<time datetime=2018-12-22>2018-12-22</time>
-        </span>&nbsp;
-            <span class="post-category">included in<a href="/categories/thesis/">
-                        <i class="far fa-folder fa-fw"></i>Thesis
-                    </a></span></div><div class="content">差分隐私（Differential Privacy）模型是微软研究院的 Cynthia Dwork 等人于 2006 年提出的一个严谨的数学模型，目标在于提出用以修改隐私数据的技术，使得修改后的数据可以安全发布(以供第三方进行研究)，而不会遭受去匿名化等隐私攻击。同时，修改后的数据要在保护隐私的前提下最大限度地保留原数据的整体信息，否则被发布的数据将毫无研究价值。
-该论文主要提出了一个称为 Set-Value Item Mining (SVIM) 的协议，用于在隐私保护约束条件下提高本地差分隐私数据的精确度。由于差分隐私主要是纯理论的模型，没有具体的实现和应用，限于篇幅此文不展开论述。此处主要了解差分隐私的一些背景即可。
-相关资料：
- 差分隐私学习总结 苹果的 Differential Privacy 差分隐私技术是什么原理？ 大数据下的信息安全-差分隐私保护技术  </div><div class="post-footer">
-        <a href="/2018-12-22-%E8%AE%BA%E6%96%87-svim/">Read More</a></div>
 </article>
 <ul class="pagination"><li class="page-item ">
                     <span class="page-link">

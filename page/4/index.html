@@ -77,6 +77,19 @@
         alt="Posts"
         title="Posts" /></a></div><h1 class="home-title">CODE FOR FOOD :)</h1><h2 class="home-subtitle"><div id="id-1" class="typeit"></div></h2><div class="social-links"><a href="https://github.com/utopizza" title="GitHub" target="_blank" rel="noopener noreffer me"><i class="fab fa-github-alt fa-fw"></i></a><a href="mailto:648847079@qq.com" title="Email" rel=" me"><i class="far fa-envelope fa-fw"></i></a></div></div>
 <article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+        <a href="/2018-12-22-%E8%AE%BA%E6%96%87-svim/">SVIM</a>
+    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
+            published on&nbsp;<time datetime=2018-12-22>2018-12-22</time>
+        </span>&nbsp;
+            <span class="post-category">included in<a href="/categories/thesis/">
+                        <i class="far fa-folder fa-fw"></i>Thesis
+                    </a></span></div><div class="content">差分隐私（Differential Privacy）模型是微软研究院的 Cynthia Dwork 等人于 2006 年提出的一个严谨的数学模型，目标在于提出用以修改隐私数据的技术，使得修改后的数据可以安全发布(以供第三方进行研究)，而不会遭受去匿名化等隐私攻击。同时，修改后的数据要在保护隐私的前提下最大限度地保留原数据的整体信息，否则被发布的数据将毫无研究价值。
+该论文主要提出了一个称为 Set-Value Item Mining (SVIM) 的协议，用于在隐私保护约束条件下提高本地差分隐私数据的精确度。由于差分隐私主要是纯理论的模型，没有具体的实现和应用，限于篇幅此文不展开论述。此处主要了解差分隐私的一些背景即可。
+相关资料：
+ 差分隐私学习总结 苹果的 Differential Privacy 差分隐私技术是什么原理？ 大数据下的信息安全-差分隐私保护技术  </div><div class="post-footer">
+        <a href="/2018-12-22-%E8%AE%BA%E6%96%87-svim/">Read More</a></div>
+</article>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
         <a href="/2018-12-18-%E6%95%B0%E5%AD%A6-%E5%AE%9A%E7%A7%AF%E5%88%86/">定积分</a>
     </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
             published on&nbsp;<time datetime=2018-12-18>2018-12-18</time>
@@ -147,18 +160,6 @@ $$S=\sum_{i=1}^{n}f(\xi)\Delta x_i$$
  系统日志记录的系统事件可以用依赖图表示。系统内的实体（如进程、文件、网络等）用结点表示，系统事件（如系统调用，读写文件、进程间消息通讯、网络数据传输等）用带时间戳的有向边表示，其指向方向与信息/数据流动方向一致 只针对 read、write、load 三类系统事件进行压缩，其他系统事件如 fork、execve、remove、rename、chmod 等等不考虑压缩直接保留。因为根据经验统计，系统中超过 95% 的事件是读写事件，只要这部分的日志减下来即可。并且只对读写事件进行压缩可以降低算法模型的复杂度，提高可读性 根据前向可达性（Forward Reachability）和后向可达性（Backward Reachability），定义两种子图保留方案：全依赖 (Full Dependence FD) 保留，资源依赖（Source Dependence，SD）保留 由于依赖图的边（即系统事件）是带时间戳的，当执行可达性计算时，需要对一个节点按时间戳的先后顺序多次计算，而不能像标准的图算法那样对所有结点一视同仁地一次性计算并进行中间结果缓存。这样显然会提高算法的复杂度，因此文章提出了一个算法，将带时间戳的依赖图转化标准图（边不带时间戳），具体方法是对结点进行多版本化（Versioning） 但是如果只简单地进行结点的多版本化，又会增大图的复杂度，增大日志的体积，因此在多版本化后，文章提出了几种剪枝优化算法来简化依赖图：Redundant edge optimization (REO)、Global Redundant Edge Optimization (REO*)、Redundant node optimization (RNO)、 Redundant node optimization (RNO) 通过以上步骤对依赖图进行简化之后，就可以将依赖图还原成日志文件，此时的日志文件中只保留了关键的信息，体积大大减小。但是文章认为日志文件原来的格式不够节省空间，于是提出了一种新的压缩文件格式 CSR ，可以进一步减少空间占用  三、总结
 文章主要针对鉴定分析需要的日志文件过大问题，提出了一种在保证不影响侦查分析准确性的前提下，优化依赖子图、减少日志文件体积、提高鉴定分析效率的方案，其主要思路是通过前后可达性和后向可达性来保证依赖子图保留了关键的结点和边。</div><div class="post-footer">
         <a href="/2018-12-08-%E8%AE%BA%E6%96%87-fdsd/">Read More</a></div>
-</article>
-<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
-        <a href="/2018-12-06-%E6%95%B0%E5%AD%A6-%E5%AF%BC%E6%95%B0%E4%B8%8E%E5%BE%AE%E5%88%86/">导数与微分</a>
-    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
-            published on&nbsp;<time datetime=2018-12-06>2018-12-06</time>
-        </span>&nbsp;
-            <span class="post-category">included in<a href="/categories/math/">
-                        <i class="far fa-folder fa-fw"></i>Math
-                    </a></span></div><div class="content">一、导数定义 1、函数在一点处的导数：设函数 $y=f(x)$ 在点 $x_0$ 的某个邻域内有定义，当自变量 $x$ 在 $x_0$ 处取得增量 $\Delta x$（点 $x_0 + \Delta x$ 仍在该邻域内）时，相应地，因变量取得增量 $\Delta y=f(x_0+\Delta x)-f(x_0)$。如果 $\Delta y$ 与 $\Delta x$ 之比当 $\Delta x \to 0$ 时的极限存在，那么称函数 $y=f(x)$ 在点 $x_0$ 处可导，并称这个极限为函数 $y=f(x)$ 在点 $x_0$ 处的导数，记为 $f&rsquo;(x_0)$，即
-$$f&rsquo;(x_0)=\lim_{\Delta x \to 0} \frac{\Delta y}{\Delta x}=\lim_{\Delta x \to 0} \frac{f(x_0+\Delta x)-f(x_0)}{\Delta x}$$
-2、导函数：如果函数 $y=f(x)$ 在开区间的每点处都可导，那么就称函数 $f(x)$ 在开区间 $I$ 内可导。这时，对于任一 $x \in I$ 都对应着 $f(x)$ 的一个确定的导数值，这样就构成了一个新的函数，这个函数叫做函数 $y=f(x)$ 的导函数，记作 $y'$, 或 $f&rsquo;(x)$。导函数 $f&rsquo;(x)$ 简称导数，$f&rsquo;(x_0)$ 是 $f(x)$ 在 $x_0$ 处的导数，或导数 $f&rsquo;(x)$ 在 $x_0$ 处的值，即 $f&rsquo;(x_0)=f&rsquo;(x)|_{x=x_0}$</div><div class="post-footer">
-        <a href="/2018-12-06-%E6%95%B0%E5%AD%A6-%E5%AF%BC%E6%95%B0%E4%B8%8E%E5%BE%AE%E5%88%86/">Read More</a></div>
 </article>
 <ul class="pagination"><li class="page-item ">
                     <span class="page-link">

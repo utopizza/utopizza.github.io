@@ -77,6 +77,19 @@
         alt="Posts"
         title="Posts" /></a></div><h1 class="home-title">CODE FOR FOOD :)</h1><h2 class="home-subtitle"><div id="id-1" class="typeit"></div></h2><div class="social-links"><a href="https://github.com/utopizza" title="GitHub" target="_blank" rel="noopener noreffer me"><i class="fab fa-github-alt fa-fw"></i></a><a href="mailto:648847079@qq.com" title="Email" rel=" me"><i class="far fa-envelope fa-fw"></i></a></div></div>
 <article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+        <a href="/2018-01-13-%E7%AE%97%E6%B3%95-foursum/">FourSum</a>
+    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
+            published on&nbsp;<time datetime=2018-01-13>2018-01-13</time>
+        </span>&nbsp;
+            <span class="post-category">included in<a href="/categories/algorithm/">
+                        <i class="far fa-folder fa-fw"></i>Algorithm
+                    </a></span></div><div class="content">一、TwoSum
+给定一个整型数组，和一个 target，返回数组中两个数之和等于 target 的所有组合。不能输出重复组合。例如给定数组 [2,3,1,-4,8,3]，target = 4，则满足条件的非重复组合有 [3,1] 和 [-4,8]。
+思路：因为要求输出的是数组元素而不是数组下标，因此可以对数组进行排序（注意，如果题目要求输出数组下标，就不应使用排序，而是使用 HashMap 来优化）。排序之后，使用两个指针分别从数组两头往中间移动搜索整个数组，为避免重复组合，需跳过重复的元素。当指针相遇时搜索结束，因此搜索的时间复杂度为 $O(n)$。（其实如果算上前面的排序操作那么时间复杂度不止$O(n)$。因为所有基于比较的排序算法的时间复杂度下界为 $O(nlogn)$，所以本算法的总时间复杂度实际上应是 $O(n+nlogn)=O(nlogn)$）
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17  public List&lt;List&lt;Integer&gt;&gt; TwoSum(int[] nums, int target) { List&lt;List&lt;Integer&gt;&gt; list = new ArrayList&lt;List&lt;Integer&gt;&gt;(); Arrays.sort(nums); int lo = 0, hi = nums.length - 1; while (lo &lt; hi) { int sum = nums[lo] + nums[hi]; if (sum == target) { list.</div><div class="post-footer">
+        <a href="/2018-01-13-%E7%AE%97%E6%B3%95-foursum/">Read More</a></div>
+</article>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
         <a href="/2018-01-06-%E7%AE%97%E6%B3%95-%E4%BD%8D%E8%BF%90%E7%AE%97%E6%8A%80%E5%B7%A7/">位运算技巧</a>
     </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
             published on&nbsp;<time datetime=2018-01-06>2018-01-06</time>
@@ -180,33 +193,6 @@ $$P(Y=0 \mid x)=1-\frac{1}{1+e^{-w \cdot x}}$$
 1、初始化
 $$f_0(x)=argmin\sum_{i=1}^{N}L(y_i,c)$$</div><div class="post-footer">
         <a href="/2017-12-05-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-randomforest%E4%B8%8Egbdt/">Read More</a></div>
-</article>
-<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
-        <a href="/2017-11-30-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-boosting%E4%B8%8Ebagging/">boosting与bagging</a>
-    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
-            published on&nbsp;<time datetime=2017-11-30>2017-11-30</time>
-        </span>&nbsp;
-            <span class="post-category">included in<a href="/categories/machinelearning/">
-                        <i class="far fa-folder fa-fw"></i>MachineLearning
-                    </a></span></div><div class="content">一、boosting
-前面已经学习过，boosting 是一种提升方法，它通过改变训练样本的权重，学习多个分类器，并将这些分类器进行组合，提高分类的性能。
-boosting 方法每一轮学习一个分类器，并根据本次学习的误差，改变整个样本集合中每个样本的权重，被误分类的那些样本的权重将增大。在下一轮学习新的分类器时，这些被误分类的样本将会被赋予更大的关注。
-因此可以看出，boosting 方法是通过串行训练而获得的，下一轮的学习是基于上一轮的误差进行的。另外，每一轮的训练集都是整个原数据集，数据集中的样本不变，变的是各个样本的权重。
-最后，在学习基本分类器时，会同时计算得到每个分类器的权重。boosting 的最终组合分类器是这一系列基本分类器的加权组合。
-目前比较典型的两种 boosting 算法是 Adaboosting （Adaptive Boosting，自适应boosting）算法，和 GBDT（gradient boosting decision tree，梯度提升决策树）算法。
-二、bagging
-自举汇聚法（bootstrap aggregating），也称 bagging 方法。该方法通过从原数据集中随机放回抽样，得到 $S$ 个和原数据集大小相等的数据集，来作为 $S$ 次训练的训练集，从而训练得到 $S$ 个分类器。
-因为是放回抽样，所以新的数据集中可以有重复的样本，原数据集也可以有部分样本不在新数据集中出现。
-得到了 $S$ 个分类器后，就将这些分类器组合成最终的分类器。执行预测时，让这 $S$ 个分类器分别对新数据进行预测，得到 $S$ 个预测结果。如果是分类任务，则采用多数表决的方式，选择这 $S$ 个结果中票数最多的那个类别返回。如果是回归任务，则取均值作为最终结果返回。
-目前比较典型的 bagging 类的方法有随机森林（Random Forest）。
-三、区别
-1、学习方式
-boosting 的每一轮学习是基于前一轮的误差，因此它的一系列基本分类器的训练是串行的。bagging 是随机不放回抽样得到若干个新的训练集进行各自的训练，彼此间没有联系，可并行。
-2、训练样本
-boosting 不改变样本，而是在每一轮根据误差改变每个样本的权重。bagging 不改变权重，而是从原数据集抽选其中一部分样本（可重复）来构成不同的训练集。
-3、分类器组合方式
-boosting 的最终分类器是基本分类器的加权之和，每个分类器有各自的权重，最终的预测结果是每个分类器的预测结果的加权之和。bagging 的分类器没有权重的概念，每个基本分类器都有相等权重的一票，最终的预测结果是票数最多的那一个类（标签）。</div><div class="post-footer">
-        <a href="/2017-11-30-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-boosting%E4%B8%8Ebagging/">Read More</a></div>
 </article>
 <ul class="pagination"><li class="page-item ">
                     <span class="page-link">

@@ -77,6 +77,32 @@
         alt="Posts"
         title="Posts" /></a></div><h1 class="home-title">CODE FOR FOOD :)</h1><h2 class="home-subtitle"><div id="id-1" class="typeit"></div></h2><div class="social-links"><a href="https://github.com/utopizza" title="GitHub" target="_blank" rel="noopener noreffer me"><i class="fab fa-github-alt fa-fw"></i></a><a href="mailto:648847079@qq.com" title="Email" rel=" me"><i class="far fa-envelope fa-fw"></i></a></div></div>
 <article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+        <a href="/2017-11-11-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E4%BF%A1%E6%81%AF%E5%A2%9E%E7%9B%8A/">信息增益</a>
+    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
+            published on&nbsp;<time datetime=2017-11-11>2017-11-11</time>
+        </span>&nbsp;
+            <span class="post-category">included in<a href="/categories/machinelearning/">
+                        <i class="far fa-folder fa-fw"></i>MachineLearning
+                    </a></span></div><div class="content">一、熵（entropy）
+熵是表示随机变量不确定性的度量。熵越大，随机变量的不确定性越大。设 $X$ 是一个取值为有限个的离散型随机变量，其概率分布为：
+$$P(X=x_i)=p_i \text{ , } i=1,2,\cdots,n$$
+则随机变量 $X$ 的熵定义为
+$$H(X)=-\sum_{i=1}^{n}p_i\log(p_i)$$
+当式中对数以 $2$ 为底时，熵的单位为比特（bit）；以自然对数 $e$ 为底时，熵的单位为纳特（nat）。
+二、条件熵（conditional entropy）
+条件熵 $H(Y \mid X)$ 表示已知随机变量 $X$ 的条件下，随机变量 $Y$ 的不确定性。
+设有随机变量 $(X,Y)$，联合分布概率为
+$$P(X=x_i,Y=y_i)=p_{ij} \text{ , } i=1,2,\cdots,n \text{ ; }j=1,2,\cdots,m$$
+则随机变量 $X$ 给定条件下，随机变量 $Y$ 的条件熵为
+$$H(Y \mid X)=\sum_{i=1}^{n} p_i H(Y \mid X=x_i)$$
+这里 $p_i=P(X=x_i) \text{ , } i=1,2,\cdots,n$。
+当熵和条件熵的概率有数据估计得到时，所对应的熵与条件熵称为经验熵（empirical entropy）和经验条件熵（empirical conditional entropy）。
+三、信息增益（information gain）
+信息增益表示得知特征 $X$ 的信息而使得类 $Y$ 的信息的不确定性减少的程度。
+特征 $A$ 对训练数据集 $D$ 的信息增益 $g(D,A)$ 定义为集合 $D$ 的经验熵 $H(D)$ 与特征 $A$ 给定条件下 $D$ 的经验条件熵 $H(D \mid A)$ 之差</div><div class="post-footer">
+        <a href="/2017-11-11-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E4%BF%A1%E6%81%AF%E5%A2%9E%E7%9B%8A/">Read More</a></div>
+</article>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
         <a href="/2017-11-08-%E7%AE%97%E6%B3%95-%E4%BA%8C%E5%8F%89%E5%A0%86%E5%BB%BA%E5%A0%86%E6%97%B6%E9%97%B4%E5%A4%8D%E6%9D%82%E5%BA%A6/">二叉堆建堆时间复杂度</a>
     </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
             published on&nbsp;<time datetime=2017-11-08>2017-11-08</time>
@@ -160,29 +186,6 @@ $$ dp[i]=A[i]+(dp[i-1]&gt;0?dp[i-1]:0) $$
 设前 $i$ 个元素的最长递增子序列长度（即第 $i$ 个子问题最优解）表示为 $dp(i)$。那么第 $i$ 个子问题的最优解 $dp(i)$ 与前面 $i-1$ 个子问题各自的最优解 $dp(k)$ $(1 \leq k \leq i-1)$ 有着怎么样的递推关系？
 考察前 $i-1$ 个子问题中第 $k$ $(1 \leq k \leq i-1)$ 个子问题对应的最长递增子序列。如果原序列第 $i$ 个元素 $A[i]$ 大于等于该序列的最后一个元素（设为 $last[k]$），则 $A[i]$ 可以追加到此递增子序列的末尾。此时有 $dp(i)=dp(k)+1$；反之如果 $A[i]$ 小于该序列的最后一个元素 $last[k]$，则 $A[i]$ 不能追加到此递增子序列的末尾，此时 $dp(i)=dp(k)$。由于 $1 \leq k \leq i-1$，因此我们只要遍历前 $i-1$ 个元素对应的 $i-1$ 个最长子序列，并考察第 $i$ 个元素追加（或者不追加）到这些子序列末尾后得到的 $i-1$ 个 $dp(i)$，其中最大一个的即为第 $i$ 个问题的最优解。形式化描述为：</div><div class="post-footer">
         <a href="/2017-09-26-%E7%AE%97%E6%B3%95-%E6%9C%80%E9%95%BF%E9%80%92%E5%A2%9E%E5%AD%90%E5%BA%8F%E5%88%97/">Read More</a></div>
-</article>
-<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
-        <a href="/2017-09-24-%E7%AE%97%E6%B3%95-%E7%A1%AC%E5%B8%81%E6%89%BE%E9%9B%B6/">硬币找零</a>
-    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
-            published on&nbsp;<time datetime=2017-09-24>2017-09-24</time>
-        </span>&nbsp;
-            <span class="post-category">included in<a href="/categories/algorithm/">
-                        <i class="far fa-folder fa-fw"></i>Algorithm
-                    </a></span></div><div class="content">一、问题
-假设有几种硬币，如1、3、5、10，并且数量无限。请找出能够组成某个数目的找零所使用最少的硬币数
-形式化定义：设需要找零的总额为 $V$ ，一共有 $n$ 种硬币可以选择，其中第 $i$ 种硬币面值为 $c_i$，对应的使用数量为 $y_i$。则问题表述为：
-$$min \quad \sum_{i=1}^{n}y_i , \quad y_i \in N \text{（自然数集）} $$
-$$s.t. \quad \sum_{i=1}^{n} c_i \cdot y_i = V$$
-二、划分子问题，导出递推式
-今天查了一些资料，对动态规划有了新的理解。
-有博主说：
- 动态规划的本质是对问题状态的定义，和对状态转移方程的定义。动态规划是通过拆分问题，定义问题状态和状态之间的关系，使得问题能够以递推（或者说分治）的方式去解决。如何拆分问题，才是动态规划的核心，而拆分问题，靠的就是状态的定义和状态转移方程的定义。
- 也有博主说：
- 计算机的本质是一个状态机，内存里存储的所有数据构成了当前的状态，CPU只能利用当前的状态计算出下一个状态（不要纠结硬盘之类的外部存储，就算考虑他们也只是扩大了状态的存储容量而已，并不能改变下一个状态只能从当前状态计算出来这一条铁律）当你企图使用计算机解决一个问题是，其实就是在思考如何将这个问题表达成状态（用哪些变量存储哪些数据）以及如何在状态中转移（怎样根据一些变量计算出另一些变量）。所以所谓的空间复杂度就是为了支持你的计算所必需存储的状态最多有多少，所谓时间复杂度就是从初始状态到达最终状态中间需要多少步！
- 回到我们的问题，要定义这个问题的状态和状态转移方程，首先需要分析这个问题的解的构建过程。那么找零的过程是怎么样的？很简单，每次可以拿起 $n$ 种硬币中，面值小于找零总额的任意一个。然后把找零总额减去拿起的硬币的面值，进入下一次选择。不断如此重复，直至拿起的硬币的总值等于找零的总额。（到这里，子问题的定义就显而易见了，这个问题的子问题就是每一次进行的硬币的选择，本次的选择只与之前的选择有关，因为每一次选择后剩余的找零总额会相应减小）
-但是这样并不能保证硬币数是最小的。为了找到最优解，我们需要假设某个子问题已经得到了最优解，然后推出与它的子问题的最优解的关系，也就是最优解的递推关系式。设 $dp(i)$ 表示组合总价值为 $i$ 的零钱所需要的最小硬币数。因此每次可以选择 $n$ 种硬币中的一种，设本次选择的硬币为第 $j$ $(1 \leq j \leq n)$ 种，对应的面值为 $c[j]$，则在拿起该硬币之前的子问题即为：组合面值为 $dp(i-c[j])$ 的总额需要的最小硬币数。同样可以用“剪贴粘贴”的反正法证明其最优解为 $dp(i-c[j])-1$。形式化描述为：
- $$ dp(i)= \begin{cases} 0, & \text{if $i=0 $} \\ min_{1 \leq j \leq n}(dp(i-c[j])+1), & \text{if $i 0 \, , \, c[j] \leq i$} \\ \end{cases} $$  三、算法实现</div><div class="post-footer">
-        <a href="/2017-09-24-%E7%AE%97%E6%B3%95-%E7%A1%AC%E5%B8%81%E6%89%BE%E9%9B%B6/">Read More</a></div>
 </article>
 <ul class="pagination"><li class="page-item ">
                     <span class="page-link">

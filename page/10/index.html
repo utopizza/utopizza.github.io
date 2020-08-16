@@ -77,6 +77,33 @@
         alt="Posts"
         title="Posts" /></a></div><h1 class="home-title">CODE FOR FOOD :)</h1><h2 class="home-subtitle"><div id="id-1" class="typeit"></div></h2><div class="social-links"><a href="https://github.com/utopizza" title="GitHub" target="_blank" rel="noopener noreffer me"><i class="fab fa-github-alt fa-fw"></i></a><a href="mailto:648847079@qq.com" title="Email" rel=" me"><i class="far fa-envelope fa-fw"></i></a></div></div>
 <article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+        <a href="/2017-11-30-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-boosting%E4%B8%8Ebagging/">boosting与bagging</a>
+    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
+            published on&nbsp;<time datetime=2017-11-30>2017-11-30</time>
+        </span>&nbsp;
+            <span class="post-category">included in<a href="/categories/machinelearning/">
+                        <i class="far fa-folder fa-fw"></i>MachineLearning
+                    </a></span></div><div class="content">一、boosting
+前面已经学习过，boosting 是一种提升方法，它通过改变训练样本的权重，学习多个分类器，并将这些分类器进行组合，提高分类的性能。
+boosting 方法每一轮学习一个分类器，并根据本次学习的误差，改变整个样本集合中每个样本的权重，被误分类的那些样本的权重将增大。在下一轮学习新的分类器时，这些被误分类的样本将会被赋予更大的关注。
+因此可以看出，boosting 方法是通过串行训练而获得的，下一轮的学习是基于上一轮的误差进行的。另外，每一轮的训练集都是整个原数据集，数据集中的样本不变，变的是各个样本的权重。
+最后，在学习基本分类器时，会同时计算得到每个分类器的权重。boosting 的最终组合分类器是这一系列基本分类器的加权组合。
+目前比较典型的两种 boosting 算法是 Adaboosting （Adaptive Boosting，自适应boosting）算法，和 GBDT（gradient boosting decision tree，梯度提升决策树）算法。
+二、bagging
+自举汇聚法（bootstrap aggregating），也称 bagging 方法。该方法通过从原数据集中随机放回抽样，得到 $S$ 个和原数据集大小相等的数据集，来作为 $S$ 次训练的训练集，从而训练得到 $S$ 个分类器。
+因为是放回抽样，所以新的数据集中可以有重复的样本，原数据集也可以有部分样本不在新数据集中出现。
+得到了 $S$ 个分类器后，就将这些分类器组合成最终的分类器。执行预测时，让这 $S$ 个分类器分别对新数据进行预测，得到 $S$ 个预测结果。如果是分类任务，则采用多数表决的方式，选择这 $S$ 个结果中票数最多的那个类别返回。如果是回归任务，则取均值作为最终结果返回。
+目前比较典型的 bagging 类的方法有随机森林（Random Forest）。
+三、区别
+1、学习方式
+boosting 的每一轮学习是基于前一轮的误差，因此它的一系列基本分类器的训练是串行的。bagging 是随机不放回抽样得到若干个新的训练集进行各自的训练，彼此间没有联系，可并行。
+2、训练样本
+boosting 不改变样本，而是在每一轮根据误差改变每个样本的权重。bagging 不改变权重，而是从原数据集抽选其中一部分样本（可重复）来构成不同的训练集。
+3、分类器组合方式
+boosting 的最终分类器是基本分类器的加权之和，每个分类器有各自的权重，最终的预测结果是每个分类器的预测结果的加权之和。bagging 的分类器没有权重的概念，每个基本分类器都有相等权重的一票，最终的预测结果是票数最多的那一个类（标签）。</div><div class="post-footer">
+        <a href="/2017-11-30-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-boosting%E4%B8%8Ebagging/">Read More</a></div>
+</article>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
         <a href="/2017-11-26-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E5%88%86%E7%B1%BB%E6%8F%90%E5%8D%87%E6%A0%91%E4%B8%8E%E5%9B%9E%E5%BD%92%E6%8F%90%E5%8D%87%E6%A0%91/">分类提升树与回归提升树</a>
     </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
             published on&nbsp;<time datetime=2017-11-26>2017-11-26</time>
@@ -200,32 +227,6 @@ ID3算法的核心是在决策树各个结点上应用“信息增益”准则�
 输入：训练数据集 $D$，特征集 $A$，阈值 $\varepsilon$ 输出：决策树 $T$
  若 $D$ 中所有实例属于同一类 $C_k$，则 $T$ 为单结点树，并将 $C_k$ 作为该结点的类标记，返回 $T$； 若 $A=\emptyset$ ，则 $T$ 为单结点树，将 $D$ 中实例数最大的类 $C_k$ 作为该结点的类标记，返回 $T$； 遍历 $A$ 中每一个特征，计算信息增益 $g(D,A)=H(D)-\sum_{i=1}^{n}\frac{|D_i|}{|D|}H(D_i)$，选择信息增益最大特征 $A_g$。如果 $A_g$ 的信息增益小于阈值 $\varepsilon$，则置 $T$ 为单结点树，并将 $D$ 中实例数最大的类 $C_k$ 作为该结点的类标记，返回 $T$；否则，对 $A_g$ 的每一个可能值 $a_i$，按照 $A_g=a_i$ 将 $D$ 分割为若干非空子集 $D_i$，对每个子集 $D_i$，将其实例数中最大的类作为标记，构建子结点，由结点及其子结点构成树 $T$，返回 $T$； 对第 $i$ 个子结点，以 $D_i$ 为训练集，以 $A- { A_g }$ 为特征集，递归地调用前3步，得到子树 $T_i$，返回 $T_i$。  以下是部分关键代码，参考《机器学习实战》第三章。这里忽略了上述算法的“信息增益阈值 $\varepsilon$ 这一条件。</div><div class="post-footer">
         <a href="/2017-11-15-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-id3%E7%AE%97%E6%B3%95%E4%B8%8Ec4.5%E7%AE%97%E6%B3%95/">Read More</a></div>
-</article>
-<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
-        <a href="/2017-11-11-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E4%BF%A1%E6%81%AF%E5%A2%9E%E7%9B%8A/">信息增益</a>
-    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
-            published on&nbsp;<time datetime=2017-11-11>2017-11-11</time>
-        </span>&nbsp;
-            <span class="post-category">included in<a href="/categories/machinelearning/">
-                        <i class="far fa-folder fa-fw"></i>MachineLearning
-                    </a></span></div><div class="content">一、熵（entropy）
-熵是表示随机变量不确定性的度量。熵越大，随机变量的不确定性越大。设 $X$ 是一个取值为有限个的离散型随机变量，其概率分布为：
-$$P(X=x_i)=p_i \text{ , } i=1,2,\cdots,n$$
-则随机变量 $X$ 的熵定义为
-$$H(X)=-\sum_{i=1}^{n}p_i\log(p_i)$$
-当式中对数以 $2$ 为底时，熵的单位为比特（bit）；以自然对数 $e$ 为底时，熵的单位为纳特（nat）。
-二、条件熵（conditional entropy）
-条件熵 $H(Y \mid X)$ 表示已知随机变量 $X$ 的条件下，随机变量 $Y$ 的不确定性。
-设有随机变量 $(X,Y)$，联合分布概率为
-$$P(X=x_i,Y=y_i)=p_{ij} \text{ , } i=1,2,\cdots,n \text{ ; }j=1,2,\cdots,m$$
-则随机变量 $X$ 给定条件下，随机变量 $Y$ 的条件熵为
-$$H(Y \mid X)=\sum_{i=1}^{n} p_i H(Y \mid X=x_i)$$
-这里 $p_i=P(X=x_i) \text{ , } i=1,2,\cdots,n$。
-当熵和条件熵的概率有数据估计得到时，所对应的熵与条件熵称为经验熵（empirical entropy）和经验条件熵（empirical conditional entropy）。
-三、信息增益（information gain）
-信息增益表示得知特征 $X$ 的信息而使得类 $Y$ 的信息的不确定性减少的程度。
-特征 $A$ 对训练数据集 $D$ 的信息增益 $g(D,A)$ 定义为集合 $D$ 的经验熵 $H(D)$ 与特征 $A$ 给定条件下 $D$ 的经验条件熵 $H(D \mid A)$ 之差</div><div class="post-footer">
-        <a href="/2017-11-11-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E4%BF%A1%E6%81%AF%E5%A2%9E%E7%9B%8A/">Read More</a></div>
 </article>
 <ul class="pagination"><li class="page-item ">
                     <span class="page-link">
