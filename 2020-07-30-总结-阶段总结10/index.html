@@ -7,21 +7,41 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
         <title>阶段总结(10) - Utopizza</title>
         <meta name="Description" content="About LoveIt Theme"><meta property="og:title" content="阶段总结(10)" />
-<meta property="og:description" content="上一次写阶段总结是2020年1月入职半年转正，到现在7月又过去半年，入职满一年。回顾下这半年来的工作。" />
+<meta property="og:description" content="上一次写阶段总结是2020年1月入职半年转正，到现在7月又过去半年，入职满一年。回顾下这半年来的工作。
+2020年2月
+2月份主要正式开始重构SPE，用原生storm重写spe，聚合相同的审计任务，把130个审计任务压缩成4个通用任务，优化后单域任务启动耗时从1个小时缩减到3秒以内，机器资源需求数量从30台缩减到5台，优化效果相当明显。这次对原有复杂系统的重构优化，确实从中学到很多东西，比如storm上的分布式任务编程、多节点选主、缓存实时刷新、读写冲突、流式数据批量写库提高吞吐等等。在重构SPE的同时，接手了两个新的项目BST和PMS，在大概月底附近SPE转测之后，BST开始研发，PMS开始详设。
+2020年3月
+3月份同时开展三个项目的研发工作，包括
+ SPE研发、转测、bug修复、上线 BST研发、转测、bug修复、前后端联调、发布版本 PMS详细设计完善补充、详设评审、研发  2020年4月
+4月份初基本完成了SPE、BST的研发工作，然后正式转入PMS一期的研发。余下时间基本都是在实现PMS一期，主要是实现http server，处理client端的请求。4月进行了Q1季度（1～3月）的OKR review，准备得比较充足，拿了“卓越战功奖”。
+2020年5月、6月
+5月份进入PMS二期研发，主要是web server，对整个数据结构设计引入一些新的对象，重新设计了权限模型。web相关的接口有10多个，工作量很大。用beego重写了一期的一些代码。6月份引入了集中式的相关接口，业务逻辑十分复杂，花了很多时间。这两个月总体上完成了研发任务，陆续完成了三轮测试，基本上可以发布第一版本。
+2020年7月
+在7月10日这天终于上线了PMS beta版本，刚好是入职一周年，真是个值得纪念的日子。7月进行了Q2季度（4～6）的OKR review，拿了“文化之星奖”（估计是因为奖项半年内不能重复）。" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://utopizza.github.io/2020-07-30-%E6%80%BB%E7%BB%93-%E9%98%B6%E6%AE%B5%E6%80%BB%E7%BB%9310/" />
 <meta property="og:image" content="https://utopizza.github.io/logo.png"/>
-<meta property="article:published_time" content="2020-07-30T00:00:00+00:00" />
-<meta property="article:modified_time" content="2020-07-30T00:00:00+00:00" />
+<meta property="article:published_time" content="2020-07-10T00:00:00+00:00" />
+<meta property="article:modified_time" content="2020-07-10T00:00:00+00:00" />
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://utopizza.github.io/logo.png"/>
 
 <meta name="twitter:title" content="阶段总结(10)"/>
-<meta name="twitter:description" content="上一次写阶段总结是2020年1月入职半年转正，到现在7月又过去半年，入职满一年。回顾下这半年来的工作。"/>
+<meta name="twitter:description" content="上一次写阶段总结是2020年1月入职半年转正，到现在7月又过去半年，入职满一年。回顾下这半年来的工作。
+2020年2月
+2月份主要正式开始重构SPE，用原生storm重写spe，聚合相同的审计任务，把130个审计任务压缩成4个通用任务，优化后单域任务启动耗时从1个小时缩减到3秒以内，机器资源需求数量从30台缩减到5台，优化效果相当明显。这次对原有复杂系统的重构优化，确实从中学到很多东西，比如storm上的分布式任务编程、多节点选主、缓存实时刷新、读写冲突、流式数据批量写库提高吞吐等等。在重构SPE的同时，接手了两个新的项目BST和PMS，在大概月底附近SPE转测之后，BST开始研发，PMS开始详设。
+2020年3月
+3月份同时开展三个项目的研发工作，包括
+ SPE研发、转测、bug修复、上线 BST研发、转测、bug修复、前后端联调、发布版本 PMS详细设计完善补充、详设评审、研发  2020年4月
+4月份初基本完成了SPE、BST的研发工作，然后正式转入PMS一期的研发。余下时间基本都是在实现PMS一期，主要是实现http server，处理client端的请求。4月进行了Q1季度（1～3月）的OKR review，准备得比较充足，拿了“卓越战功奖”。
+2020年5月、6月
+5月份进入PMS二期研发，主要是web server，对整个数据结构设计引入一些新的对象，重新设计了权限模型。web相关的接口有10多个，工作量很大。用beego重写了一期的一些代码。6月份引入了集中式的相关接口，业务逻辑十分复杂，花了很多时间。这两个月总体上完成了研发任务，陆续完成了三轮测试，基本上可以发布第一版本。
+2020年7月
+在7月10日这天终于上线了PMS beta版本，刚好是入职一周年，真是个值得纪念的日子。7月进行了Q2季度（4～6）的OKR review，拿了“文化之星奖”（估计是因为奖项半年内不能重复）。"/>
 <meta name="application-name" content="Utopizza">
 <meta name="apple-mobile-web-app-title" content="Utopizza"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://utopizza.github.io/2020-07-30-%E6%80%BB%E7%BB%93-%E9%98%B6%E6%AE%B5%E6%80%BB%E7%BB%9310/" /><link rel="prev" href="https://utopizza.github.io/2020-07-26-%E8%AE%BA%E6%96%87-raft/" /><link rel="next" href="https://utopizza.github.io/2020-08-04-%E8%AE%BA%E6%96%87-kafka/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://utopizza.github.io/2020-07-30-%E6%80%BB%E7%BB%93-%E9%98%B6%E6%AE%B5%E6%80%BB%E7%BB%9310/" /><link rel="prev" href="https://utopizza.github.io/2020-01-20-%E6%80%BB%E7%BB%93-%E9%98%B6%E6%AE%B5%E6%80%BB%E7%BB%939/" /><link rel="next" href="https://utopizza.github.io/2020-07-26-%E8%AE%BA%E6%96%87-raft/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
     {
         "@context": "http://schema.org",
         "@type": "BlogPosting",
@@ -35,8 +55,8 @@
                 "url": "https:\/\/utopizza.github.io\/cover.png",
                 "width":  800 ,
                 "height":  600 
-            },"genre": "posts","wordcount":  1 ,
-        "url": "https:\/\/utopizza.github.io\/2020-07-30-%E6%80%BB%E7%BB%93-%E9%98%B6%E6%AE%B5%E6%80%BB%E7%BB%9310\/","datePublished": "2020-07-30T00:00:00+00:00","dateModified": "2020-07-30T00:00:00+00:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+            },"genre": "posts","wordcount":  19 ,
+        "url": "https:\/\/utopizza.github.io\/2020-07-30-%E6%80%BB%E7%BB%93-%E9%98%B6%E6%AE%B5%E6%80%BB%E7%BB%9310\/","datePublished": "2020-07-10T00:00:00+00:00","dateModified": "2020-07-10T00:00:00+00:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
                 "@type": "Organization",
                 "name": "",
                 "logo": {
@@ -95,8 +115,8 @@
                     <span class="post-category">included in<a href="/categories/summary/">
                                 <i class="far fa-folder fa-fw"></i>Summary
                             </a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i><time datetime=2020-07-30>2020-07-30</time>&nbsp;
-                <i class="fas fa-pencil-alt fa-fw"></i>about 1 words&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i><time datetime=2020-07-10>2020-07-10</time>&nbsp;
+                <i class="fas fa-pencil-alt fa-fw"></i>about 19 words&nbsp;
                 <i class="far fa-clock fa-fw"></i>1 min&nbsp;</div>
         </div><div class="details toc" id="toc-static">
                 <div class="details-summary toc-title">
@@ -105,11 +125,26 @@
                 </div>
                 <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents"></nav></div>
             </div><div class="content" id="content"><p>上一次写阶段总结是2020年1月入职半年转正，到现在7月又过去半年，入职满一年。回顾下这半年来的工作。</p>
+<p>2020年2月</p>
+<p>2月份主要正式开始重构SPE，用原生storm重写spe，聚合相同的审计任务，把130个审计任务压缩成4个通用任务，优化后单域任务启动耗时从1个小时缩减到3秒以内，机器资源需求数量从30台缩减到5台，优化效果相当明显。这次对原有复杂系统的重构优化，确实从中学到很多东西，比如storm上的分布式任务编程、多节点选主、缓存实时刷新、读写冲突、流式数据批量写库提高吞吐等等。在重构SPE的同时，接手了两个新的项目BST和PMS，在大概月底附近SPE转测之后，BST开始研发，PMS开始详设。</p>
+<p>2020年3月</p>
+<p>3月份同时开展三个项目的研发工作，包括</p>
+<ul>
+<li>SPE研发、转测、bug修复、上线</li>
+<li>BST研发、转测、bug修复、前后端联调、发布版本</li>
+<li>PMS详细设计完善补充、详设评审、研发</li>
+</ul>
+<p>2020年4月</p>
+<p>4月份初基本完成了SPE、BST的研发工作，然后正式转入PMS一期的研发。余下时间基本都是在实现PMS一期，主要是实现http server，处理client端的请求。4月进行了Q1季度（1～3月）的OKR review，准备得比较充足，拿了“卓越战功奖”。</p>
+<p>2020年5月、6月</p>
+<p>5月份进入PMS二期研发，主要是web server，对整个数据结构设计引入一些新的对象，重新设计了权限模型。web相关的接口有10多个，工作量很大。用beego重写了一期的一些代码。6月份引入了集中式的相关接口，业务逻辑十分复杂，花了很多时间。这两个月总体上完成了研发任务，陆续完成了三轮测试，基本上可以发布第一版本。</p>
+<p>2020年7月</p>
+<p>在7月10日这天终于上线了PMS beta版本，刚好是入职一周年，真是个值得纪念的日子。7月进行了Q2季度（4～6）的OKR review，拿了“文化之星奖”（估计是因为奖项半年内不能重复）。</p>
 </div><div class="post-footer" id="post-footer">
     <div class="post-info">
         <div class="post-info-line">
             <div class="post-info-mod">
-                <span>The article was updated on 2020-07-30</span>
+                <span>The article was updated on 2020-07-10</span>
             </div>
             <div class="post-info-license"></div>
         </div>
@@ -130,8 +165,8 @@
         </section>
     </div>
 
-    <div class="post-nav"><a href="/2020-07-26-%E8%AE%BA%E6%96%87-raft/" class="prev" rel="prev" title="Raft"><i class="fas fa-angle-left fa-fw"></i>Raft</a>
-            <a href="/2020-08-04-%E8%AE%BA%E6%96%87-kafka/" class="next" rel="next" title="Kafka">Kafka<i class="fas fa-angle-right fa-fw"></i></a></div>
+    <div class="post-nav"><a href="/2020-01-20-%E6%80%BB%E7%BB%93-%E9%98%B6%E6%AE%B5%E6%80%BB%E7%BB%939/" class="prev" rel="prev" title="阶段总结(9)"><i class="fas fa-angle-left fa-fw"></i>阶段总结(9)</a>
+            <a href="/2020-07-26-%E8%AE%BA%E6%96%87-raft/" class="next" rel="next" title="Raft">Raft<i class="fas fa-angle-right fa-fw"></i></a></div>
 </div>
 </article></div>
             </main><footer class="footer">
