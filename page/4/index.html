@@ -77,63 +77,6 @@
         alt="Posts"
         title="Posts" /></a></div><h1 class="home-title">CODE FOR FOOD :)</h1><h2 class="home-subtitle"><div id="id-1" class="typeit"></div></h2><div class="social-links"><a href="https://github.com/utopizza" title="GitHub" target="_blank" rel="noopener noreffer me"><i class="fab fa-github-alt fa-fw"></i></a><a href="mailto:648847079@qq.com" title="Email" rel=" me"><i class="far fa-envelope fa-fw"></i></a></div></div>
 <article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
-        <a href="/2018-12-22-%E8%AE%BA%E6%96%87-svim/">SVIM</a>
-    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
-            published on&nbsp;<time datetime=2018-12-22>2018-12-22</time>
-        </span>&nbsp;
-            <span class="post-category">included in<a href="/categories/thesis/">
-                        <i class="far fa-folder fa-fw"></i>Thesis
-                    </a></span></div><div class="content">差分隐私（Differential Privacy）模型是微软研究院的 Cynthia Dwork 等人于 2006 年提出的一个严谨的数学模型，目标在于提出用以修改隐私数据的技术，使得修改后的数据可以安全发布(以供第三方进行研究)，而不会遭受去匿名化等隐私攻击。同时，修改后的数据要在保护隐私的前提下最大限度地保留原数据的整体信息，否则被发布的数据将毫无研究价值。
-该论文主要提出了一个称为 Set-Value Item Mining (SVIM) 的协议，用于在隐私保护约束条件下提高本地差分隐私数据的精确度。由于差分隐私主要是纯理论的模型，没有具体的实现和应用，限于篇幅此文不展开论述。此处主要了解差分隐私的一些背景即可。
-相关资料：
- 差分隐私学习总结 苹果的 Differential Privacy 差分隐私技术是什么原理？ 大数据下的信息安全-差分隐私保护技术  </div><div class="post-footer">
-        <a href="/2018-12-22-%E8%AE%BA%E6%96%87-svim/">Read More</a></div>
-</article>
-<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
-        <a href="/2018-12-18-%E6%95%B0%E5%AD%A6-%E5%AE%9A%E7%A7%AF%E5%88%86/">定积分</a>
-    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
-            published on&nbsp;<time datetime=2018-12-18>2018-12-18</time>
-        </span>&nbsp;
-            <span class="post-category">included in<a href="/categories/math/">
-                        <i class="far fa-folder fa-fw"></i>Math
-                    </a></span></div><div class="content">一、定积分的概念与性质 1、定义：设函数 $f(x)$ 在 $[a,b]$ 上有界，在 $[a,b]$ 中任意插入若干分点 $a=x_0 &lt; x_1 &lt; x_2 &lt; \cdots &lt; x_{n-1} &lt; x_n=b$，把区间 $[a,b]$ 分成 $n$ 个小区 $[x_0, x_1]$，$[x_1,x_2]$，$\cdots$，$[x_{n-1},x_n]$，各个小区间的长度依次为 $\Delta x_1=x_1-x_0$, $\Delta x_2=x_2-x_1$, $\cdots$, $\Delta x_n=x_n-x_{n-1}$。在每个小区间 $[x_{i-1},x_i]$ 上任取一点 $\xi_i (x_{i-1} \leq \xi \leq x_i)$，作函数值 $f(\xi)$ 与小区间长度 $\Delta x_i$ 的乘积 $f(\xi_i) \cdot \Delta x_i$，并作和
-$$S=\sum_{i=1}^{n}f(\xi)\Delta x_i$$
-记 $\lambda=\max { \Delta x_1, \Delta x_2, \cdots, \Delta x_n }$，如果当 $\lambda \to 0$ 时，$S$ 的极限总存在，且与闭区间 $[a,b]$ 的分法及点 $\xi_i$ 的取法无关，那么称这个极限 $I$ 为函数 $f(x)$ 在区间 $[a,b]$ 上的定积分，记作 $\int_{a}^{b} f(x) dx$，即</div><div class="post-footer">
-        <a href="/2018-12-18-%E6%95%B0%E5%AD%A6-%E5%AE%9A%E7%A7%AF%E5%88%86/">Read More</a></div>
-</article>
-<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
-        <a href="/2018-12-15-%E8%AE%BA%E6%96%87-enclavedb/">EnclaveDB</a>
-    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
-            published on&nbsp;<time datetime=2018-12-15>2018-12-15</time>
-        </span>&nbsp;
-            <span class="post-category">included in<a href="/categories/thesis/">
-                        <i class="far fa-folder fa-fw"></i>Thesis
-                    </a></span></div><div class="content">一、背景及问题
-目前一些云端的数据处理服务经常受到可能来自数据库管理员、服务器管理员、利用操作系统漏洞的黑客等的攻击。虽然一般意义上的数据加密可以为静态数据和数据传输提供强力高效的保护，但是却无法为数据处理系统提供足够的保护，因为数据处理系统在处理查询的时会在内存解密敏感数据。而内存是容易被攻击者入侵并掌控的区域，因此这会导致数据的不安全。
-一种实现安全查询（secure query）的方法是，一些系统如 CryptDB，Monomi 以及 Seabed 等通过使用 property-preserving encryption 技术来进行在已加密数据上的安全查询。然而这种方法只能处理十分有限的查询请求，并且有信息泄漏的风险。
-另一种实现安全查询的方法是在受信任的执行环境（trusted execution environment）或者内飞地（enclaves） 中执行查询。系统的内飞地如 Intel Software Guard Extensions (SGX) 可以保护敏感数据和代码，即使攻击者控制了整个操作系统或者主机。虽然如此，使用内飞地存在几个问题：
- 为了实现安全保护，需要仔细地对应用程序进行重构，分解出可信任部分和不可信任部分 为了实现高层次的安全特性如机密性（confidentiality）、完整性（integrity）、时新性（freshness），需要增加额外的逻辑和机制来确保机密信息在进入和离开内飞地的时候不会被泄漏  这些问题对于一些简单的应用程序来说并不困难，但是对于一些大型复杂系统如数据库系统来说则非常不容易。先前的一些研究例如 CipherBase、TrustedDB 等采取的方式是将查询引擎（query engine）的一小部分放置于受信任的硬件之上，这种方式的问题是无法提供上述的机密性、完整性、时新性。另一种选择是将整个数据库放置于内飞地之中，但这显然会导致大量的 trusted computing base (TCB) 以及服务性能的下降，并且无法阻止来自数据库管理员的攻击。
- 【根据维基百科，飞地指在某个地理区划境内有一块隶属于他地的区域。根据地区与国家之间的相对关系，飞地又可以分为“外飞地”（Exclave）与“内飞地”（Enclave）两种概念，其关系如下：内飞地（enclave）：意指某个国家境内有块土地，其主权属于另外一个国家，则该地区称为此国家的内飞地。外飞地（exclave）：某国家拥有一块与本国分离开来的领土，该领土被其他国家包围，则该领土称为某国的外飞地。】
- 二、解决方案
-文章提出了一个称为 EnclaveDB 的数据库，它可以为查询和数据提供机密性、完整性、时新性。它与传统关系型数据库一样提供了数据处理、SQL查询、存储过程等基本功能。与传统数据库不同的是：
- EnclaveDB 通过把所有敏感数据（tables, indexes, queries and other intermediate state）维护在内飞地的内存中来保护数据库状态 EnclaveDB 使用可信任的 EnclaveDB 客户端来预编译查询代码，并进行加密 预编译代码后，受信任的 EnclaveDB 客户端与不受信任的服务器上的内飞地直接建立一个安全的加密通道，然后将已加密的查询和参数发送过去 不受信任的服务器上的内飞地收到查询请求后，对请求进行验证、解密、执行查询、对查询结果进行加密、返回给客户端 EnclaveDB 重新设计了数据库的日志与恢复机制，以确保服务器无法对数据库的日志进行攻击 EnclaveDB 采取了一些优化手段，减少线程上下文切换，减少服务器开销  三、总结
-文章提出了一个通过使用内飞地来实现不信任服务器上的安全数据库。通过可信任客户端的预编译、加密安全通道的通信、内飞地的隔离保护、重新设计数据库的日志与恢复机制等一系列措施，实现了机密性、完整性、时新性这三个重要的安全特性。</div><div class="post-footer">
-        <a href="/2018-12-15-%E8%AE%BA%E6%96%87-enclavedb/">Read More</a></div>
-</article>
-<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
-        <a href="/2018-12-14-%E6%95%B0%E5%AD%A6-%E4%B8%8D%E5%AE%9A%E7%A7%AF%E5%88%86/">不定积分</a>
-    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
-            published on&nbsp;<time datetime=2018-12-14>2018-12-14</time>
-        </span>&nbsp;
-            <span class="post-category">included in<a href="/categories/math/">
-                        <i class="far fa-folder fa-fw"></i>Math
-                    </a></span></div><div class="content">一、不定积分的概念与性质 1、定义：如果在区间 $I$ 上，可导函数 $F(x)$ 的导函数为 $f(x)$，即对任一 $x \in I$，都有 $F&rsquo;(x)=f(x)$ 或 $dF(x)=f(x)dx$，那么函数 $F(x)$ 就称为 $f(x)$（或 $f(x)dx$）在区间 $I$ 上的一个原函数
-2、定理：如果函数 $f(x)$ 在区间 $I$ 上连续，那么在区间 $I$ 上存在可导函数 $F(x)$，使得对任一 $x \in I$ 都有 $F&rsquo;(x)=f(x)$，也就是说连续函数一定有原函数
-3、定义：在区间 $I$ 上，函数 $f(x)$ 的带有任意常数项的原函数称为 $f(x)$ （或 $f(x)dx$）在区间 $I$ 上的不定积分，记作 $\int f(x)dx$。其中记号 $\int$ 称为积分号，$f(x)$ 称为被积函数，$f(x)dx$ 称为被积表达式，$x$ 称为积分变量
-4、由于 $\int f(x)dx$ 是 $f(x)$ 的原函数，所以 $\frac{d}{dx}[\int f(x)dx]=f(x)$ 或 $d[\int f(x)dx]=f(x)dx$；又由于 $F(x)$ 是 $F&rsquo;(x)$ 的原函数，所以 $\int F&rsquo;(x) dx=F(x)+C$ 或 $\int dF(x)=F(x)+C$。由此可见，微分运算（以记号 $d$ 表示）与积分运算（以记号 $\int$ 表示）是互逆的。当此两个记号连在一起时，或者抵消，或者抵消后差一个常数。</div><div class="post-footer">
-        <a href="/2018-12-14-%E6%95%B0%E5%AD%A6-%E4%B8%8D%E5%AE%9A%E7%A7%AF%E5%88%86/">Read More</a></div>
-</article>
-<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
         <a href="/2018-12-11-%E6%95%B0%E5%AD%A6-%E5%BE%AE%E5%88%86%E4%B8%AD%E5%80%BC%E5%AE%9A%E7%90%86%E4%B8%8E%E5%AF%BC%E6%95%B0%E7%9A%84%E5%BA%94%E7%94%A8/">微分中值定理与导数的应用</a>
     </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
             published on&nbsp;<time datetime=2018-12-11>2018-12-11</time>
@@ -160,6 +103,65 @@ $$S=\sum_{i=1}^{n}f(\xi)\Delta x_i$$
  系统日志记录的系统事件可以用依赖图表示。系统内的实体（如进程、文件、网络等）用结点表示，系统事件（如系统调用，读写文件、进程间消息通讯、网络数据传输等）用带时间戳的有向边表示，其指向方向与信息/数据流动方向一致 只针对 read、write、load 三类系统事件进行压缩，其他系统事件如 fork、execve、remove、rename、chmod 等等不考虑压缩直接保留。因为根据经验统计，系统中超过 95% 的事件是读写事件，只要这部分的日志减下来即可。并且只对读写事件进行压缩可以降低算法模型的复杂度，提高可读性 根据前向可达性（Forward Reachability）和后向可达性（Backward Reachability），定义两种子图保留方案：全依赖 (Full Dependence FD) 保留，资源依赖（Source Dependence，SD）保留 由于依赖图的边（即系统事件）是带时间戳的，当执行可达性计算时，需要对一个节点按时间戳的先后顺序多次计算，而不能像标准的图算法那样对所有结点一视同仁地一次性计算并进行中间结果缓存。这样显然会提高算法的复杂度，因此文章提出了一个算法，将带时间戳的依赖图转化标准图（边不带时间戳），具体方法是对结点进行多版本化（Versioning） 但是如果只简单地进行结点的多版本化，又会增大图的复杂度，增大日志的体积，因此在多版本化后，文章提出了几种剪枝优化算法来简化依赖图：Redundant edge optimization (REO)、Global Redundant Edge Optimization (REO*)、Redundant node optimization (RNO)、 Redundant node optimization (RNO) 通过以上步骤对依赖图进行简化之后，就可以将依赖图还原成日志文件，此时的日志文件中只保留了关键的信息，体积大大减小。但是文章认为日志文件原来的格式不够节省空间，于是提出了一种新的压缩文件格式 CSR ，可以进一步减少空间占用  三、总结
 文章主要针对鉴定分析需要的日志文件过大问题，提出了一种在保证不影响侦查分析准确性的前提下，优化依赖子图、减少日志文件体积、提高鉴定分析效率的方案，其主要思路是通过前后可达性和后向可达性来保证依赖子图保留了关键的结点和边。</div><div class="post-footer">
         <a href="/2018-12-08-%E8%AE%BA%E6%96%87-fdsd/">Read More</a></div>
+</article>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+        <a href="/2018-12-06-%E6%95%B0%E5%AD%A6-%E5%AF%BC%E6%95%B0%E4%B8%8E%E5%BE%AE%E5%88%86/">导数与微分</a>
+    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
+            published on&nbsp;<time datetime=2018-12-06>2018-12-06</time>
+        </span>&nbsp;
+            <span class="post-category">included in<a href="/categories/math/">
+                        <i class="far fa-folder fa-fw"></i>Math
+                    </a></span></div><div class="content">一、导数定义 1、函数在一点处的导数：设函数 $y=f(x)$ 在点 $x_0$ 的某个邻域内有定义，当自变量 $x$ 在 $x_0$ 处取得增量 $\Delta x$（点 $x_0 + \Delta x$ 仍在该邻域内）时，相应地，因变量取得增量 $\Delta y=f(x_0+\Delta x)-f(x_0)$。如果 $\Delta y$ 与 $\Delta x$ 之比当 $\Delta x \to 0$ 时的极限存在，那么称函数 $y=f(x)$ 在点 $x_0$ 处可导，并称这个极限为函数 $y=f(x)$ 在点 $x_0$ 处的导数，记为 $f&rsquo;(x_0)$，即
+$$f&rsquo;(x_0)=\lim_{\Delta x \to 0} \frac{\Delta y}{\Delta x}=\lim_{\Delta x \to 0} \frac{f(x_0+\Delta x)-f(x_0)}{\Delta x}$$
+2、导函数：如果函数 $y=f(x)$ 在开区间的每点处都可导，那么就称函数 $f(x)$ 在开区间 $I$ 内可导。这时，对于任一 $x \in I$ 都对应着 $f(x)$ 的一个确定的导数值，这样就构成了一个新的函数，这个函数叫做函数 $y=f(x)$ 的导函数，记作 $y'$, 或 $f&rsquo;(x)$。导函数 $f&rsquo;(x)$ 简称导数，$f&rsquo;(x_0)$ 是 $f(x)$ 在 $x_0$ 处的导数，或导数 $f&rsquo;(x)$ 在 $x_0$ 处的值，即 $f&rsquo;(x_0)=f&rsquo;(x)|_{x=x_0}$</div><div class="post-footer">
+        <a href="/2018-12-06-%E6%95%B0%E5%AD%A6-%E5%AF%BC%E6%95%B0%E4%B8%8E%E5%BE%AE%E5%88%86/">Read More</a></div>
+</article>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+        <a href="/2018-12-02-%E6%95%B0%E5%AD%A6-%E5%87%BD%E6%95%B0%E4%B8%8E%E6%9E%81%E9%99%90/">函数与极限</a>
+    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
+            published on&nbsp;<time datetime=2018-12-02>2018-12-02</time>
+        </span>&nbsp;
+            <span class="post-category">included in<a href="/categories/math/">
+                        <i class="far fa-folder fa-fw"></i>Math
+                    </a></span></div><div class="content">一、映射与函数 1、映射：设 $X$、$Y$ 是两个非空集合，如果存在一个法则 $f$，使得对 $X$ 中每个元素 $x$，按法则 $f$，在 $Y$ 中有唯一确定的元素 $y$ 与之对应，那么称 $f$ 为从 $X$ 到 $Y$ 的映射，记作 $f:X \to Y$，其中 $y$ 称为元素 $x$ 在映射 $f$ 下的像，记作 $y=f(x)$，而 $x$ 称为元素 $y$ 在映射 $f$ 下的一个原像。集合 $X$ 称为映射 $f$ 的定义域，$X$ 中所有元素的像组成的集合称为映射 $f$ 的值域。
+2、函数：设数集 $D \subset R$，$R$ 为实数集，则称映射 $f:D \to R$ 为定义在 $D$ 上的函数，记作 $y=f(x), x \in D$，其中 $x$ 称为自变量，$y$ 称为因变量，$D$ 称为定义域。
+五类基本初等函数：
+ 幂函数：$y=x^{\mu}$ ( $\mu \in R$ 是常数 ) 指数函数：$y=a^{x}$ ( $a&gt;0$ 且 $a \neq 1$ ) 对数函数：$y=\log_ax$ ( $a&gt;0$ 且 $a \neq 1$ ) 三角函数：$y=\sin x$，$y=\cos x$，$y=\tan x$ 等等 反三角函数：$y=\arcsin x$，$y=\arccos x$，$y=\arctan x$ 等等  二、数列的极限 1、定义：设 {$x_n$} 为一数列，如果存在常数 $a$，对于任意给定的正数 $\varepsilon$（不论它多么小），总存在正整数 $N$，使得当 $n&gt;N$ 时，不等式 $|x_n - a| &lt; \varepsilon$ 都成立，那么称常数 $a$ 是数列 $x_n$ 的极限，或者称数列 $x_n$ 收敛于 $a$，记为 $\lim_{n \to \infty} x_n=a$。上述定义可简记为： $$\lim_{n \to \infty} x_n=a \iff \forall \varepsilon&gt;0, \exists N \in N^{+}, \text{ 当 } n&gt;N \text{ 时 }, \text{ 有 } |x_n-a|&lt;\varepsilon $$</div><div class="post-footer">
+        <a href="/2018-12-02-%E6%95%B0%E5%AD%A6-%E5%87%BD%E6%95%B0%E4%B8%8E%E6%9E%81%E9%99%90/">Read More</a></div>
+</article>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+        <a href="/2018-11-30-%E8%AE%BA%E6%96%87-saql/">SAQL</a>
+    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
+            published on&nbsp;<time datetime=2018-11-30>2018-11-30</time>
+        </span>&nbsp;
+            <span class="post-category">included in<a href="/categories/thesis/">
+                        <i class="far fa-folder fa-fw"></i>Thesis
+                    </a></span></div><div class="content">一、背景及问题
+目前一些高级的网络攻击如 APT（advanced persistent threats）威胁并损害着很多公司的信息安全。它们利用主机的各种弱点，通过一系列步骤来进行攻击。
+为了应对这些攻击，一些基于系统监控（System Monitoring）的方法被提出，用于快速侦查异常，或者定位存在风险的系统事件（System Event）。这些方法主要通过对主机的系统调用（system calls）进行监控，收集系统事件的信息，来实现系统异常的侦查。然而，目前这些方法存在几点问题和困难：
+ 时间要求严格。要避免主机受到进一步的伤害导致无法修复，该监控系统必须做到实时在线保护主机，实时侦查主机内的异常事件，这就犹如进行实时的“大海捞针” 如何让监控系统实时地结合系统管理员、安全专家、数据分析专家们的领域知识（domain knowledge）？因为这些领域知识对于系统异常的侦查是非常有帮助的，甚至是必要的 实时的系统监控自然会产生海量的日志数据，这就要求分析数据侦查异常的算法必须非常高效，因为是实时的  遗憾的是目前没有任何一个监控系统能够解决以上问题，尤其是第二点——已有的监控系统往往只专注于特定的异常侦查，无法提供足够的支持以便用户可以灵活地引入专家的领域知识。
+二、解决方案
+论文提出了一个基于流的异常查询系统，以及一种基于流的异常查询语言（Streambased Anomaly Query Language，SAQL）。该系统主要面向 4 种异常：
+ Rule-based Anomaly:基于规则的异常，某个进程在短时间内读取大量的命令日志文件，这种异常通常意味着某个非法的用户想要探测合法用户的常用命令或者操作习惯。为了侦查这种异常，SAQL 使用事件模式（event patterns）来表达操作系统中的各种活动：定义一个事件表示为 {subject-operation-object}，例如 {process p1 write file f2}。有了如此统一定义的形式，用户就可以在查询的时间灵活地定义领域知识，甚至可以定制基于特定规则的异常检测 Time-Series Anomaly:时间序列的异常，某个进程在一段时间内不正常地传送了大量的数据。为了探测到这种异常，SAQL 构造带状态的滑动窗口，将数据流进行分段，那么只要通过与历史滑动窗口的状态进行比较，就可以检测到某个时间段对应的数据量是否异常地增大 Invariant-based Anomaly:基于不变的异常？一个进程启动了一个异常的进程，如 apache.exe 本应该启动 httpd.exe，但却启动了一个在训练模型时从来未出现过的进程 java.exe。这种情况同样可以使用上述带状态滑动窗口的模型，只要提前训练学习好正常情况下的系统状态（可用窗口状态表达），便可检测此类异常。 Outlier-based Anomaly:基于异常的异常，通过与同等的进程的比较来确定异常。例如，通过比较发现，某个进程向某个 IP 地址传送的数据量比同等进程向其他 IP 地址传送的数据量大太多，那么这个进程就值得怀疑。SAQL 可以使用聚类算法对事件进行聚类，以便在同类的事件中进行比较并发现异常。  除此之外，系统往往需要同时处理大批量的异常检测查询，而目前一般的检测系统如 Siddhi、Esper、Flink 采取的做法都是为每一个 query 复制一份数据，由于操作系统的日志文件是非常巨大的，这样的复制操作会使得系统非常低效。针对这个问题，论文提出一个名为 master-dependent-query 的查询模式，它把用户提交的各种查询进行兼容性分析，然后将兼容的查询分到同一个组，每个组的查询都共用一份数据，这样避免了大量的数据复制，提高了查询分析的效率。
+三、总结
+总的来说，文章的主要工作是提出了一个用于描述操作系统事件的形式化语言 SAQL，使得用户和系统可以统一地描述各种正常和异常的事件，从而可以灵活地加入专家领域知识并进行异常检测，无需改动系统本身。另外提高为查询效率，文章提出了查询分组的模型，让可以相互兼容的查询共用日志数据，避免了为每个查询复制一次数据的低效模式。</div><div class="post-footer">
+        <a href="/2018-11-30-%E8%AE%BA%E6%96%87-saql/">Read More</a></div>
+</article>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+        <a href="/2018-11-24-%E8%AE%BA%E6%96%87-rtag/">RTAG</a>
+    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
+            published on&nbsp;<time datetime=2018-11-24>2018-11-24</time>
+        </span>&nbsp;
+            <span class="post-category">included in<a href="/categories/thesis/">
+                        <i class="far fa-folder fa-fw"></i>Thesis
+                    </a></span></div><div class="content">一、背景及问题
+目前出现一些高级的多主机攻击手段，它们通过使用“command-and-control(C&amp;C)”通道或者代理服务器来实现攻击者隐藏和攻击方式隐藏。例如 GitPwnd 攻击，它利用了 Git 的同步机制来泄漏被攻击者的私有数据，大致过程如下：
+ 攻击者事先在一个流行的 git repository 的镜像中 放置一个钩子脚本，这个脚本会指向一个恶意的 C&amp;C repository 当被攻击者用 git 复制该 repository 镜像时，git 会自动地连带那个恶意 C&amp;C repository 一起复制到被攻击者的 git 服务器 当被攻击者在 repository 上执行某些特定操作如 git commit 时，恶意 C&amp;C repository 被触发，把被攻击者的数据私下发送到攻击者的主机而不会被察觉  针对这类攻击，一种称为动态信息流追踪（Dynamic information flow tracking , DIFT）的技术被提出并应用于攻击侦查。然而，目前存在的大多数攻击侦查系统只能对单个主机的攻击进行侦查，例如对某个主机下的 system-call-level 或 instruction-level 的事件进行监控，而无法侦查如上述 GitPwnd 之类的跨主机攻击。
+二、解决方案
+论文提出了一种基于记录-回放的信息流标签和追踪系统（a record-and-replay-based data flow tagging and tracking system, called RTAG）。RTAG 首先通过隔断标签依赖关系（主机之间的信息流）来摆脱多个主机之间信息流顺序的约束，使 DIFT 可以并行执行。其次，RTAG 通过精心设计的数据结构来减少 DIFT 的内存消耗（90%）和时间消耗（60%-90%）。
+标签系统 RTAG 的大致设计思路如下：
+ 使用 &lt;主机 mac 地址 + inode + dev + crtime + byte-offset&gt; 来实现全局唯一标签（global tag），标识感兴趣文件中的每个字节，实现对文件在多个主机之间的信息流的追踪 使用与 RAIN 系统一样的资源图（provenance graph） 来追踪程序之间的信息流，如程序到文件、程序到程序、文件到程序 使用可达性分析算法，对多主机的全局资源图进行剪枝，得到只与攻击相关的资源子图，减少后续分析的计算量。为实现此跨主机的可达性追踪，RAIN 需要在 socket 层次（TCP &amp; UDP）上对主机之间的网络通讯进行监控 采用与 RAIN 系统一样的记录-回放策略（record-and-replay），即平时只记录信息流动的信息，只有在执行攻击分析查询时再通过回放记录来执行 DIFT（因为计算量和内存消耗较大，无法实时在线执行） 使用 32-bit 的数据版本号来隔断 tags 之间的依赖关系，使得每个 replay 可以单独执行而无需执行所依赖的数据版本的 replay。数据版本号在数据（即文件的数据）被执行 write() 之类的系统调用时自动增加 使用 global tag 和 local tag 转换技术来减低资源消耗量。因为在单个主机内执行攻击分析时，没有必要因为使用 global tag 而耗费内存资源。因此在执行这种单个主机内的 DIFT 之前，RTAG 会先把 global tag 转换成 local tag，待执行完后再换回来  三、总结</div><div class="post-footer">
+        <a href="/2018-11-24-%E8%AE%BA%E6%96%87-rtag/">Read More</a></div>
 </article>
 <ul class="pagination"><li class="page-item ">
                     <span class="page-link">
@@ -189,7 +191,7 @@ $$S=\sum_{i=1}^{n}f(\xi)\Delta x_i$$
                     <span class="page-link" aria-hidden="true">&hellip;</span>
                 </li><li class="page-item ">
                     <span class="page-link">
-                        <a href="/page/17/">17</a>
+                        <a href="/page/15/">15</a>
                     </span>
                 </li></ul></div></div>
             </main><footer class="footer">

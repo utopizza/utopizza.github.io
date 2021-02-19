@@ -77,68 +77,6 @@
         alt="Posts"
         title="Posts" /></a></div><h1 class="home-title">CODE FOR FOOD :)</h1><h2 class="home-subtitle"><div id="id-1" class="typeit"></div></h2><div class="social-links"><a href="https://github.com/utopizza" title="GitHub" target="_blank" rel="noopener noreffer me"><i class="fab fa-github-alt fa-fw"></i></a><a href="mailto:648847079@qq.com" title="Email" rel=" me"><i class="far fa-envelope fa-fw"></i></a></div></div>
 <article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
-        <a href="/2019-05-09-%E8%AE%BA%E6%96%87-spark/">Spark</a>
-    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
-            published on&nbsp;<time datetime=2019-05-09>2019-05-09</time>
-        </span>&nbsp;
-            <span class="post-category">included in<a href="/categories/thesis/">
-                        <i class="far fa-folder fa-fw"></i>Thesis
-                    </a></span></div><div class="content">一、背景及问题
-在谷歌提出了 MapReduce 编程模型之后，UC Berkeley 在此基础上提出了一个更加高效的模型，称为 Spark。其核心思想是将 MapReduce 的中间结果缓存到内存中，使得 Workers 可以快速读取数据而无需启动延迟极大的磁盘读取操作。这种编程模型针对一些迭代次数高、需要反复使用或者修改数据的计算任务尤其有效。根据论文的实验，Spark 在一些高迭代次数的算法实验中处理速度是 MapReduce 的 10 倍以上。
-然而因为没有了将中间结果写磁盘的操作来保证容灾和恢复，因此 Spark 设计了一套别的方案来达到该目的，那就是 RDD + Lineage。RDD(Resilient Distribute Datasets)称为弹性数据集，它是一种对被操作数据的抽象，而 Lineage 称为“血统”，顾名思义它记录了每一个 RDD 演变过程中的上下文信息。当故障出现时，可以根据丢失的 RDD 的 Lineage 来追寻它的祖先 RDD ，然后重新执行演化即可恢复出丢失的 RDD。
-二、Spark 编程模型
-使用 Spark 的用户通过编写一个称为 Driver Program 的程序来实现自己的计算任务。Spark 为用户的并行化编程提供了三个组件：resilient distribution dataset、 parallel operations、 parallel operations。
-(1) Resilient Distribution Datasets(RDDs)：一个 RDD 是一个可恢复的只读对象集合，它无须存储在磁盘中。每次对一个 RDD 的操作都会被记录下来，从而每个 RDD 可以沿着它的演化过程一直追寻它的祖先 RDD，甚至可以追寻到最开始的第一次从磁盘读取初始数据。因此这个机制保证了任何一个 RDD 都可以被恢复。具体在 Spark 系统中，RDD 由 Scala 对象来表达。论文中规定了 RDD 仅可以从四种方式构造：</div><div class="post-footer">
-        <a href="/2019-05-09-%E8%AE%BA%E6%96%87-spark/">Read More</a></div>
-</article>
-<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
-        <a href="/2019-05-08-%E8%AE%BA%E6%96%87-mapreduce/">MapReduce</a>
-    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
-            published on&nbsp;<time datetime=2019-05-08>2019-05-08</time>
-        </span>&nbsp;
-            <span class="post-category">included in<a href="/categories/thesis/">
-                        <i class="far fa-folder fa-fw"></i>Thesis
-                    </a></span></div><div class="content">一、背景及问题
-这两天总算把谷歌三大论文之一的 MapReduce 看了。这篇论文的影响力就不多说了，谷歌AI首席科学家 Jeffrey Dean 的代表作之一。该论文主要提出了一个称为 MapReduce 的编程模型，主要是为了解决谷歌公司自身需要处理海量数据的问题。众所周知，谷歌的主要业务是搜索引擎，每天需要处理爬取到的海量文件和网页，以及对这些数据进行索引计算、处理查询请求等等。显然单台机器难以完成这样巨大的计算任务，必须使用机器集群。但如果使用专业的服务器，集群的成本就太高了。为了降低成本，谷歌采用了普通的计算机来搭建这个集群。为了实现这个目的，必须设计一套可以自动并行化计算、自我管理调度、以及拥有良好容错性的集群计算方案，因此 Jeffrey Dean 提出了这套编程模型，只要按照这个编程模型来调用接口实现计算任务，这些计算就可以自动地在一个由普通机器搭建的分布式集群上被并行地执行。
-二、解决方案
-具体来说，MapReduce 这个编程模型可以简单地分为 Map 部分以及 Reduce 部分。
-Map 函数：由用户实现该接口，其功能是使算法输入的初始 key-value 对转化成用户定义的新 key-value 对。接下来系统会自动把它们按新 key 分组，即一个新 key 对应一组 values（key-values），并传递给 Reduce 函数。这一步类似 SQL 中的 Select GroupBy 操作。
-$$key_{1}/value_{1} \implies key_{2}/value_{2} \implies key_{2}/value_{2}(s)$$
-Reduce 函数：由用户实现该接口，其功能是使从 Map 函数接收过来的 key-values 组按用户定义的计算方式进行 Merge，然后输出每个 key 组的最终结果。这一步类似定义 SQL 中对被 GroupBy 的字段的聚合函数。
-$$key_{2}/value_{2}(s) \implies key_{2}/value_{3} $$
-论文中给出了一个具体例子，从一个巨大的文档集中统计每个单词的出现次数。每个单词可以看作 key，它的出现次数就是最终想得到的 value。按照 MapReduce 编程范式，可以分为两步，在 Map 阶段输入文档集合，为每个文档拆解出每个单词，并为每个单词赋值它的 value 为 1，表示这个单词在此出现了一次；在 Reduce 阶段，把每个单词对应的分组进行 value 的求和，即可得到每个单词的总出现次数。</div><div class="post-footer">
-        <a href="/2019-05-08-%E8%AE%BA%E6%96%87-mapreduce/">Read More</a></div>
-</article>
-<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
-        <a href="/2019-04-30-%E6%80%BB%E7%BB%93-%E9%98%B6%E6%AE%B5%E6%80%BB%E7%BB%937/">阶段总结(7)</a>
-    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
-            published on&nbsp;<time datetime=2019-04-30>2019-04-30</time>
-        </span>&nbsp;
-            <span class="post-category">included in<a href="/categories/summary/">
-                        <i class="far fa-folder fa-fw"></i>Summary
-                    </a></span></div><div class="content">上一次写阶段总结是2018年10月，转眼过了半年多。自从10月初选定了offer后，就转去忙论文、数学、以及英语。
-一、论文
-因为之前看过十来篇兴趣点推荐相关的顶会论文，考虑了下就还是继续做这个方向。从10月份开始，断断续续开始重新看了一遍之前看过的论文，以及做过的笔记和思路。因为之前专注于找工作，从4月份到9月份一直都是在看CS基础以及研发技术相关的书，学术工作放下了半年多，很多细节都忘记了。幸好之前认真做了笔记，复习起来不是太吃力。花了大约一星期的上午完成了复习，感觉还是没啥新灵感，继续用dblp去找了很多新的论文来看。印象中大概一直到快要放寒假的时候才想出了一个基本的雏形，用英文写了个小论文版本。寒假放了13天（2月1日到13日），在家基本都是休息，也没继续弄论文。回来后在公司陆续完成了论文的后半部分。思路基本是定下来了，给这边的老师看了下，确定思路没啥问题后，就差不多搬回学校了（3月3日）。
-搬回学校之后就开始做实验，幸亏舍友给力，提供了他们实验室的服务器，不然我这小破笔记本完全不可能做的出实验。实验基本代码很快就写出来了，大概三天左右，接下来就是无尽的噩梦般的炼丹（调参）了。不知道是代码写错还是啥原因，我发现很有的参数即使是很小的改变，竟然对实验结果的影响很大（大雾）。到了三月中下旬，实验结果调得差不多之后，就感觉开始写大论文（毕业论文）。因为你之前已经写好了英文版的小论文，所以大论文写起来比较轻松，一共只用了6天左右。其中花的时间比较多的是第一章绪论，扯了很多废话，找了一些中文的参考文献。后面的相关理论、自己提出的模型、实验设计等等几章直接从英文小论文翻译下扩充下，雏形就基本出来了。四月份基本都在学校修修补补论文以及继续调参，还有就是考虑优化实验里的SGD。四月底，定了稿，发给了导师，以及回公司找导师签字一些报告。
-总而言之，从2018年10月到2019年4月主要在弄论文，时间线大概为
- 10月份主要复习以前看过的论文 11、12月看新论文 1月份开始构思自己的模型，以及写出一个基本的英语小论文雏形 2月份中旬寒假回来后继续完善英文小论文，2月底跟导师确认思路没有问题 3月初搬回学校，开始做实验。3月中下旬用一周写出了大论文 4月份继续修补大论文以及实验调参。4月底定稿。  二、数学
-11月、12月、1月这三个月因为比较闲，回头复习了一波微积分、线性代数、概率统计。其中，微积分主要通过复习本科时候学的《高等数学》，线性代数主要通过网上的教学视频以及研究生学的《矩阵论》，概率统计看的是中科大的《概率论与数理统计》。一般是晚上下班回去看书和吃饭的时候看视频，算是一个小复习。下面贴出资料链接。这波数学复习主要以晚上回宿舍看书为主，最后整理了大概9篇 博客。
- 《高等数学》 《概率论与数理统计》 《矩阵论》 MIT公开课：线性代数 MIT公开课：微积分重点 3b1b：线性代数的本质 3b1b：微积分的本质  三、英语
-10月、11月、12月三个月基本上都是在背四六级、雅思词汇。因为定了个考雅思的目标。因为习惯了这个新东方系列的排版，索性就又买了这个系列的雅思词汇。背单词的同时也注意听力和写作。针对听力，主要就是直接听真题听力，把MP3下载到音乐播放软件，整天整夜没完没了地放。至于写作，买了本写作的书和一本笔记本，每天抄一篇范文，然后读几遍。从3月份搬回学校之后，因为每天去图书馆，就很少读英语范文了，改成用百词斩背单词。总的来说，这几个月基本把四六级背得比较熟了，雅思那本过了两三遍，词汇量在上面的网上测是9000个左右，百词斩测是一万个左右。搬回学校前主要以背单词书、抄写范文为主。搬回学校后以刷百词斩复习、在网上做雅思题为主。因为回学校后做论文实验花了很多时间，分配给英语的时间不是很多，练的比较少，目前效果不太理想。现在论文定了稿，后面重新把英语提上日程
- 《新东方雅思词汇》 《顾家北手把手教你雅思写作》 雅思在线 词汇量测试  </div><div class="post-footer">
-        <a href="/2019-04-30-%E6%80%BB%E7%BB%93-%E9%98%B6%E6%AE%B5%E6%80%BB%E7%BB%937/">Read More</a></div>
-</article>
-<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
-        <a href="/2019-01-27-%E8%AE%BA%E6%96%87-mci/">MCI</a>
-    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
-            published on&nbsp;<time datetime=2019-01-27>2019-01-27</time>
-        </span>&nbsp;
-            <span class="post-category">included in<a href="/categories/thesis/">
-                        <i class="far fa-folder fa-fw"></i>Thesis
-                    </a></span></div><div class="content">该文章依然是针对 APT 攻击而提出的一种基于模型推断的攻击因果分析。该方法比以往方法的优势在于不需要在系统中做任何修改，只需要启动日志，对系统事件进行记录即可。该方法的核心技术是使用一种称为 LDX 的动态分析方案，可以在系统调用之间进行因果推断。</div><div class="post-footer">
-        <a href="/2019-01-27-%E8%AE%BA%E6%96%87-mci/">Read More</a></div>
-</article>
-<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
         <a href="/2019-01-19-%E8%AE%BA%E6%96%87-oblix/">Oblix</a>
     </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
             published on&nbsp;<time datetime=2019-01-19>2019-01-19</time>
@@ -179,6 +117,83 @@ $$F(x)=P(X \leq x)=\sum_{{i|a_i \leq x}}p_i \quad (-\infty &lt; x &lt; +\infty)$
  当 $x_1 &lt; x_2$ 时，有 $F(x_1) \leq F(x_2)$ 当 $x \to +\infty$ 时，$F(x) \to 1$；当 $x \to -\infty$ 时，$F(x) \to 0$  3、常见的离散型随机变量</div><div class="post-footer">
         <a href="/2019-01-16-%E6%A6%82%E7%8E%87-%E4%B8%80%E7%BB%B4%E9%9A%8F%E6%9C%BA%E5%8F%98%E9%87%8F/">Read More</a></div>
 </article>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+        <a href="/2019-01-12-%E8%AE%BA%E6%96%87-winnower/">Winnower</a>
+    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
+            published on&nbsp;<time datetime=2019-01-12>2019-01-12</time>
+        </span>&nbsp;
+            <span class="post-category">included in<a href="/categories/thesis/">
+                        <i class="far fa-folder fa-fw"></i>Thesis
+                    </a></span></div><div class="content">一、背景及问题
+这篇文章针对的问题和前面看过的 《Dependence-Preserving Data Compaction for Scalable Forensic Analysis》和 这篇文章类似，目标都是减小日志文件的体积，以减少存储空间并提高攻击侦查的速度。
+这篇文章主要针对的是分布式服务器集群下的 APT 攻击。在这样的情景中，服务器集群有一个中心监控节点（Monitor node），以及大量的工作节点（Worker nodes）。监控节点与所有的工作节点保持通信。工作节点在生产环境中不断地产生日志记录。当发起监控节点攻击侦查分析时，它需要从多个工作节点上拷贝日志文件到本地，再进行攻击分析。问题就出现在这里，大量的工作节点每天都产生大量的日志记录，监控节点几乎不可能从所有工作节点上拷贝全部的日志记录，因为这样的拷贝任务不但需要消耗大量的网络资源，并且需要消耗大量的存储空间。
+二、解决方案
+这篇文章和上述的那篇文章有点类似，其核心思想都是通过对资源图（Provenance Graph）进行剪枝、压缩、优化，从而减小对应的日志记录体积。不同的只是他们使用的剪枝算法不同而已，这篇文章使用的算法是一个称为 Deterministic Finite Automata (DFA) 的算法，这个算法可以对一个复杂的图中的每一个节点、边（对应系统日志记录中的事件以及信息流向）进行推断，判断出它是不是冗余的，如果是冗余的就可以去掉，从而极大提精简了日志记录。
+文章提出的模型称为 Winnower，具体剪枝算法较复杂，主要分为图抽象（Provenance Graph Abstraction）和图推断（Provenance Graph Induction）两部分，其中涉及一些图语义学习（Graph Grammar Learning）的知识，以前没怎么接触过，感觉不太懂，以后有时间再补一下这方面的学习。</div><div class="post-footer">
+        <a href="/2019-01-12-%E8%AE%BA%E6%96%87-winnower/">Read More</a></div>
+</article>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+        <a href="/2019-01-12-%E6%95%B0%E5%AD%A6-%E7%BA%BF%E6%80%A7%E5%8F%98%E6%8D%A2%E7%9A%84%E7%9F%A9%E9%98%B5/">线性变换的矩阵</a>
+    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
+            published on&nbsp;<time datetime=2019-01-12>2019-01-12</time>
+        </span>&nbsp;
+            <span class="post-category">included in<a href="/categories/math/">
+                        <i class="far fa-folder fa-fw"></i>Math
+                    </a></span></div><div class="content">我们知道，线性空间中，在给定基的情况下，对任意一个向量 $\vec{v}$ 施予一个线性变换 $T$ 时，就让该向量的坐标向量左乘某个矩阵 $A$ 即可。例如，设在线性空间 $V_n(F)$ 中，取一组基为 ${\vec{\alpha_1},\vec{\alpha_2},\cdots,\vec{\alpha_n}}$，向量 $\vec{w}$ 在该基下的坐标为 $\vec{Y}$，向量 $\vec{v}$ 在该基下的坐标为 $\vec{X}$，即：
+$$\vec{w}=(\vec{\alpha_1},\vec{\alpha_2},\cdots,\vec{\alpha_n}) \vec{Y}$$
+$$\vec{v}=(\vec{\alpha_1},\vec{\alpha_2},\cdots,\vec{\alpha_n}) \vec{X}$$
+如果向量 $\vec{w}$ 是由向量 $\vec{v}$ 经过线性变换 $T$ 得到的，即
+$$\vec{w}=T(\vec{v})$$
+那么它们的坐标关系为：
+$$\vec{Y}=A \vec{X}$$
+并且，线性空间中任一个线性变换 $T$ 可以由某个矩阵 $A$ 唯一对应：
+$$T \iff A$$
+为什么？这个矩阵 $A$ 如何得到？接下来复习一下 $A$ 的推导。需要的预备知识：
+ 线性空间定义 线性空间的基与坐标 线性变换定义   记 $T$ 为线性空间 $V_n(F)$ 上的线性变换。记 ${\vec{\alpha_1},\vec{\alpha_2},\cdots,\vec{\alpha_n}}$ 为 $V_n(F)$ 的一组基，则对任意向量 $\forall \pmb\beta \in V_n(F)$，由基的定义可得
+ $$\vec{v}=(\vec{\alpha_1},\vec{\alpha_2},\cdots,\vec{\alpha_n}) \vec{X}=(\vec{\alpha_1},\vec{\alpha_2},\cdots,\vec{\alpha_n}) \begin{pmatrix} x_1 \\ x_2 \\ \vdots \\ x_n \end{pmatrix} =x_1\vec{\alpha_1}+x_2\vec{\alpha_2}+\cdots+x_n\vec{\alpha_n}$$  对 $\vec{v}$ 施予线性变换 $T$：</div><div class="post-footer">
+        <a href="/2019-01-12-%E6%95%B0%E5%AD%A6-%E7%BA%BF%E6%80%A7%E5%8F%98%E6%8D%A2%E7%9A%84%E7%9F%A9%E9%98%B5/">Read More</a></div>
+</article>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+        <a href="/2019-01-11-%E6%95%B0%E5%AD%A6-%E6%B3%B0%E5%8B%92%E5%B1%95%E5%BC%80%E5%BC%8F/">泰勒展开式</a>
+    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
+            published on&nbsp;<time datetime=2019-01-11>2019-01-11</time>
+        </span>&nbsp;
+            <span class="post-category">included in<a href="/categories/math/">
+                        <i class="far fa-folder fa-fw"></i>Math
+                    </a></span></div><div class="content">泰勒公式是怎么被推导出来的，以及为什么可以用多项式来逼近任意函数？
+根据微积分的“以直代曲”的思想，对一个连续可导的函数 $f(x)$，当因变量 $x$ 在某点 $x_0$ 附近的改变值为 $\Delta x$ 时，过该点的切线上对应的纵坐标增量为 $dy=f&rsquo;(x_0) \cdot \Delta x$。虽然 $f(x)$ 实际上的纵坐标增量是 $\Delta y=f(x_0+\Delta x)-f(x_0)$，但是如果 $\Delta x$ 非常小，那么可以近似认为切线的纵坐标增量等于 $f(x)$ 的纵坐标增量。即：
+$$\Delta y=f(x_0+\Delta x)-f(x_0) \approx f&rsquo;(x_0) \cdot \Delta x$$
+那么对于 $x_0$ 附近的任意一点 $x$，有 $\Delta x=x-x_0$，代入上式得：
+$$f(x)-f(x_0) \approx f&rsquo;(x_0) \cdot (x-x_0)$$
+将 $f(x_0)$ 移到右边，凑出关于 $x$ 的函数表达形式：
+$$f(x) \approx f(x_0)+f&rsquo;(x_0) \cdot (x-x_0)$$
+观察这个式子，显然它就是利用已知的一个点 $(x_0,f(x_0))$ 及在该点处的一阶导数 $f&rsquo;(x_0)$ 来近似表达了在 $x_0$ 附近的原函数 $f(x)$，而且它是一个线性的函数，非常便于我们计算和处理，特别是在原函数 $f(x)$ 是一个非常复杂的函数的情况下。
+到了这里，严谨的数学家肯定不满足于如此，因为这只是一个非常粗略的近似。那么如何进一步逼近原函数 $f(x)$？甚至什么时候可以取等号？这就是泰勒以及众多数学家的贡献了。
+既然一阶导数和一次多项式可以用来近似代替函数 $f(x)$，而现在希望能进一步提高近似的精度，那么一个非常自然、直接的想法就是使用更高阶的导数以及更高阶的多项式。因为多项式函数无论是连续求导、变形、还是数值计算，都要比其他一些函数例如三角函数、指数函数、对数函数、幂函数等容易得多，所以自然选择多项式来作为基本构件。这其实在生活中是很常见的思路：
+ 当遇到一个复杂的、无法直接使用的东西时，我们自然想办法用其他一些简单的、方便使用的东西去近似模拟它，得到和它基本相近的功能 当我们要去近似模拟时，要直接一步到位是很难的，一般是先模拟一个大体的近似，然后在这个基础上，一步步去完善细节，一步步提高精度 如第一点所说，我们肯定是使用简单的零部件去构建整体，并且越简单越好，因为越简单则越容易理解和改造、控制。其实大自然亦如此，复杂如人的神经系统、大脑组织，也是由一个个十分简单、有效的神经细胞组建而成  相信上面的陈述应该可以说服你，像数学家那样使用高阶导数和高阶多项式来进行近似代替某个复杂但连续并且可导的函数 $f(x)$。我们知道，最简单的多项式函数表达形式如下：</div><div class="post-footer">
+        <a href="/2019-01-11-%E6%95%B0%E5%AD%A6-%E6%B3%B0%E5%8B%92%E5%B1%95%E5%BC%80%E5%BC%8F/">Read More</a></div>
+</article>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+        <a href="/2019-01-09-%E6%A6%82%E7%8E%87-%E4%BA%8B%E4%BB%B6%E4%B8%8E%E6%A6%82%E7%8E%87/">事件与概率</a>
+    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
+            published on&nbsp;<time datetime=2019-01-09>2019-01-09</time>
+        </span>&nbsp;
+            <span class="post-category">included in<a href="/categories/math/">
+                        <i class="far fa-folder fa-fw"></i>Math
+                    </a></span></div><div class="content">一、概率 1、概率的公理化定义（柯氏理论体系）：事件有概率，其大小随事件而异。也即，概率是事件的函数：事件 $A$ 的概率记为 $P(A)$。
+2、古典概率：设一个试验有 $N$ 个等可能的结果，而事件 $E$ 恰包含其中的 $M$ 个结果，则事件 $E$ 的概率，记为 $P(E)$，定义为
+$$P(E)=\frac{M}{N}$$
+3、古典概率计算归结为计算两个数 $M$ 和 $N$。这种计算大多涉及排列组合。排列组合公式： (1) $n$ 个相异物件取 $r(1\leq r \leq n)$ 个的不同排列总数为
+$$A_{n}^{r}=n(n-1)(n-2) \cdots (n-r+1)=\frac{n!}{(n-r)!}$$
+(2) $n$ 个相异物件取 $r(1\leq r \leq n)$ 个的不同组合总数为
+$$C_{n}^{r}=\frac{A_{n}^{r}}{r!}=\frac{n!}{r!(n-r)!}$$
+(3) 组合系数 $C_{n}^{r}$ 又常称为二项式系数，因为它出现在二项式展开的公式中：
+$$(a+b)^n=\sum_{i=0}^{n}C_{n}^{i}a^{i}b^{n-i}$$
+(4) $n$ 个相异物分成 $k$ 堆，各堆物件数分别为 $r_1,\cdots,r_k$，分法种数为：
+$$\frac{n!}{r_1! \cdots r_k!}$$
+二、事件的运算、条件概率与独立性 1、事件的蕴含、包含以及相等：在同一试验下的两个事件 $A$ 和 $B$，如果： (1) 当 $A$ 发生时 $B$ 必发生，则称 $A$ 蕴含 $B$，或者 $B$ 包含 A，记为 $A \subset B$ (2) 若 $A$、$B$ 相互蕴含，即 $A \subset B$ 且 $B \subset A$，则称 $A$、$B$ 两事件相等，记为 $A=B$</div><div class="post-footer">
+        <a href="/2019-01-09-%E6%A6%82%E7%8E%87-%E4%BA%8B%E4%BB%B6%E4%B8%8E%E6%A6%82%E7%8E%87/">Read More</a></div>
+</article>
 <ul class="pagination"><li class="page-item ">
                     <span class="page-link">
                         <a href="/">1</a>
@@ -199,7 +214,7 @@ $$F(x)=P(X \leq x)=\sum_{{i|a_i \leq x}}p_i \quad (-\infty &lt; x &lt; +\infty)$
                     <span class="page-link" aria-hidden="true">&hellip;</span>
                 </li><li class="page-item ">
                     <span class="page-link">
-                        <a href="/page/17/">17</a>
+                        <a href="/page/15/">15</a>
                     </span>
                 </li></ul></div></div>
             </main><footer class="footer">

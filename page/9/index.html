@@ -77,122 +77,135 @@
         alt="Posts"
         title="Posts" /></a></div><h1 class="home-title">CODE FOR FOOD :)</h1><h2 class="home-subtitle"><div id="id-1" class="typeit"></div></h2><div class="social-links"><a href="https://github.com/utopizza" title="GitHub" target="_blank" rel="noopener noreffer me"><i class="fab fa-github-alt fa-fw"></i></a><a href="mailto:648847079@qq.com" title="Email" rel=" me"><i class="far fa-envelope fa-fw"></i></a></div></div>
 <article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
-        <a href="/2018-01-13-%E7%AE%97%E6%B3%95-foursum/">FourSum</a>
+        <a href="/2017-11-20-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E8%AE%AD%E7%BB%83%E8%AF%AF%E5%B7%AE%E4%B8%8E%E6%B5%8B%E8%AF%95%E8%AF%AF%E5%B7%AE/">训练误差与测试误差</a>
     </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
-            published on&nbsp;<time datetime=2018-01-13>2018-01-13</time>
-        </span>&nbsp;
-            <span class="post-category">included in<a href="/categories/algorithm/">
-                        <i class="far fa-folder fa-fw"></i>Algorithm
-                    </a></span></div><div class="content">一、TwoSum
-给定一个整型数组，和一个 target，返回数组中两个数之和等于 target 的所有组合。不能输出重复组合。例如给定数组 [2,3,1,-4,8,3]，target = 4，则满足条件的非重复组合有 [3,1] 和 [-4,8]。
-思路：因为要求输出的是数组元素而不是数组下标，因此可以对数组进行排序（注意，如果题目要求输出数组下标，就不应使用排序，而是使用 HashMap 来优化）。排序之后，使用两个指针分别从数组两头往中间移动搜索整个数组，为避免重复组合，需跳过重复的元素。当指针相遇时搜索结束，因此搜索的时间复杂度为 $O(n)$。（其实如果算上前面的排序操作那么时间复杂度不止$O(n)$。因为所有基于比较的排序算法的时间复杂度下界为 $O(nlogn)$，所以本算法的总时间复杂度实际上应是 $O(n+nlogn)=O(nlogn)$）
-1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17  public List&lt;List&lt;Integer&gt;&gt; TwoSum(int[] nums, int target) { List&lt;List&lt;Integer&gt;&gt; list = new ArrayList&lt;List&lt;Integer&gt;&gt;(); Arrays.sort(nums); int lo = 0, hi = nums.length - 1; while (lo &lt; hi) { int sum = nums[lo] + nums[hi]; if (sum == target) { list.</div><div class="post-footer">
-        <a href="/2018-01-13-%E7%AE%97%E6%B3%95-foursum/">Read More</a></div>
-</article>
-<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
-        <a href="/2018-01-06-%E7%AE%97%E6%B3%95-%E4%BD%8D%E8%BF%90%E7%AE%97%E6%8A%80%E5%B7%A7/">位运算技巧</a>
-    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
-            published on&nbsp;<time datetime=2018-01-06>2018-01-06</time>
-        </span>&nbsp;
-            <span class="post-category">included in<a href="/categories/algorithm/">
-                        <i class="far fa-folder fa-fw"></i>Algorithm
-                    </a></span></div><div class="content">一、6种基本位操作
-   符号 描述 运算规则     &amp; And（按位与） 对应位上同时为 1 时，结果才为 1，否则为 0   $\mid$ Or（按位或） 对应位上同时为 0 时，结果才为 0，否则为 1   ~ Not（取反） 1 变 0，0 变 1   ^ Xor（异或） 对应位上相同时输出 0，相异时输出 1   &laquo; Left Shift（左移） 各二进位全部左移若干位，高位丢弃，低位补 0   &gt;&gt; Right Shift（右移） 各二进位全部右移若干位，低位丢弃，高位分情况    注：
- 计算机内部使用补码作为机器数，正数的补码等于原码，负数的补码等于原码的符号位外取反加一，切记。另外注意机器字长，如果题目没有明确说明，一般默认是32位或64位 这6种操作符中，只有~取反是单目操作符，其它5种都是双目操作符 位操作只能用于整型数据 位操作运算优先级比较低（比加减乘除低），因此一般需要使用括号来保证正确的运算顺序，否则容易出错 右移运算（&gt;&gt;）时，对无符号数，高位补0。对有符号数，各编译器处理方法不一样，有的补符号位（算术右移），有的补0（逻辑右移） Java中的右移（&gt;&gt;）执行的是算术右移，高位补符号位；Java中的无符号（逻辑）右移有单独的运算符号：&gt;&raquo; 另外位操作还有一些复合操作符，如 &amp;=、|=、^=、&laquo;=、&gt;&gt;= 等  二、常用技巧</div><div class="post-footer">
-        <a href="/2018-01-06-%E7%AE%97%E6%B3%95-%E4%BD%8D%E8%BF%90%E7%AE%97%E6%8A%80%E5%B7%A7/">Read More</a></div>
-</article>
-<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
-        <a href="/2017-12-31-%E7%AE%97%E6%B3%95-%E6%9C%BA%E5%99%A8%E6%95%B0%E7%9A%84%E4%B8%89%E7%A7%8D%E7%BC%96%E7%A0%81%E7%AD%96%E7%95%A5/">机器数的三种编码策略</a>
-    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
-            published on&nbsp;<time datetime=2017-12-31>2017-12-31</time>
-        </span>&nbsp;
-            <span class="post-category">included in<a href="/categories/algorithm/">
-                        <i class="far fa-folder fa-fw"></i>Algorithm
-                    </a></span></div><div class="content">一、机器数（Machine Data）与真值（True Value）
-一个数在计算机中的二进制表示形式，叫做这个数的机器数。我们知道，计算机的物理结构决定了它内部只能存储 0 和 1，也即二进制数，那么计算机如何区分表示一个数的正负呢？一般上，计算机用机器数的最高位存放符号，如果最高位是 0 则表示这个数是一个正数。如果最高位是 1 则表示这个数是一个负数。假设计算机字长为 8 位（现在的计算机一般32位和64位），则 +3 转换成二进制机器数就是 0000 0011，-3 转换成二进制机器数是 1000 0011。
-反过来，我们把当一个二进制数作为机器数出现时，它所代表的真实数值为机器数的真值。例如，机器数 0000 0011 的真值为 +000 0001 = +3，机器数 1000 0001 的真值为 –000 0011 = –3。
-下面分别介绍原码，反码，补码，它们实际上就是机器数的三种不同的编码策略。其中，适合人脑理解和计算的是原码，而适合计算机使用的是补码。
-二、原码（Primitive Encoding）
-原码就是直接使用符号位和真值的绝对值的二进制数作为机器码。例如，计算机字长为 8 位时，
-$$[+3]_{原}=0000 , 0011$$
-$$[-3]_{原}=1000 , 0011$$
-由于原码最高位用于表示符号，因此原码可以表示的最大正数为 0111 1111 即 +127，最小负数为 1111 1111 即 -127，因此 8 位字长的原码机器码的取值范围为 [-127, 127]。
-三、反码（Invert Encoding）
-反码的定义为：正数的反码等于它的原码，负数的反码等于其原码的符号位不变，其余各位取反。例如，计算机字长为 8 位时，
-$$[+3]_{反}=0000 , 0011$$
-$$[-3]_{反}=1111 , 1100$$</div><div class="post-footer">
-        <a href="/2017-12-31-%E7%AE%97%E6%B3%95-%E6%9C%BA%E5%99%A8%E6%95%B0%E7%9A%84%E4%B8%89%E7%A7%8D%E7%BC%96%E7%A0%81%E7%AD%96%E7%95%A5/">Read More</a></div>
-</article>
-<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
-        <a href="/2017-12-23-%E6%80%BB%E7%BB%93-%E9%98%B6%E6%AE%B5%E6%80%BB%E7%BB%932/">阶段总结(2)</a>
-    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
-            published on&nbsp;<time datetime=2017-12-30>2017-12-30</time>
-        </span>&nbsp;
-            <span class="post-category">included in<a href="/categories/summary/">
-                        <i class="far fa-folder fa-fw"></i>Summary
-                    </a></span></div><div class="content">上一次总结是8月，到现在12月份过去了4个月。2018元旦快到了，研二上学期也接近尾声，现总结下这四个月的工作。
-2017年9月
-9月份先花了半个月左右的时候整理了本科期间的大部分技术文档和比赛经验，补了些博客。后半个月开始看《算法导论》，主要精力集中于动态规划那一章，自己用 Java 实现了书上的几个算法并按照自己的理解写了几篇博客。之后感觉做题还是太少，理解和熟练程度都不够，便开始在网上搜一些动态规划的经典题目进行补充。这个月基本以补博客为主
-2017年10月
-10月份中秋国庆假回了趟家，到10月9日左右才回学校。这个月过的比较混乱，同时在尝试做论文和算法，写博客。但因为论文的数据问题进度被卡住了，所以主要精力貌似集中于刷 leetcode 的算法题了，那段时间刷了大概有100多道，大部分是 Easy 难度。19号左右，同届的专硕同学和上一届的学硕学长找完工作回来了，请教了不少经验，要了个书单，不过帮助不大，他们找的都是前后台研发岗，不是机器学习和算法岗。这个月可以说主要以刷 leetcode 为主
-2017年11月
-11月份，大神舍友带我打天池比赛。11月8日左右弄到了服务器，选好题，选好了 baseline 模型 LightGBM，我就完全停止了论文和算法的学习，全部精力放在了比赛上面。第一次正式使用 Python 的 pandas，numpy，sklearn 这些工具库来实现机器学习，花了不少精力，学习到了很多非常实用的知识。因为 lgb 的本质是梯度提升树，所以我回头去看书，复习了一遍决策树，提升算法，集成学习，提升树与回归树，推导了一些细节，写了一系列博客。
-2017年12月
-12月份，当然是继续以比赛为主要工作内容。不断尝试新的想法，代码更新并整理了一遍又一遍，成绩排名还行，一直在前20。另外由于题目比较坑，官方的数据有问题，重新发布了两次数据集，导致我们之前的大量调试工作都白费了。同时也逐渐感到遇到提高的瓶颈了，需要继续深入学习新的知识，我们又尝试了模型融合，但是效果并不是很理想。这个月主要精力在调试参数和补决策树的理论知识为主。另外向舍友大神要了个书单和coursera的视频单，但是感觉难度较大，也没太多时间去看了，主要看了吴恩达的《Machine Learning》，并完成作业。
-总的来说，这四个月来完成的主要工作：
- 整理出了本科时的部分技术博客 读《算法导论》，研究并练习动态规划算法 刷了100多道 leetcode 题，从 Easy 难度开始入手 参加天池大数据比赛，初步学习正规使用 Python 看吴恩达《Machine Learning》视频，做课后作业 看了一些 Kaggle 的资料，初步了解 Kaggle   接下来计划：
- 继续弄好天池，争取拿个拿得出手的成绩 继续完成吴恩达《Machine Learning》的后半部分课程 开始刷 leetcode 的 medium 难度的题，适时总结 论文希望能有时间推进进度吧   推荐资料：
- 《程序员的数学》（日）结成浩等 《概率论与数理统计》 陈希孺（中科大版） 《具体数学：计算机学科基础》 Knuth等 《Python for Data Analysis》 《Hands-On Machine Learning with Scikit-Learn and TensorFlow》 Coursera:《Machine Learning Specialization》 Coursera:《Neural Networks and Deep Learning》 Coursera:《Neural Networks for Machine Learning》  </div><div class="post-footer">
-        <a href="/2017-12-23-%E6%80%BB%E7%BB%93-%E9%98%B6%E6%AE%B5%E6%80%BB%E7%BB%932/">Read More</a></div>
-</article>
-<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
-        <a href="/2017-12-12-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92%E5%9C%A8%E6%A2%AF%E5%BA%A6%E6%8F%90%E5%8D%87%E6%A0%91%E4%B8%AD%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E7%9A%84%E6%A2%AF%E5%BA%A6%E6%8E%A8%E5%AF%BC/">逻辑回归在梯度提升树中损失函数的梯度推导</a>
-    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
-            published on&nbsp;<time datetime=2017-12-12>2017-12-12</time>
+            published on&nbsp;<time datetime=2017-11-20>2017-11-20</time>
         </span>&nbsp;
             <span class="post-category">included in<a href="/categories/machinelearning/">
                         <i class="far fa-folder fa-fw"></i>MachineLearning
-                    </a></span></div><div class="content">一、梯度提升树
-因为做比赛最近用到了 LightGBM 来实现逻辑回归，并尝试修改 LightGBM 的目标函数，于是顺便温习一下梯度提升树和逻辑回归，并简单推导了一下逻辑回归在梯度提升树中的损失函数的梯度计算。
-前面的博文介绍过，当损失函数是平方损失和指数损失时，前向加法模型的提升树（回归提升树）可以很方便地进行目标函数的优化并构造决策树。但对于一般的损失函数，前向加法提升树就比较难实现优化。这时就需要使用梯度提升模型的提升树，它能适应一般的损失函数。类似最速下降法，梯度提升树利用损失函数的负梯度在当前模型的值
-$$- \left[ \frac{\partial L(y,f(x_i))}{\partial f(x_i)} \right]$$
-作为回归提升树算法中的残差的近似值，来拟合一个回归树。
-二、逻辑回归
-逻辑回归是比较简单而且应用非常广泛的机器学习算法。它主要用于二分类任务，但是与一般的分类器不同，逻辑回归并不直接给出未知样本的预测类别，而是给出属于某个类别的概率。
-对一个二分类任务，每个训练样本都属于且只属于两种类别之中的一种，即要么是正样本，要么是负样本。习惯上，一般用 $0$ 表示负样本，用 $1$ 表示正样本。
-设训练集一共有 $m$ 个样本，每个样本有 $n$ 个属性，第 $i$ 个训练样本表示为 $x_i=(x_{i}^{(1)},x_{i}^{(2)},\cdots,x_{i}^{(n)})$，$1 \leq i \leq m$。对应地，每个样本有一个类别，设为 $Y$，则对第 $i$ 个样本，要么 $Y_i=1$，要么 $Y_i=0$。
-现在的任务是，给定 $m$ 个已知对应类别的样本 ${(x_1,Y_1),(x_2,Y_2),\cdots,(x_m,Y_m)}$，用来作为训练集，学习一个分类器模型 $f(x,Y)$，然后用这个模型来对未知类别的样本如 $(x_{m+1},？)$ 进行预测，预测它的类别 $Y_{m+1}$ 是等于 $1$ 还是等于 $0$。
-逻辑回归使用 $sigmod$ 函数作为预测模型，它不直接判定某个样本是正样本还是负样本，而是给出一个条件概率，即在已知样本的 $n$ 个属性的情况下，该样本属于正样本或负样本的概率。数学描述为
-$$P(Y=1 \mid x)=\frac{1}{1+e^{-w \cdot x}}$$
-$$P(Y=0 \mid x)=1-\frac{1}{1+e^{-w \cdot x}}$$
-其中 $w$ 是 $n$ 维的向量，每一维对应样本 $x$ 的 $n$ 个特征，可以理解为：$w^{(i)}$ 表示训练样本 $x$ 第 $i$ 个特征 $x^{(i)}$ 的权重。$w \cdot x$ 为两个向量的内积，即</div><div class="post-footer">
-        <a href="/2017-12-12-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92%E5%9C%A8%E6%A2%AF%E5%BA%A6%E6%8F%90%E5%8D%87%E6%A0%91%E4%B8%AD%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E7%9A%84%E6%A2%AF%E5%BA%A6%E6%8E%A8%E5%AF%BC/">Read More</a></div>
+                    </a></span></div><div class="content">今天和队友讨论好准备做交叉验证的时候，我们竟然都搞错了对交叉验证的理解，回过头来看书的时候发现是竟然因为搞错了一些最基本的但十分重要的知识，特此记录一下。
+一、交叉验证（cross validation）
+机器学习中的交叉验证是一种常用的模型选择的方法。交叉验证的基本思想是重复地使用数据，把给定的数据集进行切分，分成训练集和测试集，在此基础上反复地进行训练、测试，并选择最好的模型。
+1、简单交叉验证
+随机地将已给数据集分为两部分，约 70% 作为训练集，剩下 30% 作为测试集。然后用训练集在不同的参数条件下训练模型，得到各个参数不同的模型，接着在测试集上评价模型的测试误差，选出测试集误差最小的模型。 这种方法只把训练集和测试集做一次划分。
+2、$S$ 折交叉验证
+目前应用最多的是 $S$ 折交叉验证，首先随机地将已给数据切分成 $S$ 个互不相交的大小相同的子集，然后利用其中任意 $S-1$ 个子集作为训练集训练得到一个模型，把剩下的那一个子集作为测试集测试模型得到一个测试误差。如此重复 $S$ 次，直到每一个子集都作为一次测试集，一共得出 $S$ 个不同的模型，和 $S$ 个对应的测试误差。最后，选择出这 $S$ 个测试误差中最小的那个模型，作为最终确定的最优模型。
+到这里，我就不明白，为什么这样做可以避免过拟合？选择测试误差最小的那个模型，不就又过拟合了吗？后来查了一下书，其实是我把训练误差和测试误差搞混了，而且过拟合的定义没理解好。
+二、过拟合（over-fitting）
+所谓过拟合，是指在学习时选择的模型包含参数过多，以致于出现这一模型对已知数据预测得很好，但是对未知数据预测很差的现象。也就是说，在训练集上训练误差已经非常小，但在测试集上测试误差却非常大。
+出现这个问题往往是因为在设定训练的目标函数时，只片面地追求对训练数据的预测能力。例如，假设现在有一个任务是用训练集（点集）去拟合一个多项式函数，然后用这个多项式函数去预测一些未知的样本。如果在设定训练的目标函数时，只考虑多项式函数与训练样本总误差的最小化，那么在学习的时候为了找到这个最小误差，模型会不断地提高自己的多项式次数（也即模型的复杂度），尝试用三次，四次，或者更高次的多项式，去逼近所有训练样本，达到最小误差。极端的情况下有可能找到一个极高次的多项式函数，使得所有样本都落在这个函数上，训练样本总误差达到了 $0$。但实际上，数据集中往往包含各种噪音和离群点，而模型却无法分辨，在计算总误差的时候依然包含了这些噪音，为了减小这些误差不得不提高多项式函数的次数。如下图所示，理想的模型其实是一个二次多项式函数，但是由于只考虑了使总误差最小，学习的结果是得到一个高次的多项式函数，那么如果用这个高次多项式来预测本应该是二次多项式的未知数据，那么预测效果将会非常糟糕。
+可以认为，在训练误差已经比较小的情况下（模型训练完成后），测试误差是对过拟合程度的一种衡量。如果模型在测试集上的测试误差越小，说明过拟合程度越小，如果测试误差越大，则说明过拟合程度比较严重了。所以上面交叉验证中，选择测试误差最小的模型，实际上就是过拟合程度最小的模型。
+三、训练误差（training error）与测试误差（test error）
+统计学习的目的是使学习到的模型不仅对已知数据（训练集），而且对未知数据（测试集）都有很好的预测能力。当损失函数给定时，基于损失函数的模型的训练误差和预测误差就成为了模型训练效果评估的标准。
+假设给定训练集为 $Tr={ (x_1,y_1),(x_2,y_2),\cdots,(x_N,y_N) }$，测试集为 $Te={ (x_1,y_1),(x_2,y_2),\cdots,(x_M,y_M) }$，其中 $x_i \in R^n$，$y_i \in R$，选定的损失函数是 $L(Y,f(X))$，学习到的模型是 $Y=\hat{f}(X)$，则输入某个样本到模型得到的预测值为 $\hat{y}_i=\hat{f}(x_i)$，则
+训练误差是模型 $Y=\hat{f}(X)$ 在训练集 $Tr$ 上的平均损失：
+$$R_{emp}(\hat{f})=\frac{1}{N}\sum_{i=1}^{N}L(y_i,\hat{y}_i)$$
+测试误差是模型 $Y=\hat{f}(X)$ 在测试集 $Te$ 上的平均损失：
+$$e_{test}=\frac{1}{M}\sum_{i=1}^{M}L(y_i,\hat{y}_i)$$
+根据前人的经验，训练误差和测试误差与模型有着如下图的关系：当模型的复杂度增大时，训练误差会逐渐减小并趋向于 0，而测试误差会先减小，达到最小值后又增大。
+当选择的模型复杂度过大时，过拟合现象就会发生（训练误差很小，但测试误差很大），这样在训练模型时，就需要防止过拟合，进行最优的模型选择，即选择复杂度适当的模型，目的是找到具有最优泛化能力（最小测试误差）的模型，因为我们训练模型的目的不是让模型完美逼近训练集，而是让模型完美预测未知数据。
+而常用的模型选择方式有两种，一种是上面的交叉验证法，取预测效果最好的众多个模型中的一个，另一个方法就是在目标函数中加入正则项，惩罚模型在学习过程中增大的复杂度。例如在上面所举的例子中，可以在目标函数中加入关于模型复杂度的函数，当模型复杂度越高，这个函数的值就越大。那么这样一来，模型在学习的时候，最小化的目标就不仅仅是训练样本的总误差了，而是训练样本总误差与模型复杂度之和。如此这般就可以因避免片面追求误差最小而提高了复杂度。</div><div class="post-footer">
+        <a href="/2017-11-20-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E8%AE%AD%E7%BB%83%E8%AF%AF%E5%B7%AE%E4%B8%8E%E6%B5%8B%E8%AF%95%E8%AF%AF%E5%B7%AE/">Read More</a></div>
 </article>
 <article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
-        <a href="/2017-12-05-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-randomforest%E4%B8%8Egbdt/">RandomForest与GBDT</a>
+        <a href="/2017-11-18-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-cart%E7%AE%97%E6%B3%95/">CART算法</a>
     </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
-            published on&nbsp;<time datetime=2017-12-05>2017-12-05</time>
+            published on&nbsp;<time datetime=2017-11-18>2017-11-18</time>
         </span>&nbsp;
             <span class="post-category">included in<a href="/categories/machinelearning/">
                         <i class="far fa-folder fa-fw"></i>MachineLearning
-                    </a></span></div><div class="content">一、随机森林（RandomForest）
-前面学习过了 bagging 方法，我们知道该方法是通过有放回随机抽样来构建 $S$ 个和原数据集大小相等的训练集，然后分别进行训练，得到 $S$ 个分类器，再把这些分类器通过多数表决的方式组合得到最终的分类器。
-随机森林算法正是 bagging 方法的一种扩展。随机森林算法不仅对训练集的样本（行）进行抽样，而且对训练集的特征（列）也进行抽样。具体来说，随机森林分为三个步骤：
-1、随机采样
-对于行采样，使用有放回随机采样，和常规 bagging 方法一致，前面已经介绍过，此处不再赘述。
-对于列采样，假设样本有 $M$ 个特征（即训练集有 $M$ 列），那么该算法在每次决策树的节点要分裂的时候，随机选择其中 $m$ 个特征作为考察的特征子集（即只在这 $m$ 个特征之中选出最优特征作为分裂决策，而不是像传统决策树那样考察全部特征）。满足 $m &laquo; M$ ，即每次随机选择的子特征集的大小应远小于总特征集的大小，一般情况下推荐取 $m=log_2(M)$。
-行采样的目的是 “用有限数据模拟无限数据”，而列采样的目的是使每个决策树专注于一小部分特征的学习，使其成为各自的 “窄领域专家”，当最终把这些 “擅长于不同领域的专家” 组合到一起时，就可以大大减少 “所有专家犯同样错误” 的可能，也即过拟合的可能。
-2、完全分裂
-因为有了上一步采样的过程，最终分类器的过拟合现象基本不可能发生，因此在学习各个决策树的时候就按照完全分裂的方式来构造，无须剪枝。如在执行分类任务时，分裂的决策依据就可以选择常规决策树的生成算法的决策依据，如 ID3 算法的信息增益等。
-3、执行决策
-当学习完成，得到 $S$ 个彼此独立的决策树后，就可以把这些决策树组合在一起，作为最终的分类器。组合的方式是常规 bagging 方式，即在对预测输出进行结合时，让各个分类器分别执行预测，得到 $S$ 个预测结果，如果预测任务是分类任务则使用投票法选择票数最多的那个类别返回，如果是回归任务则使用均值法取这些预测结果的均值返回。
-二、梯度提升树（Gradient boosting decision tree，GBDT）
-梯度提升树是 boosting 提升方法中的一种。它的提出是为了解决 “回归提升树在使用一般损失函数的时候，求解目标函数时每一步的优化比较困难” 这一问题。之前学习的回归提升树在使用前向分步算法求解目标函数时，使用的损失函数是指数函数，每一步的优化很简单。但如果要扩展到一般的损失函数，就不那么容易了。因此 Freidman 提出了梯度提升（gradient boosting）算法，利用最速下降法的近似方法，其关键是利用损失函数的负梯度在当前模型的值作为回归提升树中的残差的近似值，来拟合一个回归树。
-梯度提升算法：
-输入：训练数据集 $T$，输入空间 $X$，输出空间 $Y$，损失函数 $L(y,f(x))$ 输出：回归提升树 $f_M(x)$
-1、初始化
-$$f_0(x)=argmin\sum_{i=1}^{N}L(y_i,c)$$</div><div class="post-footer">
-        <a href="/2017-12-05-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-randomforest%E4%B8%8Egbdt/">Read More</a></div>
+                    </a></span></div><div class="content">分类与回归树（classification and regression tree, CART）模型是应用广泛的决策树学习方法，既可以用于分类，也可以用于回归。
+回顾之前学习的 ID3 算法，它的做法是每次选取当前最佳的特征来分割数据，分割依据是该特征的所有取值。也就是说，如果这个特征有 $n$ 个取值，那么数据将立即被分割成 $n$ 分。一旦被切分之后，该特征在之后将不会再被考虑。这样有两个问题：一是切分过于迅速，如果 $n$ 很大，那么数据将被马上切分成大量的小份，影响后续切分的效果。二是，这样的决策树只能处理离散型的数值，如果特征的取值是连续型数值，则需要将其预处理转化成离散型，但这样就会人为地破坏了连续型变量的内在性质。
+CART 算法解决了上述问题。CART 设定决策树是二叉树，每次切分数据只做二元切分，即把数据集切分成两份。对某个连续型的特征，设定一个切分值，大于此值的数据进入左子树，反之则进入右子树。然后递归地构建子树。
+一、CART 生成
+CART 决策树的生成就是递归地构建二叉决策树的过程。对回归树用平方误差最小化准则，对分类树用基尼指数最小化准则，进行特征选择。
+1、回归树的生成
+输入：训练数据集 $D$，特征集 $A$ 输出：回归树 $T$
+(1)、寻找最佳的切分特征 $A_g$ 和对应的最佳切分值 $v$：遍历特征集中每一个特征，尝试以该特征的每一个取值作为切分值，对数据集执行二元切分，然后计算切分误差，如果当前误差小于记录的最小误差，那么更新最优切分特征、最优切分值、最小误差。遍历完成后，返回最优切分特征、最优切分值。
+其中误差一般使用目标变量的方差来计算，设数据集为 $D$，数据集中的目标变量为 $D.Y$，数据集在执行一次二元切分后被切分成 $D_{left}$ 和 $D_{right}$，则此次切分减小的混乱程度为
+$$g(D,A_g,v)=var(D.Y)- \left[ var(D_{left}.Y)+var(D_{right}.Y) \right]$$
+其中 $D_{left}={D \mid D.A_g&gt;v}$，$D_{right}={D \mid D.A_g \leq v}$。
+(2)、如果该结点不能再分（左右两个子集方差之和比原数据集方差还大，或者大于给定的某个阈值等等），将该结点存为叶结点，把该结点上的数据集目标变量的平均值作为该结点的输出值返回；否则执行二元切分，把数据集以 $v$ 为切分值，按特征 $A_g$ 切分成 $D_{left}$ 和 $D_{right}$ 两个子集，并对应地生成左右两个子树
+(3)、递归地对左右子树重复执行前面的步骤，直到满足停止条件
+构造决策树：
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21  def createTree(dataSet,tolN,tolS): # 寻找最优切分特征、最优切分值 feat, value = chooseBestSplit(dataSet,tolN,tolS) # 切分特征为空，说明不能再分，直接返回value作为叶结点的输出值 if feat is None: return value # 把最优切分特征、最优切分值记录到树中 retTree = {} retTree[&#39;spInd&#39;] = feat retTree[&#39;spVal&#39;] = value # 执行二元切分，得到左右子树对应的两个数据集子集 leftSet, rightSet = binSplitDataSet(dataSet, feat, value) # 在左右子树继续递归地调用自己，构造决策树 retTree[&#39;left&#39;] = createTree(leftSet, leafType, errType, ops) retTree[&#39;right&#39;] = createTree(rightSet, leafType, errType, ops) return retTree   选择最优切分特征、最优切分值：</div><div class="post-footer">
+        <a href="/2017-11-18-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-cart%E7%AE%97%E6%B3%95/">Read More</a></div>
+</article>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+        <a href="/2017-11-15-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-id3%E7%AE%97%E6%B3%95%E4%B8%8Ec4.5%E7%AE%97%E6%B3%95/">ID3算法与C4.5算法</a>
+    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
+            published on&nbsp;<time datetime=2017-11-15>2017-11-15</time>
+        </span>&nbsp;
+            <span class="post-category">included in<a href="/categories/machinelearning/">
+                        <i class="far fa-folder fa-fw"></i>MachineLearning
+                    </a></span></div><div class="content">一、ID3算法
+ID3算法的核心是在决策树各个结点上应用“信息增益”准则选择特征，递归地构建决策树。具体方法：从根结点开始，对结点计算所有可能的特征的信息增益，选择信息增益最大的特征作为结点的特征，由该特征的不同取值建立子结点；再对子结点递归地调用以上方法，构建决策树，直到所有特征的信息增益均很小或没有特征可以选择为止。
+输入：训练数据集 $D$，特征集 $A$，阈值 $\varepsilon$ 输出：决策树 $T$
+ 若 $D$ 中所有实例属于同一类 $C_k$，则 $T$ 为单结点树，并将 $C_k$ 作为该结点的类标记，返回 $T$； 若 $A=\emptyset$ ，则 $T$ 为单结点树，将 $D$ 中实例数最大的类 $C_k$ 作为该结点的类标记，返回 $T$； 遍历 $A$ 中每一个特征，计算信息增益 $g(D,A)=H(D)-\sum_{i=1}^{n}\frac{|D_i|}{|D|}H(D_i)$，选择信息增益最大特征 $A_g$。如果 $A_g$ 的信息增益小于阈值 $\varepsilon$，则置 $T$ 为单结点树，并将 $D$ 中实例数最大的类 $C_k$ 作为该结点的类标记，返回 $T$；否则，对 $A_g$ 的每一个可能值 $a_i$，按照 $A_g=a_i$ 将 $D$ 分割为若干非空子集 $D_i$，对每个子集 $D_i$，将其实例数中最大的类作为标记，构建子结点，由结点及其子结点构成树 $T$，返回 $T$； 对第 $i$ 个子结点，以 $D_i$ 为训练集，以 $A- { A_g }$ 为特征集，递归地调用前3步，得到子树 $T_i$，返回 $T_i$。  以下是部分关键代码，参考《机器学习实战》第三章。这里忽略了上述算法的“信息增益阈值 $\varepsilon$ 这一条件。</div><div class="post-footer">
+        <a href="/2017-11-15-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-id3%E7%AE%97%E6%B3%95%E4%B8%8Ec4.5%E7%AE%97%E6%B3%95/">Read More</a></div>
+</article>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+        <a href="/2017-11-11-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E4%BF%A1%E6%81%AF%E5%A2%9E%E7%9B%8A/">信息增益</a>
+    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
+            published on&nbsp;<time datetime=2017-11-11>2017-11-11</time>
+        </span>&nbsp;
+            <span class="post-category">included in<a href="/categories/machinelearning/">
+                        <i class="far fa-folder fa-fw"></i>MachineLearning
+                    </a></span></div><div class="content">一、熵（entropy）
+熵是表示随机变量不确定性的度量。熵越大，随机变量的不确定性越大。设 $X$ 是一个取值为有限个的离散型随机变量，其概率分布为：
+$$P(X=x_i)=p_i \text{ , } i=1,2,\cdots,n$$
+则随机变量 $X$ 的熵定义为
+$$H(X)=-\sum_{i=1}^{n}p_i\log(p_i)$$
+当式中对数以 $2$ 为底时，熵的单位为比特（bit）；以自然对数 $e$ 为底时，熵的单位为纳特（nat）。
+二、条件熵（conditional entropy）
+条件熵 $H(Y \mid X)$ 表示已知随机变量 $X$ 的条件下，随机变量 $Y$ 的不确定性。
+设有随机变量 $(X,Y)$，联合分布概率为
+$$P(X=x_i,Y=y_i)=p_{ij} \text{ , } i=1,2,\cdots,n \text{ ; }j=1,2,\cdots,m$$
+则随机变量 $X$ 给定条件下，随机变量 $Y$ 的条件熵为
+$$H(Y \mid X)=\sum_{i=1}^{n} p_i H(Y \mid X=x_i)$$
+这里 $p_i=P(X=x_i) \text{ , } i=1,2,\cdots,n$。
+当熵和条件熵的概率有数据估计得到时，所对应的熵与条件熵称为经验熵（empirical entropy）和经验条件熵（empirical conditional entropy）。
+三、信息增益（information gain）
+信息增益表示得知特征 $X$ 的信息而使得类 $Y$ 的信息的不确定性减少的程度。
+特征 $A$ 对训练数据集 $D$ 的信息增益 $g(D,A)$ 定义为集合 $D$ 的经验熵 $H(D)$ 与特征 $A$ 给定条件下 $D$ 的经验条件熵 $H(D \mid A)$ 之差</div><div class="post-footer">
+        <a href="/2017-11-11-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E4%BF%A1%E6%81%AF%E5%A2%9E%E7%9B%8A/">Read More</a></div>
+</article>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+        <a href="/2017-11-08-%E7%AE%97%E6%B3%95-%E4%BA%8C%E5%8F%89%E5%A0%86%E5%BB%BA%E5%A0%86%E6%97%B6%E9%97%B4%E5%A4%8D%E6%9D%82%E5%BA%A6/">二叉堆建堆时间复杂度</a>
+    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
+            published on&nbsp;<time datetime=2017-11-08>2017-11-08</time>
+        </span>&nbsp;
+            <span class="post-category">included in<a href="/categories/algorithm/">
+                        <i class="far fa-folder fa-fw"></i>Algorithm
+                    </a></span></div><div class="content">一、二叉堆建堆过程
+二叉堆的定义、父子结点的相对位置计算公式，还有建堆过程在 排序算法（一） 中已经说明。这里稍微温习一下建堆的过程：
+ 从数组的中间位置开始，往左边扫描每个元素，并调用 $sink()$ 方法往下不断调整父子结点的相对位置，如果此堆是最大堆，那么 $sink()$ 方法会使小的结点下沉，大的结点上浮。当扫描完成，则可以保证每个子堆都是父结点大于两个孩子结点，此时堆有序，建堆完成。
+ 从树的角度来理解，建堆的总时间成本，就是对于下标小于 $\frac{n}{2}$ 的所有结点，也即所有的非叶子结点（二叉堆是完全二叉树），从原位置下沉到正确的位置的总成本。最好的情况是所有非叶子结点都比它的孩子结点大，即数组本来就是堆有序的。最坏的情况是所有非叶子结点都要从原位置一直向下被交换到叶子结点。现在我们来考虑最坏情况的时间复杂度。
+在此之前，需要先得到推导过程中会用到的两个小结论。
+二、含有 $n$ 个元素的二叉堆的高度为 $\lfloor \log_2{n} \rfloor$
+《算法导论》中给出的关于堆的高度的定义：
+ 堆中一个结点的高度为该结点到叶子结点最长简单路径上边的数目；一个堆的高度即为根结点的高度。
+ 换句通俗的话说，就是从下往上数，以最深的叶子结点为第一层，高度为 $0$（注意这是《算法导论》给出的堆的高度定义，好像和树的高度的定义不太一样，网上有些博客对于树的高度好像是把最深叶子结点的高度算作 $1$ 而不是 $0$）；它的父结点所在的层为第二层，高度为 $1$，依此类推。因此，一个堆的高度（即根结点的高度）在数值上就等于该堆的总层数减一。这样就可转化成求含 $n$ 个元素的二叉树的总层数的简单问题：
+对于一棵完全二叉树，结点总数为 $n$，设一共有 $x$ 层。根据完全二叉树的定义和性质，它的前 $x-1$ 层是一棵满二叉树。这棵满二叉树的总结点个数可以轻松求出：从根节点往下数，第一层共 $2^0$ 个结点，第二层共 $2^1$ 个结点，第 $k$ 层共 $2^{k-1}$ 个结点，因此满二叉树结点总数为：
+$$2^0+2^1+\cdots+2^{(x-1)-1}=2^{x-1}-1$$
+考虑最后一层，可能是满的也可能不是满的，我们无法确定，但是可以确定这一层必定多于或等于 $1$ 个结点，少于或等于 $2^{x-1}$ 个结点。因此
+$$2^{x-1}-1+1 \leq n \leq 2^{x-1}-1+2^{x-1}$$
+$$2^{x-1} \leq n \leq 2^x-1$$
+$$x-1 \leq \log_{2}n \leq \log_2(2^x-1) &lt; \log_{2}2^x = x$$</div><div class="post-footer">
+        <a href="/2017-11-08-%E7%AE%97%E6%B3%95-%E4%BA%8C%E5%8F%89%E5%A0%86%E5%BB%BA%E5%A0%86%E6%97%B6%E9%97%B4%E5%A4%8D%E6%9D%82%E5%BA%A6/">Read More</a></div>
+</article>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+        <a href="/2017-11-04-%E7%AE%97%E6%B3%95-%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95/">排序算法</a>
+    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
+            published on&nbsp;<time datetime=2017-11-04>2017-11-04</time>
+        </span>&nbsp;
+            <span class="post-category">included in<a href="/categories/algorithm/">
+                        <i class="far fa-folder fa-fw"></i>Algorithm
+                    </a></span></div><div class="content">一、选择排序
+输入长度为 $n$ 的数组，依次选择数组第 $i$ 小的元素，交换到数组第 $i$ 个位置。使用内外两个循环，外循环负责定位到数组第 $i$ 个位置，内循环负责从数组第 $i+1$ 个位置 遍历到数组末端，记录最小的元素，交换到数组第 $i$ 个位置上。
+无论输入数组元素的初始序列如何，内循环都需要迭代 $n-i$ 次，所以选择排序的总比较次数始终为 $(n-1)+(n-2)+ \cdots +2+1=\frac{n(n-1)}{2} \approx \frac{n^2}{2}$ ，时间复杂度为 $O(n^2)$。
+1 2 3 4 5 6 7 8 9 10 11 12 13  public class SortSelection extends Sort { public static void sort(Comparable[] a) { for (int i = 0; i &lt; a.length; i++) { int minIndex = i; for (int j = i + 1; j &lt; a.</div><div class="post-footer">
+        <a href="/2017-11-04-%E7%AE%97%E6%B3%95-%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95/">Read More</a></div>
 </article>
 <ul class="pagination"><li class="page-item ">
                     <span class="page-link">
@@ -224,7 +237,7 @@ $$f_0(x)=argmin\sum_{i=1}^{N}L(y_i,c)$$</div><div class="post-footer">
                     <span class="page-link" aria-hidden="true">&hellip;</span>
                 </li><li class="page-item ">
                     <span class="page-link">
-                        <a href="/page/17/">17</a>
+                        <a href="/page/15/">15</a>
                     </span>
                 </li></ul></div></div>
             </main><footer class="footer">

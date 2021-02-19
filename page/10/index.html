@@ -77,156 +77,110 @@
         alt="Posts"
         title="Posts" /></a></div><h1 class="home-title">CODE FOR FOOD :)</h1><h2 class="home-subtitle"><div id="id-1" class="typeit"></div></h2><div class="social-links"><a href="https://github.com/utopizza" title="GitHub" target="_blank" rel="noopener noreffer me"><i class="fab fa-github-alt fa-fw"></i></a><a href="mailto:648847079@qq.com" title="Email" rel=" me"><i class="far fa-envelope fa-fw"></i></a></div></div>
 <article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
-        <a href="/2017-11-30-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-boosting%E4%B8%8Ebagging/">boosting与bagging</a>
+        <a href="/2017-10-26-%E7%AE%97%E6%B3%95-java%E4%BD%8D%E8%BF%90%E7%AE%97%E7%AC%A6%E4%BC%98%E5%85%88%E7%BA%A7%E9%97%AE%E9%A2%98/">java位运算符优先级</a>
     </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
-            published on&nbsp;<time datetime=2017-11-30>2017-11-30</time>
+            published on&nbsp;<time datetime=2017-10-26>2017-10-26</time>
         </span>&nbsp;
-            <span class="post-category">included in<a href="/categories/machinelearning/">
-                        <i class="far fa-folder fa-fw"></i>MachineLearning
-                    </a></span></div><div class="content">一、boosting
-前面已经学习过，boosting 是一种提升方法，它通过改变训练样本的权重，学习多个分类器，并将这些分类器进行组合，提高分类的性能。
-boosting 方法每一轮学习一个分类器，并根据本次学习的误差，改变整个样本集合中每个样本的权重，被误分类的那些样本的权重将增大。在下一轮学习新的分类器时，这些被误分类的样本将会被赋予更大的关注。
-因此可以看出，boosting 方法是通过串行训练而获得的，下一轮的学习是基于上一轮的误差进行的。另外，每一轮的训练集都是整个原数据集，数据集中的样本不变，变的是各个样本的权重。
-最后，在学习基本分类器时，会同时计算得到每个分类器的权重。boosting 的最终组合分类器是这一系列基本分类器的加权组合。
-目前比较典型的两种 boosting 算法是 Adaboosting （Adaptive Boosting，自适应boosting）算法，和 GBDT（gradient boosting decision tree，梯度提升决策树）算法。
-二、bagging
-自举汇聚法（bootstrap aggregating），也称 bagging 方法。该方法通过从原数据集中随机放回抽样，得到 $S$ 个和原数据集大小相等的数据集，来作为 $S$ 次训练的训练集，从而训练得到 $S$ 个分类器。
-因为是放回抽样，所以新的数据集中可以有重复的样本，原数据集也可以有部分样本不在新数据集中出现。
-得到了 $S$ 个分类器后，就将这些分类器组合成最终的分类器。执行预测时，让这 $S$ 个分类器分别对新数据进行预测，得到 $S$ 个预测结果。如果是分类任务，则采用多数表决的方式，选择这 $S$ 个结果中票数最多的那个类别返回。如果是回归任务，则取均值作为最终结果返回。
-目前比较典型的 bagging 类的方法有随机森林（Random Forest）。
-三、区别
-1、学习方式
-boosting 的每一轮学习是基于前一轮的误差，因此它的一系列基本分类器的训练是串行的。bagging 是随机不放回抽样得到若干个新的训练集进行各自的训练，彼此间没有联系，可并行。
-2、训练样本
-boosting 不改变样本，而是在每一轮根据误差改变每个样本的权重。bagging 不改变权重，而是从原数据集抽选其中一部分样本（可重复）来构成不同的训练集。
-3、分类器组合方式
-boosting 的最终分类器是基本分类器的加权之和，每个分类器有各自的权重，最终的预测结果是每个分类器的预测结果的加权之和。bagging 的分类器没有权重的概念，每个基本分类器都有相等权重的一票，最终的预测结果是票数最多的那一个类（标签）。</div><div class="post-footer">
-        <a href="/2017-11-30-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-boosting%E4%B8%8Ebagging/">Read More</a></div>
+            <span class="post-category">included in<a href="/categories/algorithm/">
+                        <i class="far fa-folder fa-fw"></i>Algorithm
+                    </a></span></div><div class="content">一、问题
+leetcode第190题，逆序所输入的整数的32位bit，构成一个新的整数并输出：190. Reverse Bits
+二、解决
+思路不难，对输入的整数$n$，不断右移（带符号）并取其最低位（与上1），加到返回的整数上；返回的整数每次接收$n$的1位后，左移1位腾出最低位给下一次接收。如此循环32次即可。
+1 2 3 4 5 6 7 8 9 10 11  public class Solution { public int reverseBits(int n) { int result=0; for(int i=0;i&lt;32;i++){ result=result&lt;&lt;1; result=result+(n&amp;1); n=n&gt;&gt;&gt;1; } return result; } }   我一开始没有注意四则运算符和位运算符的优先级，默认了位运算是高于加减乘除的，所以上面第6行处我一开始写成：
+1  result = result + n&amp;1;   然后一直AC失败。我反复检查了我的思路也找不到出错的原因。无奈之下查看了discuss，发现我的思路和高票答案是一模一样的。不过别人的写法是：
+1  result += n&amp;1;   此时我才醒悟难道是运算符优先级的问题？我立马尝试加上括号，发现AC成功。后来查了资料才知道加减运算符的优先级是比按位与运算符的优先级高的：
+1 2 3 4 5  int a = 2; int b = 0; int c = a + b &amp; 1; int d = a + (b &amp; 1); System.</div><div class="post-footer">
+        <a href="/2017-10-26-%E7%AE%97%E6%B3%95-java%E4%BD%8D%E8%BF%90%E7%AE%97%E7%AC%A6%E4%BC%98%E5%85%88%E7%BA%A7%E9%97%AE%E9%A2%98/">Read More</a></div>
 </article>
 <article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
-        <a href="/2017-11-26-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E5%88%86%E7%B1%BB%E6%8F%90%E5%8D%87%E6%A0%91%E4%B8%8E%E5%9B%9E%E5%BD%92%E6%8F%90%E5%8D%87%E6%A0%91/">分类提升树与回归提升树</a>
+        <a href="/2017-10-18-%E7%AE%97%E6%B3%95-%E6%9C%80%E5%A4%A7%E5%AD%90%E6%95%B0%E7%BB%84%E5%92%8C/">最大子数组和</a>
     </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
-            published on&nbsp;<time datetime=2017-11-26>2017-11-26</time>
+            published on&nbsp;<time datetime=2017-10-18>2017-10-18</time>
         </span>&nbsp;
-            <span class="post-category">included in<a href="/categories/machinelearning/">
-                        <i class="far fa-folder fa-fw"></i>MachineLearning
-                    </a></span></div><div class="content">一、提升树（boosting tree）
-提升树是以分类树或回归树为基本分类器的提升方法。提升树被认为是统计学习中性能最好的方法之一。提升方法采用加法模型（即基函数的线性组合）与前向分步算法。对分类问题，决策树是二叉分类树；对回归问题，决策树是二叉回归树。
-提升树模型可以表示为决策树的加法模型：
-$$f_M(x)=\sum_{m=1}^{M}T(x;\theta_m)$$
-其中，$T(x;\theta_m)$ 表示决策树，$\theta_m$ 为决策树的参数，$M$ 为决策树的个数。
-二、二分类问题的提升树
-对于二分类问题，提升树算法只需将 Adaboost 算法中的基本分类器限制为二分类树即可。
-目前比较流行的方案是采用一种简单决策树作为基本分类器：单层决策树（decision stump，也称决策树桩）。它仅仅基于单个特征来执行决策，因此对应地只有一个树结点：根节点。它只能执行一次二分类，如 $x &lt; v$ 或 $x &gt; v$。
-三、回归问题的提升树
-回归树的形式化描述：设训练数据集 $T={(x_1,y_1),(x_2,y_2),\cdots,(x_N,y_N)}$，$x_i \in X \subseteq R^n$，$y_i \in Y \subseteq R$，$X$ 是输入空间，$Y$ 是输出空间。如果将输入空间 $X$ 划分为 $J$ 个不相交的区域 $R_1,R_2,\cdots,R_J$，并且在每个区域上有确定的输出常量 $c_j$，那么回归树可以表示为：
-$$T(x;\theta)=\sum_{j=1}^{J}c_j \cdot I(x \in R_j)$$
-其中，参数 $\theta={(R_1,c_1),(R_2,c_2),\cdots,(R_J,c_J)}$ 表示回归树的区域划分和各区域上的输出常量（即输出的回归值），$J$ 是回归树的复杂度（即叶结点个数）。
-回归问题的提升树算法：
-输入：如上，训练数据集 $T$，输入空间 $X$，输出空间 $Y$ 输出：回归提升树 $f_M(x)$
-1、初始化 $f_0(x)=0$
-2、对 $M$ 个分类器，进行对应的第 $m=1,2,\cdots,M$ 轮学习。对第 $m$ 轮学习：
-(1)、计算以前一轮为止，目前学习到的回归提升树 $f_{m-1}(x)$ 的残差
-$$r_{mi}=y_i-f_{m-1}(x_i)，i=1,2,\cdots,N$$</div><div class="post-footer">
-        <a href="/2017-11-26-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E5%88%86%E7%B1%BB%E6%8F%90%E5%8D%87%E6%A0%91%E4%B8%8E%E5%9B%9E%E5%BD%92%E6%8F%90%E5%8D%87%E6%A0%91/">Read More</a></div>
+            <span class="post-category">included in<a href="/categories/algorithm/">
+                        <i class="far fa-folder fa-fw"></i>Algorithm
+                    </a></span></div><div class="content">一、问题
+给定一个整型数组，求其最大的子数组和。例如，给定数组：[-2,1,-3,4,-1,2,1,-5,4]，和最大的子数组为：[4,-1,2,1]，和为6。
+二、递推式
+设给定的数组为 $A$，用 $dp[i]$ 表示以 $A[i]$ 结尾的最大子数组之和。那么 $dp[i-1]$ 和 $dp[i]$ 有怎样的关系？由于给定的数组为整型，有正数也有负数，因此我们可以从子数组和的正负来考虑。显然，要使 $dp[i]$ 是最大的和，那么 以 $A[i-1]$ 结尾的子数组最大和 $dp[i-1]$ 如果是负数，则以 $A[i]$ 结尾的子数组的最大和 $dp[i]$ 应该去掉前面部分的负数，只取 $A[i]$ 作为最大和，因为如果加上前面部分的和只会比 $A[i]$ 更小；如果是正数，那么应该取 $A[i]$ 加上前面部分的 $dp[i-1]$ 作为最大和。形式化描述为：
+$$ dp[i]=A[i]+(dp[i-1]&gt;0?dp[i-1]:0) $$
+最终的最大子数组和就是数组 $dp[n]$ 的最大值。为了避免重复扫描该数组我们可以在计算该数组的时候维护一个当前最大值 $max$。
+三、代码实现
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18  public static int maxSubArray(int[] A) { int n = A.length; int[] dp = new int[n];//dp[i] means the maximum subarray ending with A[i]; dp[0] = A[0]; int max = dp[0]; for(int i = 1; i &lt; n; i++){ dp[i] = A[i] + (dp[i - 1] &gt; 0 ?</div><div class="post-footer">
+        <a href="/2017-10-18-%E7%AE%97%E6%B3%95-%E6%9C%80%E5%A4%A7%E5%AD%90%E6%95%B0%E7%BB%84%E5%92%8C/">Read More</a></div>
 </article>
 <article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
-        <a href="/2017-11-22-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-adaboost%E7%AE%97%E6%B3%95/">Adaboost算法</a>
+        <a href="/2017-09-26-%E7%AE%97%E6%B3%95-%E6%9C%80%E9%95%BF%E9%80%92%E5%A2%9E%E5%AD%90%E5%BA%8F%E5%88%97/">最长递增子序列</a>
     </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
-            published on&nbsp;<time datetime=2017-11-22>2017-11-22</time>
+            published on&nbsp;<time datetime=2017-09-26>2017-09-26</time>
         </span>&nbsp;
-            <span class="post-category">included in<a href="/categories/machinelearning/">
-                        <i class="far fa-folder fa-fw"></i>MachineLearning
-                    </a></span></div><div class="content">一、提升方法（boosting）
-提升方法主要用于分类问题，它的基本思想是，通过改变训练样本的权重，学习多个不同的分类器，最后把这些基本分类器（也称弱分类器）通过线性组合，得到最终的强分类器。
-这里所谓的提升，通俗地说其实就是将一个分类问题交给多个分类器来处理，“对于一个复杂任务来说，将多个专家的判断进行适当的综合，得出的最终判断，要比任何一个专家单独的判断要好”。虽然每一个弱分类器都是只是一个窄领域的专家，但是把一系列这样的弱分类组合到一起，得到的分类能力并不比单个强分类器差。而且直接学习一个强分类器远比学习一个弱分类器难。
-目前大多数提升方法是通过不断改变训练数据的概率分布（样本权重分布）来不断学习出一系列弱分类器。那么这样需要确定两个问题：
- 在每一轮如何改变训练样本的权值或者概率分布 如何将这些弱分类器组合成一个强分类器  提升方法中的代表性算法有 Adaboost 算法，它的做法是：
- 在每一轮学习后，提高前一轮学习中被错误分类的样本的权值，降低前一轮学习中被正确分类的样本的权值。这样，后面学习的分类器将会专注于前面的分类器不能很好处理的那些样本，弥补了前面的分类器的不足（窄领域）。举个例子，小明和小红在学习分类一堆水果，小明先学习，他在学习分类的时候由于精力和时间有限，在一轮学习后，小明只能很好地对体积大的水果进行分类，对那些体积小的水果经常分错类。然后到小红学习的时候，为了保证两个人最终能够把这堆水果都正确分类，那么聪明的小红应该知道，自己应该专注于对那些小明不擅长的体积小的水果进行学习，因为如果小明能够很好地分类体积大的水果，而自己能够很好地分类体积小的水果，那么两个人组合互补起来得到的分类能力，远比两个人都强行学习对所有水果分类的效果好得多。 对于弱分类器的组合，Adaboost 采取加权多数表决的方法，即加大分类误差小的弱分类器的权值，使其在最终表决的时候起较大作用，减小分类误差较大的弱分类器的权值，使其在最终表决中起较小作用。这个很容易理解，谁分类的误差小、准确度高，当然谁在最终的表决里就有更大的话语权了。  二、Adaboost 算法
-算法目标：给定一个二分类的训练数据集 $T={(x_1,y_1),(x_2,y_2),\cdots,(x_N,y_N)}$，其中 $x_i \in R^n$ 是样本实例，$y_i \in {-1,+1}$ 是样本类别标记。本算法目标是从该训练数据集中，学习出 $M$ 个弱分类器，最后将这些弱分类器通过线性组合，得到最终的一个强分类器。
-输入：训练数据集 $T$，弱学习算法 输出：最终分类器 $G(x)$
-1、初始化训练集 $N$ 个样本的权重分布
-$$D_1=(w_{1,1},\cdots,w_{1,i},\cdots,w_{1,N})$$
-$$w_{1,i}=\frac{1}{N}，i=1,2,\cdots,N$$
-2、对 $M$ 个分类器，开展对应的 $m=1,2,\cdots,M$ 轮学习。对第 $m$ 轮学习：
-(1)、用训练数据集 $T$、第 $m$ 轮的样本权重 $D_m$、和弱分类器学习算法，学习得到第 $m$ 个弱分类器
-$$G_m(x):X \to {-1,+1}$$
-(2)、计算 $G_m(x)$ 在训练集上的分类误差率
-$$e_m=P(G_m(x_i) \neq y_i)=\sum_{i=1}^{N}w_{m,i}I(G_m(x_i) \neq y_i)$$
-(3)、计算 $G_m(x)$ 的权重
-$$\alpha_m=\frac{1}{2}\ln(\frac{1}{e_m}-1)$$
-(4)、计算下一轮学习的样本权重分布
-$$D_{m+1}=(w_{m+1,1},\cdots,w_{m+1,i},\cdots,w_{m+1,N})$$
-$$ w_{m+1,i}=\frac {w_{m,i} \cdot e^{-\alpha_m y_i G_m(x_i)}} {\sum_{i=1}^{N} w_{m,i} \cdot e^{-\alpha_m y_i G_m(x_i)}} ，i=1,2,\cdots,N $$</div><div class="post-footer">
-        <a href="/2017-11-22-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-adaboost%E7%AE%97%E6%B3%95/">Read More</a></div>
+            <span class="post-category">included in<a href="/categories/algorithm/">
+                        <i class="far fa-folder fa-fw"></i>Algorithm
+                    </a></span></div><div class="content">一、问题
+给定一个长度为 $N$ 的数组，找出一个最长的单调自增子序列的长度。例如：给定一个长度为 6 的数组 $A=&lt; 5，6，7，1，2，8 &gt;$，则其最长的单调递增子序列为 $&lt; 5，6，7，8 &gt;$，长度为4。
+二、寻找最优子结构，导出递推式
+设前 $i$ 个元素的最长递增子序列长度（即第 $i$ 个子问题最优解）表示为 $dp(i)$。那么第 $i$ 个子问题的最优解 $dp(i)$ 与前面 $i-1$ 个子问题各自的最优解 $dp(k)$ $(1 \leq k \leq i-1)$ 有着怎么样的递推关系？
+考察前 $i-1$ 个子问题中第 $k$ $(1 \leq k \leq i-1)$ 个子问题对应的最长递增子序列。如果原序列第 $i$ 个元素 $A[i]$ 大于等于该序列的最后一个元素（设为 $last[k]$），则 $A[i]$ 可以追加到此递增子序列的末尾。此时有 $dp(i)=dp(k)+1$；反之如果 $A[i]$ 小于该序列的最后一个元素 $last[k]$，则 $A[i]$ 不能追加到此递增子序列的末尾，此时 $dp(i)=dp(k)$。由于 $1 \leq k \leq i-1$，因此我们只要遍历前 $i-1$ 个元素对应的 $i-1$ 个最长子序列，并考察第 $i$ 个元素追加（或者不追加）到这些子序列末尾后得到的 $i-1$ 个 $dp(i)$，其中最大一个的即为第 $i$ 个问题的最优解。形式化描述为：</div><div class="post-footer">
+        <a href="/2017-09-26-%E7%AE%97%E6%B3%95-%E6%9C%80%E9%95%BF%E9%80%92%E5%A2%9E%E5%AD%90%E5%BA%8F%E5%88%97/">Read More</a></div>
 </article>
 <article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
-        <a href="/2017-11-20-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E8%AE%AD%E7%BB%83%E8%AF%AF%E5%B7%AE%E4%B8%8E%E6%B5%8B%E8%AF%95%E8%AF%AF%E5%B7%AE/">训练误差与测试误差</a>
+        <a href="/2017-09-24-%E7%AE%97%E6%B3%95-%E7%A1%AC%E5%B8%81%E6%89%BE%E9%9B%B6/">硬币找零</a>
     </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
-            published on&nbsp;<time datetime=2017-11-20>2017-11-20</time>
+            published on&nbsp;<time datetime=2017-09-24>2017-09-24</time>
         </span>&nbsp;
-            <span class="post-category">included in<a href="/categories/machinelearning/">
-                        <i class="far fa-folder fa-fw"></i>MachineLearning
-                    </a></span></div><div class="content">今天和队友讨论好准备做交叉验证的时候，我们竟然都搞错了对交叉验证的理解，回过头来看书的时候发现是竟然因为搞错了一些最基本的但十分重要的知识，特此记录一下。
-一、交叉验证（cross validation）
-机器学习中的交叉验证是一种常用的模型选择的方法。交叉验证的基本思想是重复地使用数据，把给定的数据集进行切分，分成训练集和测试集，在此基础上反复地进行训练、测试，并选择最好的模型。
-1、简单交叉验证
-随机地将已给数据集分为两部分，约 70% 作为训练集，剩下 30% 作为测试集。然后用训练集在不同的参数条件下训练模型，得到各个参数不同的模型，接着在测试集上评价模型的测试误差，选出测试集误差最小的模型。 这种方法只把训练集和测试集做一次划分。
-2、$S$ 折交叉验证
-目前应用最多的是 $S$ 折交叉验证，首先随机地将已给数据切分成 $S$ 个互不相交的大小相同的子集，然后利用其中任意 $S-1$ 个子集作为训练集训练得到一个模型，把剩下的那一个子集作为测试集测试模型得到一个测试误差。如此重复 $S$ 次，直到每一个子集都作为一次测试集，一共得出 $S$ 个不同的模型，和 $S$ 个对应的测试误差。最后，选择出这 $S$ 个测试误差中最小的那个模型，作为最终确定的最优模型。
-到这里，我就不明白，为什么这样做可以避免过拟合？选择测试误差最小的那个模型，不就又过拟合了吗？后来查了一下书，其实是我把训练误差和测试误差搞混了，而且过拟合的定义没理解好。
-二、过拟合（over-fitting）
-所谓过拟合，是指在学习时选择的模型包含参数过多，以致于出现这一模型对已知数据预测得很好，但是对未知数据预测很差的现象。也就是说，在训练集上训练误差已经非常小，但在测试集上测试误差却非常大。
-出现这个问题往往是因为在设定训练的目标函数时，只片面地追求对训练数据的预测能力。例如，假设现在有一个任务是用训练集（点集）去拟合一个多项式函数，然后用这个多项式函数去预测一些未知的样本。如果在设定训练的目标函数时，只考虑多项式函数与训练样本总误差的最小化，那么在学习的时候为了找到这个最小误差，模型会不断地提高自己的多项式次数（也即模型的复杂度），尝试用三次，四次，或者更高次的多项式，去逼近所有训练样本，达到最小误差。极端的情况下有可能找到一个极高次的多项式函数，使得所有样本都落在这个函数上，训练样本总误差达到了 $0$。但实际上，数据集中往往包含各种噪音和离群点，而模型却无法分辨，在计算总误差的时候依然包含了这些噪音，为了减小这些误差不得不提高多项式函数的次数。如下图所示，理想的模型其实是一个二次多项式函数，但是由于只考虑了使总误差最小，学习的结果是得到一个高次的多项式函数，那么如果用这个高次多项式来预测本应该是二次多项式的未知数据，那么预测效果将会非常糟糕。
-可以认为，在训练误差已经比较小的情况下（模型训练完成后），测试误差是对过拟合程度的一种衡量。如果模型在测试集上的测试误差越小，说明过拟合程度越小，如果测试误差越大，则说明过拟合程度比较严重了。所以上面交叉验证中，选择测试误差最小的模型，实际上就是过拟合程度最小的模型。
-三、训练误差（training error）与测试误差（test error）
-统计学习的目的是使学习到的模型不仅对已知数据（训练集），而且对未知数据（测试集）都有很好的预测能力。当损失函数给定时，基于损失函数的模型的训练误差和预测误差就成为了模型训练效果评估的标准。
-假设给定训练集为 $Tr={ (x_1,y_1),(x_2,y_2),\cdots,(x_N,y_N) }$，测试集为 $Te={ (x_1,y_1),(x_2,y_2),\cdots,(x_M,y_M) }$，其中 $x_i \in R^n$，$y_i \in R$，选定的损失函数是 $L(Y,f(X))$，学习到的模型是 $Y=\hat{f}(X)$，则输入某个样本到模型得到的预测值为 $\hat{y}_i=\hat{f}(x_i)$，则
-训练误差是模型 $Y=\hat{f}(X)$ 在训练集 $Tr$ 上的平均损失：
-$$R_{emp}(\hat{f})=\frac{1}{N}\sum_{i=1}^{N}L(y_i,\hat{y}_i)$$
-测试误差是模型 $Y=\hat{f}(X)$ 在测试集 $Te$ 上的平均损失：
-$$e_{test}=\frac{1}{M}\sum_{i=1}^{M}L(y_i,\hat{y}_i)$$
-根据前人的经验，训练误差和测试误差与模型有着如下图的关系：当模型的复杂度增大时，训练误差会逐渐减小并趋向于 0，而测试误差会先减小，达到最小值后又增大。
-当选择的模型复杂度过大时，过拟合现象就会发生（训练误差很小，但测试误差很大），这样在训练模型时，就需要防止过拟合，进行最优的模型选择，即选择复杂度适当的模型，目的是找到具有最优泛化能力（最小测试误差）的模型，因为我们训练模型的目的不是让模型完美逼近训练集，而是让模型完美预测未知数据。
-而常用的模型选择方式有两种，一种是上面的交叉验证法，取预测效果最好的众多个模型中的一个，另一个方法就是在目标函数中加入正则项，惩罚模型在学习过程中增大的复杂度。例如在上面所举的例子中，可以在目标函数中加入关于模型复杂度的函数，当模型复杂度越高，这个函数的值就越大。那么这样一来，模型在学习的时候，最小化的目标就不仅仅是训练样本的总误差了，而是训练样本总误差与模型复杂度之和。如此这般就可以因避免片面追求误差最小而提高了复杂度。</div><div class="post-footer">
-        <a href="/2017-11-20-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E8%AE%AD%E7%BB%83%E8%AF%AF%E5%B7%AE%E4%B8%8E%E6%B5%8B%E8%AF%95%E8%AF%AF%E5%B7%AE/">Read More</a></div>
+            <span class="post-category">included in<a href="/categories/algorithm/">
+                        <i class="far fa-folder fa-fw"></i>Algorithm
+                    </a></span></div><div class="content">一、问题
+假设有几种硬币，如1、3、5、10，并且数量无限。请找出能够组成某个数目的找零所使用最少的硬币数
+形式化定义：设需要找零的总额为 $V$ ，一共有 $n$ 种硬币可以选择，其中第 $i$ 种硬币面值为 $c_i$，对应的使用数量为 $y_i$。则问题表述为：
+$$min \quad \sum_{i=1}^{n}y_i , \quad y_i \in N \text{（自然数集）} $$
+$$s.t. \quad \sum_{i=1}^{n} c_i \cdot y_i = V$$
+二、划分子问题，导出递推式
+今天查了一些资料，对动态规划有了新的理解。
+有博主说：
+ 动态规划的本质是对问题状态的定义，和对状态转移方程的定义。动态规划是通过拆分问题，定义问题状态和状态之间的关系，使得问题能够以递推（或者说分治）的方式去解决。如何拆分问题，才是动态规划的核心，而拆分问题，靠的就是状态的定义和状态转移方程的定义。
+ 也有博主说：
+ 计算机的本质是一个状态机，内存里存储的所有数据构成了当前的状态，CPU只能利用当前的状态计算出下一个状态（不要纠结硬盘之类的外部存储，就算考虑他们也只是扩大了状态的存储容量而已，并不能改变下一个状态只能从当前状态计算出来这一条铁律）当你企图使用计算机解决一个问题是，其实就是在思考如何将这个问题表达成状态（用哪些变量存储哪些数据）以及如何在状态中转移（怎样根据一些变量计算出另一些变量）。所以所谓的空间复杂度就是为了支持你的计算所必需存储的状态最多有多少，所谓时间复杂度就是从初始状态到达最终状态中间需要多少步！
+ 回到我们的问题，要定义这个问题的状态和状态转移方程，首先需要分析这个问题的解的构建过程。那么找零的过程是怎么样的？很简单，每次可以拿起 $n$ 种硬币中，面值小于找零总额的任意一个。然后把找零总额减去拿起的硬币的面值，进入下一次选择。不断如此重复，直至拿起的硬币的总值等于找零的总额。（到这里，子问题的定义就显而易见了，这个问题的子问题就是每一次进行的硬币的选择，本次的选择只与之前的选择有关，因为每一次选择后剩余的找零总额会相应减小）
+但是这样并不能保证硬币数是最小的。为了找到最优解，我们需要假设某个子问题已经得到了最优解，然后推出与它的子问题的最优解的关系，也就是最优解的递推关系式。设 $dp(i)$ 表示组合总价值为 $i$ 的零钱所需要的最小硬币数。因此每次可以选择 $n$ 种硬币中的一种，设本次选择的硬币为第 $j$ $(1 \leq j \leq n)$ 种，对应的面值为 $c[j]$，则在拿起该硬币之前的子问题即为：组合面值为 $dp(i-c[j])$ 的总额需要的最小硬币数。同样可以用“剪贴粘贴”的反正法证明其最优解为 $dp(i-c[j])-1$。形式化描述为：
+ $$ dp(i)= \begin{cases} 0, & \text{if $i=0 $} \\ min_{1 \leq j \leq n}(dp(i-c[j])+1), & \text{if $i 0 \, , \, c[j] \leq i$} \\ \end{cases} $$  三、算法实现</div><div class="post-footer">
+        <a href="/2017-09-24-%E7%AE%97%E6%B3%95-%E7%A1%AC%E5%B8%81%E6%89%BE%E9%9B%B6/">Read More</a></div>
 </article>
 <article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
-        <a href="/2017-11-18-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-cart%E7%AE%97%E6%B3%95/">CART算法</a>
+        <a href="/2017-09-22-%E7%AE%97%E6%B3%95-01%E8%83%8C%E5%8C%85/">0-1 背包问题</a>
     </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
-            published on&nbsp;<time datetime=2017-11-18>2017-11-18</time>
+            published on&nbsp;<time datetime=2017-09-22>2017-09-22</time>
         </span>&nbsp;
-            <span class="post-category">included in<a href="/categories/machinelearning/">
-                        <i class="far fa-folder fa-fw"></i>MachineLearning
-                    </a></span></div><div class="content">分类与回归树（classification and regression tree, CART）模型是应用广泛的决策树学习方法，既可以用于分类，也可以用于回归。
-回顾之前学习的 ID3 算法，它的做法是每次选取当前最佳的特征来分割数据，分割依据是该特征的所有取值。也就是说，如果这个特征有 $n$ 个取值，那么数据将立即被分割成 $n$ 分。一旦被切分之后，该特征在之后将不会再被考虑。这样有两个问题：一是切分过于迅速，如果 $n$ 很大，那么数据将被马上切分成大量的小份，影响后续切分的效果。二是，这样的决策树只能处理离散型的数值，如果特征的取值是连续型数值，则需要将其预处理转化成离散型，但这样就会人为地破坏了连续型变量的内在性质。
-CART 算法解决了上述问题。CART 设定决策树是二叉树，每次切分数据只做二元切分，即把数据集切分成两份。对某个连续型的特征，设定一个切分值，大于此值的数据进入左子树，反之则进入右子树。然后递归地构建子树。
-一、CART 生成
-CART 决策树的生成就是递归地构建二叉决策树的过程。对回归树用平方误差最小化准则，对分类树用基尼指数最小化准则，进行特征选择。
-1、回归树的生成
-输入：训练数据集 $D$，特征集 $A$ 输出：回归树 $T$
-(1)、寻找最佳的切分特征 $A_g$ 和对应的最佳切分值 $v$：遍历特征集中每一个特征，尝试以该特征的每一个取值作为切分值，对数据集执行二元切分，然后计算切分误差，如果当前误差小于记录的最小误差，那么更新最优切分特征、最优切分值、最小误差。遍历完成后，返回最优切分特征、最优切分值。
-其中误差一般使用目标变量的方差来计算，设数据集为 $D$，数据集中的目标变量为 $D.Y$，数据集在执行一次二元切分后被切分成 $D_{left}$ 和 $D_{right}$，则此次切分减小的混乱程度为
-$$g(D,A_g,v)=var(D.Y)- \left[ var(D_{left}.Y)+var(D_{right}.Y) \right]$$
-其中 $D_{left}={D \mid D.A_g&gt;v}$，$D_{right}={D \mid D.A_g \leq v}$。
-(2)、如果该结点不能再分（左右两个子集方差之和比原数据集方差还大，或者大于给定的某个阈值等等），将该结点存为叶结点，把该结点上的数据集目标变量的平均值作为该结点的输出值返回；否则执行二元切分，把数据集以 $v$ 为切分值，按特征 $A_g$ 切分成 $D_{left}$ 和 $D_{right}$ 两个子集，并对应地生成左右两个子树
-(3)、递归地对左右子树重复执行前面的步骤，直到满足停止条件
-构造决策树：
-1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21  def createTree(dataSet,tolN,tolS): # 寻找最优切分特征、最优切分值 feat, value = chooseBestSplit(dataSet,tolN,tolS) # 切分特征为空，说明不能再分，直接返回value作为叶结点的输出值 if feat is None: return value # 把最优切分特征、最优切分值记录到树中 retTree = {} retTree[&#39;spInd&#39;] = feat retTree[&#39;spVal&#39;] = value # 执行二元切分，得到左右子树对应的两个数据集子集 leftSet, rightSet = binSplitDataSet(dataSet, feat, value) # 在左右子树继续递归地调用自己，构造决策树 retTree[&#39;left&#39;] = createTree(leftSet, leafType, errType, ops) retTree[&#39;right&#39;] = createTree(rightSet, leafType, errType, ops) return retTree   选择最优切分特征、最优切分值：</div><div class="post-footer">
-        <a href="/2017-11-18-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-cart%E7%AE%97%E6%B3%95/">Read More</a></div>
+            <span class="post-category">included in<a href="/categories/algorithm/">
+                        <i class="far fa-folder fa-fw"></i>Algorithm
+                    </a></span></div><div class="content">一、问题
+有 $n$ 个物品，其中第 $i$ 个物品的重量为 $w[i]$，价值为 $p[i]$，我们规定所有物品的重量和价格均非负。现有一个可以承受最大重量为 $W$ 的背包，对每个物品，只能选择装 0 个或者 1 个入背包。问选择哪些物品装入背包可以使背包中的总价值最大。
+形式化定义：
+$$max \quad \sum_{i=1}^{n} p[i] \cdot x_i$$
+$$s.t. \quad \sum_{i=1}^{n} w[i] \cdot x_i \leq W , \quad x_i \in { 0,1 }$$
+二、划分子问题，导出递推式
+如何从 $n$ 个物品中选择出若干个装入背包并使总价值最大？我们需要寻找一个有规律的装包过程，这样才能划分出子问题。
+假设我们已经知道了选择哪几个物品是最优的，那么一个很直接的想法就是从左往右扫描这 $n$ 个物品，依次对每个物品做出选择：装入这个物品，或者放弃这个物品。当扫描完成，那么装包过程结束。
+现在我们来分析每一步并试图划分出子问题。假设我们扫描了前 $i$ 个物品，并得到了当前的最大总价值，设为 $P_i$。那么倒回去看，这一步的最优解是怎么得到的？因为对每个物品，只能选择装入0个或者1个，因此这一步的最优解就是：在扫描并处理了前 $i-1$ 个物品后，选择装入第 $i$ 个物品后得到的最大总价值，或者放弃第 $i$ 个物品后的最大总价值。如果是通过选择物品 $i$ 而得到这一步的最优解 $P_i$，那么前 $i-1$ 个物品的最大总价值为 $P_i-p[i]$；如果是通过放弃物品 $i$ 而得到这一步的最优解，那么前 $i-1$ 个物品的最大总价值仍为 $P_i$。
+考虑最优解的对应的背包容量的递推关系。设前 $i$ 物品恰好能装入容量为 $W_i$ 的背包得到最大总价值。如果是通过选择物品 $i$ 而得到的最优解，那么前 $i-1$ 个物品恰好能装入的背包的容量为 $W_i-w[i]$；反之，则前 $i-1$ 个物品恰好能装入的背包的容量为 $W_i$。</div><div class="post-footer">
+        <a href="/2017-09-22-%E7%AE%97%E6%B3%95-01%E8%83%8C%E5%8C%85/">Read More</a></div>
 </article>
 <article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
-        <a href="/2017-11-15-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-id3%E7%AE%97%E6%B3%95%E4%B8%8Ec4.5%E7%AE%97%E6%B3%95/">ID3算法与C4.5算法</a>
+        <a href="/2017-09-21-%E8%AE%BA%E6%96%87-%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E7%9B%B8%E5%85%B3%E5%AD%A6%E6%9C%AF%E4%BC%9A%E8%AE%AE/">推荐系统相关学术会议</a>
     </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
-            published on&nbsp;<time datetime=2017-11-15>2017-11-15</time>
+            published on&nbsp;<time datetime=2017-09-21>2017-09-21</time>
         </span>&nbsp;
-            <span class="post-category">included in<a href="/categories/machinelearning/">
-                        <i class="far fa-folder fa-fw"></i>MachineLearning
-                    </a></span></div><div class="content">一、ID3算法
-ID3算法的核心是在决策树各个结点上应用“信息增益”准则选择特征，递归地构建决策树。具体方法：从根结点开始，对结点计算所有可能的特征的信息增益，选择信息增益最大的特征作为结点的特征，由该特征的不同取值建立子结点；再对子结点递归地调用以上方法，构建决策树，直到所有特征的信息增益均很小或没有特征可以选择为止。
-输入：训练数据集 $D$，特征集 $A$，阈值 $\varepsilon$ 输出：决策树 $T$
- 若 $D$ 中所有实例属于同一类 $C_k$，则 $T$ 为单结点树，并将 $C_k$ 作为该结点的类标记，返回 $T$； 若 $A=\emptyset$ ，则 $T$ 为单结点树，将 $D$ 中实例数最大的类 $C_k$ 作为该结点的类标记，返回 $T$； 遍历 $A$ 中每一个特征，计算信息增益 $g(D,A)=H(D)-\sum_{i=1}^{n}\frac{|D_i|}{|D|}H(D_i)$，选择信息增益最大特征 $A_g$。如果 $A_g$ 的信息增益小于阈值 $\varepsilon$，则置 $T$ 为单结点树，并将 $D$ 中实例数最大的类 $C_k$ 作为该结点的类标记，返回 $T$；否则，对 $A_g$ 的每一个可能值 $a_i$，按照 $A_g=a_i$ 将 $D$ 分割为若干非空子集 $D_i$，对每个子集 $D_i$，将其实例数中最大的类作为标记，构建子结点，由结点及其子结点构成树 $T$，返回 $T$； 对第 $i$ 个子结点，以 $D_i$ 为训练集，以 $A- { A_g }$ 为特征集，递归地调用前3步，得到子树 $T_i$，返回 $T_i$。  以下是部分关键代码，参考《机器学习实战》第三章。这里忽略了上述算法的“信息增益阈值 $\varepsilon$ 这一条件。</div><div class="post-footer">
-        <a href="/2017-11-15-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-id3%E7%AE%97%E6%B3%95%E4%B8%8Ec4.5%E7%AE%97%E6%B3%95/">Read More</a></div>
+            <span class="post-category">included in<a href="/categories/thesis/">
+                        <i class="far fa-folder fa-fw"></i>Thesis
+                    </a></span></div><div class="content">一、学术会议
+1、SIGKDD
+ CCF评级：A类 全称：Special Interest Group on Knowledge Discovery and Data Mining 出版社：ACM 网址：http://www.kdd.org/ DBLP：http://dblp.uni-trier.de/db/conf/kdd/ 时间：每年8月  2、SIGIR
+ CCF评级：A类 全称：Special Interest Group on Information Retrieval 出版社：ACM 网址：http://sigir.org/ DBLP：http://dblp.uni-trier.de/db/conf/sigir/ 时间：每年7月至8月  3、ICDE
+ CCF评级：A类 全称：International Conference on Data Engineering 出版社：IEEE 网址：https://www.icde.org/ DBLP：http://dblp.uni-trier.de/db/conf/icde/ 时间：每年4月至5月  4、AAAI
+ CCF评级：A类 全称：Association for the Advancement of Artificial Intelligence 出版社：AAAI 网址：https://www.aaai.org/ DBLP：http://dblp.uni-trier.de/db/conf/aaai/ 时间：2014年之前每年7月到8月，2015年开始改到了每年1月到2月  5、TKDE
+ CCF评级：A类 全称：IEEE Transactions on Knowledge and Data Engineering 出版社：IEEE 网址：https://www.</div><div class="post-footer">
+        <a href="/2017-09-21-%E8%AE%BA%E6%96%87-%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F%E7%9B%B8%E5%85%B3%E5%AD%A6%E6%9C%AF%E4%BC%9A%E8%AE%AE/">Read More</a></div>
 </article>
 <ul class="pagination"><li class="page-item ">
                     <span class="page-link">
@@ -258,7 +212,7 @@ ID3算法的核心是在决策树各个结点上应用“信息增益”准则�
                     <span class="page-link" aria-hidden="true">&hellip;</span>
                 </li><li class="page-item ">
                     <span class="page-link">
-                        <a href="/page/17/">17</a>
+                        <a href="/page/15/">15</a>
                     </span>
                 </li></ul></div></div>
             </main><footer class="footer">

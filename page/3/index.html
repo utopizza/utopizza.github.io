@@ -77,83 +77,6 @@
         alt="Posts"
         title="Posts" /></a></div><h1 class="home-title">CODE FOR FOOD :)</h1><h2 class="home-subtitle"><div id="id-1" class="typeit"></div></h2><div class="social-links"><a href="https://github.com/utopizza" title="GitHub" target="_blank" rel="noopener noreffer me"><i class="fab fa-github-alt fa-fw"></i></a><a href="mailto:648847079@qq.com" title="Email" rel=" me"><i class="far fa-envelope fa-fw"></i></a></div></div>
 <article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
-        <a href="/2019-01-12-%E8%AE%BA%E6%96%87-winnower/">Winnower</a>
-    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
-            published on&nbsp;<time datetime=2019-01-12>2019-01-12</time>
-        </span>&nbsp;
-            <span class="post-category">included in<a href="/categories/thesis/">
-                        <i class="far fa-folder fa-fw"></i>Thesis
-                    </a></span></div><div class="content">一、背景及问题
-这篇文章针对的问题和前面看过的 《Dependence-Preserving Data Compaction for Scalable Forensic Analysis》和 这篇文章类似，目标都是减小日志文件的体积，以减少存储空间并提高攻击侦查的速度。
-这篇文章主要针对的是分布式服务器集群下的 APT 攻击。在这样的情景中，服务器集群有一个中心监控节点（Monitor node），以及大量的工作节点（Worker nodes）。监控节点与所有的工作节点保持通信。工作节点在生产环境中不断地产生日志记录。当发起监控节点攻击侦查分析时，它需要从多个工作节点上拷贝日志文件到本地，再进行攻击分析。问题就出现在这里，大量的工作节点每天都产生大量的日志记录，监控节点几乎不可能从所有工作节点上拷贝全部的日志记录，因为这样的拷贝任务不但需要消耗大量的网络资源，并且需要消耗大量的存储空间。
-二、解决方案
-这篇文章和上述的那篇文章有点类似，其核心思想都是通过对资源图（Provenance Graph）进行剪枝、压缩、优化，从而减小对应的日志记录体积。不同的只是他们使用的剪枝算法不同而已，这篇文章使用的算法是一个称为 Deterministic Finite Automata (DFA) 的算法，这个算法可以对一个复杂的图中的每一个节点、边（对应系统日志记录中的事件以及信息流向）进行推断，判断出它是不是冗余的，如果是冗余的就可以去掉，从而极大提精简了日志记录。
-文章提出的模型称为 Winnower，具体剪枝算法较复杂，主要分为图抽象（Provenance Graph Abstraction）和图推断（Provenance Graph Induction）两部分，其中涉及一些图语义学习（Graph Grammar Learning）的知识，以前没怎么接触过，感觉不太懂，以后有时间再补一下这方面的学习。</div><div class="post-footer">
-        <a href="/2019-01-12-%E8%AE%BA%E6%96%87-winnower/">Read More</a></div>
-</article>
-<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
-        <a href="/2019-01-12-%E6%95%B0%E5%AD%A6-%E7%BA%BF%E6%80%A7%E5%8F%98%E6%8D%A2%E7%9A%84%E7%9F%A9%E9%98%B5/">线性变换的矩阵</a>
-    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
-            published on&nbsp;<time datetime=2019-01-12>2019-01-12</time>
-        </span>&nbsp;
-            <span class="post-category">included in<a href="/categories/math/">
-                        <i class="far fa-folder fa-fw"></i>Math
-                    </a></span></div><div class="content">我们知道，线性空间中，在给定基的情况下，对任意一个向量 $\vec{v}$ 施予一个线性变换 $T$ 时，就让该向量的坐标向量左乘某个矩阵 $A$ 即可。例如，设在线性空间 $V_n(F)$ 中，取一组基为 ${\vec{\alpha_1},\vec{\alpha_2},\cdots,\vec{\alpha_n}}$，向量 $\vec{w}$ 在该基下的坐标为 $\vec{Y}$，向量 $\vec{v}$ 在该基下的坐标为 $\vec{X}$，即：
-$$\vec{w}=(\vec{\alpha_1},\vec{\alpha_2},\cdots,\vec{\alpha_n}) \vec{Y}$$
-$$\vec{v}=(\vec{\alpha_1},\vec{\alpha_2},\cdots,\vec{\alpha_n}) \vec{X}$$
-如果向量 $\vec{w}$ 是由向量 $\vec{v}$ 经过线性变换 $T$ 得到的，即
-$$\vec{w}=T(\vec{v})$$
-那么它们的坐标关系为：
-$$\vec{Y}=A \vec{X}$$
-并且，线性空间中任一个线性变换 $T$ 可以由某个矩阵 $A$ 唯一对应：
-$$T \iff A$$
-为什么？这个矩阵 $A$ 如何得到？接下来复习一下 $A$ 的推导。需要的预备知识：
- 线性空间定义 线性空间的基与坐标 线性变换定义   记 $T$ 为线性空间 $V_n(F)$ 上的线性变换。记 ${\vec{\alpha_1},\vec{\alpha_2},\cdots,\vec{\alpha_n}}$ 为 $V_n(F)$ 的一组基，则对任意向量 $\forall \pmb\beta \in V_n(F)$，由基的定义可得
- $$\vec{v}=(\vec{\alpha_1},\vec{\alpha_2},\cdots,\vec{\alpha_n}) \vec{X}=(\vec{\alpha_1},\vec{\alpha_2},\cdots,\vec{\alpha_n}) \begin{pmatrix} x_1 \\ x_2 \\ \vdots \\ x_n \end{pmatrix} =x_1\vec{\alpha_1}+x_2\vec{\alpha_2}+\cdots+x_n\vec{\alpha_n}$$  对 $\vec{v}$ 施予线性变换 $T$：</div><div class="post-footer">
-        <a href="/2019-01-12-%E6%95%B0%E5%AD%A6-%E7%BA%BF%E6%80%A7%E5%8F%98%E6%8D%A2%E7%9A%84%E7%9F%A9%E9%98%B5/">Read More</a></div>
-</article>
-<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
-        <a href="/2019-01-11-%E6%95%B0%E5%AD%A6-%E6%B3%B0%E5%8B%92%E5%B1%95%E5%BC%80%E5%BC%8F/">泰勒展开式</a>
-    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
-            published on&nbsp;<time datetime=2019-01-11>2019-01-11</time>
-        </span>&nbsp;
-            <span class="post-category">included in<a href="/categories/math/">
-                        <i class="far fa-folder fa-fw"></i>Math
-                    </a></span></div><div class="content">泰勒公式是怎么被推导出来的，以及为什么可以用多项式来逼近任意函数？
-根据微积分的“以直代曲”的思想，对一个连续可导的函数 $f(x)$，当因变量 $x$ 在某点 $x_0$ 附近的改变值为 $\Delta x$ 时，过该点的切线上对应的纵坐标增量为 $dy=f&rsquo;(x_0) \cdot \Delta x$。虽然 $f(x)$ 实际上的纵坐标增量是 $\Delta y=f(x_0+\Delta x)-f(x_0)$，但是如果 $\Delta x$ 非常小，那么可以近似认为切线的纵坐标增量等于 $f(x)$ 的纵坐标增量。即：
-$$\Delta y=f(x_0+\Delta x)-f(x_0) \approx f&rsquo;(x_0) \cdot \Delta x$$
-那么对于 $x_0$ 附近的任意一点 $x$，有 $\Delta x=x-x_0$，代入上式得：
-$$f(x)-f(x_0) \approx f&rsquo;(x_0) \cdot (x-x_0)$$
-将 $f(x_0)$ 移到右边，凑出关于 $x$ 的函数表达形式：
-$$f(x) \approx f(x_0)+f&rsquo;(x_0) \cdot (x-x_0)$$
-观察这个式子，显然它就是利用已知的一个点 $(x_0,f(x_0))$ 及在该点处的一阶导数 $f&rsquo;(x_0)$ 来近似表达了在 $x_0$ 附近的原函数 $f(x)$，而且它是一个线性的函数，非常便于我们计算和处理，特别是在原函数 $f(x)$ 是一个非常复杂的函数的情况下。
-到了这里，严谨的数学家肯定不满足于如此，因为这只是一个非常粗略的近似。那么如何进一步逼近原函数 $f(x)$？甚至什么时候可以取等号？这就是泰勒以及众多数学家的贡献了。
-既然一阶导数和一次多项式可以用来近似代替函数 $f(x)$，而现在希望能进一步提高近似的精度，那么一个非常自然、直接的想法就是使用更高阶的导数以及更高阶的多项式。因为多项式函数无论是连续求导、变形、还是数值计算，都要比其他一些函数例如三角函数、指数函数、对数函数、幂函数等容易得多，所以自然选择多项式来作为基本构件。这其实在生活中是很常见的思路：
- 当遇到一个复杂的、无法直接使用的东西时，我们自然想办法用其他一些简单的、方便使用的东西去近似模拟它，得到和它基本相近的功能 当我们要去近似模拟时，要直接一步到位是很难的，一般是先模拟一个大体的近似，然后在这个基础上，一步步去完善细节，一步步提高精度 如第一点所说，我们肯定是使用简单的零部件去构建整体，并且越简单越好，因为越简单则越容易理解和改造、控制。其实大自然亦如此，复杂如人的神经系统、大脑组织，也是由一个个十分简单、有效的神经细胞组建而成  相信上面的陈述应该可以说服你，像数学家那样使用高阶导数和高阶多项式来进行近似代替某个复杂但连续并且可导的函数 $f(x)$。我们知道，最简单的多项式函数表达形式如下：</div><div class="post-footer">
-        <a href="/2019-01-11-%E6%95%B0%E5%AD%A6-%E6%B3%B0%E5%8B%92%E5%B1%95%E5%BC%80%E5%BC%8F/">Read More</a></div>
-</article>
-<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
-        <a href="/2019-01-09-%E6%A6%82%E7%8E%87-%E4%BA%8B%E4%BB%B6%E4%B8%8E%E6%A6%82%E7%8E%87/">事件与概率</a>
-    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
-            published on&nbsp;<time datetime=2019-01-09>2019-01-09</time>
-        </span>&nbsp;
-            <span class="post-category">included in<a href="/categories/math/">
-                        <i class="far fa-folder fa-fw"></i>Math
-                    </a></span></div><div class="content">一、概率 1、概率的公理化定义（柯氏理论体系）：事件有概率，其大小随事件而异。也即，概率是事件的函数：事件 $A$ 的概率记为 $P(A)$。
-2、古典概率：设一个试验有 $N$ 个等可能的结果，而事件 $E$ 恰包含其中的 $M$ 个结果，则事件 $E$ 的概率，记为 $P(E)$，定义为
-$$P(E)=\frac{M}{N}$$
-3、古典概率计算归结为计算两个数 $M$ 和 $N$。这种计算大多涉及排列组合。排列组合公式： (1) $n$ 个相异物件取 $r(1\leq r \leq n)$ 个的不同排列总数为
-$$A_{n}^{r}=n(n-1)(n-2) \cdots (n-r+1)=\frac{n!}{(n-r)!}$$
-(2) $n$ 个相异物件取 $r(1\leq r \leq n)$ 个的不同组合总数为
-$$C_{n}^{r}=\frac{A_{n}^{r}}{r!}=\frac{n!}{r!(n-r)!}$$
-(3) 组合系数 $C_{n}^{r}$ 又常称为二项式系数，因为它出现在二项式展开的公式中：
-$$(a+b)^n=\sum_{i=0}^{n}C_{n}^{i}a^{i}b^{n-i}$$
-(4) $n$ 个相异物分成 $k$ 堆，各堆物件数分别为 $r_1,\cdots,r_k$，分法种数为：
-$$\frac{n!}{r_1! \cdots r_k!}$$
-二、事件的运算、条件概率与独立性 1、事件的蕴含、包含以及相等：在同一试验下的两个事件 $A$ 和 $B$，如果： (1) 当 $A$ 发生时 $B$ 必发生，则称 $A$ 蕴含 $B$，或者 $B$ 包含 A，记为 $A \subset B$ (2) 若 $A$、$B$ 相互蕴含，即 $A \subset B$ 且 $B \subset A$，则称 $A$、$B$ 两事件相等，记为 $A=B$</div><div class="post-footer">
-        <a href="/2019-01-09-%E6%A6%82%E7%8E%87-%E4%BA%8B%E4%BB%B6%E4%B8%8E%E6%A6%82%E7%8E%87/">Read More</a></div>
-</article>
-<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
         <a href="/2019-01-05-%E8%AE%BA%E6%96%87-priortracker/">PriorTracker</a>
     </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
             published on&nbsp;<time datetime=2019-01-05>2019-01-05</time>
@@ -187,6 +110,63 @@ $$PriorityScore(e)=\alpha \cdot RarenessScore(e) + \beta \cdot FanoutScore(e)$$
 1、逆匿名网页浏览用户（De-anonymizing web visitors）：广告投放商可以在一些外部网页上安装一个 Facebook 的 JavaScript 插件，Facebook 可以通过该插件追踪浏览过此网页的用户，然后将这些用户记录下来，作为广告目标用户集合（注意，这些用户对广告投放商来说是透明的，只有 Facebook 知道这些用户）。现在，攻击者（恶意的广告投放商）可以利用上述的漏洞来反推出某个用户 $V$ 是否访问了这个网页。攻击方法是： (1) 先确定 $V$ 是否是 Facebook 平台中的用户：提交一系列不含攻击目标 $V$ 的请求 ${ L_1,L_2,\cdots,L_n }$，每次请求只比上一次请求多一个用户，Facebook 返回的匹配用户总数分别为 ${A_1,A_2,\cdots,A_n }$。先测试出一个舍入阈值下界，例如，假设 $A_1$、$A_2$ 是 810，而 $A_3$ 是 820，那么 $A_2=810$ 是一个舍入下界。然后我们再在 $L_2$ 这个集合中加入攻击目标 $V$ 即 ${L_2 \bigcup V }$ 并提交给 Facebook，如果返回的是 810，那么 $V$ 不是 Facebook 平台中的用户，如果返回的是 820，那么说明 $V$ 是 Facebook 中的一个用户。 (2) 接下来，确定 $V$ 是否在 Facebook 追踪的网页浏览者名单中：同样地，提交一系列包含 $V$ 的请求，每个请求只比前一个请求多一个用户，然后测试出舍入上界，例如 ${L_1 \bigcup V}$、${L_2 \bigcup V}$ 是 930，而 ${L_3 \bigcup V}$ 是 940，那么 $A_3 = 940$ 就是攻击者要找的上界。此时，再提交不含 $V$ 的 ${L_4}$，看返回的结果是否下降到 930，如果下降了，说明 $V$ 就在浏览者名单中，即可以确定攻击目标 $V$ 浏览过了攻击者的网页。</div><div class="post-footer">
         <a href="/2018-12-29-%E8%AE%BA%E6%96%87-pii/">Read More</a></div>
 </article>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+        <a href="/2018-12-22-%E8%AE%BA%E6%96%87-svim/">SVIM</a>
+    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
+            published on&nbsp;<time datetime=2018-12-22>2018-12-22</time>
+        </span>&nbsp;
+            <span class="post-category">included in<a href="/categories/thesis/">
+                        <i class="far fa-folder fa-fw"></i>Thesis
+                    </a></span></div><div class="content">差分隐私（Differential Privacy）模型是微软研究院的 Cynthia Dwork 等人于 2006 年提出的一个严谨的数学模型，目标在于提出用以修改隐私数据的技术，使得修改后的数据可以安全发布(以供第三方进行研究)，而不会遭受去匿名化等隐私攻击。同时，修改后的数据要在保护隐私的前提下最大限度地保留原数据的整体信息，否则被发布的数据将毫无研究价值。
+该论文主要提出了一个称为 Set-Value Item Mining (SVIM) 的协议，用于在隐私保护约束条件下提高本地差分隐私数据的精确度。由于差分隐私主要是纯理论的模型，没有具体的实现和应用，限于篇幅此文不展开论述。此处主要了解差分隐私的一些背景即可。
+相关资料：
+ 差分隐私学习总结 苹果的 Differential Privacy 差分隐私技术是什么原理？ 大数据下的信息安全-差分隐私保护技术  </div><div class="post-footer">
+        <a href="/2018-12-22-%E8%AE%BA%E6%96%87-svim/">Read More</a></div>
+</article>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+        <a href="/2018-12-18-%E6%95%B0%E5%AD%A6-%E5%AE%9A%E7%A7%AF%E5%88%86/">定积分</a>
+    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
+            published on&nbsp;<time datetime=2018-12-18>2018-12-18</time>
+        </span>&nbsp;
+            <span class="post-category">included in<a href="/categories/math/">
+                        <i class="far fa-folder fa-fw"></i>Math
+                    </a></span></div><div class="content">一、定积分的概念与性质 1、定义：设函数 $f(x)$ 在 $[a,b]$ 上有界，在 $[a,b]$ 中任意插入若干分点 $a=x_0 &lt; x_1 &lt; x_2 &lt; \cdots &lt; x_{n-1} &lt; x_n=b$，把区间 $[a,b]$ 分成 $n$ 个小区 $[x_0, x_1]$，$[x_1,x_2]$，$\cdots$，$[x_{n-1},x_n]$，各个小区间的长度依次为 $\Delta x_1=x_1-x_0$, $\Delta x_2=x_2-x_1$, $\cdots$, $\Delta x_n=x_n-x_{n-1}$。在每个小区间 $[x_{i-1},x_i]$ 上任取一点 $\xi_i (x_{i-1} \leq \xi \leq x_i)$，作函数值 $f(\xi)$ 与小区间长度 $\Delta x_i$ 的乘积 $f(\xi_i) \cdot \Delta x_i$，并作和
+$$S=\sum_{i=1}^{n}f(\xi)\Delta x_i$$
+记 $\lambda=\max { \Delta x_1, \Delta x_2, \cdots, \Delta x_n }$，如果当 $\lambda \to 0$ 时，$S$ 的极限总存在，且与闭区间 $[a,b]$ 的分法及点 $\xi_i$ 的取法无关，那么称这个极限 $I$ 为函数 $f(x)$ 在区间 $[a,b]$ 上的定积分，记作 $\int_{a}^{b} f(x) dx$，即</div><div class="post-footer">
+        <a href="/2018-12-18-%E6%95%B0%E5%AD%A6-%E5%AE%9A%E7%A7%AF%E5%88%86/">Read More</a></div>
+</article>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+        <a href="/2018-12-15-%E8%AE%BA%E6%96%87-enclavedb/">EnclaveDB</a>
+    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
+            published on&nbsp;<time datetime=2018-12-15>2018-12-15</time>
+        </span>&nbsp;
+            <span class="post-category">included in<a href="/categories/thesis/">
+                        <i class="far fa-folder fa-fw"></i>Thesis
+                    </a></span></div><div class="content">一、背景及问题
+目前一些云端的数据处理服务经常受到可能来自数据库管理员、服务器管理员、利用操作系统漏洞的黑客等的攻击。虽然一般意义上的数据加密可以为静态数据和数据传输提供强力高效的保护，但是却无法为数据处理系统提供足够的保护，因为数据处理系统在处理查询的时会在内存解密敏感数据。而内存是容易被攻击者入侵并掌控的区域，因此这会导致数据的不安全。
+一种实现安全查询（secure query）的方法是，一些系统如 CryptDB，Monomi 以及 Seabed 等通过使用 property-preserving encryption 技术来进行在已加密数据上的安全查询。然而这种方法只能处理十分有限的查询请求，并且有信息泄漏的风险。
+另一种实现安全查询的方法是在受信任的执行环境（trusted execution environment）或者内飞地（enclaves） 中执行查询。系统的内飞地如 Intel Software Guard Extensions (SGX) 可以保护敏感数据和代码，即使攻击者控制了整个操作系统或者主机。虽然如此，使用内飞地存在几个问题：
+ 为了实现安全保护，需要仔细地对应用程序进行重构，分解出可信任部分和不可信任部分 为了实现高层次的安全特性如机密性（confidentiality）、完整性（integrity）、时新性（freshness），需要增加额外的逻辑和机制来确保机密信息在进入和离开内飞地的时候不会被泄漏  这些问题对于一些简单的应用程序来说并不困难，但是对于一些大型复杂系统如数据库系统来说则非常不容易。先前的一些研究例如 CipherBase、TrustedDB 等采取的方式是将查询引擎（query engine）的一小部分放置于受信任的硬件之上，这种方式的问题是无法提供上述的机密性、完整性、时新性。另一种选择是将整个数据库放置于内飞地之中，但这显然会导致大量的 trusted computing base (TCB) 以及服务性能的下降，并且无法阻止来自数据库管理员的攻击。
+ 【根据维基百科，飞地指在某个地理区划境内有一块隶属于他地的区域。根据地区与国家之间的相对关系，飞地又可以分为“外飞地”（Exclave）与“内飞地”（Enclave）两种概念，其关系如下：内飞地（enclave）：意指某个国家境内有块土地，其主权属于另外一个国家，则该地区称为此国家的内飞地。外飞地（exclave）：某国家拥有一块与本国分离开来的领土，该领土被其他国家包围，则该领土称为某国的外飞地。】
+ 二、解决方案
+文章提出了一个称为 EnclaveDB 的数据库，它可以为查询和数据提供机密性、完整性、时新性。它与传统关系型数据库一样提供了数据处理、SQL查询、存储过程等基本功能。与传统数据库不同的是：
+ EnclaveDB 通过把所有敏感数据（tables, indexes, queries and other intermediate state）维护在内飞地的内存中来保护数据库状态 EnclaveDB 使用可信任的 EnclaveDB 客户端来预编译查询代码，并进行加密 预编译代码后，受信任的 EnclaveDB 客户端与不受信任的服务器上的内飞地直接建立一个安全的加密通道，然后将已加密的查询和参数发送过去 不受信任的服务器上的内飞地收到查询请求后，对请求进行验证、解密、执行查询、对查询结果进行加密、返回给客户端 EnclaveDB 重新设计了数据库的日志与恢复机制，以确保服务器无法对数据库的日志进行攻击 EnclaveDB 采取了一些优化手段，减少线程上下文切换，减少服务器开销  三、总结
+文章提出了一个通过使用内飞地来实现不信任服务器上的安全数据库。通过可信任客户端的预编译、加密安全通道的通信、内飞地的隔离保护、重新设计数据库的日志与恢复机制等一系列措施，实现了机密性、完整性、时新性这三个重要的安全特性。</div><div class="post-footer">
+        <a href="/2018-12-15-%E8%AE%BA%E6%96%87-enclavedb/">Read More</a></div>
+</article>
+<article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
+        <a href="/2018-12-14-%E6%95%B0%E5%AD%A6-%E4%B8%8D%E5%AE%9A%E7%A7%AF%E5%88%86/">不定积分</a>
+    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>yusheng</a></span>&nbsp;<span class="post-publish">
+            published on&nbsp;<time datetime=2018-12-14>2018-12-14</time>
+        </span>&nbsp;
+            <span class="post-category">included in<a href="/categories/math/">
+                        <i class="far fa-folder fa-fw"></i>Math
+                    </a></span></div><div class="content">一、不定积分的概念与性质 1、定义：如果在区间 $I$ 上，可导函数 $F(x)$ 的导函数为 $f(x)$，即对任一 $x \in I$，都有 $F&rsquo;(x)=f(x)$ 或 $dF(x)=f(x)dx$，那么函数 $F(x)$ 就称为 $f(x)$（或 $f(x)dx$）在区间 $I$ 上的一个原函数
+2、定理：如果函数 $f(x)$ 在区间 $I$ 上连续，那么在区间 $I$ 上存在可导函数 $F(x)$，使得对任一 $x \in I$ 都有 $F&rsquo;(x)=f(x)$，也就是说连续函数一定有原函数
+3、定义：在区间 $I$ 上，函数 $f(x)$ 的带有任意常数项的原函数称为 $f(x)$ （或 $f(x)dx$）在区间 $I$ 上的不定积分，记作 $\int f(x)dx$。其中记号 $\int$ 称为积分号，$f(x)$ 称为被积函数，$f(x)dx$ 称为被积表达式，$x$ 称为积分变量
+4、由于 $\int f(x)dx$ 是 $f(x)$ 的原函数，所以 $\frac{d}{dx}[\int f(x)dx]=f(x)$ 或 $d[\int f(x)dx]=f(x)dx$；又由于 $F(x)$ 是 $F&rsquo;(x)$ 的原函数，所以 $\int F&rsquo;(x) dx=F(x)+C$ 或 $\int dF(x)=F(x)+C$。由此可见，微分运算（以记号 $d$ 表示）与积分运算（以记号 $\int$ 表示）是互逆的。当此两个记号连在一起时，或者抵消，或者抵消后差一个常数。</div><div class="post-footer">
+        <a href="/2018-12-14-%E6%95%B0%E5%AD%A6-%E4%B8%8D%E5%AE%9A%E7%A7%AF%E5%88%86/">Read More</a></div>
+</article>
 <ul class="pagination"><li class="page-item ">
                     <span class="page-link">
                         <a href="/">1</a>
@@ -211,7 +191,7 @@ $$PriorityScore(e)=\alpha \cdot RarenessScore(e) + \beta \cdot FanoutScore(e)$$
                     <span class="page-link" aria-hidden="true">&hellip;</span>
                 </li><li class="page-item ">
                     <span class="page-link">
-                        <a href="/page/17/">17</a>
+                        <a href="/page/15/">15</a>
                     </span>
                 </li></ul></div></div>
             </main><footer class="footer">
