@@ -30,10 +30,10 @@ $$e_{test}=\frac{1}{M}\sum_{i=1}^{M}L(y_i,\hat{y}_i)$$
 当选择的模型复杂度过大时，过拟合现象就会发生（训练误差很小，但测试误差很大），这样在训练模型时，就需要防止过拟合，进行最优的模型选择，即选择复杂度适当的模型，目的是找到具有最优泛化能力（最小测试误差）的模型，因为我们训练模型的目的不是让模型完美逼近训练集，而是让模型完美预测未知数据。
 而常用的模型选择方式有两种，一种是上面的交叉验证法，取预测效果最好的众多个模型中的一个，另一个方法就是在目标函数中加入正则项，惩罚模型在学习过程中增大的复杂度。例如在上面所举的例子中，可以在目标函数中加入关于模型复杂度的函数，当模型复杂度越高，这个函数的值就越大。那么这样一来，模型在学习的时候，最小化的目标就不仅仅是训练样本的总误差了，而是训练样本总误差与模型复杂度之和。如此这般就可以因避免片面追求误差最小而提高了复杂度。" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://utopizza.github.io/2017-11-20-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E8%AE%AD%E7%BB%83%E8%AF%AF%E5%B7%AE%E4%B8%8E%E6%B5%8B%E8%AF%95%E8%AF%AF%E5%B7%AE/" />
-<meta property="og:image" content="https://utopizza.github.io/logo.png"/>
-<meta property="article:published_time" content="2017-11-20T13:57:00+00:00" />
-<meta property="article:modified_time" content="2017-11-20T13:57:00+00:00" />
+<meta property="og:url" content="https://utopizza.github.io/2017-11-20-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E8%AE%AD%E7%BB%83%E8%AF%AF%E5%B7%AE%E4%B8%8E%E6%B5%8B%E8%AF%95%E8%AF%AF%E5%B7%AE/" /><meta property="og:image" content="https://utopizza.github.io/logo.png"/><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2017-11-20T13:57:00&#43;00:00" />
+<meta property="article:modified_time" content="2017-11-20T13:57:00&#43;00:00" />
+
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://utopizza.github.io/logo.png"/>
 
@@ -214,7 +214,7 @@ $$e_{test}=\frac{1}{M}\sum_{i=1}^{M}L(y_i,\hat{y}_i)$$
 </div>
 </article></div>
             </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.69.2">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.6"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.83.1">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.6"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
                 </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2021</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">yusheng</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
         </div>
     </footer></div>

@@ -11,10 +11,10 @@
 在实现SQL的多条件查询时，一般采用的实现方法是根据传入的参数是否有效来判读是否拼接该项查询条件，如
 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20  // 传入参数：@ProjectName=&#39;rrrr&#39;，@ProjectNumber=&#39;123&#39; // 先写好基本查询句子 declare @sqlString varchar(100) set @sqlString = &#39;select * from Project_Info where 1=1&#39; // 拼接查询条件1 if (@ProjectName IS NOT NULL) AND (@ProjectName &lt;&gt; &#39;&#39;) begin set @sqlString = @sqlString &#43; &#39; and ProjectName like &#39;&#39;%&#39; &#43; @ProjectName &#43; &#39;%&#39;&#39;&#39; end // 拼接查询条件2 if (@ProjectNumber IS NOT NULL) AND (@ProjectNumber &lt;&gt; &#39;&#39;) begin set @sqlString = @sqlString &#43; &#39; and ProjectNumber =&#39;&#39;&#39; &#43; @ProjectNumber &#43; &#39;&#39;&#39;&#39; end // 执行最终结果 exec @sqlString   二、问题" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://utopizza.github.io/2014-03-06-%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B08/" />
-<meta property="og:image" content="https://utopizza.github.io/logo.png"/>
-<meta property="article:published_time" content="2014-03-06T10:18:00+00:00" />
-<meta property="article:modified_time" content="2014-03-06T10:18:00+00:00" />
+<meta property="og:url" content="https://utopizza.github.io/2014-03-06-%E6%8A%80%E6%9C%AF%E7%AC%94%E8%AE%B08/" /><meta property="og:image" content="https://utopizza.github.io/logo.png"/><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2014-03-06T10:18:00&#43;00:00" />
+<meta property="article:modified_time" content="2014-03-06T10:18:00&#43;00:00" />
+
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://utopizza.github.io/logo.png"/>
 
@@ -199,30 +199,30 @@ exec @sqlString
 <table>
 <thead>
 <tr>
-<th align="center">SQL 语句</th>
-<th align="center">执行结果</th>
+<th style="text-align:center">SQL 语句</th>
+<th style="text-align:center">执行结果</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td align="center"><code>select ''''''</code></td>
-<td align="center">'&rsquo;</td>
+<td style="text-align:center"><code>select ''''''</code></td>
+<td style="text-align:center">''</td>
 </tr>
 <tr>
-<td align="center"><code>select ' '' '' '</code></td>
-<td align="center">' '</td>
+<td style="text-align:center"><code>select ' '' '' '</code></td>
+<td style="text-align:center">' '</td>
 </tr>
 <tr>
-<td align="center"><code>select ' ''ab '</code></td>
-<td align="center">&lsquo;ab</td>
+<td style="text-align:center"><code>select ' ''ab '</code></td>
+<td style="text-align:center">&lsquo;ab</td>
 </tr>
 <tr>
-<td align="center"><code>select ' ''a''b '</code></td>
-<td align="center">&lsquo;a&rsquo;b</td>
+<td style="text-align:center"><code>select ' ''a''b '</code></td>
+<td style="text-align:center">&lsquo;a&rsquo;b</td>
 </tr>
 <tr>
-<td align="center"><code>select ' ''a''b'' '</code></td>
-<td align="center">&lsquo;a&rsquo;b&rsquo;</td>
+<td style="text-align:center"><code>select ' ''a''b'' '</code></td>
+<td style="text-align:center">&lsquo;a&rsquo;b&rsquo;</td>
 </tr>
 </tbody>
 </table>
@@ -257,7 +257,7 @@ exec @sqlString
 </div>
 </article></div>
             </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.69.2">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.6"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.83.1">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.6"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
                 </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2021</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">yusheng</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
         </div>
     </footer></div>

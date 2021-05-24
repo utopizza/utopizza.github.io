@@ -8,33 +8,33 @@
         <title>泰勒展开式 - Utopizza</title>
         <meta name="Description" content="About LoveIt Theme"><meta property="og:title" content="泰勒展开式" />
 <meta property="og:description" content="泰勒公式是怎么被推导出来的，以及为什么可以用多项式来逼近任意函数？
-根据微积分的“以直代曲”的思想，对一个连续可导的函数 $f(x)$，当因变量 $x$ 在某点 $x_0$ 附近的改变值为 $\Delta x$ 时，过该点的切线上对应的纵坐标增量为 $dy=f&rsquo;(x_0) \cdot \Delta x$。虽然 $f(x)$ 实际上的纵坐标增量是 $\Delta y=f(x_0&#43;\Delta x)-f(x_0)$，但是如果 $\Delta x$ 非常小，那么可以近似认为切线的纵坐标增量等于 $f(x)$ 的纵坐标增量。即：
-$$\Delta y=f(x_0&#43;\Delta x)-f(x_0) \approx f&rsquo;(x_0) \cdot \Delta x$$
+根据微积分的“以直代曲”的思想，对一个连续可导的函数 $f(x)$，当因变量 $x$ 在某点 $x_0$ 附近的改变值为 $\Delta x$ 时，过该点的切线上对应的纵坐标增量为 $dy=f&#39;(x_0) \cdot \Delta x$。虽然 $f(x)$ 实际上的纵坐标增量是 $\Delta y=f(x_0&#43;\Delta x)-f(x_0)$，但是如果 $\Delta x$ 非常小，那么可以近似认为切线的纵坐标增量等于 $f(x)$ 的纵坐标增量。即：
+$$\Delta y=f(x_0&#43;\Delta x)-f(x_0) \approx f&#39;(x_0) \cdot \Delta x$$
 那么对于 $x_0$ 附近的任意一点 $x$，有 $\Delta x=x-x_0$，代入上式得：
-$$f(x)-f(x_0) \approx f&rsquo;(x_0) \cdot (x-x_0)$$
+$$f(x)-f(x_0) \approx f&#39;(x_0) \cdot (x-x_0)$$
 将 $f(x_0)$ 移到右边，凑出关于 $x$ 的函数表达形式：
-$$f(x) \approx f(x_0)&#43;f&rsquo;(x_0) \cdot (x-x_0)$$
-观察这个式子，显然它就是利用已知的一个点 $(x_0,f(x_0))$ 及在该点处的一阶导数 $f&rsquo;(x_0)$ 来近似表达了在 $x_0$ 附近的原函数 $f(x)$，而且它是一个线性的函数，非常便于我们计算和处理，特别是在原函数 $f(x)$ 是一个非常复杂的函数的情况下。
+$$f(x) \approx f(x_0)&#43;f&#39;(x_0) \cdot (x-x_0)$$
+观察这个式子，显然它就是利用已知的一个点 $(x_0,f(x_0))$ 及在该点处的一阶导数 $f&#39;(x_0)$ 来近似表达了在 $x_0$ 附近的原函数 $f(x)$，而且它是一个线性的函数，非常便于我们计算和处理，特别是在原函数 $f(x)$ 是一个非常复杂的函数的情况下。
 到了这里，严谨的数学家肯定不满足于如此，因为这只是一个非常粗略的近似。那么如何进一步逼近原函数 $f(x)$？甚至什么时候可以取等号？这就是泰勒以及众多数学家的贡献了。
 既然一阶导数和一次多项式可以用来近似代替函数 $f(x)$，而现在希望能进一步提高近似的精度，那么一个非常自然、直接的想法就是使用更高阶的导数以及更高阶的多项式。因为多项式函数无论是连续求导、变形、还是数值计算，都要比其他一些函数例如三角函数、指数函数、对数函数、幂函数等容易得多，所以自然选择多项式来作为基本构件。这其实在生活中是很常见的思路：
  当遇到一个复杂的、无法直接使用的东西时，我们自然想办法用其他一些简单的、方便使用的东西去近似模拟它，得到和它基本相近的功能 当我们要去近似模拟时，要直接一步到位是很难的，一般是先模拟一个大体的近似，然后在这个基础上，一步步去完善细节，一步步提高精度 如第一点所说，我们肯定是使用简单的零部件去构建整体，并且越简单越好，因为越简单则越容易理解和改造、控制。其实大自然亦如此，复杂如人的神经系统、大脑组织，也是由一个个十分简单、有效的神经细胞组建而成  相信上面的陈述应该可以说服你，像数学家那样使用高阶导数和高阶多项式来进行近似代替某个复杂但连续并且可导的函数 $f(x)$。我们知道，最简单的多项式函数表达形式如下：" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://utopizza.github.io/2019-01-11-%E6%95%B0%E5%AD%A6-%E6%B3%B0%E5%8B%92%E5%B1%95%E5%BC%80%E5%BC%8F/" />
-<meta property="og:image" content="https://utopizza.github.io/logo.png"/>
-<meta property="article:published_time" content="2019-01-11T00:00:00+00:00" />
-<meta property="article:modified_time" content="2019-01-11T00:00:00+00:00" />
+<meta property="og:url" content="https://utopizza.github.io/2019-01-11-%E6%95%B0%E5%AD%A6-%E6%B3%B0%E5%8B%92%E5%B1%95%E5%BC%80%E5%BC%8F/" /><meta property="og:image" content="https://utopizza.github.io/logo.png"/><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2019-01-11T00:00:00&#43;00:00" />
+<meta property="article:modified_time" content="2019-01-11T00:00:00&#43;00:00" />
+
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://utopizza.github.io/logo.png"/>
 
 <meta name="twitter:title" content="泰勒展开式"/>
 <meta name="twitter:description" content="泰勒公式是怎么被推导出来的，以及为什么可以用多项式来逼近任意函数？
-根据微积分的“以直代曲”的思想，对一个连续可导的函数 $f(x)$，当因变量 $x$ 在某点 $x_0$ 附近的改变值为 $\Delta x$ 时，过该点的切线上对应的纵坐标增量为 $dy=f&rsquo;(x_0) \cdot \Delta x$。虽然 $f(x)$ 实际上的纵坐标增量是 $\Delta y=f(x_0&#43;\Delta x)-f(x_0)$，但是如果 $\Delta x$ 非常小，那么可以近似认为切线的纵坐标增量等于 $f(x)$ 的纵坐标增量。即：
-$$\Delta y=f(x_0&#43;\Delta x)-f(x_0) \approx f&rsquo;(x_0) \cdot \Delta x$$
+根据微积分的“以直代曲”的思想，对一个连续可导的函数 $f(x)$，当因变量 $x$ 在某点 $x_0$ 附近的改变值为 $\Delta x$ 时，过该点的切线上对应的纵坐标增量为 $dy=f&#39;(x_0) \cdot \Delta x$。虽然 $f(x)$ 实际上的纵坐标增量是 $\Delta y=f(x_0&#43;\Delta x)-f(x_0)$，但是如果 $\Delta x$ 非常小，那么可以近似认为切线的纵坐标增量等于 $f(x)$ 的纵坐标增量。即：
+$$\Delta y=f(x_0&#43;\Delta x)-f(x_0) \approx f&#39;(x_0) \cdot \Delta x$$
 那么对于 $x_0$ 附近的任意一点 $x$，有 $\Delta x=x-x_0$，代入上式得：
-$$f(x)-f(x_0) \approx f&rsquo;(x_0) \cdot (x-x_0)$$
+$$f(x)-f(x_0) \approx f&#39;(x_0) \cdot (x-x_0)$$
 将 $f(x_0)$ 移到右边，凑出关于 $x$ 的函数表达形式：
-$$f(x) \approx f(x_0)&#43;f&rsquo;(x_0) \cdot (x-x_0)$$
-观察这个式子，显然它就是利用已知的一个点 $(x_0,f(x_0))$ 及在该点处的一阶导数 $f&rsquo;(x_0)$ 来近似表达了在 $x_0$ 附近的原函数 $f(x)$，而且它是一个线性的函数，非常便于我们计算和处理，特别是在原函数 $f(x)$ 是一个非常复杂的函数的情况下。
+$$f(x) \approx f(x_0)&#43;f&#39;(x_0) \cdot (x-x_0)$$
+观察这个式子，显然它就是利用已知的一个点 $(x_0,f(x_0))$ 及在该点处的一阶导数 $f&#39;(x_0)$ 来近似表达了在 $x_0$ 附近的原函数 $f(x)$，而且它是一个线性的函数，非常便于我们计算和处理，特别是在原函数 $f(x)$ 是一个非常复杂的函数的情况下。
 到了这里，严谨的数学家肯定不满足于如此，因为这只是一个非常粗略的近似。那么如何进一步逼近原函数 $f(x)$？甚至什么时候可以取等号？这就是泰勒以及众多数学家的贡献了。
 既然一阶导数和一次多项式可以用来近似代替函数 $f(x)$，而现在希望能进一步提高近似的精度，那么一个非常自然、直接的想法就是使用更高阶的导数以及更高阶的多项式。因为多项式函数无论是连续求导、变形、还是数值计算，都要比其他一些函数例如三角函数、指数函数、对数函数、幂函数等容易得多，所以自然选择多项式来作为基本构件。这其实在生活中是很常见的思路：
  当遇到一个复杂的、无法直接使用的东西时，我们自然想办法用其他一些简单的、方便使用的东西去近似模拟它，得到和它基本相近的功能 当我们要去近似模拟时，要直接一步到位是很难的，一般是先模拟一个大体的近似，然后在这个基础上，一步步去完善细节，一步步提高精度 如第一点所说，我们肯定是使用简单的零部件去构建整体，并且越简单越好，因为越简单则越容易理解和改造、控制。其实大自然亦如此，复杂如人的神经系统、大脑组织，也是由一个个十分简单、有效的神经细胞组建而成  相信上面的陈述应该可以说服你，像数学家那样使用高阶导数和高阶多项式来进行近似代替某个复杂但连续并且可导的函数 $f(x)$。我们知道，最简单的多项式函数表达形式如下："/>
@@ -125,13 +125,13 @@ $$f(x) \approx f(x_0)&#43;f&rsquo;(x_0) \cdot (x-x_0)$$
                 </div>
                 <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents"></nav></div>
             </div><div class="content" id="content"><p>泰勒公式是怎么被推导出来的，以及为什么可以用多项式来逼近任意函数？</p>
-<p>根据微积分的“以直代曲”的思想，对一个连续可导的函数 $f(x)$，当因变量 $x$ 在某点 $x_0$ 附近的改变值为 $\Delta x$ 时，过该点的切线上对应的纵坐标增量为 $dy=f&rsquo;(x_0) \cdot \Delta x$。虽然 $f(x)$ 实际上的纵坐标增量是 $\Delta y=f(x_0+\Delta x)-f(x_0)$，但是如果 $\Delta x$ 非常小，那么可以近似认为切线的纵坐标增量等于 $f(x)$ 的纵坐标增量。即：</p>
-<p>$$\Delta y=f(x_0+\Delta x)-f(x_0) \approx f&rsquo;(x_0) \cdot \Delta x$$</p>
+<p>根据微积分的“以直代曲”的思想，对一个连续可导的函数 $f(x)$，当因变量 $x$ 在某点 $x_0$ 附近的改变值为 $\Delta x$ 时，过该点的切线上对应的纵坐标增量为 $dy=f'(x_0) \cdot \Delta x$。虽然 $f(x)$ 实际上的纵坐标增量是 $\Delta y=f(x_0+\Delta x)-f(x_0)$，但是如果 $\Delta x$ 非常小，那么可以近似认为切线的纵坐标增量等于 $f(x)$ 的纵坐标增量。即：</p>
+<p>$$\Delta y=f(x_0+\Delta x)-f(x_0) \approx f'(x_0) \cdot \Delta x$$</p>
 <p>那么对于 $x_0$ 附近的任意一点 $x$，有 $\Delta x=x-x_0$，代入上式得：</p>
-<p>$$f(x)-f(x_0) \approx f&rsquo;(x_0) \cdot (x-x_0)$$</p>
+<p>$$f(x)-f(x_0) \approx f'(x_0) \cdot (x-x_0)$$</p>
 <p>将 $f(x_0)$ 移到右边，凑出关于 $x$ 的函数表达形式：</p>
-<p>$$f(x) \approx f(x_0)+f&rsquo;(x_0) \cdot (x-x_0)$$</p>
-<p>观察这个式子，显然它就是利用已知的一个点 $(x_0,f(x_0))$ 及在该点处的一阶导数 $f&rsquo;(x_0)$ 来近似表达了在 $x_0$ 附近的原函数 $f(x)$，而且它是一个线性的函数，非常便于我们计算和处理，特别是在原函数 $f(x)$ 是一个非常复杂的函数的情况下。</p>
+<p>$$f(x) \approx f(x_0)+f'(x_0) \cdot (x-x_0)$$</p>
+<p>观察这个式子，显然它就是利用已知的一个点 $(x_0,f(x_0))$ 及在该点处的一阶导数 $f'(x_0)$ 来近似表达了在 $x_0$ 附近的原函数 $f(x)$，而且它是一个线性的函数，非常便于我们计算和处理，特别是在原函数 $f(x)$ 是一个非常复杂的函数的情况下。</p>
 <p>到了这里，严谨的数学家肯定不满足于如此，因为这只是一个非常粗略的近似。那么如何进一步逼近原函数 $f(x)$？甚至什么时候可以取等号？这就是泰勒以及众多数学家的贡献了。</p>
 <p>既然一阶导数和一次多项式可以用来近似代替函数 $f(x)$，而现在希望能进一步提高近似的精度，那么一个非常自然、直接的想法就是使用更高阶的导数以及更高阶的多项式。因为多项式函数无论是连续求导、变形、还是数值计算，都要比其他一些函数例如三角函数、指数函数、对数函数、幂函数等容易得多，所以自然选择多项式来作为基本构件。这其实在生活中是很常见的思路：</p>
 <ol>
@@ -142,21 +142,21 @@ $$f(x) \approx f(x_0)&#43;f&rsquo;(x_0) \cdot (x-x_0)$$
 <p>相信上面的陈述应该可以说服你，像数学家那样使用高阶导数和高阶多项式来进行近似代替某个复杂但连续并且可导的函数 $f(x)$。我们知道，最简单的多项式函数表达形式如下：</p>
 <p>$$g(x)=a_0+a_1x+a_2x^2+\cdots+a_nx^n$$</p>
 <p>回顾一阶近似的时候，近似的函数形式是</p>
-<p>$$f(x) \approx f(x_0)+f&rsquo;(x_0) \cdot (x-x_0)$$</p>
+<p>$$f(x) \approx f(x_0)+f'(x_0) \cdot (x-x_0)$$</p>
 <p>结合两者，我们依样画葫芦地写出：</p>
 <p>$$f(x)=a_0+a_1(x-x_0)+a_2(x-x_0)^2+ \cdots + a_n(x-x_0)^n$$</p>
-<p>至此泰勒展开已经完成了一半了，只剩各项的系数需要确定。对比一阶近似，一次项的系数是 $f&rsquo;(x_0)$，这暗示着各项的系数与函数 $f(x)$ 在 $x_0$ 处的导数存在某种关系，启发我们往这个方向去假设和推测。以下是推导过程。</p>
+<p>至此泰勒展开已经完成了一半了，只剩各项的系数需要确定。对比一阶近似，一次项的系数是 $f'(x_0)$，这暗示着各项的系数与函数 $f(x)$ 在 $x_0$ 处的导数存在某种关系，启发我们往这个方向去假设和推测。以下是推导过程。</p>
 <hr>
 <p>对 $f(x)$ 求 $1$ 至 $n$ 阶导：</p>
-<p>$$f&rsquo;(x)=a_1+2a_2(x-x_0)+3a_3(x-x_0)^2+\cdots+na_n(x-x_0)^{n-1}$$</p>
-<p>$$f&rsquo;'(x)=2a_2+6a_3(x-x_0)+\cdots+n(n-1)a_n(x-x_0)^{n-2}$$</p>
-<p>$$f&rsquo;''(x)=6a_3+\cdots+n(n-1)(n-2)a_n(x-x_0)^{n-3}$$</p>
+<p>$$f'(x)=a_1+2a_2(x-x_0)+3a_3(x-x_0)^2+\cdots+na_n(x-x_0)^{n-1}$$</p>
+<p>$$f''(x)=2a_2+6a_3(x-x_0)+\cdots+n(n-1)a_n(x-x_0)^{n-2}$$</p>
+<p>$$f'''(x)=6a_3+\cdots+n(n-1)(n-2)a_n(x-x_0)^{n-3}$$</p>
 <p>$$\cdots$$</p>
 <p>$$f^{(n)}(x)=n(n-1)(n-2)\cdots \cdot 2 \cdot 1 \cdot a_n$$</p>
 <p>令 $x=x_0$ 代入以上式子，得</p>
-<p>$$f&rsquo;(x_0)=1 \cdot a_1 = 1! \cdot a_1$$</p>
-<p>$$f&rsquo;'(x_0)=2 \cdot 1 \cdot a_2=2! \cdot a_2$$</p>
-<p>$$f&rsquo;''(x_0)=3 \cdot 2 \cdot 1 \cdot a_3=3! \cdot a_3$$</p>
+<p>$$f'(x_0)=1 \cdot a_1 = 1! \cdot a_1$$</p>
+<p>$$f''(x_0)=2 \cdot 1 \cdot a_2=2! \cdot a_2$$</p>
+<p>$$f'''(x_0)=3 \cdot 2 \cdot 1 \cdot a_3=3! \cdot a_3$$</p>
 <p>$$\cdots$$</p>
 <p>$$f^{(n)}(x_0)= n \cdot (n-1) \cdots \cdot 2 \cdot 1 \cdot a_n=n! \cdot a_n$$</p>
 <p>因此即得</p>
@@ -214,7 +214,7 @@ $$
 </div>
 </article></div>
             </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.69.2">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.6"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.83.1">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.6"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
                 </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2021</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">yusheng</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
         </div>
     </footer></div>

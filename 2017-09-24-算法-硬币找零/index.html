@@ -22,10 +22,10 @@ $$s.t. \quad \sum_{i=1}^{n} c_i \cdot y_i = V$$
 但是这样并不能保证硬币数是最小的。为了找到最优解，我们需要假设某个子问题已经得到了最优解，然后推出与它的子问题的最优解的关系，也就是最优解的递推关系式。设 $dp(i)$ 表示组合总价值为 $i$ 的零钱所需要的最小硬币数。因此每次可以选择 $n$ 种硬币中的一种，设本次选择的硬币为第 $j$ $(1 \leq j \leq n)$ 种，对应的面值为 $c[j]$，则在拿起该硬币之前的子问题即为：组合面值为 $dp(i-c[j])$ 的总额需要的最小硬币数。同样可以用“剪贴粘贴”的反正法证明其最优解为 $dp(i-c[j])-1$。形式化描述为：
  $$ dp(i)= \begin{cases} 0, & \text{if $i=0 $} \\ min_{1 \leq j \leq n}(dp(i-c[j])&#43;1), & \text{if $i 0 \, , \, c[j] \leq i$} \\ \end{cases} $$  三、算法实现" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://utopizza.github.io/2017-09-24-%E7%AE%97%E6%B3%95-%E7%A1%AC%E5%B8%81%E6%89%BE%E9%9B%B6/" />
-<meta property="og:image" content="https://utopizza.github.io/logo.png"/>
-<meta property="article:published_time" content="2017-09-24T23:20:00+00:00" />
-<meta property="article:modified_time" content="2017-09-24T23:20:00+00:00" />
+<meta property="og:url" content="https://utopizza.github.io/2017-09-24-%E7%AE%97%E6%B3%95-%E7%A1%AC%E5%B8%81%E6%89%BE%E9%9B%B6/" /><meta property="og:image" content="https://utopizza.github.io/logo.png"/><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2017-09-24T23:20:00&#43;00:00" />
+<meta property="article:modified_time" content="2017-09-24T23:20:00&#43;00:00" />
+
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://utopizza.github.io/logo.png"/>
 
@@ -234,7 +234,7 @@ public static void main(String[] args) {
 </div>
 </article></div>
             </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.69.2">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.6"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.83.1">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.6"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
                 </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2021</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">yusheng</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
         </div>
     </footer></div>

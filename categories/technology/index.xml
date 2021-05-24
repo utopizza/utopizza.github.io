@@ -132,7 +132,7 @@ CentOS配置VSFTP服务器 为何客户端软件可以而浏览器则不能连�
     <description><![CDATA[1、 Transact-SQL语言分类
  数据定义语言（DDL）：创建，删除，修改数据表，建立索引和约束，创建其他数据库对象等 数据操纵语言（DML）：查询，添加，删除，修改数据等 数据控制语言（DCL）：控制安全性的命令  2、数据类型：
  数值型：int,smallint,bigint,tinyint,bit,decimal,numeric,float,real 字符型：char,varchar,text 日期/时间型：datetime,smalldatetime 货币型：money,smallmoney 二进制型：binary,varbinary,image unicode型：nchar,nvarchar,ntext sql-variant型：混合型 table型：临时表 自定义型  3、标识符命名规则：
- 规则标识符（符合标识符规则，不用分隔符） 分隔标识符（不符合标识符规则，必须包含在&rdquo; &ldquo;和内）  4、对象命名规则：服务器名+数据库名+所有者名+对象名，如：sever.database.owner_name.object_name
+ 规则标识符（符合标识符规则，不用分隔符） 分隔标识符（不符合标识符规则，必须包含在&quot; &ldquo;和内）  4、对象命名规则：服务器名+数据库名+所有者名+对象名，如：sever.database.owner_name.object_name
 5、常量：见上数据类型
 6、变量：
 1 2 3 4 5 6 7 8 9 10  //声明 DECLARE @myint int，@mychar char(8) //赋值： SET @myint=10 SET @mychar=&#39;wang&#39; SELECT @myint=10，@mychar=&#39;wang&#39; //查询（即输出） SELECT @myint as myint   7、全局变量：系统预定好的变量，只读，如：@@ERROR，@@DBTS

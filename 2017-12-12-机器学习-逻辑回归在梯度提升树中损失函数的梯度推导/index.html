@@ -22,10 +22,10 @@ $$P(Y=1 \mid x)=\frac{1}{1&#43;e^{-w \cdot x}}$$
 $$P(Y=0 \mid x)=1-\frac{1}{1&#43;e^{-w \cdot x}}$$
 其中 $w$ 是 $n$ 维的向量，每一维对应样本 $x$ 的 $n$ 个特征，可以理解为：$w^{(i)}$ 表示训练样本 $x$ 第 $i$ 个特征 $x^{(i)}$ 的权重。$w \cdot x$ 为两个向量的内积，即" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://utopizza.github.io/2017-12-12-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92%E5%9C%A8%E6%A2%AF%E5%BA%A6%E6%8F%90%E5%8D%87%E6%A0%91%E4%B8%AD%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E7%9A%84%E6%A2%AF%E5%BA%A6%E6%8E%A8%E5%AF%BC/" />
-<meta property="og:image" content="https://utopizza.github.io/logo.png"/>
-<meta property="article:published_time" content="2017-12-12T16:40:00+00:00" />
-<meta property="article:modified_time" content="2017-12-12T16:40:00+00:00" />
+<meta property="og:url" content="https://utopizza.github.io/2017-12-12-%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92%E5%9C%A8%E6%A2%AF%E5%BA%A6%E6%8F%90%E5%8D%87%E6%A0%91%E4%B8%AD%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E7%9A%84%E6%A2%AF%E5%BA%A6%E6%8E%A8%E5%AF%BC/" /><meta property="og:image" content="https://utopizza.github.io/logo.png"/><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2017-12-12T16:40:00&#43;00:00" />
+<meta property="article:modified_time" content="2017-12-12T16:40:00&#43;00:00" />
+
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://utopizza.github.io/logo.png"/>
 
@@ -184,7 +184,7 @@ $$
 <p>$$z=\frac{1}{1+e^{-w \cdot x_i}}, \quad 1-z=1-\frac{1}{1+e^{-w \cdot x_i}}$$</p>
 <p>为了简洁过程在这里我们把 $-w*x_i$ 看作一个整体的变量即可，现在分别对 $z$ 和 $1-z$ 求导，有</p>
 <p>$$z'=\frac{e^{-w \cdot x_i}}{(1+e^{-w \cdot x_i})^2}, \quad
-(1-z)&lsquo;=-\frac{e^{-w \cdot x_i}}{(1+e^{-w \cdot x_i})^2}
+(1-z)'=-\frac{e^{-w \cdot x_i}}{(1+e^{-w \cdot x_i})^2}
 $$</p>
 <p>因此梯度提升树在第 $i$ 个样本处的负梯度（一阶导）：</p>
 <div>
@@ -307,7 +307,7 @@ gbm = lgb.train(params,
 </div>
 </article></div>
             </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.69.2">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.6"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.83.1">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.6"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
                 </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2021</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">yusheng</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
         </div>
     </footer></div>

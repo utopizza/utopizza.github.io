@@ -17,10 +17,10 @@ $$PriorityScore(e)=\alpha \cdot RarenessScore(e) &#43; \beta \cdot FanoutScore(e
 其中 $e$ 表示资源依赖图中的一个系统事件；$RarenessScore$ 表示事件的稀有得分，因为异常事件必定是正常系统的过往历史中很少出现的事件；$FanoutScore$ 表示扇出得分，如果一个事件的扇出（也即在资源依赖图中的一个节点的出度）越多，那么执行这个事件的分析所花费的时间越多。另外从统计经验知道，一般来说一些正常的系统事件例如更新进程数据等等的扇出度是非常巨大的，但是这类数据对攻击分析是没什么贡献的，只会浪费 CPU 时间。因此一个自然的想法是优先计算扇出较小的事件节点，别免浪费时间。当然这也会导致分析覆盖面的减小，但是这样的 tradeoff 总的来说是需要的。而 $\alpha$ 和 $\beta$ 是两者的平滑系数，文章中使用机器学习方法来训练这两个参数。两者的计算公式如下：
  $$RarenessScore(e)= \begin{cases} 1, & \text{if e has not been observed by reference model} \\ \frac{1}{ref(e)}, & \text{otherwise} \end{cases}$$   $$FanoutScore(e)= \begin{cases} 0,& \text{if e reaches a read-only file in backtracking} \\ \delta,& \text{if e reaches a write-only file in forward tracking} \\ \frac{1}{fanout(e)}, & \text{otherwise} \end{cases} $$  其中 $ref(e)$ 由文章定义的一个称为 $Reference Model$ 的模型给出，其主要思想是统计一个系统事件在一个时间段（一周或者一个月，这个可以根据企业的生产情况自行调节）内的出现总次数。而 $fanout(e)$ 文章没有给出计算公式，估计就是节点出度？" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://utopizza.github.io/2019-01-05-%E8%AE%BA%E6%96%87-priortracker/" />
-<meta property="og:image" content="https://utopizza.github.io/logo.png"/>
-<meta property="article:published_time" content="2019-01-05T00:00:00+00:00" />
-<meta property="article:modified_time" content="2019-01-05T00:00:00+00:00" />
+<meta property="og:url" content="https://utopizza.github.io/2019-01-05-%E8%AE%BA%E6%96%87-priortracker/" /><meta property="og:image" content="https://utopizza.github.io/logo.png"/><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2019-01-05T00:00:00&#43;00:00" />
+<meta property="article:modified_time" content="2019-01-05T00:00:00&#43;00:00" />
+
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://utopizza.github.io/logo.png"/>
 
@@ -178,7 +178,7 @@ $$
 </div>
 </article></div>
             </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.69.2">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.6"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.83.1">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.6"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
                 </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2021</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">yusheng</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
         </div>
     </footer></div>

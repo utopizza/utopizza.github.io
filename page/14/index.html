@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-	<meta name="generator" content="Hugo 0.69.2" />
+	<meta name="generator" content="Hugo 0.83.1" />
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="robots" content="noodp" />
@@ -10,9 +10,8 @@
         <meta name="Description" content="About LoveIt Theme"><meta property="og:title" content="Utopizza" />
 <meta property="og:description" content="About LoveIt Theme" />
 <meta property="og:type" content="website" />
-<meta property="og:url" content="https://utopizza.github.io/" />
-<meta property="og:image" content="https://utopizza.github.io/logo.png"/>
-<meta property="og:updated_time" content="2020-08-04T00:00:00+00:00" />
+<meta property="og:url" content="https://utopizza.github.io/" /><meta property="og:image" content="https://utopizza.github.io/logo.png"/>
+
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://utopizza.github.io/logo.png"/>
 
@@ -152,7 +151,7 @@ Server 端主要的两个文件是：网站主页 TICSystemDefault.aspx 和 WebS
 二、Model层
 1、该层用来将各个表的数据封装成对象进行数据传递，所以，表中的每个字段都是该表对应的类的属性。但是有时候需要经常用到一些额外的参数，例如分页时用的两个索引值，如果每次都作为额外参数进行传递会十分麻烦，所以可以把这些参数也作为该类的一个属性，使用时直接像其他参数一样封装到该类的对象中进行传递或调用，这样可以简便很多
 2、为了封装参数时的灵活性，应该给每个类写一个空的构造函数，这样可以每次使用该类时可以调用不定个属性，而不是固定死每次封装对象都必须把所有属性赋值
-3、一般来说，Model层中，每个类对应数据库中的每个表，每个类的属性的要和表中对应的字段数据类型要保持一致。但是由于从前台取参，到赋值给Model层对象，到再调用BLL层函数，到传参到数据库，这几个环节都需要对参数进行非空判断，而DateTime等数据类型的非空判断比较困难，所以在本项目中，我例外的把DateTime类型的属性改为String字符串类型（因为字符串在前台取值时不会为NULL，例如，如果用户在TextBox中什么都不填，那么在后台取值时，将取得一个空字符串&rsquo;'，而不是NULL）
+3、一般来说，Model层中，每个类对应数据库中的每个表，每个类的属性的要和表中对应的字段数据类型要保持一致。但是由于从前台取参，到赋值给Model层对象，到再调用BLL层函数，到传参到数据库，这几个环节都需要对参数进行非空判断，而DateTime等数据类型的非空判断比较困难，所以在本项目中，我例外的把DateTime类型的属性改为String字符串类型（因为字符串在前台取值时不会为NULL，例如，如果用户在TextBox中什么都不填，那么在后台取值时，将取得一个空字符串''，而不是NULL）
 三、Common层
 1、该层主要是存放SqlHelper，FileHelper等通用的帮助类
 2、其实后来发现，有很多东西都是公用的，比如一些方法，例如：输入的数据的非空检测，输入数据的最大长度检测和截取，防止SQL注入的字符串检测和处理，添加用户操作日志等等，这些可用抽出来的公用方法，最好是在这个common层写好，然后在其他层引用或者调用，这样维护起来十分的方面，不用在修改的时候逐个cs文件或者逐个页面的改
@@ -176,7 +175,7 @@ Server 端主要的两个文件是：网站主页 TICSystemDefault.aspx 和 WebS
 七、关于维护
 1、维护是开发的重中之重，在维护过程中经常会出现许多大大小小的问题，我们必须站在用户的角度去开发这些软件，必须认真细心耐烦，只有这样才能把错误和漏洞降到最小，才能做一个好的软件
 2、必须坚持一个原则就是每次写好一段代码（每个类，每个方法等），自己必须进行测试并调试值没有问题出现，尽量使代码简洁高效，并加上注释，让其他人能够轻易的看懂
-3、在写页面的时候，必须考虑的事情有：输入的最大长度（最好写一个统一的函数来进行判断并截断），输入的数据格式（一般用try catch，即使前台用js进行判断了，后台也要进行判断，但是进行简单的错误抛出即可），输入的字符中是否含有危险的sql注入（写一个函数进行检测，并将原字符串的&rsquo;替换成&rdquo;）
+3、在写页面的时候，必须考虑的事情有：输入的最大长度（最好写一个统一的函数来进行判断并截断），输入的数据格式（一般用try catch，即使前台用js进行判断了，后台也要进行判断，但是进行简单的错误抛出即可），输入的字符中是否含有危险的sql注入（写一个函数进行检测，并将原字符串的&rsquo;替换成&quot;）
 4、在前台控件取值，封装成Model层的对象并传递到后台时，一定要注意对空的判断，特别是传递到多条件选择的存储过程的参数时，不能把NULL传进去，所有对每一个参数必须进行非空判断，到底是传空字符串，还是某个默认值，还是什么什么，这个是必须要注意的问题
 5、关于修改：有时候客户需要修改需求，这时系统不得不做一些硬性修改。比如增加表里某个字段的长度。这时一定要细心，一定要从数据库改起，先改表的字段长度，然后是相关的增删改的存储过程中的那些临时表的字段的长度，然后是Model层，然后是DAL层的函数，接着是BLL层的函数，最后是最关键的UI层，要仔细检查每个用户输入控件的获取数据情况，修改截取函数的截取长度。另外还要留意一下控件的最大输入长度，是否需要修改</div><div class="post-footer">
         <a href="/2014-06-20-%E9%A1%B9%E7%9B%AE-%E5%8D%8E%E5%8C%97%E7%94%B5%E5%8A%9B%E5%A4%A7%E5%AD%A6%E5%9F%BA%E9%87%91%E4%BC%9A%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E6%80%BB%E7%BB%93/">Read More</a></div>
@@ -244,7 +243,7 @@ Server 端主要的两个文件是：网站主页 TICSystemDefault.aspx 和 WebS
                     </span>
                 </li></ul></div></div>
             </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.69.2">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.6"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.83.1">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.6"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
                 </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2019 - 2021</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank">yusheng</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
         </div>
     </footer></div>
